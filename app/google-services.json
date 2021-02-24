@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "76276922541",
+    "project_id": "ambassadors-app-93583",
+    "storage_bucket": "ambassadors-app-93583.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:76276922541:android:9611bb113d9ddcdfebee24",
+        "android_client_info": {
+          "package_name": "hashed.app.ampassadors"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "76276922541-a21q84aodvakv57vg4s9hhpbcbvkhm5a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBH4GTDV85DZVuVGCU46jK7MIsS6ATHm6Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "76276922541-a21q84aodvakv57vg4s9hhpbcbvkhm5a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

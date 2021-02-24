@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainToolbar"
+    android:layout_width="match_parent"
+    app:navigationIcon="@drawable/back_arrow_icon"
+    app:navigationContentDescription="navigate back"
+    android:layout_height="?actionBarSize"
+    android:elevation="4dp"
+    android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+    android:fitsSystemWindows="true"
+    app:titleTextColor="@color/white"
+    app:menu="@menu/messaging_toolbar_menu"
+    android:background="@color/dark_green">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/messagingTbProfileIv"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:layoutDirection="ltr"
+        android:src="@color/white"
+        android:contentDescription="@string/profile_image"/>
+
+    <TextView
+        android:id="@+id/messagingTbNameTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:textColor="@color/white"
+        android:layoutDirection="ltr"
+        android:fontFamily="@font/segoe_ui_bold"
+        android:text="Name"
+        android:textSize="24sp"
+        />
+
+</androidx.appcompat.widget.Toolbar>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/messagingPickerLl"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fitsSystemWindows="true"
+    android:background="@drawable/messaging_layout_back"
+    android:paddingStart="4dp"
+    android:paddingEnd="10dp"
+    android:paddingVertical="7dp"
+    android:gravity="center_vertical"
+    android:layout_gravity="bottom"
+    android:orientation="horizontal">
+
+    <EditText
+        android:id="@+id/messagingPickerEd"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="@string/text_message"
+        android:background="@drawable/messaging_ed_back"
+        android:fontFamily="@font/segoe_ui_light"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:paddingTop="7dp"
+        android:paddingBottom="10dp"
+        android:importantForAutofill="no"
+        android:inputType="textShortMessage"
+        android:layout_marginEnd="6dp" />
+
+
+    <ImageView
+        android:id="@+id/messagingPickerSendIv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/send_icon"
+        android:contentDescription="@string/send_message" />
+
+</LinearLayout>

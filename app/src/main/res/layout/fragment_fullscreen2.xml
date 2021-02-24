@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="?attr/fullscreenBackgroundColor"
+    android:fitsSystemWindows="true"
+    android:theme="@style/ThemeOverlay.AmpassadorsApp.FullscreenContainer"
+    tools:context=".Fragments.FullscreenFragment2">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/fullScreenToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        app:navigationIcon="@drawable/back_arrow_icon"
+        android:layout_alignParentTop="true"
+        app:title="photos"
+        app:titleTextColor="@color/white" />
+
+        <ImageView
+            android:id="@+id/fullScreenIv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/fullScreenToolbar"
+            android:layout_above="@id/messaging_picker_edittext"
+            android:contentDescription="@string/chosen_image"
+            android:src="@color/white"
+            android:keepScreenOn="true" />
+
+
+        <include
+            android:id="@+id/messaging_picker_edittext"
+            android:layout_alignParentBottom="true"
+            layout="@layout/messaging_picker_edittext"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent" />
+
+
+
+</RelativeLayout>
