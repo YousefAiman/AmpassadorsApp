@@ -180,7 +180,7 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
                         mProgressDialog.dismiss();
-                        Picasso.get().load(filePath.toString()).fit().into(postImage);
+                        Picasso.get().load(filePath.toString()).fit().centerInside().into(postImage);
 
 
 

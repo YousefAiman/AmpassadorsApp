@@ -30,14 +30,14 @@ import hashed.app.ampassadors.Adapters.PostAdapter;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 
-public class    Home_Activity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener {
+public class Home_Activity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener {
     CircleImageView post;
     RecyclerView post_list;
-    FirebaseFirestore firebaseFirestore ;
-    Task<QuerySnapshot>task;
-    List<PostData>postData;
-    PostAdapter adapter ;
-    TextView  newpost;
+    FirebaseFirestore firebaseFirestore;
+    Task<QuerySnapshot> task;
+    List<PostData> postData;
+    PostAdapter adapter;
+    TextView newpost;
     TextView newPoll;
 
     @Override
@@ -45,9 +45,9 @@ public class    Home_Activity extends AppCompatActivity implements Toolbar.OnMen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
         SetUpCompetent();
-            post_list.setHasFixedSize(true);
-            post_list.setLayoutManager(new LinearLayoutManager(this));
-            OnClickButtons();
+        post_list.setHasFixedSize(true);
+        post_list.setLayoutManager(new LinearLayoutManager(this));
+        OnClickButtons();
         ReadPost();
         setUpToolBarAndActions();
 
@@ -60,16 +60,16 @@ public class    Home_Activity extends AppCompatActivity implements Toolbar.OnMen
     }
 
 
-                public void SetUpCompetent() {
-                    post = findViewById(R.id.posting_image_btn);
-                    post_list = findViewById(R.id.home_list);
-                    firebaseFirestore = FirebaseFirestore.getInstance();
-                    task = firebaseFirestore.collection("Post").get();
-                    postData = new ArrayList<>();
-                    newPoll = findViewById(R.id.new_poll);
-                    newpost = findViewById(R.id.new_post);
+    public void SetUpCompetent() {
+        post = findViewById(R.id.posting_image_btn);
+        post_list = findViewById(R.id.home_list);
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        task = firebaseFirestore.collection("Post").get();
+        postData = new ArrayList<>();
+        newPoll = findViewById(R.id.new_poll);
+        newpost = findViewById(R.id.new_post);
 
-                }
+    }
 
     // Tool bar
     private void setUpToolBarAndActions() {
@@ -93,40 +93,39 @@ public class    Home_Activity extends AppCompatActivity implements Toolbar.OnMen
         post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-             showPostOptionsBottomSheet();
+                showPostOptionsBottomSheet();
 
             }
         });
 
     }
-    public void ReadPost(){
-        task.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-             @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                if (task.isSuccessful()){
-                        for (DocumentSnapshot sp : task.getResult().getDocuments()){
-                            String posttrxt = sp.getString("description");
-                            PostData data = new PostData();
-                            data.setDescription(posttrxt);
-                            postData.add(data);
 
-                        }
+    public void ReadPost() {
+        task.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                if (task.isSuccessful()) {
+                    for (DocumentSnapshot sp : task.getResult().getDocuments()) {
+                        String posttrxt = sp.getString("description");
+                        PostData data = new PostData();
+                        data.setDescription(posttrxt);
+                        postData.add(data);
+
+                    }
                 }
 
-                adapter = new PostAdapter(postData , getApplicationContext());
+                adapter = new PostAdapter(postData, getApplicationContext());
                 adapter.notifyDataSetChanged();
                 post_list.setAdapter(adapter);
 
 
-
             }
         });
     }
-    private void showPostOptionsBottomSheet(){
 
-
-        final BottomSheetDialog bsd = new BottomSheetDialog(this,R.style.SheetDialog);
-        final View parentView = getLayoutInflater().inflate(R.layout.post_options_bsd,null);
+    private void showPostOptionsBottomSheet() {
+        final BottomSheetDialog bsd = new BottomSheetDialog(this, R.style.SheetDialog);
+        final View parentView = getLayoutInflater().inflate(R.layout.post_options_bsd, null);
         parentView.setBackgroundColor(Color.TRANSPARENT);
 
         parentView.findViewById(R.id.new_post).setOnClickListener(new View.OnClickListener() {
@@ -134,7 +133,7 @@ public class    Home_Activity extends AppCompatActivity implements Toolbar.OnMen
             public void onClick(View view) {
 
                 bsd.dismiss();
-                Intent intent = new Intent(getApplicationContext() , PostActivity.class);
+                Intent intent = new Intent(getApplicationContext(), PostActivity.class);
                 startActivity(intent);
             }
         });
@@ -143,7 +142,7 @@ public class    Home_Activity extends AppCompatActivity implements Toolbar.OnMen
             public void onClick(View view) {
 
                 bsd.dismiss();
-                Intent intent = new Intent(getApplicationContext() , PollActivity.class);
+                Intent intent = new Intent(getApplicationContext(), PollActivity.class);
                 startActivity(intent);
             }
         });
