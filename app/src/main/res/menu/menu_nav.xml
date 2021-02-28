@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/news"
+        android:title="News"/>
+    <item
+        android:id="@+id/awreaness_post"
+        android:title="Awareness post"/>
+    <item
+        android:id="@+id/course"
+         android:title="Course"/>
+    <item
+        android:id="@+id/polls"
+        android:title="Polls"
+        />
+    <item
+        android:id="@+id/complaints"
+        android:title="Complaints"/>
+    <item
+        android:id="@+id/suggestions"
+        android:title="Suggestions"/>
+    <item
+        android:id="@+id/policy_praivacy"
+        android:title="Policy praivacy"/>
+    <item
+        android:id="@+id/about_us"
+        android:title="About us"
+        />
+</menu>

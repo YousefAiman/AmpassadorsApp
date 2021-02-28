@@ -143,7 +143,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
     final Toolbar toolbar = findViewById(R.id.privateMessagingTb);
 
-    toolbar.setNavigationOnClickListener(v-> onBackPressed());
+    toolbar.setNavigationOnClickListener(v-> onBackPressed()) ;
     toolbar.setOnMenuItemClickListener(this);
 
   }

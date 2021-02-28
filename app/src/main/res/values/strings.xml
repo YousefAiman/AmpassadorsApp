@@ -4,7 +4,10 @@
     <string name="notification_indicator">notification indicator</string>
     <string name="notifications">notifications</string>
     <string name="profile_image">profile image</string>
+    <!--Navigation -->
 
+    <string name="open">open</string>
+    <string name="close">close</string>
 
     <!--Messaging-->
     <string name="record_audio_message">record audio message</string>
@@ -24,5 +27,7 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="chosen_image">Chosen image</string>
     <string name="message_image">message image</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
