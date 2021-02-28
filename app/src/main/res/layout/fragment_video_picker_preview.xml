@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="?attr/fullscreenBackgroundColor"
+    android:fitsSystemWindows="true"
+    android:theme="@style/ThemeOverlay.AmpassadorsApp.FullscreenContainer"
+    tools:context=".Fragments.VideoPickerPreviewFragment">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/fullScreenToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        app:navigationIcon="@drawable/back_arrow_icon"
+        android:layout_alignParentTop="true"
+        app:title="videos"
+        app:titleTextColor="@color/white" />
+
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/exoPlayer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:controller_layout_id="@layout/custom_video_controller_no_next"
+        android:layout_below="@id/fullScreenToolbar"
+        android:layout_above="@id/messaging_picker_edittext"
+        />
+
+    <ImageView
+        android:id="@+id/videoThumbnailTv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/fullScreenToolbar"
+        android:layout_above="@id/messaging_picker_edittext"
+        />
+
+    <ImageView
+        android:id="@+id/videoPlayIv"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/play_icon_new"
+        android:layout_centerInParent="true"
+        />
+
+    <include
+        android:id="@+id/messaging_picker_edittext"
+        android:layout_alignParentBottom="true"
+        layout="@layout/messaging_picker_edittext"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent" />
+
+</RelativeLayout>

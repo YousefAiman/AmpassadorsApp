@@ -9,9 +9,13 @@
     <color name="white">#FFFFFFFF</color>
     <color name="dark_green">#1B5E20</color>
     <color name="light_green">#02723A</color>
+    <color name="neon_green">#22E315</color>
     <color name="light_grey">#E9E9E9</color>
+    <color name="white_grey">#F2F2F2</color>
+    <color name="light_medium_grey">#E0E0E0</color>
     <color name="medium_grey">#707070</color>
     <color name="red">#E50707</color>
+    <color name="dark_red">#B71C1C</color>
     <color name="transparent">#00000000</color>
     <color name="light_blue_600">#FF039BE5</color>
     <color name="light_blue_900">#FF01579B</color>

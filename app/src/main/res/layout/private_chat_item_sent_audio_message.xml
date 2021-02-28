@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="20dp"
+    android:layout_marginTop="25dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/view2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/sent_audio_message_back"
+        app:layout_constraintDimensionRatio="4.2:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:elevation="5dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent=".81" >
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imageIv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:src="@color/white"
+            app:civ_border_color="@color/medium_grey"
+            app:civ_border_width="1dp"
+            app:layout_constraintBottom_toBottomOf="@+id/view2"
+            app:layout_constraintDimensionRatio="1"
+            app:layout_constraintHeight_percent=".67"
+            app:layout_constraintEnd_toEndOf="@+id/view2"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/playIv"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="15dp"
+            android:src="@drawable/play_icon_new"
+            android:rotation="180"
+            android:layout_marginEnd="15dp"
+            app:layout_constraintBottom_toBottomOf="@+id/imageIv"
+            app:layout_constraintEnd_toStartOf="@+id/imageIv"
+            app:layout_constraintTop_toTopOf="@+id/imageIv" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/audioProgressSlider"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:thumbRadius="7dp"
+            app:trackColorInactive="@color/white"
+            app:trackColorActive="@color/light_green"
+            app:thumbColor="@color/light_green"
+            android:valueFrom="0"
+            android:rotation="180"
+            android:layout_marginStart="5dp"
+            android:valueTo="100"
+            app:trackHeight="1dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/playIv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

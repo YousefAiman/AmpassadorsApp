@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/chatting_item_back"
+    android:elevation="3dp"
+    android:layout_marginHorizontal="5dp"
+    android:layout_marginTop="16dp"
+    android:layout_height="100dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imageIv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="14dp"
+        android:src="@color/white"
+        app:civ_border_color="@color/light_green"
+        app:civ_border_width="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintHeight_percent=".77"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/selectedIv"
+        app:civ_border_color="@color/light_green"
+        app:civ_border_width="1dp"
+        android:src="@drawable/check_icon"
+        android:layout_width="wrap_content"
+        android:visibility="gone"
+        app:civ_circle_background_color="@color/light_green"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/statusIv"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+
+    <TextView
+        android:id="@+id/nameTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="7dp"
+        android:fontFamily="@font/segoe_ui"
+        android:layout_marginBottom="20dp"
+        android:textColor="#F2000000"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageIv"
+        app:layout_constraintStart_toEndOf="@+id/imageIv"
+        app:layout_constraintTop_toTopOf="@+id/imageIv" />
+
+
+    <ImageView
+        android:id="@+id/statusIv"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/green_circle"
+        app:layout_constraintEnd_toEndOf="@+id/statusTv"
+        app:layout_constraintStart_toStartOf="@+id/statusTv"
+        app:layout_constraintTop_toTopOf="@+id/nameTv" />
+
+    <TextView
+        android:id="@+id/statusTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="17dp"
+        android:fontFamily="@font/segoe_ui_bold"
+        android:textColor="#F2000000"
+        android:layout_marginTop="3dp"
+        android:textSize="12sp"
+        app:drawableTopCompat="@drawable/green_circle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/statusIv" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
