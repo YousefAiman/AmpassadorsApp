@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_more"
+        android:orderInCategory="100"
+        android:icon="@drawable/dots_more_icon"
+        android:title="@string/more"
+        app:showAsAction="ifRoom" />
+
+<!--    <item android:id="@+id/search"-->
+<!--        android:title="Search"-->
+<!--        android:icon="@drawable/search_icon"-->
+<!--        app:showAsAction="always|collapseActionView"-->
+<!--        app:actionViewClass="androidx.appcompat.widget.SearchView" />-->
+
+    <item
+        android:id="@+id/action_notifications"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/notification_icon"
+        android:actionLayout="@layout/notification_indicator_action_layout"
+        android:title="Notifications"/>
+
+
+
+</menu>

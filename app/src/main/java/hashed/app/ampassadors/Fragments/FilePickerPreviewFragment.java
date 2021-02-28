@@ -4,33 +4,36 @@ import android.annotation.SuppressLint;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
-import android.app.Activity;
-import android.content.Intent;
+import android.content.ContentResolver;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.OpenableColumns;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 
-import com.google.firebase.database.DatabaseReference;
 import com.squareup.picasso.Picasso;
+
+import java.io.File;
+import java.net.URL;
+import java.util.Map;
+import java.util.Objects;
 
 import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
 
-public class FullscreenFragment2 extends Fragment {
+public class FilePickerPreviewFragment extends Fragment {
 
   private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
   private static final int UI_ANIMATION_DELAY = 300;
@@ -91,18 +94,41 @@ public class FullscreenFragment2 extends Fragment {
 
   private boolean isStatusBarVisible;
 
-  private final Uri imageUri;
+  private final Uri uri;
+  private final int type;
 
-  public FullscreenFragment2(Uri imageUri){
-    this.imageUri = imageUri;
+  public FilePickerPreviewFragment(Uri uri, int type){
+    this.uri = uri;
+    this.type = type;
   }
+
 
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater,
                            @Nullable ViewGroup container,
                            @Nullable Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.fragment_fullscreen2, container, false);
+
+    int layout;
+    switch (type){
+      case Files.IMAGE:
+        layout = R.layout.fragment_image_picker_preview;
+        break;
+
+      case Files.DOCUMENT:
+        layout = R.layout.fragment_file_picker_preview;
+        break;
+
+      case Files.AUDIO:
+        layout = R.layout.fragment_image_picker_preview;
+        break;
+
+      default:
+        throw new IllegalStateException("Unexpected value: " + type);
+    }
+
+    return inflater.inflate(layout, container, false);
+
   }
 
   @Override
@@ -113,22 +139,6 @@ public class FullscreenFragment2 extends Fragment {
     EditText messagingPickerEd = view.findViewById(R.id.messagingPickerEd);
     ImageView messagingPickerSendIv = view.findViewById(R.id.messagingPickerSendIv);
 
-    messagingPickerSendIv.setOnClickListener(new sendClickListener(messagingPickerEd));
-
-
-
-//    fullScreenIv.setOnTouchListener(new View.OnTouchListener() {
-//      @SuppressLint("ClickableViewAccessibility")
-//      @Override
-//      public boolean onTouch(View view, MotionEvent motionEvent) {
-//        if(!isStatusBarVisible){
-//
-//          show(true);
-//
-//        }
-//        return true;
-//      }
-//    });
 
     final Toolbar fullScreenToolbar = view.findViewById(R.id.fullScreenToolbar);
 
@@ -139,24 +149,57 @@ public class FullscreenFragment2 extends Fragment {
       }
     });
 
-    Picasso.get().load(imageUri).fit().into(fullScreenIv);
+    if(type == Files.IMAGE){
+      Picasso.get().load(uri).fit().into(fullScreenIv);
+
+      messagingPickerSendIv.setOnClickListener(new sendClickListener(messagingPickerEd));
+
+    }else if(type == Files.DOCUMENT){
+
+      TextView documentNameTv = view.findViewById(R.id.documentNameTv);
+
+        Map<String,Object> fileInfoMap = Files.getFileInfo(getContext(),uri);
+
+        final String fileName = (String) fileInfoMap.get("fileName");
+
+//        final String fileType = (String) fileInfoMap.get("fileType");
+//        Log.d("ttt","fileName: "+fileName);
+//        Log.d("ttt","fileType: "+fileType);
+        documentNameTv.setText(fileName);
+
+        messagingPickerSendIv.setOnClickListener(new sendClickListener(messagingPickerEd,fileName));
+
+    }
+
 
   }
 
   private class sendClickListener implements View.OnClickListener {
     EditText messagingPickerEd;
+    String fileName;
 
     sendClickListener(EditText messagingPickerEd){
       this.messagingPickerEd = messagingPickerEd;
+    }
+
+    sendClickListener(EditText messagingPickerEd,String fileName){
+      this.messagingPickerEd = messagingPickerEd;
+      this.fileName = fileName;
     }
 
     @Override
     public void onClick(View view) {
 
       final String content = messagingPickerEd.getText().toString();
-      if(!content.isEmpty() && imageUri!=null){
+      if(!content.isEmpty() && uri!=null){
 
-        ((PrivateMessagingActivity)getActivity()).sendFileMessage(imageUri, Files.IMAGE, content);
+        ((PrivateMessagingActivity)getActivity()).sendFileMessage(
+                uri,
+                type,
+                content,
+                0,
+                fileName);
+
         getActivity().onBackPressed();
 
       }else{

@@ -23,10 +23,65 @@ public class PrivateMessage implements Serializable {
   private int type;
   @PropertyName("attachmentUrl")
   private String attachmentUrl;
+  @PropertyName("videoThumbnail")
+  private String videoThumbnail;
+  @PropertyName("length")
+  private long length;
+  @PropertyName("fileName")
+  private String fileName;
+  @Exclude
+  private UploadTask uploadTask;
 
   public PrivateMessage() {
   }
+//
+  public UploadTask getUploadTask() {
+    return uploadTask;
+  }
 
+  public void setUploadTask(UploadTask uploadTask) {
+    this.uploadTask = uploadTask;
+  }
+
+
+  public static class UploadTask{
+
+    private long downloadId;
+    private boolean isDownloading;
+    private boolean isCompleted;
+
+    public UploadTask(long downloadId,boolean isDownloading){
+      this.downloadId = downloadId;
+      this.isDownloading = isDownloading;
+    }
+
+    public long getDownloadId() {
+      return downloadId;
+    }
+
+    public void setDownloadId(long downloadId) {
+      this.downloadId = downloadId;
+    }
+
+    public boolean isDownloading() {
+      return isDownloading;
+    }
+
+    public void setDownloading(boolean downloading) {
+      isDownloading = downloading;
+    }
+
+    public boolean isCompleted() {
+      return isCompleted;
+    }
+
+    public void setCompleted(boolean completed) {
+      isCompleted = completed;
+    }
+  }
+
+
+  //text message
   public PrivateMessage(String content, long time, String sender,int type) {
     this.content = content;
     this.time = time;
@@ -34,12 +89,44 @@ public class PrivateMessage implements Serializable {
     this.type = type;
   }
 
+  //image message
   public PrivateMessage(String content, long time, String sender,int type,String attachmentUrl) {
     this.content = content;
     this.time = time;
     this.sender = sender;
     this.type = type;
     this.attachmentUrl = attachmentUrl;
+  }
+
+  //video message
+  public PrivateMessage(String content, long time, String sender,int type,String attachmentUrl,
+                        String videoThumbnail) {
+    this.content = content;
+    this.time = time;
+    this.sender = sender;
+    this.type = type;
+    this.attachmentUrl = attachmentUrl;
+    this.videoThumbnail = videoThumbnail;
+  }
+
+  //audio message
+  public PrivateMessage(long length, long time, String sender,int type,String attachmentUrl) {
+    this.length = length;
+    this.time = time;
+    this.sender = sender;
+    this.type = type;
+    this.attachmentUrl = attachmentUrl;
+  }
+
+  //document message
+  public PrivateMessage(long time,String content, String sender,int type,String attachmentUrl,
+                        String fileName) {
+    this.time = time;
+    this.content = content;
+    this.sender = sender;
+    this.type = type;
+    this.attachmentUrl = attachmentUrl;
+    this.fileName = fileName;
   }
 
   public String getContent() {
@@ -97,4 +184,30 @@ public class PrivateMessage implements Serializable {
   public void setAttachmentUrl(String attachmentUrl) {
     this.attachmentUrl = attachmentUrl;
   }
+
+  public long getLength() {
+    return length;
+  }
+
+  public void setLength(long length) {
+    this.length = length;
+  }
+
+  public String getVideoThumbnail() {
+    return videoThumbnail;
+  }
+
+  public void setVideoThumbnail(String videoThumbnail) {
+    this.videoThumbnail = videoThumbnail;
+  }
+
+  public String getFileName() {
+    return fileName;
+  }
+
+  public void setFileName(String fileName) {
+    this.fileName = fileName;
+  }
+
+
 }

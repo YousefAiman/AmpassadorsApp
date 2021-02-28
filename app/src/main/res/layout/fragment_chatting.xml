@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context=".Fragments.ChattingFragment">
+
+    <include layout="@layout/chatting_toolbar"/>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/chattingTabLayout"
+        android:background="@color/dark_green"
+        android:layout_width="match_parent"
+        android:layout_marginTop="1dp"
+        app:tabIndicatorHeight="5dp"
+        app:tabIndicatorColor="@color/white"
+        android:paddingBottom="1dp"
+        app:tabTextColor="@color/white"
+        app:tabTextAppearance="@style/TabTextAppearance"
+        app:tabRippleColor="@color/white"
+        android:layout_height="wrap_content"/>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/chattingViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</LinearLayout>

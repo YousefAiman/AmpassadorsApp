@@ -4,10 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="?attr/fullscreenBackgroundColor"
+    android:background="#E3000000"
     android:fitsSystemWindows="true"
     android:theme="@style/ThemeOverlay.AmpassadorsApp.FullscreenContainer"
-    tools:context=".Fragments.FullscreenFragment2">
+    tools:context=".Fragments.FilePickerPreviewFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/fullScreenToolbar"
@@ -25,9 +25,7 @@
             android:layout_below="@id/fullScreenToolbar"
             android:layout_above="@id/messaging_picker_edittext"
             android:contentDescription="@string/chosen_image"
-            android:src="@color/white"
             android:keepScreenOn="true" />
-
 
         <include
             android:id="@+id/messaging_picker_edittext"
@@ -35,7 +33,5 @@
             layout="@layout/messaging_picker_edittext"
             android:layout_height="wrap_content"
             android:layout_width="match_parent" />
-
-
 
 </RelativeLayout>

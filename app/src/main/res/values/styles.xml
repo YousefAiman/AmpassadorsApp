@@ -4,10 +4,10 @@
         <item name="android:background">@color/black_overlay</item>
         <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
 
-<!--        <item name="android:windowNoTitle">true</item>-->
-<!--        <item name="windowActionBar">false</item>-->
-<!--        <item name="android:windowFullscreen">true</item>-->
-<!--        <item name="android:windowContentOverlay">@null</item>-->
+        <!--        <item name="android:windowNoTitle">true</item>-->
+        <!--        <item name="windowActionBar">false</item>-->
+        <!--        <item name="android:windowFullscreen">true</item>-->
+        <!--        <item name="android:windowContentOverlay">@null</item>-->
     </style>
 
 
@@ -15,11 +15,32 @@
         <!--<item name="android:windowCloseOnTouchOutside">false</item>-->
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:colorBackground"> @android:color/transparent</item>
-<!--        <item name="android:backgroundDimEnabled">true</item>-->
-<!--        <item name="android:backgroundDimAmount">0.3</item>-->
-<!--        <item name="android:windowFrame">@null</item>-->
+        <item name="android:colorBackground">@android:color/transparent</item>
+        <!--        <item name="android:backgroundDimEnabled">true</item>-->
+        <!--        <item name="android:backgroundDimAmount">0.3</item>-->
+        <!--        <item name="android:windowFrame">@null</item>-->
         <item name="android:windowIsFloating">true</item>
+
+    </style>
+
+    <style name="ToolbarTitleAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+
+        <item name="android:textSize">24sp</item>
+        <item name="android:fontFamily">@font/segoe_ui_bold</item>
+
+    </style>
+
+    <style name="TabTextAppearance" parent="Widget.MaterialComponents.TabLayout">
+
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">@font/segoe_ui_bold</item>
+
+    </style>
+
+    <style name="fs" parent="Widget.AppCompat.SearchView">
+
+        <item name="android:textSize">1sp</item>
+        <item name="android:fontFamily">@font/segoe_ui_bold</item>
 
     </style>
 
