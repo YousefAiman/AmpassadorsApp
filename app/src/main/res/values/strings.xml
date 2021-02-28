@@ -24,18 +24,21 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="chosen_image">Chosen image</string>
     <string name="message_image">message image</string>
+    <string name="video">video</string>
+    <string name="audio">audio</string>
+    <string name="skype">skype</string>
+    <string name="document">document</string>
+    <string name="zoom">zoom</string>
+    <string name="image">image</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_navegation_drawer">navegation_drawer</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
-
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
+    <string name="chats">Chats</string>
+    <string name="add_group">Add Group</string>
+    <string name="online">online</string>
+    <string name="offline">offline</string>
+    <string name="done">done</string>
+    <string name="no_current_messages">No Current Messages</string>
+    <string name="no_online_users">No Online Users</string>
+    <string name="no_current_meetings">No Current Meetings</string>
 
 </resources>

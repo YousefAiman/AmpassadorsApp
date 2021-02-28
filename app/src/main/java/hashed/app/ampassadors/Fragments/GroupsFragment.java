@@ -63,7 +63,9 @@ public class GroupsFragment extends Fragment implements View.OnClickListener{
       mParam2 = getArguments().getString(ARG_PARAM2);
     }
 
-    final Fragment[] fragments = {new OnlineUsersFragment(),new MeetingsFragment()};
+    final Fragment[] fragments = {new OnlineUsersFragment()
+//            ,new MeetingsFragment()
+    };
     final String[] titles = {"Workshops","Meetings"};
 
     tabAdapterTitle = new TabAdapterTitle(getChildFragmentManager(),

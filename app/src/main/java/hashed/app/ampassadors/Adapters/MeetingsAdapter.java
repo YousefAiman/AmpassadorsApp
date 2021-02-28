@@ -32,7 +32,7 @@
 //import hashed.app.ampassadors.Utils.Files;
 //import hashed.app.ampassadors.Utils.TimeFormatter;
 //
-//public class MeetingsAdapter extends RecyclerView.Adapter<MeetingsAdapter.ChatsVh> {
+//public class MeetingsAdapter extends RecyclerView.Adapter<MeetingsAdapter.MeetingsVh> {
 //
 //  private static ArrayList<Meeting> meetings;
 //  private static String currentUid;

@@ -61,7 +61,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersVh> imp
 
   @NonNull
   @Override
-  public UsersAdapter.UsersVh onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+  public UsersVh onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
     return new UsersVh(LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.user_item_layout, parent, false));

@@ -19,7 +19,18 @@
         android:id="@+id/micIv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
         android:src="@drawable/mic_icon"
+        android:contentDescription="@string/record_audio_message" />
+
+    <ImageView
+        android:id="@+id/cancelIv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:visibility="gone"
+        android:layout_marginEnd="28dp"
+        android:src="@drawable/cancel_icon"
         android:contentDescription="@string/record_audio_message" />
 
     <EditText
@@ -39,12 +50,12 @@
         android:paddingBottom="10dp"
         android:importantForAutofill="no"
         android:inputType="textShortMessage"
-        android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp" />
 
     <ImageView
         android:id="@+id/messageAttachIv"
         android:layout_width="wrap_content"
+        android:visibility="visible"
         android:layout_height="wrap_content"
         android:src="@drawable/attach_icon"
         android:contentDescription="@string/attach_files" />
@@ -54,6 +65,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
+        android:visibility="visible"
         android:src="@drawable/send_icon"
         android:contentDescription="@string/send_message"
         />
