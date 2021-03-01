@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 
@@ -26,15 +27,24 @@ public class MainActivity extends AppCompatActivity {
 
     if(FirebaseAuth.getInstance().getCurrentUser()!=null){
 
-      startActivity( new Intent(MainActivity.this, Home_Activity.class));
-      finish();
+      new Handler().postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          startActivity( new Intent(MainActivity.this, Home_Activity.class));
+          finish();
+        }
+      },1000);
 
     }else{
 
-      FirebaseAuth.getInstance().signInAnonymously().addOnSuccessListener(authResult -> {
-        startActivity(new Intent(MainActivity.this, sign_in.class));
-        finish();
-      });
+      new Handler().postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          startActivity( new Intent(MainActivity.this, sign_in.class));
+          finish();
+        }
+      },2000);
+
     }
 
 }

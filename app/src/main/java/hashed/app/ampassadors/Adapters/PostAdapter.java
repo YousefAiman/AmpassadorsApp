@@ -106,7 +106,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
             Picasso.get().load(postData.getImageUrl()).fit().into(postIv);
 
             if(postData.getPublisherName() == null){
+
                 getUserInfo(postData,postData.getPublisherId());
+
             }else{
 
               if(postData.getPublisherImage()!=null){
@@ -145,29 +147,27 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
 
         private void getUserInfo(PostData postData, String userId){
 
-            usersCollectionRef.whereEqualTo("userId",userId).get()
-                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                        @Override
-                        public void onSuccess(QuerySnapshot snapshots) {
+            usersCollectionRef.document(userId).get()
+                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                      @Override
+                      public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                            if(snapshots.isEmpty()){
-                                return;
-                            }
+                        if(documentSnapshot.exists()){
 
-                            final DocumentSnapshot userSnap = snapshots.getDocuments().get(0);
-
-                            postData.setImageUrl(userSnap.getString("imageUrl"));
-                            postData.setPublisherName(userSnap.getString("usernam"));
+                          postData.setImageUrl(documentSnapshot.getString("imageUrl"));
+                          postData.setPublisherName(documentSnapshot.getString("username"));
 
                         }
-                    }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if(task.isSuccessful()){
-                        Picasso.get().load(postData.getImageUrl()).into(imageIv);
-                        usernameTv.setText(postData.getPublisherName());
-                    }
-                }
+
+                      }
+                    }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+              @Override
+              public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                Picasso.get().load(postData.getImageUrl()).into(imageIv);
+                usernameTv.setText(postData.getPublisherName());
+
+              }
             });
 
         }

@@ -30,9 +30,9 @@
         android:layout_marginTop="10dp"
         android:fontFamily="@font/segoe_ui_bold"
         android:textColor="#060606"
+        android:layout_marginEnd="15dp"
         android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="@+id/dateTv"
-        app:layout_constraintStart_toStartOf="@+id/dateTv"
+        app:layout_constraintEnd_toStartOf="@+id/imageIv"
         app:layout_constraintTop_toTopOf="@+id/imageIv" />
 
 
