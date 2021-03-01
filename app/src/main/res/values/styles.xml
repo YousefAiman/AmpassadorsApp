@@ -30,6 +30,13 @@
 
     </style>
 
+    <style name="ToolbarTitleAppearanceEnd" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">@font/segoe_ui_bold</item>
+
+    </style>
+
     <style name="TabTextAppearance" parent="Widget.MaterialComponents.TabLayout">
 
         <item name="android:textSize">18sp</item>

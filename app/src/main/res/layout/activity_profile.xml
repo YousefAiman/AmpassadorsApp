@@ -1,36 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout
+<?xml version="1.0" encoding="utf-8"?><androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
-
-    <com.google.android.material.navigation.NavigationView
-
-        android:id="@+id/navigationview"
-        android:layout_width="320dp"
-        android:layout_height="match_parent"
-        app:menu="@menu/navigation_menu"
-        android:background="@color/black"
-        app:itemTextColor="@color/white"
-        android:layout_marginTop="55dp"
-        app:headerLayout="@layout/layout_navegation_header"
-        android:layout_gravity="start"/>
-
-<!--
-<ScrollView android:layout_height="match_parent"
-    android:layout_width="match_parent">
--->
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".profile">
-
-
+        tools:context=".Fragments.ProfileFragment">
 
         <include
             android:id="@+id/toolbar"
@@ -203,7 +177,3 @@
             app:layout_constraintTop_toBottomOf="@+id/in_phone"
             tools:ignore="MissingConstraints" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-    <!--
-</ScrollView>
--->
-</androidx.drawerlayout.widget.DrawerLayout>

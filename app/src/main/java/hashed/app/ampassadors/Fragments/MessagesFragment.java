@@ -155,7 +155,10 @@ public class MessagesFragment extends Fragment{
       @Override
       public void onSuccess(QuerySnapshot snapshots) {
 
-        lastDocumentSnapshot = snapshots.getDocuments().get(snapshots.size()-1);
+        if(!snapshots.getDocuments().isEmpty()){
+          lastDocumentSnapshot = snapshots.getDocuments().get(snapshots.size()-1);
+        }
+
 
         if(isInitial){
           valueEventListeners = new HashMap<>();

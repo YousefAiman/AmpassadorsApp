@@ -158,9 +158,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersVh> imp
 
        }
 
-       if(!isForPreview){
          itemView.setOnClickListener(this);
-       }
 
      }
 
@@ -169,15 +167,27 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersVh> imp
      @Override
      public void onClick(View view) {
 
-       String userId = users.get(getAdapterPosition()).getUserId();
+       if(isForPreview){
 
-       if(selectedUserIds.contains(userId)){
-         selectedUserIds.remove(userId);
+         itemView.getContext().startActivity(new Intent(itemView.getContext(),
+                 PrivateMessagingActivity.class).putExtra("messagingUid",
+                 users.get(getAdapterPosition()).getUserId()));
+
+
        }else{
-         selectedUserIds.add(users.get(getAdapterPosition()).getUserId());
+
+         String userId = users.get(getAdapterPosition()).getUserId();
+
+         if(selectedUserIds.contains(userId)){
+           selectedUserIds.remove(userId);
+         }else{
+           selectedUserIds.add(users.get(getAdapterPosition()).getUserId());
+         }
+
+         notifyItemChanged(getAdapterPosition());
+
        }
 
-       notifyItemChanged(getAdapterPosition());
 
 //       itemView.getContext().startActivity(new Intent(itemView.getContext(),
 //               PrivateMessagingActivity.class).putExtra("messagingUid",

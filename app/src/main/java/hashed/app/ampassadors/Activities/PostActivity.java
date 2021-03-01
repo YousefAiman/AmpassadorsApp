@@ -30,6 +30,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.api.Authentication;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.CollectionReference;
@@ -41,11 +42,13 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.Files;
 
 public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener {
 
@@ -56,7 +59,6 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     Button video_btn;
     Button pdf;
     ImageView postImage;
-
     CircleImageView user_image;
     TextView username;
     ProgressDialog mProgressDialog;
@@ -65,6 +67,7 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     FirebaseStorage storage;
     StorageReference storageReference;
     User user;
+    String downloadUrl;
     private Uri filePath;
     boolean uploading = false;
     private String cameraImageFilePath;
@@ -75,8 +78,6 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         setContentView(R.layout.activity_post);
         setUpComponte();
         clickListiners();
-
-
     }
 
     // set up all ui design
@@ -90,12 +91,11 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         user_image = findViewById(R.id.image_user_posting_in_create_post);
         username = findViewById(R.id.username_post_in_create_psot);
         firebaseFirestore = FirebaseFirestore.getInstance();
-        reference = firebaseFirestore.collection("Post");
+        reference = firebaseFirestore.collection("Posts");
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
         postImage = findViewById(R.id.image_create_post);
         mProgressDialog = new ProgressDialog(this);
-
     }
 
     public void clickListiners() {
@@ -104,47 +104,53 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             @Override
             public void onClick(View v) {
                 String postTexting = post_text.getText().toString();
-                if (postTexting.isEmpty()) {
-                    Toast.makeText(PostActivity.this, "pales write your post", Toast.LENGTH_SHORT).show();
-                } else {
-                    PostData data = new PostData();
-                    data.setDescription(postTexting);
-                    data.setPostImage(filePath.toString());
-                    data.setUsername("Ahmed");
-                    data.setUesrid("2");
-                    Task<DocumentReference> task = reference.add(data);
-                    task.addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                            Toast.makeText(PostActivity.this, "Posting now", Toast.LENGTH_SHORT).show();
-                        }
-                    });
 
-                    task.addOnFailureListener(new OnFailureListener() {
+                if(!postTexting.isEmpty() && !downloadUrl.isEmpty()){
+                    mProgressDialog.setMessage("publishing form");
+                    mProgressDialog.show();
+
+                    HashMap<String, Object> dataMap = new HashMap<>();
+                    String postId = UUID.randomUUID().toString();
+                    dataMap.put("postId",postId);
+                    dataMap.put("publisherId",FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    dataMap.put("imageUrl",downloadUrl);
+                    dataMap.put("publishTime",System.currentTimeMillis());
+                    dataMap.put("likes",0);
+                    dataMap.put("comments",0);
+                    dataMap.put("description",postTexting);
+                    dataMap.put("type",1);
+
+                    reference.document(postId).set(dataMap)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    mProgressDialog.dismiss();
+                                    finish();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(PostActivity.this, e.getMessage() + "", Toast.LENGTH_SHORT).show();
+
+                            mProgressDialog.dismiss();
+
+                            Toast.makeText(PostActivity.this, "Failed to post!" +
+                                    " Please try again", Toast.LENGTH_SHORT).show();
                         }
                     });
-                }
-            }
-        });
-        poll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                Toast.makeText(PostActivity.this, "poll", Toast.LENGTH_SHORT).show();
+                }else{
+
+                    Toast.makeText(PostActivity.this, "Please Fill in the post form!"
+                            , Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
+
         image_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ActivityCompat.requestPermissions(PostActivity.this, new String[]{Manifest.permission.CAMERA,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
-
-                Intent pikPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(pikPhoto, 2);
-
+                Files.startImageFetchIntent(PostActivity.this);
             }
         });
         pdf.setOnClickListener(new View.OnClickListener() {
@@ -158,7 +164,6 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             @Override
             public void onClick(View v) {
                 Toast.makeText(PostActivity.this, "Video", Toast.LENGTH_SHORT).show();
-
             }
         });
 
@@ -169,7 +174,8 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && data != null && data.getData() != null) {
+        if (requestCode == Files.PICK_IMAGE  &&
+                resultCode == RESULT_OK && data != null) {
             uploading = true;
             mProgressDialog.setMessage("جاري التحميل ......");
             mProgressDialog.show();
@@ -178,10 +184,15 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             storageReference.putFile(data.getData()).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                        mProgressDialog.dismiss();
                         Picasso.get().load(filePath.toString()).fit().centerInside().into(postImage);
 
+                    storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            mProgressDialog.dismiss();
+                            downloadUrl = uri.toString();
+                        }
+                    });
 
 
                 }
