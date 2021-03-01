@@ -1,24 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/home"
-        android:title="Home"
-        android:icon="@drawable/ic_redhome"
-        />
-    <item
-        android:id="@+id/chat"
-        android:title="Chats"
-        android:icon="@drawable/ic_blackchat"
-        />
+
     <item
         android:id="@+id/charity"
         android:title="Meeting"
-        android:icon="@drawable/ic_blackmeet"
+        android:icon="@drawable/group_icon"
         />
+
+
+    <item
+        android:id="@+id/chat"
+        android:title="Chats"
+        android:icon="@drawable/ic_blackchat" />
+
     <item
         android:id="@+id/profile"
         android:title="Profile"
         android:icon="@drawable/ic_blackuser"
 
         />
+
+
+    <item
+        android:id="@+id/home"
+        android:title="Home"
+        android:icon="@drawable/home_icon" />
+
+
+
+
 </menu>

@@ -58,18 +58,18 @@ public class GroupsFragment extends Fragment implements View.OnClickListener{
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    if (getArguments() != null) {
-      mParam1 = getArguments().getString(ARG_PARAM1);
-      mParam2 = getArguments().getString(ARG_PARAM2);
-    }
-
-    final Fragment[] fragments = {new OnlineUsersFragment()
-//            ,new MeetingsFragment()
-    };
-    final String[] titles = {"Workshops","Meetings"};
-
-    tabAdapterTitle = new TabAdapterTitle(getChildFragmentManager(),
-            FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,fragments,titles);
+//    if (getArguments() != null) {
+//      mParam1 = getArguments().getString(ARG_PARAM1);
+//      mParam2 = getArguments().getString(ARG_PARAM2);
+//    }
+//
+//    final Fragment[] fragments = {new OnlineUsersFragment()
+////            ,new MeetingsFragment()
+//    };
+//    final String[] titles = {"Workshops","Meetings"};
+//
+//    tabAdapterTitle = new TabAdapterTitle(getChildFragmentManager(),
+//            FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,fragments,titles);
 
   }
 

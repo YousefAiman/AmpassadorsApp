@@ -22,11 +22,11 @@ public class TimeFormatter {
           MONTH_DAY_YEAR = "MMM dd yyyy";
 
   public static String formatTime(long time){
-//
-//    if (time < 1000000000000L) {
-//
-//    }
-    time *= 1000;
+
+    if (time < 1000000000000L) {
+      time *= 1000;
+    }
+
 
     final long timeAgo = System.currentTimeMillis() - time;
 

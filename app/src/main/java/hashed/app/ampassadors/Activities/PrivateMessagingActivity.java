@@ -148,6 +148,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
   private final DateFormat secondMinuteFormat =
           new SimpleDateFormat("mm:ss", Locale.getDefault());
   private Runnable progressRunnable;
+  boolean isGroupMessaging;
 //  int lastVisiblePosition;
 
 
@@ -156,7 +157,14 @@ public class PrivateMessagingActivity extends AppCompatActivity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_private_messaging);
 
-    messagingUid = getIntent().getStringExtra("messagingUid");
+    if(getIntent().hasExtra("groupId")){
+
+      messagingUid = getIntent().getStringExtra("groupId");
+      isGroupMessaging = true;
+    }else{
+      messagingUid = getIntent().getStringExtra("messagingUid");
+    }
+
 
 
     //setting up toolbar and its actions
@@ -229,6 +237,17 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
 
   //database messages functions
+
+  private void fetchGroupPreviousMessages(){
+
+    adapter = new PrivateMessagingAdapter(privateMessages,
+            this,this,this,this);
+    privateMessagingRv.setAdapter(adapter);
+
+
+
+  }
+
   private void fetchPreviousMessages(){
 
     adapter = new PrivateMessagingAdapter(privateMessages,
@@ -236,9 +255,27 @@ public class PrivateMessagingActivity extends AppCompatActivity
     privateMessagingRv.setAdapter(adapter);
 
     Log.d("privateMessaging","start fetching");
-    long starTime = System.currentTimeMillis();
 
-    databaseReference.child(currentUid+"-"+messagingUid)
+    if(isGroupMessaging){
+      databaseReference.child(messagingUid)
+              .addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                  currentMessagingRef = snapshot.getRef();
+                  fetchMessagesFromSnapshot(snapshot);
+                  firebaseMessageDocRef = FirebaseFirestore
+                          .getInstance().document(currentMessagingRef.getKey());
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+              });
+    }else{
+          databaseReference.child(currentUid+"-"+messagingUid)
             .addListenerForSingleValueEvent(new ValueEventListener() {
       @Override
       public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -284,6 +321,8 @@ public class PrivateMessagingActivity extends AppCompatActivity
                 +error.getMessage());
       }
     });
+    }
+
 
   }
 

@@ -57,7 +57,7 @@ public class sign_in extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()){
-                                        Intent intent = new Intent(sign_in.this, profile.class);
+                                        Intent intent = new Intent(sign_in.this, Home_Activity.class);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                         startActivity(intent);
                                         finish();
