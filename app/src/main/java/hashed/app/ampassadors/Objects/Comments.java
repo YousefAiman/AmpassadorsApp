@@ -1,14 +1,31 @@
 package hashed.app.ampassadors.Objects;
 
 public class Comments extends  PostData{
-    String comments;
+    String commentstext;
+    String commentslikes;
+    String commentforcomments;
 
-//    @Override
-//    public String getComments() {
-//        return comments;
-//    }
+    public String getCommentstext() {
+        return commentstext;
+    }
 
-    public void setComments(String comments) {
-        this.comments = comments;
+    public void setCommentstext(String commentstext) {
+        this.commentstext = commentstext;
+    }
+
+    public String getCommentslikes() {
+        return commentslikes;
+    }
+
+    public void setCommentslikes(String commentslikes) {
+        this.commentslikes = commentslikes;
+    }
+
+    public String getCommentforcomments() {
+        return commentforcomments;
+    }
+
+    public void setCommentforcomments(String commentforcomments) {
+        this.commentforcomments = commentforcomments;
     }
 }
