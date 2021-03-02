@@ -40,5 +40,6 @@
     <string name="no_current_messages">No Current Messages</string>
     <string name="no_online_users">No Online Users</string>
     <string name="no_current_meetings">No Current Meetings</string>
+    <string name="profile">Profile</string>
 
 </resources>

@@ -60,7 +60,19 @@ public class profile extends AppCompatActivity {
                if (task.isSuccessful()){
                    if (task.getResult().exists()){
                        String user_name = task.getResult().getString("usernam");
+                       String pass = task.getResult().getString("password");
+                       String ema = task.getResult().getString("email");
+                       String coun = task.getResult().getString("country");
+                       String cit = task.getResult().getString("city");
+                       String pho = task.getResult().getString("phone");
+
                        username.setText(user_name);
+                       password.setText(pass);
+                       email.setText(ema);
+                       country.setText(coun);
+                       city.setText(cit);
+                       phone.setText(pho);
+
                    }
                }else {
                    Toast.makeText(profile.this, "Error"+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
