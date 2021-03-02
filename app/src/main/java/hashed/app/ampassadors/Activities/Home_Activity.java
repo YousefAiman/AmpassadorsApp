@@ -192,7 +192,7 @@ public class Home_Activity extends AppCompatActivity  {
             }
         });
 
-        bsd.setContentView(parentView);
+                bsd.setContentView(parentView);
         bsd.show();
 
     }

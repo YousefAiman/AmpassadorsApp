@@ -869,5 +869,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 //    }
 
   }
+  public interface CommentsBottomSheet {
 
+  }
 }

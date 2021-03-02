@@ -1,7 +1,11 @@
 package hashed.app.ampassadors.Adapters;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +15,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -28,12 +36,16 @@ import java.util.List;
 import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import hashed.app.ampassadors.Activities.Home_Activity;
+import hashed.app.ampassadors.Activities.PollActivity;
+import hashed.app.ampassadors.Activities.PostActivity;
+import hashed.app.ampassadors.Fragments.CommentFragment;
 import hashed.app.ampassadors.Objects.ChatItem;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 
-public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
+public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.PostHolder>  {
 
     private static List<PostData> posts;
     Context context;
@@ -67,7 +79,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
         return posts.size();
     }
 
-    public static class PostHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class PostHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
       private final CircleImageView imageIv ;
         private final TextView usernameTv ;
         private final TextView dateTv ;
@@ -100,6 +112,24 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
             descriptionTv = itemView.findViewById(R.id.descriptionTv);
             menuIv = itemView.findViewById(R.id.menuIv);
         }
+
+
+        //        private void showPostOptionsBottomSheet() {
+//            final View parentView = new CommentFragment().getLayoutInflater
+//                    ().inflate(R.layout.fragment_commnet, null);
+//            parentView.setBackgroundColor(Color.TRANSPARENT);
+//
+//
+//
+//            bsd.setContentView(parentView);
+//            bsd.show();
+//
+//        }
+
+
+
+
+
 
         private void bind(PostData postData){
 
@@ -139,9 +169,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
             descriptionTv.setText(postData.getDescription());
 
             likeTv.setOnClickListener(this);
-            commentTv.setOnClickListener(this);
             redMoreTv.setOnClickListener(this);
             menuIv.setOnClickListener(this);
+
+            commentTv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
 
         }
 
@@ -168,6 +204,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
                 usernameTv.setText(postData.getPublisherName());
 
               }
+            });
+            commentTv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+
+                }
             });
 
         }
@@ -227,4 +270,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
 
         }
     }
+
+
 }

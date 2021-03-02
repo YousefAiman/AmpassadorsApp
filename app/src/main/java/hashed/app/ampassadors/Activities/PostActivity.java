@@ -61,7 +61,7 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     ImageView postImage;
     CircleImageView user_image;
     TextView username;
-    ProgressDialog mProgressDialog;
+    ProgressDialog  mProgressDialog;
     FirebaseFirestore firebaseFirestore;
     CollectionReference reference;
     FirebaseStorage storage;
