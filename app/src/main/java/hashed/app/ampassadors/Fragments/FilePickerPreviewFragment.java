@@ -29,6 +29,7 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
 
+import hashed.app.ampassadors.Activities.GroupMessagingActivity;
 import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
@@ -193,12 +194,26 @@ public class FilePickerPreviewFragment extends Fragment {
       final String content = messagingPickerEd.getText().toString();
       if(!content.isEmpty() && uri!=null){
 
-        ((PrivateMessagingActivity)getActivity()).sendFileMessage(
-                uri,
-                type,
-                content,
-                0,
-                fileName);
+        if(getActivity() instanceof PrivateMessagingActivity){
+
+          ((PrivateMessagingActivity)getActivity()).sendFileMessage(
+                  uri,
+                  type,
+                  content,
+                  0,
+                  fileName);
+
+        }else if(getActivity() instanceof GroupMessagingActivity){
+
+          ((GroupMessagingActivity)getActivity()).sendFileMessage(
+                  uri,
+                  type,
+                  content,
+                  0,
+                  fileName);
+
+        }
+
 
         getActivity().onBackPressed();
 

@@ -30,21 +30,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:contentDescription="@string/add_group"
-        android:src="@drawable/feather_icon"
-        app:fabSize="normal"
-        app:layout_constraintBottom_toTopOf="@+id/nav_btom"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="14dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:maxImageSize="40dp"
-        app:tint="@color/white" />
 
 
     r<com.google.android.material.bottomnavigation.BottomNavigationView

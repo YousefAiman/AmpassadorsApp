@@ -12,7 +12,6 @@
     android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
     android:fitsSystemWindows="true"
-    app:menu="@menu/messaging_toolbar_menu"
     android:background="@color/dark_green">
 
     <de.hdodenhof.circleimageview.CircleImageView

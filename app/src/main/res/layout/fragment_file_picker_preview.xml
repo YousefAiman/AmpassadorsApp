@@ -62,7 +62,7 @@
         android:gravity="center"
         android:textSize="30sp"
         android:fontFamily="@font/segoe_ui_bold"
-        android:textColor="#F2000000"
+        android:textColor="@color/black_transparent"
         app:layout_constraintBottom_toBottomOf="@+id/materialCardView"
         app:layout_constraintEnd_toEndOf="@+id/materialCardView"
         app:layout_constraintStart_toStartOf="@+id/materialCardView"

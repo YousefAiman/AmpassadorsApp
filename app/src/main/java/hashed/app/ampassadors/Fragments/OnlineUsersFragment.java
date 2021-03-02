@@ -1,5 +1,6 @@
 package hashed.app.ampassadors.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,15 +19,17 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.auth.User;
 
 import java.util.ArrayList;
 
+import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
 import hashed.app.ampassadors.Activities.UsersPickerActivity;
 import hashed.app.ampassadors.Adapters.UsersAdapter;
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
 
-public class OnlineUsersFragment extends Fragment {
+public class OnlineUsersFragment extends Fragment implements UsersAdapter.UserClickListener {
 
 
   Query query;
@@ -48,10 +51,10 @@ public class OnlineUsersFragment extends Fragment {
     super.onCreate(savedInstanceState);
 
     users = new ArrayList<>();
-    usersAdapter = new UsersAdapter(users,getContext(),true);
+    usersAdapter = new UsersAdapter(users,getContext(),this);
 
     query = FirebaseFirestore.getInstance().collection("Users")
-            .whereEqualTo("status","online")
+            .whereEqualTo("online",true)
             .orderBy("username", Query.Direction.DESCENDING).limit(USERS_LIMIT);
 
   }
@@ -124,6 +127,7 @@ public class OnlineUsersFragment extends Fragment {
 
         Log.d("ttt","online users: "+snapshots.size());
         if(isInitial){
+          userRv.setVisibility(View.VISIBLE);
           users.addAll(snapshots.toObjects(UserPreview.class));
         }else{
           users.addAll(users.size()-1,snapshots.toObjects(UserPreview.class));
@@ -162,6 +166,14 @@ public class OnlineUsersFragment extends Fragment {
       }
 
     });
+
+  }
+
+  @Override
+  public void clickUser(String userId,int position) {
+
+    startActivity(new Intent(getContext(), PrivateMessagingActivity.class)
+            .putExtra("messagingUid",userId));
 
   }
 

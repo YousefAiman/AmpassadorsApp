@@ -8,7 +8,6 @@
             android:icon="@drawable/dots_more_icon"
             android:title="@string/more"
             app:showAsAction="always" />
-
         <item
             android:id="@+id/action_notifications"
             app:showAsAction="always"

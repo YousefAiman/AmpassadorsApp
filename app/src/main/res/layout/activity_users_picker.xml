@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:orientation="vertical"
+    android:background="#F2F2F2"
     android:layout_height="match_parent"
     tools:context=".Activities.UsersPickerActivity">
 
@@ -17,17 +18,17 @@
         app:title="Pick Users"
         app:menu="@menu/selection_menu"
         app:titleTextColor="@color/white"
-        app:titleTextAppearance="@style/ToolbarTitleAppearance"
-        />
+        app:titleTextAppearance="@style/ToolbarTitleAppearance" />
 
-
-    <EditText
-        android:id="@+id/searchUserEd"
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/searchUserSearchView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/light_grey"
         android:layout_margin="10dp"
-        android:inputType="text"
+        android:elevation="3dp"
         android:hint="Search user"
+        app:searchIcon="@drawable/search_icon"
         />
 
     <androidx.recyclerview.widget.RecyclerView

@@ -27,4 +27,13 @@
     <style name="Theme.AmpassadorsApp.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.AmpassadorsApp.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="progressBarGreen" parent="@style/Theme.AmpassadorsApp">
+        <item name="colorAccent">@color/light_green</item>
+    </style>
+
+    <style name="progressBarRed" parent="@style/Theme.AmpassadorsApp">
+        <item name="colorAccent">@color/red</item>
+    </style>
+
 </resources>

@@ -1,12 +1,13 @@
 package hashed.app.ampassadors.Fragments;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -20,7 +21,8 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -29,13 +31,15 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+import hashed.app.ampassadors.Activities.CreatePollActivity;
 import hashed.app.ampassadors.Activities.Home_Activity;
+import hashed.app.ampassadors.Activities.PostActivity;
 import hashed.app.ampassadors.Adapters.PostAdapter;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 
 public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickListener,
-        SwipeRefreshLayout.OnRefreshListener {
+        SwipeRefreshLayout.OnRefreshListener , View.OnClickListener {
 
   FirebaseFirestore firebaseFirestore;
   Query query;
@@ -45,6 +49,8 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
   DocumentSnapshot lastDocSnap;
   boolean isLoadingMessages;
   SwipeRefreshLayout swipeRefresh;
+  FloatingActionButton floatingButton;
+
   public PostsFragment() {
     // Required empty public constructor
   }
@@ -99,6 +105,9 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
+    floatingButton = view.findViewById(R.id.floatingButton);
+    floatingButton.setOnClickListener(this);
+
     post_list.setAdapter(adapter);
 
     ReadPost(true);
@@ -120,6 +129,14 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     lastDocSnap = null;
     ReadPost(true);
 
+  }
+
+  @Override
+  public void onClick(View view) {
+    if(view.getId() == R.id.floatingButton){
+
+      showPostOptionsBottomSheet();
+    }
   }
 
   private class ChatsScrollListener extends RecyclerView.OnScrollListener {
@@ -171,7 +188,6 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
       public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
 
-
         if(isInitial){
           adapter.notifyDataSetChanged();
 
@@ -187,6 +203,38 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     });
   }
 
+
+  private void showPostOptionsBottomSheet(){
+
+    final BottomSheetDialog bsd = new BottomSheetDialog(getContext(), R.style.SheetDialog);
+    final View parentView = getLayoutInflater().inflate(R.layout.post_options_bsd, null);
+    parentView.setBackgroundColor(Color.TRANSPARENT);
+
+    parentView.findViewById(R.id.new_post).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+
+        bsd.dismiss();
+        Intent intent = new Intent(getContext(), PostActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+      }
+    });
+
+    parentView.findViewById(R.id.new_poll).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        bsd.dismiss();
+        Intent intent = new Intent(getContext(), CreatePollActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+      }
+    });
+
+    bsd.setContentView(parentView);
+    bsd.show();
+
+  }
 
   private void setUpToolBarAndActions() {
 

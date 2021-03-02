@@ -14,8 +14,7 @@ public class TimeFormatter {
           MONTH_MILLIS = 30 * DAY_MILLIS,
           YEAR_MILLIS = 12 * MONTH_MILLIS;
 
-
-  private static final String
+  public static final String
           HOUR_MINUTE= "h:mm a",
           WEEK_DAY = "EEE",
           MONTH_DAY = "MMM dd",
@@ -27,13 +26,13 @@ public class TimeFormatter {
       time *= 1000;
     }
 
-
     final long timeAgo = System.currentTimeMillis() - time;
 
     String format ="";
     if(timeAgo < DAY_MILLIS){
 
       format = HOUR_MINUTE;
+
     }else if(timeAgo < WEEK_MILLIS){
 
       format = WEEK_DAY;
@@ -47,4 +46,10 @@ public class TimeFormatter {
 
     return new SimpleDateFormat(format,Locale.getDefault()).format(time);
   }
+
+
+  public static String formatWithPattern(long time,String format){
+    return new SimpleDateFormat(format,Locale.getDefault()).format(time);
+  }
+
 }

@@ -21,16 +21,7 @@ import hashed.app.ampassadors.Adapters.TabAdapterTitle;
 import hashed.app.ampassadors.R;
 
 public class GroupsFragment extends Fragment implements View.OnClickListener{
-
-  private static final String ARG_PARAM1 = "param1";
-  private static final String ARG_PARAM2 = "param2";
-
-  private static final int MEETINGS_PAGE = 0,WORKSHOPS_PAGE = 1;
-
-
-  private String mParam1;
-  private String mParam2;
-
+  private static final int WORKSHOPS_PAGE = 0,MEETINGS_PAGE = 1;
 
   //Views
   private TabLayout groupsTabLayout;
@@ -45,31 +36,17 @@ public class GroupsFragment extends Fragment implements View.OnClickListener{
   public GroupsFragment() {
   }
 
-  public static GroupsFragment newInstance(String param1, String param2) {
-    GroupsFragment fragment = new GroupsFragment();
-    Bundle args = new Bundle();
-    args.putString(ARG_PARAM1, param1);
-    args.putString(ARG_PARAM2, param2);
-    fragment.setArguments(args);
-    return fragment;
-  }
+
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-//    if (getArguments() != null) {
-//      mParam1 = getArguments().getString(ARG_PARAM1);
-//      mParam2 = getArguments().getString(ARG_PARAM2);
-//    }
-//
-//    final Fragment[] fragments = {new OnlineUsersFragment()
-////            ,new MeetingsFragment()
-//    };
-//    final String[] titles = {"Workshops","Meetings"};
-//
-//    tabAdapterTitle = new TabAdapterTitle(getChildFragmentManager(),
-//            FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,fragments,titles);
+    final Fragment[] fragments = {new WorkshopsFragment(),new MeetingsFragment()};
+    final String[] titles = {"Workshops","Meetings"};
+
+    tabAdapterTitle = new TabAdapterTitle(getChildFragmentManager(),
+            FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,fragments,titles);
 
   }
 

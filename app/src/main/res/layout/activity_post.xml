@@ -87,7 +87,7 @@
                 android:layout_marginLeft="0dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/btn_design_post"
-                android:drawableStart="@drawable/pdf"
+                android:drawableStart="@drawable/pdf_icon"
                 android:paddingLeft="30dp" />
 
             <android.widget.Button
@@ -97,7 +97,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/btn_design_post"
-                android:drawableStart="@drawable/pdf"
+                android:drawableStart="@drawable/pdf_icon"
                 android:paddingLeft="30dp" />
 
             <android.widget.Button
@@ -107,7 +107,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/btn_design_post"
-                android:drawableStart="@drawable/pdf"
+                android:drawableStart="@drawable/pdf_icon"
                 android:paddingLeft="30dp" />
 
             <android.widget.Button
@@ -117,7 +117,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/btn_design_post"
-                android:drawableStart="@drawable/pdf"
+                android:drawableStart="@drawable/pdf_icon"
                 android:paddingLeft="30dp" />
 
 

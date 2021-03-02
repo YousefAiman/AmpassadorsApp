@@ -53,7 +53,7 @@ public class Home_Activity extends AppCompatActivity  {
     TextView newpost;
     TextView newPoll;
     BottomNavigationView nav_btom;
-    FloatingActionButton floatingButton;
+
     FrameLayout homeFrameLayout;
     DrawerLayout drawer_layout;
     @Override
@@ -63,7 +63,6 @@ public class Home_Activity extends AppCompatActivity  {
 
         SetUpCompetent();
         OnClickButtons();
-
         createUserLikesListener();
 
     }
@@ -80,6 +79,12 @@ public class Home_Activity extends AppCompatActivity  {
 
                         if(value!=null && value.exists()){
 
+                            if(GlobalVariables.getCurrentUsername() == null){
+                                GlobalVariables.setCurrentUsername(value.getString("username"));
+                                GlobalVariables.setCurrentUserImageUrl(value.getString("imageUrl"));
+                            }
+
+
                             if(value.contains("Likes")){
                                 List<String> likes = (List<String>) value.get("Likes");
                                 GlobalVariables.setLikesList(likes);
@@ -94,7 +99,6 @@ public class Home_Activity extends AppCompatActivity  {
     }
     public void SetUpCompetent() {
 
-        floatingButton = findViewById(R.id.floatingButton);
 
         newPoll = findViewById(R.id.new_poll);
         newpost = findViewById(R.id.new_post);
@@ -109,13 +113,6 @@ public class Home_Activity extends AppCompatActivity  {
 
     // Buttons Click
     public void OnClickButtons() {
-
-        floatingButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPostOptionsBottomSheet();
-            }
-        });
 
 
         nav_btom.setOnNavigationItemSelectedListener(item -> {
@@ -201,6 +198,7 @@ public class Home_Activity extends AppCompatActivity  {
     public void onBackPressed() {
 
         if(nav_btom.getSelectedItemId()!=R.id.home){
+            nav_btom.setSelectedItemId(R.id.home);
             replaceFragment(new PostsFragment());
         }else{
             super.onBackPressed();

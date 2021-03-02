@@ -42,16 +42,33 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersVh> imp
 
   private static ArrayList<UserPreview> users;
   private static ArrayList<UserPreview> filteredUsers;
-
-
   Context context;
-  public final ArrayList<String> selectedUserIds = new ArrayList<>();
-  boolean isForPreview;
-  public UsersAdapter(ArrayList<UserPreview> users, Context context,boolean isForPreview){
+
+  public ArrayList<String> selectedUserIds;
+//  public ArrayList<String> previousSelectedUserIds;
+
+  private final UserClickListener userClickListener;
+
+  public interface UserClickListener{
+    void clickUser(String userId,int position);
+  }
+
+  public UsersAdapter(ArrayList<UserPreview> users, Context context,UserClickListener
+                      userClickListener){
     UsersAdapter.users = users;
-    UsersAdapter.filteredUsers = users;
+    filteredUsers = users;
+    this.userClickListener = userClickListener;
     this.context = context;
-    this.isForPreview = isForPreview;
+    selectedUserIds = new ArrayList<>();
+  }
+
+  public UsersAdapter(ArrayList<UserPreview> users, Context context,UserClickListener
+          userClickListener,ArrayList<String> selectedUserIds){
+    UsersAdapter.users = users;
+    filteredUsers = users;
+    this.userClickListener = userClickListener;
+    this.context = context;
+    this.selectedUserIds = selectedUserIds;
   }
 
   @Override
@@ -127,6 +144,9 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersVh> imp
 
       private void bindChat(UserPreview user){
 
+       if(user.getUserId() == null)
+         return;
+
        if(selectedUserIds.contains(user.getUserId())){
          selectedIv.setVisibility(View.VISIBLE);
 
@@ -155,38 +175,14 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersVh> imp
                  itemView.getContext().getResources().getColor(R.color.red)
          );
          statusTv.setText(R.string.offline);
-
        }
 
-         itemView.setOnClickListener(this);
+         itemView.setOnClickListener(v-> userClickListener.clickUser(user.getUserId(),getAdapterPosition()));
 
      }
 
-
-
      @Override
      public void onClick(View view) {
-
-       if(isForPreview){
-
-         itemView.getContext().startActivity(new Intent(itemView.getContext(),
-                 PrivateMessagingActivity.class).putExtra("messagingUid",
-                 users.get(getAdapterPosition()).getUserId()));
-
-
-       }else{
-
-         String userId = users.get(getAdapterPosition()).getUserId();
-
-         if(selectedUserIds.contains(userId)){
-           selectedUserIds.remove(userId);
-         }else{
-           selectedUserIds.add(users.get(getAdapterPosition()).getUserId());
-         }
-
-         notifyItemChanged(getAdapterPosition());
-
-       }
 
 
 //       itemView.getContext().startActivity(new Intent(itemView.getContext(),

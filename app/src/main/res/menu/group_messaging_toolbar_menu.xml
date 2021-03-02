@@ -4,17 +4,28 @@
 
     <item
         android:id="@+id/action_more"
-        android:orderInCategory="100"
+        android:orderInCategory="1"
         android:icon="@drawable/dots_more_icon"
         android:title="@string/more"
-        app:showAsAction="always" />
+        app:showAsAction="always" >
+
+<menu>
+    <item
+        android:id="@+id/action_item"
+        android:title="item"
+        app:showAsAction="ifRoom" />
+
+</menu>
+
+    </item>
 
     <item
         android:id="@+id/action_notifications"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom"
         android:icon="@drawable/notification_icon"
         android:actionLayout="@layout/notification_indicator_action_layout"
         android:title="Notifications">
+
 
     </item>
 

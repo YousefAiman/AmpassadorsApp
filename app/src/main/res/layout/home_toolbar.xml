@@ -14,8 +14,7 @@
     app:navigationContentDescription="side menu"
     android:background="#1B5E20"
     app:navigationIcon="@drawable/navigation_menu_icon"
-    app:menu="@menu/menu_for_home_toolbar"
-    >
+    app:menu="@menu/menu_for_home_toolbar">
 
 
     <TextView

@@ -63,8 +63,6 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -80,6 +78,7 @@ import java.util.UUID;
 
 import hashed.app.ampassadors.Adapters.PrivateMessagingAdapter;
 import hashed.app.ampassadors.Fragments.FilePickerPreviewFragment;
+import hashed.app.ampassadors.Fragments.ImageFullScreenFragment;
 import hashed.app.ampassadors.Fragments.VideoFullScreenFragment;
 import hashed.app.ampassadors.Fragments.VideoPickerPreviewFragment;
 import hashed.app.ampassadors.Objects.PrivateMessage;
@@ -89,7 +88,8 @@ import hashed.app.ampassadors.Utils.Files;
 public class PrivateMessagingActivity extends AppCompatActivity
         implements Toolbar.OnMenuItemClickListener,PrivateMessagingAdapter.DeleteMessageListener,
         PrivateMessagingAdapter.VideoMessageListener,PrivateMessagingAdapter.DocumentMessageListener,
-        View.OnClickListener, RecyclerView.OnLayoutChangeListener {
+        View.OnClickListener, RecyclerView.OnLayoutChangeListener ,
+        PrivateMessagingAdapter.ImageMessageListener{
 
   //constants
   private static final String TAG = "privateMessaging";
@@ -148,7 +148,6 @@ public class PrivateMessagingActivity extends AppCompatActivity
   private final DateFormat secondMinuteFormat =
           new SimpleDateFormat("mm:ss", Locale.getDefault());
   private Runnable progressRunnable;
-  boolean isGroupMessaging;
 //  int lastVisiblePosition;
 
 
@@ -157,14 +156,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_private_messaging);
 
-    if(getIntent().hasExtra("groupId")){
-
-      messagingUid = getIntent().getStringExtra("groupId");
-      isGroupMessaging = true;
-    }else{
       messagingUid = getIntent().getStringExtra("messagingUid");
-    }
-
 
 
     //setting up toolbar and its actions
@@ -177,7 +169,8 @@ public class PrivateMessagingActivity extends AppCompatActivity
     getUserData();
 
     //fetching previous messages and listen to new
-    fetchPreviousMessages();
+      fetchPreviousMessages();
+
 
   }
 
@@ -204,8 +197,10 @@ public class PrivateMessagingActivity extends AppCompatActivity
   private void setUpToolBarAndActions(){
 
     final Toolbar toolbar = findViewById(R.id.privateMessagingTb);
+    toolbar.inflateMenu(R.menu.private_messaging_toolbar_menu);
 
-    toolbar.setNavigationOnClickListener(v-> onBackPressed()) ;
+
+    toolbar.setNavigationOnClickListener(v-> onBackPressed());
     toolbar.setOnMenuItemClickListener(this);
 
   }
@@ -213,6 +208,11 @@ public class PrivateMessagingActivity extends AppCompatActivity
   @Override
   public boolean onMenuItemClick(MenuItem item) {
 
+    if(item.getItemId() == R.id.action_delete){
+
+      deleteMessageDocument();
+
+    }
 
     return false;
   }
@@ -238,43 +238,21 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
   //database messages functions
 
-  private void fetchGroupPreviousMessages(){
-
-    adapter = new PrivateMessagingAdapter(privateMessages,
-            this,this,this,this);
-    privateMessagingRv.setAdapter(adapter);
-
-
-
-  }
-
   private void fetchPreviousMessages(){
 
     adapter = new PrivateMessagingAdapter(privateMessages,
-            this,this,this,this);
+            this,
+            this,
+            this,
+            this,
+            this,
+            false);
+
     privateMessagingRv.setAdapter(adapter);
 
     Log.d("privateMessaging","start fetching");
 
-    if(isGroupMessaging){
-      databaseReference.child(messagingUid)
-              .addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                  currentMessagingRef = snapshot.getRef();
-                  fetchMessagesFromSnapshot(snapshot);
-                  firebaseMessageDocRef = FirebaseFirestore
-                          .getInstance().document(currentMessagingRef.getKey());
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-              });
-    }else{
           databaseReference.child(currentUid+"-"+messagingUid)
             .addListenerForSingleValueEvent(new ValueEventListener() {
       @Override
@@ -297,8 +275,10 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
                       }else{
 
-                        currentMessagingRef = databaseReference.child(currentUid+"-"+messagingUid);
-                        firebaseMessageDocRef = FirebaseFirestore.getInstance().document(currentMessagingRef.getKey());
+                        currentMessagingRef = databaseReference.child(currentUid+"/"+messagingUid);
+                        firebaseMessageDocRef = FirebaseFirestore.getInstance()
+                                .collection("PrivateMessages")
+                                .document(currentMessagingRef.getKey());
 
                         messageSendIv.setOnClickListener(new FirstMessageClickListener());
 
@@ -324,8 +304,6 @@ public class PrivateMessagingActivity extends AppCompatActivity
     }
 
 
-  }
-
   private void fetchMessagesFromSnapshot(DataSnapshot dataSnapshot){
 
     currentMessagingRef = dataSnapshot.getRef();
@@ -334,17 +312,30 @@ public class PrivateMessagingActivity extends AppCompatActivity
             .collection("PrivateMessages")
             .document(Objects.requireNonNull(currentMessagingRef.getKey()));
 
+    createMessagesListener();
+
+  }
+
+  private void createMessagesListener(){
+
     currentMessagingRef.child("messages").orderByKey().limitToLast(MESSAGES_PAGE_SIZE)
             .addListenerForSingleValueEvent(new ValueEventListener() {
               @Override
               public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-
+                if(!snapshot.exists() || snapshot.getChildrenCount() == 0){
+                  return;
+                }
+                
                 for(DataSnapshot child:snapshot.getChildren()){
+                  if(firstKeyRef == null){
+                    firstKeyRef = child.getKey();
+                  }
                   privateMessages.add(child.getValue(PrivateMessage.class));
                 }
 
-                firstKeyRef = Iterables.get(snapshot.getChildren(),0).getKey();
+//                firstKeyRef = Iterables.get(snapshot.getChildren(),0).getKey();
+                
                 lastKeyRef = Iterables.getLast(snapshot.getChildren()).getKey();
 
                 adapter.notifyDataSetChanged();
@@ -359,15 +350,15 @@ public class PrivateMessagingActivity extends AppCompatActivity
                           currentScrollListener = new toTopScrollListener());
                 }
 
-                currentMessagingRef.child("LastSeenMessage:"+currentUid).setValue(lastKeyRef);
+                  currentMessagingRef.child("LastSeenMessage:"+currentUid).setValue(lastKeyRef);
 
                 addDeleteFieldListener();
 
               }
               @Override
               public void onCancelled(@NonNull DatabaseError error) {
-                 Toast.makeText(PrivateMessagingActivity.this,
-                      R.string.message_load_failed, Toast.LENGTH_SHORT).show();
+                Toast.makeText(PrivateMessagingActivity.this,
+                        R.string.message_load_failed, Toast.LENGTH_SHORT).show();
                 finish();
               }
             });
@@ -491,6 +482,10 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
   }
 
+  @Override
+  public void showImage(String url) {
+    showFullScreenFragment(new ImageFullScreenFragment(url));
+  }
 
 
   //click listeners
@@ -512,7 +507,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
                 currentUid,
                 Files.TEXT);
 
-        createMessagingDocument(privateMessage);
+          createMessagingDocument(privateMessage);
 
       } else {
         Toast.makeText(view.getContext(),
@@ -551,7 +546,6 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
 
   //messaging methods
-
   private void createMessagingDocument(PrivateMessage privateMessage){
 
 
@@ -613,7 +607,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
     messagingEd.setClickable(false);
 
     if(lastKeyRef == null){
-      createMessagingDocument(privateMessage);
+        createMessagingDocument(privateMessage);
       return;
     }
 
@@ -1399,9 +1393,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
       progressHandle.removeCallbacks(progressRunnable);
     }
 
-    if(currentMessagingRef!=null && lastKeyRef!=null){
       currentMessagingRef.child("LastSeenMessage:"+currentUid).setValue(lastKeyRef);
-    }
 
   }
 
@@ -1587,5 +1579,45 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
   }
 
+  private void deleteMessageDocument(){
 
+    if(firebaseMessageDocRef!=null) {
+      finish();
+
+      FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+
+      firebaseMessageDocRef.delete();
+
+      currentMessagingRef.child("messages")
+              .get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
+        @Override
+        public void onSuccess(DataSnapshot snapshot) {
+
+          if (snapshot.exists() && snapshot.getChildrenCount() > 0) {
+
+            for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+              if (snapshot1.hasChild("attachmentUrl")) {
+                firebaseStorage.getReferenceFromUrl(Objects.requireNonNull(snapshot1
+                        .child("attachmentUrl").getValue(String.class)))
+                        .delete();
+              }
+
+              if(snapshot1.hasChild("videoThumbnail")){
+                firebaseStorage.getReferenceFromUrl(Objects.requireNonNull(snapshot1
+                        .child("videoThumbnail").getValue(String.class)))
+                        .delete();
+              }
+            }
+          }
+
+        }
+      }).addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+        @Override
+        public void onComplete(@NonNull Task<DataSnapshot> task) {
+          currentMessagingRef.getRef().removeValue();
+        }
+      });
+
+    }
+  }
 }

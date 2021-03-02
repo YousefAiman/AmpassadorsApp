@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@drawable/number_picker_border_back"
+    android:layout_height="match_parent"
+    tools:context=".Fragments.NumberPickerDialogFragment">
+
+    <TextView
+        android:id="@+id/setTimeTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/set_duration"
+        android:textColor="@color/black_transparent"
+        android:textSize="16sp"
+        android:fontFamily="@font/segoe_ui"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="7dp"
+        />
+
+
+    <TextView
+        android:id="@+id/daysTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/days"
+        android:textColor="@color/black_transparent"
+        android:textSize="16sp"
+        android:layout_below="@id/setTimeTv"
+        android:fontFamily="@font/segoe_ui"
+        android:layout_marginTop="18dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="24dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/days"
+        android:textColor="@color/black_transparent"
+        android:textSize="16sp"
+        android:layout_alignTop="@id/daysTv"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="@font/segoe_ui"
+        android:layout_marginTop="18dp"
+        android:layout_marginStart="24dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/days"
+        android:textColor="@color/black_transparent"
+        android:textSize="16sp"
+        android:layout_below="@id/setTimeTv"
+        android:fontFamily="@font/segoe_ui"
+        android:layout_marginTop="18dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="24dp"
+        />
+
+
+    <NumberPicker
+        android:id="@+id/dayPicker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+    <NumberPicker
+        android:id="@+id/dayPicker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+    <NumberPicker
+        android:id="@+id/dayPicker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+</RelativeLayout>

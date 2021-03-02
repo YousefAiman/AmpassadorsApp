@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:orientation="vertical"
     tools:context=".Activities.CreateMeetingActivity">
 
@@ -18,6 +19,15 @@
         app:titleTextColor="@color/white"
         app:titleTextAppearance="@style/ToolbarTitleAppearance"/>
 
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
     <EditText
         android:id="@+id/titleEd"
@@ -93,6 +103,7 @@
         android:paddingStart="20dp" />
 
 
+
     <Button
         android:id="@+id/doneButton"
         android:layout_width="match_parent"
@@ -105,6 +116,28 @@
         android:layout_gravity="bottom"
         android:importantForAutofill="no" />
 
-    
+        <TextView
+            android:id="@+id/showSelectedUsersTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="Show selected users"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="15dp"
+            app:drawableEndCompat="@drawable/down_arrow" />
 
-</LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/selectedUserRv"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:overScrollMode="never"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="20dp" />
+
+
+    </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    </LinearLayout>

@@ -38,6 +38,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
 
+import hashed.app.ampassadors.Activities.GroupMessagingActivity;
 import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
@@ -199,11 +200,24 @@ public class VideoPickerPreviewFragment extends Fragment {
       final String content = messagingPickerEd.getText().toString();
       if(!content.isEmpty() && videoUri!=null){
 
-        ((PrivateMessagingActivity)getActivity()).uploadVideoMessage(
-                videoUri,
-                content,
-                videoThumbnailBitmap
-        );
+        if(getActivity() instanceof PrivateMessagingActivity){
+
+          ((PrivateMessagingActivity)getActivity()).uploadVideoMessage(
+                  videoUri,
+                  content,
+                  videoThumbnailBitmap
+          );
+
+
+        }else if(getActivity() instanceof GroupMessagingActivity){
+
+          ((GroupMessagingActivity)getActivity()).uploadVideoMessage(
+                  videoUri,
+                  content,
+                  videoThumbnailBitmap
+          );
+
+        }
 
         getActivity().onBackPressed();
 

@@ -105,10 +105,6 @@ public class sign_up extends AppCompatActivity {
                 String txt_city = city.getText().toString();
                 String txt_phone = phone.getText().toString();
 
-
-
-
-
                 if (TextUtils.isEmpty(txt_username) || TextUtils.isEmpty(txt_password)||TextUtils.isEmpty(txt_email)
                         || TextUtils.isEmpty(txt_country) || TextUtils.isEmpty(txt_city ) || TextUtils.isEmpty(txt_phone)) {
                     Toast.makeText(sign_up.this, "All field are required", Toast.LENGTH_SHORT).show();

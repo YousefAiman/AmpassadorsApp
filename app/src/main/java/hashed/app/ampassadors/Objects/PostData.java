@@ -22,11 +22,11 @@ public class PostData {
     @PropertyName("title")
     private String title;
     @PropertyName("publisherId")
-    private String publisherId ;
+    private String publisherId;
     @PropertyName("publisherName")
-    private String publisherName ;
+    private String publisherName;
     @PropertyName("publisherImage")
-    private String publisherImage ;
+    private String publisherImage;
     @PropertyName("imageUrl")
     private String imageUrl;
     @PropertyName("publishTime")
@@ -41,8 +41,8 @@ public class PostData {
     private int type;
 
     public PostData(){
-
     }
+
     public PostData(String title, String publisherId, String imageUrl,
                     long publishTime, int likes, int comments, String description, int type) {
         this.title = title;
@@ -139,6 +139,7 @@ public class PostData {
 
 
     public static void likePost(String postId,int type){
+
 
 
         if(type == 1){

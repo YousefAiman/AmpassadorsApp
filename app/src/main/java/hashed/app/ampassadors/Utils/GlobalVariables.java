@@ -11,6 +11,9 @@ public class GlobalVariables extends Application {
 
   private static GlobalVariables globalSingleton;
   private static List<String> likesList = new ArrayList<>();
+  private static String currentUsername;
+  private static String currentUserImageUrl;
+
 
 
   public static GlobalVariables getInstance() {
@@ -23,6 +26,22 @@ public class GlobalVariables extends Application {
 
   public static void setLikesList(List<String> likesList) {
     GlobalVariables.likesList = likesList;
+  }
+
+  public static String getCurrentUsername() {
+    return currentUsername;
+  }
+
+  public static void setCurrentUsername(String currentUsername) {
+    GlobalVariables.currentUsername = currentUsername;
+  }
+
+  public static String getCurrentUserImageUrl() {
+    return currentUserImageUrl;
+  }
+
+  public static void setCurrentUserImageUrl(String currentUserImageUrl) {
+    GlobalVariables.currentUserImageUrl = currentUserImageUrl;
   }
 
 

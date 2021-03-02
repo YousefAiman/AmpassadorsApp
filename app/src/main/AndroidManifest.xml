@@ -6,9 +6,12 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.CAMERA" />
+
 
     <application
         android:name=".Utils.GlobalVariables"
@@ -18,21 +21,30 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AmpassadorsApp">
-        <activity android:name=".Activities.posts_profile"/>
-        <activity android:name=".Activities.Home_Activity"/>
+        <activity android:name=".Activities.GroupMessagingActivity"/>
+        <activity android:name=".Activities.posts_profile" />
+        <activity android:name=".Activities.Home_Activity" />
         <activity android:name=".Activities.Admin" />
         <activity android:name=".Activities.profile_edit" />
         <activity android:name=".Activities.profile" />
         <activity android:name=".Activities.PostActivity" />
         <activity android:name=".Activities.sign_up" />
-        <activity android:name=".Activities.sign_in" />
-        <activity android:name=".Activities.PrivateMessagingActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".Activities.CreateMeetingActivity"/>
+        <activity android:name=".Activities.CreatePollActivity">
+
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+        </activity>
+        <activity android:name=".Activities.UsersPickerActivity" />
+        <activity android:name=".Activities.sign_in" />
+        <activity android:name=".Activities.PrivateMessagingActivity" />
+        <activity android:name=".MainActivity">
+
         </activity>
 
         <provider

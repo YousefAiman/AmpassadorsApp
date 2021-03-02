@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import hashed.app.ampassadors.Adapters.ChatsAdapter;
 import hashed.app.ampassadors.Objects.ChatItem;
@@ -238,10 +239,11 @@ public class MessagesFragment extends Fragment{
                   @Override
                   public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                    chatItem.setSeen(message.getKey() == null ||
-                            Long.parseLong(snapshot.getValue(String.class))
-                                    <= Long.parseLong(message.getKey()));
-
+                    if(snapshot.exists()){
+                      chatItem.setSeen(message.getKey() == null ||
+                              Long.parseLong(snapshot.getValue(String.class))
+                                      <= Long.parseLong(message.getKey()));
+                    }
 
                   }
 
@@ -383,7 +385,7 @@ public class MessagesFragment extends Fragment{
 
     if(valueEventListeners!=null && !valueEventListeners.isEmpty()){
       for(DatabaseReference reference: valueEventListeners.keySet()){
-        reference.removeEventListener(valueEventListeners.get(reference));
+        reference.removeEventListener(Objects.requireNonNull(valueEventListeners.get(reference)));
       }
     }
 
