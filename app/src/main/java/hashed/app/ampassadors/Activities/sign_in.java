@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import hashed.app.ampassadors.Fragments.ProfileFragment;
 import hashed.app.ampassadors.R;
 
 public class sign_in extends AppCompatActivity {
@@ -57,7 +58,7 @@ public class sign_in extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()){
-                                        Intent intent = new Intent(sign_in.this, Home_Activity.class);
+                                        Intent intent = new Intent(sign_in.this, profile.class);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                         startActivity(intent);
                                         finish();
@@ -70,7 +71,6 @@ public class sign_in extends AppCompatActivity {
             }
         });
     }
-
     private void CreateAccount(){
         create_account_btn.setOnClickListener(new View.OnClickListener() {
             @Override

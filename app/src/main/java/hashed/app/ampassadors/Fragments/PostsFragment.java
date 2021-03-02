@@ -201,9 +201,4 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     toolbar.setOnMenuItemClickListener(this);
 
   }
-
-
-
-
-
 }

@@ -33,7 +33,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -46,6 +45,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import hashed.app.ampassadors.Objects.UserInfo;
 import hashed.app.ampassadors.R;
 
@@ -59,6 +59,8 @@ public class sign_up extends AppCompatActivity {
     CollectionReference reference;
     UserInfo userInfo;
 
+    String imageUrl;
+    String userid ;
     ImageView iamge;
     ProgressDialog mProgressDialog;
     StorageReference sreference;
@@ -103,6 +105,10 @@ public class sign_up extends AppCompatActivity {
                 String txt_city = city.getText().toString();
                 String txt_phone = phone.getText().toString();
 
+
+
+
+
                 if (TextUtils.isEmpty(txt_username) || TextUtils.isEmpty(txt_password)||TextUtils.isEmpty(txt_email)
                         || TextUtils.isEmpty(txt_country) || TextUtils.isEmpty(txt_city ) || TextUtils.isEmpty(txt_phone)) {
                     Toast.makeText(sign_up.this, "All field are required", Toast.LENGTH_SHORT).show();
@@ -127,14 +133,19 @@ public class sign_up extends AppCompatActivity {
             @Override
             public void onSuccess(AuthResult authResult) {
                 userInfo = new UserInfo();
+               // Picasso.get().load(userInfo.getImageUrl()).fit().into(circleImageView);
+
                 FirebaseUser firebaseUser = auth.getCurrentUser();
 
-                userInfo.setUsernam(username);
+                userInfo.setUsername(username);
                 userInfo.setPassword(passwrod);
                 userInfo.setEmail(firebaseUser.getEmail());
                 userInfo.setCountry(country);
                 userInfo.setCity(city);
                 userInfo.setPhone(phone);
+                userInfo.setUserid(firebaseUser.getUid());
+                userInfo.setImageUrl(imageUrl);
+
 
                reference.document(firebaseUser.getUid()).set(userInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
                    @Override
@@ -190,6 +201,7 @@ public class sign_up extends AppCompatActivity {
         storage = FirebaseStorage.getInstance();
         sreference = storage.getReference();
         mProgressDialog = new ProgressDialog(this);
+        userid = auth.getUid();
 
 
     }
@@ -216,7 +228,7 @@ public class sign_up extends AppCompatActivity {
                     result.addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            String imageUrl = uri.toString();
+                             imageUrl = uri.toString();
                             Picasso.get().load(imageUrl).fit().into(iamge);
                             Log.d("ttt",imageUrl);
                         }

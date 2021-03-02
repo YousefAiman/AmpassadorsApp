@@ -48,7 +48,6 @@ public class Admin extends AppCompatActivity {
                         String email = qs.getString("email");
                         String pass = qs.getString("password");
 
-
                         UserInfo info = new UserInfo();
                         info.setEmail("Email : "+email);
                         info.setPassword("Password : "+pass);

@@ -1,19 +1,22 @@
 package hashed.app.ampassadors.Objects;
 
 public class UserInfo {
-    String usernam;
+    String username;
     String password;
     String email;
     String country;
     String city;
     String phone;
+    String imageUrl;
+    String userid;
 
-    public String getUsernam() {
-        return usernam;
+
+    public String getUsername() {
+        return username;
     }
 
-    public void setUsernam(String usernam) {
-        this.usernam = usernam;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -55,4 +58,23 @@ public class UserInfo {
     public void setPhone(String phone) {
         this.phone = phone;
     }
+
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getUserid() {
+        return userid;
+    }
+
+    public void setUserid(String userid) {
+        this.userid = userid;
+    }
+
+
 }
