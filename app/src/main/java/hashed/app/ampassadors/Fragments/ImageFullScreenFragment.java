@@ -2,6 +2,7 @@ package hashed.app.ampassadors.Fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -31,7 +33,7 @@ import java.util.Objects;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.VideoDataSourceFactory;
 
-public class ImageFullScreenFragment extends Fragment {
+public class ImageFullScreenFragment extends DialogFragment {
 
   private static final boolean AUTO_HIDE = true;
 
@@ -92,9 +94,12 @@ public class ImageFullScreenFragment extends Fragment {
                            @Nullable ViewGroup container,
                            @Nullable Bundle savedInstanceState) {
     View view =  inflater.inflate(R.layout.fragment_image_full_screen, container, false);
+
+    setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialogTheme);
+
     fullScreenIv = view.findViewById(R.id.fullScreenIv);
 
-    Toolbar fullScreenToolbar = view.findViewById(R.id.fullScreenToolbar);
+    final Toolbar fullScreenToolbar = view.findViewById(R.id.fullScreenToolbar);
     fullScreenToolbar.setNavigationOnClickListener(v-> requireActivity().onBackPressed());
 
     return view;
@@ -139,7 +144,7 @@ public class ImageFullScreenFragment extends Fragment {
   }
 
   @SuppressLint("InlinedApi")
-  private void show() {
+  public void show() {
     // Show the system bar
     fullScreenIv.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
             | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);

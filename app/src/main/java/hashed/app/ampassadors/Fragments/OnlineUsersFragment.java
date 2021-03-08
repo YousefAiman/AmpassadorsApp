@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +23,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.auth.User;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
 import hashed.app.ampassadors.Activities.UsersPickerActivity;
@@ -29,19 +31,20 @@ import hashed.app.ampassadors.Adapters.UsersAdapter;
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
 
-public class OnlineUsersFragment extends Fragment implements UsersAdapter.UserClickListener {
+public class OnlineUsersFragment extends Fragment implements UsersAdapter.UserClickListener,
+        SwipeRefreshLayout.OnRefreshListener {
 
 
-  Query query;
-  DocumentSnapshot lastDocSnap;
+  private Query query;
+  private DocumentSnapshot lastDocSnap;
 
   private static final int USERS_LIMIT = 15;
-  ArrayList<UserPreview> users;
-  RecyclerView userRv;
-  UsersAdapter usersAdapter;
+  private ArrayList<UserPreview> users;
+  private RecyclerView userRv;
+  private UsersAdapter usersAdapter;
   private scrollListener scrollListener;
-  boolean isLoading;
-
+  private boolean isLoading;
+  private SwipeRefreshLayout swipeRefreshLayout;
 
   public OnlineUsersFragment() {
   }
@@ -55,7 +58,10 @@ public class OnlineUsersFragment extends Fragment implements UsersAdapter.UserCl
 
     query = FirebaseFirestore.getInstance().collection("Users")
             .whereEqualTo("online",true)
-            .orderBy("username", Query.Direction.DESCENDING).limit(USERS_LIMIT);
+            .whereNotEqualTo("userId",
+                    Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
+            .orderBy("userId")
+            .orderBy("username", Query.Direction.ASCENDING).limit(USERS_LIMIT);
 
   }
 
@@ -63,7 +69,10 @@ public class OnlineUsersFragment extends Fragment implements UsersAdapter.UserCl
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
 
-    View view =  inflater.inflate(R.layout.fragment_recycler_child, container, false);
+    View view =  inflater.inflate(R.layout.online_users_fragment, container, false);
+
+    swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+    swipeRefreshLayout.setOnRefreshListener(this);
     userRv = view.findViewById(R.id.childRv);
     TextView noUsersTv = view.findViewById(R.id.emptyTv);
     noUsersTv.setText(R.string.no_online_users);
@@ -103,6 +112,8 @@ public class OnlineUsersFragment extends Fragment implements UsersAdapter.UserCl
 
     userRv.setAdapter(usersAdapter);
 
+
+
     return view;
   }
 
@@ -116,7 +127,8 @@ public class OnlineUsersFragment extends Fragment implements UsersAdapter.UserCl
   }
 
   private void getMoreUsers(boolean isInitial){
-
+    swipeRefreshLayout.setRefreshing(true);
+    isLoading = true;
     if(lastDocSnap!=null){
       query = query.startAfter(lastDocSnap);
     }
@@ -124,6 +136,7 @@ public class OnlineUsersFragment extends Fragment implements UsersAdapter.UserCl
     query.get().addOnSuccessListener(snapshots -> {
 
       if(!snapshots.isEmpty()){
+        lastDocSnap = snapshots.getDocuments().get(snapshots.size()-1);
 
         Log.d("ttt","online users: "+snapshots.size());
         if(isInitial){
@@ -151,20 +164,22 @@ public class OnlineUsersFragment extends Fragment implements UsersAdapter.UserCl
           }
         } else {
 
-          if (!task.getResult().isEmpty() && task.getResult().size() < USERS_LIMIT){
-            userRv.removeOnScrollListener(scrollListener);
-          }
+          if (!task.getResult().isEmpty()){
 
-          usersAdapter.notifyItemRangeInserted(
-                  (users.size() - task.getResult().size())-1, task.getResult().size());
+            usersAdapter.notifyItemRangeInserted(
+                    (users.size() - task.getResult().size())-1, task.getResult().size());
+
+
+            if(task.getResult().size() < USERS_LIMIT && scrollListener!=null){
+              userRv.removeOnScrollListener(scrollListener);
+            }
+          }
 
 
         }
-
-
-
+        swipeRefreshLayout.setRefreshing(false);
       }
-
+      isLoading = false;
     });
 
   }
@@ -174,6 +189,16 @@ public class OnlineUsersFragment extends Fragment implements UsersAdapter.UserCl
 
     startActivity(new Intent(getContext(), PrivateMessagingActivity.class)
             .putExtra("messagingUid",userId));
+
+  }
+
+  @Override
+  public void onRefresh() {
+
+    users.clear();
+    usersAdapter.notifyDataSetChanged();
+    lastDocSnap = null;
+    getMoreUsers(true);
 
   }
 
@@ -192,5 +217,12 @@ public class OnlineUsersFragment extends Fragment implements UsersAdapter.UserCl
     }
   }
 
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
 
+    if(userRv!=null && scrollListener!=null){
+      userRv.removeOnScrollListener(scrollListener);
+    }
+  }
 }

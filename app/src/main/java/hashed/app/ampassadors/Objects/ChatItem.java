@@ -15,6 +15,7 @@ public class ChatItem implements Serializable {
   private String username;
   private PrivateMessagePreview message;
   private long time;
+  private long messageKey;
 
   public ChatItem(){
   }
@@ -84,5 +85,13 @@ public class ChatItem implements Serializable {
 
   public void setSeen(boolean seen) {
     this.seen = seen;
+  }
+
+  public long getMessageKey() {
+    return messageKey;
+  }
+
+  public void setMessageKey(long messageKey) {
+    this.messageKey = messageKey;
   }
 }

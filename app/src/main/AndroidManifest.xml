@@ -12,7 +12,6 @@
         tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.CAMERA" />
 
-
     <application
         android:name=".Utils.GlobalVariables"
         android:allowBackup="true"
@@ -21,26 +20,27 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AmpassadorsApp">
-        <activity android:name=".Activities.GroupMessagingActivity"/>
+        <activity android:name=".Activities.ConnectionActivity"/>
+        <activity android:name=".Activities.GroupMessagingActivity" />
         <activity android:name=".Activities.posts_profile" />
-        <activity android:name=".Activities.Home_Activity" />
+        <activity
+            android:name=".Activities.Home_Activity"
+            android:screenOrientation="portrait" />
         <activity android:name=".Activities.Admin" />
         <activity android:name=".Activities.profile_edit" />
         <activity android:name=".Activities.profile" />
         <activity android:name=".Activities.PostActivity" />
         <activity android:name=".Activities.sign_up" />
-        <activity android:name=".Activities.CreateMeetingActivity"/>
-        <activity android:name=".Activities.CreatePollActivity">
-
-
+        <activity android:name=".Activities.CreateMeetingActivity" />
+        <activity android:name=".Activities.CreatePollActivity" />
+        <activity android:name=".Activities.UsersPickerActivity" />
+        <activity android:name=".Activities.ZoomActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-        <activity android:name=".Activities.UsersPickerActivity" />
         <activity android:name=".Activities.sign_in" />
         <activity android:name=".Activities.PrivateMessagingActivity" />
         <activity android:name=".MainActivity">
@@ -56,6 +56,34 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+
+        <service
+            android:name=".Services.FirebaseMessaging"
+            android:enabled="false"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <receiver
+            android:name=".BroadcastReceivers.WifiReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_ACTION" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".Services.ShutdownService"
+            android:enabled="true"
+            android:exported="false"
+            android:stopWithTask="false" />
+
+        <receiver android:name=".NotificationUtil.NotificationClickReceiver" />
+
+        <receiver android:name=".NotificationUtil.NotificationDeleteListener" />
+
     </application>
 
 </manifest>

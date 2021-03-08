@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:queryHint="Search"
             android:layout_marginVertical="12dp"
-            style="@style/fs"
+            style="@style/searchViewStyle"
             android:layout_marginHorizontal="10dp"
             android:searchIcon="@drawable/search_icon"
             android:background="@drawable/search_view_back" />

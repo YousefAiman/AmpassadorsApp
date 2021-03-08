@@ -30,7 +30,6 @@
     <string name="document">document</string>
     <string name="zoom">zoom</string>
     <string name="image">image</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="chats">Chats</string>
     <string name="add_group">Add Group</string>
@@ -43,5 +42,33 @@
     <string name="profile">Profile</string>
     <string name="set_duration">Set duration</string>
     <string name="days">Days</string>
+    <string name="comments">Comments</string>
+    <string name="text_comment">Text Comment …</string>
+    <string name="likes">Likes</string>
+    <string name="hours">Hours</string>
+    <string name="minute">Minute</string>
+    <string name="minutes">Minutes</string>
+    <string name="set">Set</string>
+
+    <!--Comments-->
+    <string name="failed_to_like">Failed to like comment!</string>
+    <string name="failed_to_remove_like">Failed to remove like!</string>
+
+    <!--Poll-->
+    <string name="add_question_poll">Please Add at least two question to the poll!</string>
+    <string name="set_duration_poll">Please set the duration for the poll!</string>
+    <string name="two_items_poll">Please enter at least two choices for your poll!</string>
+    <string name="poll_publish_failed">Failed to publish poll please try again!</string>
+    <string name="vote">صوت</string>
+    <string name="num_of_people">من الاشخاص</string>
+    <string name="vote_check">Vote check</string>
+
+
+    <!--Notifications-->
+    <string name="new_message">New message from </string>
+    <string name="fullscreen_image">Fullscreen image</string>
+    <string name="try_again">Try again</string>
+    <string name="you_are_not_currently_connected_to_the_internet">You are not currently connected to the internet!</string>
+    <string name="please_check_your_internet_connection_and_try_again">Please check your internet connection and try again.</string>
 
 </resources>

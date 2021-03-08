@@ -26,6 +26,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -39,18 +40,18 @@ import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 
 public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickListener,
-        SwipeRefreshLayout.OnRefreshListener , View.OnClickListener {
+        SwipeRefreshLayout.OnRefreshListener , View.OnClickListener ,
+        PostAdapter.CommentsInterface{
 
-  FirebaseFirestore firebaseFirestore;
-  Query query;
-  List<PostData> postData;
-  PostAdapter adapter;
-  RecyclerView post_list;
-  DocumentSnapshot lastDocSnap;
-  boolean isLoadingMessages;
-  SwipeRefreshLayout swipeRefresh;
-  FloatingActionButton floatingButton;
-
+  private static final int POSTS_LIMIT = 10;
+  private Query query;
+  private List<PostData> postData;
+  private PostAdapter adapter;
+  private RecyclerView post_list;
+  private DocumentSnapshot lastDocSnap;
+  private boolean isLoadingMessages;
+  private SwipeRefreshLayout swipeRefresh;
+  private PostsBottomScrollListener scrollListener;
   public PostsFragment() {
     // Required empty public constructor
   }
@@ -59,12 +60,11 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    firebaseFirestore = FirebaseFirestore.getInstance();
-    query = firebaseFirestore.collection("Posts").orderBy("publishTime",
-            Query.Direction.DESCENDING).limit(10);
+    query = FirebaseFirestore.getInstance().collection("Posts")
+            .orderBy("publishTime", Query.Direction.DESCENDING).limit(POSTS_LIMIT);
     postData = new ArrayList<>();
 
-    adapter = new PostAdapter(postData, getContext());
+    adapter = new PostAdapter(postData, getContext(),this);
 
   }
 
@@ -87,16 +87,6 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
       }
     });
 
-
-
-//    post_list.setLayoutManager(new LinearLayoutManager(getContext(),
-//            RecyclerView.VERTICAL, false) {
-//      @Override
-//      public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
-//        lp.height = (int) (getWidth() * 2.2);
-//        return true;
-//      }
-//    });
     return view;
   }
 
@@ -105,15 +95,13 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
-    floatingButton = view.findViewById(R.id.floatingButton);
+    FloatingActionButton floatingButton = view.findViewById(R.id.floatingButton);
     floatingButton.setOnClickListener(this);
 
     post_list.setAdapter(adapter);
 
     ReadPost(true);
 
-
-    post_list.addOnScrollListener(new ChatsScrollListener());
   }
 
   @Override
@@ -139,7 +127,15 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     }
   }
 
-  private class ChatsScrollListener extends RecyclerView.OnScrollListener {
+  @Override
+  public void showComments(String postId, int commentsCount) {
+
+    CommentsFragment commentsFragment = new CommentsFragment(postId,commentsCount);
+    commentsFragment.show(getChildFragmentManager(),"CommentsFragment");
+
+  }
+
+  private class PostsBottomScrollListener extends RecyclerView.OnScrollListener {
     @Override
     public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
       super.onScrollStateChanged(recyclerView, newState);
@@ -147,7 +143,6 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
               !recyclerView.canScrollVertically(1) &&
               newState == RecyclerView.SCROLL_STATE_IDLE) {
 
-        Log.d("ttt","is at bottom man");
 
         ReadPost(false);
 
@@ -178,7 +173,49 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                   queryDocumentSnapshots.size()-1
           );
 
-          postData.addAll(queryDocumentSnapshots.toObjects(PostData.class));
+          for(QueryDocumentSnapshot snapshot:queryDocumentSnapshots){
+
+            if(snapshot.getLong("type") == PostData.TYPE_POLL){
+
+              if(snapshot.getBoolean("pollEnded")){
+
+                if(snapshot.getLong("totalVotes") > 0){
+                  postData.add(snapshot.toObject(PostData.class));
+                }
+
+              }else{
+
+                if(System.currentTimeMillis() >
+                        snapshot.getLong("publishTime") +
+                                snapshot.getLong("pollDuration")){
+
+                  snapshot.getReference().update("pollEnded",true);
+
+                  if(snapshot.getLong("totalVotes") > 0){
+
+                    final PostData post = snapshot.toObject(PostData.class);
+                    post.setPollEnded(true);
+                    postData.add(post);
+
+                  }
+
+                }else{
+
+                  postData.add(snapshot.toObject(PostData.class));
+
+                }
+
+              }
+
+            }else{
+
+              postData.add(snapshot.toObject(PostData.class));
+
+            }
+
+
+          }
+//          postData.addAll(queryDocumentSnapshots.toObjects(PostData.class));
 
         }
 
@@ -191,10 +228,20 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         if(isInitial){
           adapter.notifyDataSetChanged();
 
+          if(postData.size() == POSTS_LIMIT){
+            post_list.addOnScrollListener(scrollListener = new PostsBottomScrollListener());
+          }
         }else{
+
           adapter.notifyItemRangeInserted((postData.size()-task.getResult().size())-1,
                   task.getResult().size());
+
+
+          if(postData.size() < POSTS_LIMIT && scrollListener != null){
+            post_list.removeOnScrollListener(scrollListener);
+          }
         }
+
 
 
         swipeRefresh.setRefreshing(false);

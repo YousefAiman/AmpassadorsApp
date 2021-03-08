@@ -24,7 +24,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
         <ImageView
             android:id="@+id/videoIv"
             android:layout_width="0dp"
@@ -160,8 +159,8 @@
 
         <ImageView
             android:id="@+id/zoomIv"
-            android:layout_width="80dp"
-            android:layout_height="81dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:background="@drawable/grey_circle_border_back"
             android:scaleType="centerInside"
             android:src="@drawable/zoom_icon"

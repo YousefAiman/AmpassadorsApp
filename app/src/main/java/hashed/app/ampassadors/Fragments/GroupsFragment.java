@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -17,10 +18,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 import hashed.app.ampassadors.Activities.CreateMeetingActivity;
+import hashed.app.ampassadors.Activities.Home_Activity;
 import hashed.app.ampassadors.Adapters.TabAdapterTitle;
 import hashed.app.ampassadors.R;
 
 public class GroupsFragment extends Fragment implements View.OnClickListener{
+
   private static final int WORKSHOPS_PAGE = 0,MEETINGS_PAGE = 1;
 
   //Views
@@ -57,6 +60,10 @@ public class GroupsFragment extends Fragment implements View.OnClickListener{
     groupsTabLayout = view.findViewById(R.id.groupsTabLayout);
     groupsViewPager = view.findViewById(R.id.groupsViewPager);
     floatingButton = view.findViewById(R.id.floatingButton);
+
+    final Toolbar groupToolbar = view.findViewById(R.id.groupToolbar);
+    groupToolbar.setNavigationOnClickListener(v-> ((Home_Activity)getActivity()).showDrawer());
+
     return view;
   }
 

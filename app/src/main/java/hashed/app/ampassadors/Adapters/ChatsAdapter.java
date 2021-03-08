@@ -106,11 +106,14 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsVh> {
 
       private void bindChat(ChatItem chatItem){
 
-       if(chatItem.getImageUrl()!=null){
-         picasso.load(chatItem.getImageUrl()).fit().into(imageIv);
+
+       if(chatItem.getImageUrl() != null){
+         if(!chatItem.getImageUrl().isEmpty()){
+           picasso.load(chatItem.getImageUrl()).fit().into(imageIv);
+         }
          nameTv.setText(chatItem.getUsername());
        }else{
-         getUserInfo(chatItem,chatItem.getMessagingUid());
+         getUserInfo(chatItem,chatItem.getMessagingUid(),imageIv,nameTv);
        }
 
         messageTv.setText(getMessageText(chatItem.getMessage()));
@@ -129,15 +132,41 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsVh> {
      private String getMessageText(PrivateMessagePreview message){
 
        String text = null;
-       if(message.getDeleted()){
 
-         if(message.getSender().equals(currentUid)){
+       if(message.getSender().equals(currentUid)){
+
+         if(message.getDeleted()) {
            text = "You deleted a message";
-         }else{
-           text = "Deleted message";
          }
 
+         switch (message.getType()){
+
+           case Files.TEXT:
+             text = message.getContent();
+             break;
+
+           case Files.IMAGE:
+             text = "You sent an image";
+             break;
+
+           case Files.VIDEO:
+             text = "You sent a video";
+             break;
+
+           case Files.DOCUMENT:
+             text = "You sent an attachment";
+             break;
+
+           case Files.AUDIO:
+             text = "You sent an audio message";
+             break;
+
+         }
        }else{
+
+         if(message.getDeleted()) {
+           text = "Deleted message";
+         }
 
          switch (message.getType()){
 
@@ -162,40 +191,15 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsVh> {
              break;
 
          }
+
        }
+
+
 
        return text;
      }
 
-     private void getUserInfo(ChatItem chatItem,String userId){
 
-       usersCollectionRef.whereEqualTo("userId",userId).get()
-               .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                 @Override
-                 public void onSuccess(QuerySnapshot snapshots) {
-
-                   if(snapshots.isEmpty()){
-                     return;
-                   }
-
-                   final DocumentSnapshot userSnap = snapshots.getDocuments().get(0);
-
-                   chatItem.setImageUrl(userSnap.getString("imageUrl"));
-                   chatItem.setUsername(userSnap.getString("username"));
-
-
-                 }
-               }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-         @Override
-         public void onComplete(@NonNull Task<QuerySnapshot> task) {
-           if(task.isSuccessful()){
-             picasso.load(chatItem.getImageUrl()).into(imageIv);
-             nameTv.setText(chatItem.getUsername());
-           }
-         }
-       });
-
-     }
 
      @Override
      public void onClick(View view) {
@@ -203,6 +207,34 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsVh> {
        itemView.getContext().startActivity(new Intent(itemView.getContext(),
                PrivateMessagingActivity.class).putExtra("messagingUid",
                chatItems.get(getAdapterPosition()).getMessagingUid()));
+
+     }
+
+
+     private void getUserInfo(ChatItem chatItem ,String userId, ImageView imageIv,TextView nameTv){
+
+       usersCollectionRef.document(userId).get()
+               .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                 @Override
+                 public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                   if(documentSnapshot.exists()){
+                     chatItem.setImageUrl(documentSnapshot.getString("imageUrl"));
+                     chatItem.setUsername(documentSnapshot.getString("username"));
+                   }
+                 }
+               }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+         @Override
+         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+           if(task.isSuccessful()){
+             if(chatItem.getImageUrl()!=null && !chatItem.getImageUrl().isEmpty()){
+               picasso.load(chatItem.getImageUrl()).into(imageIv);
+             }
+             nameTv.setText(chatItem.getUsername());
+           }
+         }
+       });
 
      }
 

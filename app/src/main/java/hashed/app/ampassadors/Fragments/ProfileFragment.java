@@ -55,19 +55,19 @@ public class ProfileFragment extends Fragment {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()){
                     if (task.getResult().exists()){
-                        String user_name = task.getResult().getString("username");
-                        String pass = task.getResult().getString("password");
-                        String ema = task.getResult().getString("email");
-                        String coun = task.getResult().getString("country");
-                        String cit = task.getResult().getString("city");
-                        String pho = task.getResult().getString("phone");
-
-                        username.setText(user_name);
-                        password.setText(pass);
-                        email.setText(ema);
-                        country.setText(coun);
-                        city.setText(cit);
-                        phone.setText(pho);
+//                        String user_name = task.getResult().getString("username");
+//                        String pass = task.getResult().getString("password");
+//                        String ema = task.getResult().getString("email");
+//                        String coun = task.getResult().getString("country");
+//                        String cit = task.getResult().getString("city");
+//                        String pho = task.getResult().getString("phone");
+//
+//                        username.setText(user_name);
+//                        password.setText(pass);
+//                        email.setText(ema);
+//                        country.setText(coun);
+//                        city.setText(cit);
+//                        phone.setText(pho);
 
                     }
                 }else {

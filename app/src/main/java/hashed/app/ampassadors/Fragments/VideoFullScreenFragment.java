@@ -36,42 +36,38 @@ import hashed.app.ampassadors.Utils.VideoDataSourceFactory;
 
 public class VideoFullScreenFragment extends Fragment {
 
-  private static final boolean AUTO_HIDE = true;
-
-  private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
+//  private static final boolean AUTO_HIDE = true;
+//
+//  private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
 
   private static final int UI_ANIMATION_DELAY = 300;
   private final Handler mHideHandler = new Handler();
-  private final Runnable mHidePart2Runnable = new Runnable() {
-    @SuppressLint("InlinedApi")
-    @Override
-    public void run() {
+  private final Runnable mHidePart2Runnable = () -> {
 
-      int flags = View.SYSTEM_UI_FLAG_LOW_PROFILE
-              | View.SYSTEM_UI_FLAG_FULLSCREEN
-              | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-              | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-              | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-              | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+    int flags = View.SYSTEM_UI_FLAG_LOW_PROFILE
+            | View.SYSTEM_UI_FLAG_FULLSCREEN
+            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
 
-      Activity activity = getActivity();
-      if (activity != null
-              && activity.getWindow() != null) {
-        activity.getWindow().getDecorView().setSystemUiVisibility(flags);
-      }
-
+    Activity activity = getActivity();
+    if (activity != null
+            && activity.getWindow() != null) {
+      activity.getWindow().getDecorView().setSystemUiVisibility(flags);
     }
+
   };
 
-  private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-    @Override
-    public boolean onTouch(View view, MotionEvent motionEvent) {
-      if (AUTO_HIDE) {
-        delayedHide(AUTO_HIDE_DELAY_MILLIS);
-      }
-      return false;
-    }
-  };
+//  private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
+//    @Override
+//    public boolean onTouch(View view, MotionEvent motionEvent) {
+//      if (AUTO_HIDE) {
+//        delayedHide(AUTO_HIDE_DELAY_MILLIS);
+//      }
+//      return false;
+//    }
+//  };
 
   //video
   private PlayerView playerView;
@@ -79,12 +75,7 @@ public class VideoFullScreenFragment extends Fragment {
   private final String videoUrl;
 
   private boolean mVisible;
-  private final Runnable mHideRunnable = new Runnable() {
-    @Override
-    public void run() {
-      hide();
-    }
-  };
+  private final Runnable mHideRunnable = this::hide;
 
   public VideoFullScreenFragment(String videoUrl){
     this.videoUrl = videoUrl;
@@ -97,7 +88,7 @@ public class VideoFullScreenFragment extends Fragment {
                            @Nullable Bundle savedInstanceState) {
     View view =  inflater.inflate(R.layout.fragment_video_full_screen, container, false);
 
-    Toolbar fullScreenToolbar = view.findViewById(R.id.fullScreenToolbar);
+    final Toolbar fullScreenToolbar = view.findViewById(R.id.fullScreenToolbar);
     fullScreenToolbar.setNavigationOnClickListener(v-> requireActivity().onBackPressed());
 
     playerView = view.findViewById(R.id.playerView);

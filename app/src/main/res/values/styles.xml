@@ -44,12 +44,40 @@
 
     </style>
 
-    <style name="fs" parent="Widget.AppCompat.SearchView">
+    <style name="searchViewStyle" parent="Widget.AppCompat.SearchView">
 
         <item name="android:textSize">1sp</item>
         <item name="android:fontFamily">@font/segoe_ui_bold</item>
 
     </style>
 
+    <style name="ShapeAppearanceOverlay.Demo" parent="">
+        <item name="cornerSizeTopLeft">25dp</item>
+        <item name="cornerSizeTopRight">25dp</item>
+    </style>
+
+    <style
+        name="ThemeOverlay.Demo.BottomSheetDialog"
+        parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Widget.Demo.BottomSheet</item>
+    </style>
+
+    <style name="Widget.Demo.BottomSheet" parent="Widget.MaterialComponents.BottomSheet">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.Demo</item>
+    </style>
+
+    <style name="BsdCardStyle"
+        parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/comments_layout_card_back</item>
+    </style>
+
+
+    <style name="PollProgressStyle"
+        parent="Base.Widget.AppCompat.ProgressBar.Horizontal">
+    </style>
+
+    <style name="FullScreenDialogTheme" parent="Theme.AppCompat.Dialog">
+        <item name="windowNoTitle">true</item>
+    </style>
 
 </resources>

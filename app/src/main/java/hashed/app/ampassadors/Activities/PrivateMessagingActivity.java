@@ -13,11 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -38,10 +40,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.common.collect.Iterables;
 import com.google.firebase.auth.FirebaseAuth;
@@ -56,7 +55,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
@@ -81,9 +79,14 @@ import hashed.app.ampassadors.Fragments.FilePickerPreviewFragment;
 import hashed.app.ampassadors.Fragments.ImageFullScreenFragment;
 import hashed.app.ampassadors.Fragments.VideoFullScreenFragment;
 import hashed.app.ampassadors.Fragments.VideoPickerPreviewFragment;
+import hashed.app.ampassadors.NotificationUtil.BadgeUtil;
+import hashed.app.ampassadors.NotificationUtil.CloudMessagingNotificationsSender;
+import hashed.app.ampassadors.NotificationUtil.NotificationData;
+import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.Objects.PrivateMessage;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
+import hashed.app.ampassadors.Utils.GlobalVariables;
 
 public class PrivateMessagingActivity extends AppCompatActivity
         implements Toolbar.OnMenuItemClickListener,PrivateMessagingAdapter.DeleteMessageListener,
@@ -151,13 +154,20 @@ public class PrivateMessagingActivity extends AppCompatActivity
 //  int lastVisiblePosition;
 
 
+  //notifications
+  private SharedPreferences sharedPreferences;
+  private NotificationData notificationData;
+  private String currentUserName;
+  private String currentImageUrl;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_private_messaging);
 
-      messagingUid = getIntent().getStringExtra("messagingUid");
 
+    //getting the messaging user id
+    getMessagingUid();
 
     //setting up toolbar and its actions
     setUpToolBarAndActions();
@@ -165,14 +175,18 @@ public class PrivateMessagingActivity extends AppCompatActivity
     //initializing Views
     initializeViews();
 
+    //handling notification is it exists
+    handleNotification();
+
     //getting messaging userInfo
     getUserData();
 
     //fetching previous messages and listen to new
-      fetchPreviousMessages();
+    fetchPreviousMessages();
 
 
   }
+
 
 
   //Activity actions and views
@@ -217,27 +231,125 @@ public class PrivateMessagingActivity extends AppCompatActivity
     return false;
   }
 
+  //get messaging user id
+  private void getMessagingUid(){
+
+    final Intent intent = getIntent();
+
+    messagingUid = intent.getStringExtra("messagingUid");
+
+    if(intent.hasExtra("isFromNotification") && Build.VERSION.SDK_INT < 26){
+        BadgeUtil.decrementBadgeNum(this);
+    }
+
+    usersRef.document(currentUid).update("ActivelyMessaging",messagingUid);
+
+  }
+
   //firestore user data
   private void getUserData(){
 
-    usersRef.whereEqualTo("userId",messagingUid).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+    usersRef.document(messagingUid).get().addOnSuccessListener(documentSnapshot -> {
+
+      if(documentSnapshot.exists()){
+
+        Picasso.get().load(documentSnapshot.getString("imageUrl")).fit()
+                .into(messagingTbProfileIv);
+        messagingTbNameTv.setText(documentSnapshot.getString("username"));
+
+      }
+
+    });
+  }
+
+  private void getMyData(){
+
+    usersRef.document(currentUid).get().addOnSuccessListener(documentSnapshot -> {
+      if(documentSnapshot.exists()){
+
+      }
+    });
+  }
+
+
+  // remove messaging notifcation if one exists
+  private void handleNotification(){
+
+    sharedPreferences = getSharedPreferences(getResources().getString(R.string.app_name),
+            Context.MODE_PRIVATE);
+
+    sharedPreferences.edit()
+            .putString("currentlyMessagingUid", currentUid).apply();
+
+    if (GlobalVariables.getMessagesNotificationMap() != null) {
+
+      if (GlobalVariables.getMessagesNotificationMap().containsKey(messagingUid)) {
+        Log.d("ttt", "removing: " + messagingUid);
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        notificationManager.cancel(GlobalVariables.getMessagesNotificationMap().get(messagingUid));
+
+        GlobalVariables.getMessagesNotificationMap().remove(messagingUid);
+      }
+    }
+
+  }
+
+  //notifcations methods
+  private void checkUserActivityAndSendNotifications(String message){
+
+    usersRef.document(messagingUid)
+            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
       @Override
-      public void onSuccess(QuerySnapshot snapshots) {
-        if(!snapshots.isEmpty()){
-          final DocumentSnapshot ds  = snapshots.getDocuments().get(0);
-          Picasso.get().load(ds.getString("imageUrl")).fit().into(messagingTbProfileIv);
-          messagingTbNameTv.setText(ds.getString("username"));
+      public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+        if(documentSnapshot.contains("ActivelyMessaging")){
+          final String messaging = documentSnapshot.getString("ActivelyMessaging");
+          if(messaging == null || !messaging.equals(currentUid)){
+            Log.d("ttt","sendBothNotifs");
+            sendBothNotifs(message);
+          }
+        }else{
+          Log.d("ttt","sendBothNotifs");
+          sendBothNotifs(message);
         }
+
       }
     });
 
+  }
+
+  private void sendBothNotifs(String message){
+    FirestoreNotificationSender.sendFirestoreNotification(messagingUid, "message");
+    sendCloudNotification(message);
+  }
+
+  private void sendCloudNotification(String message) {
+    Log.d("ttt","sending cloud notificaiton");
+
+    if (notificationData == null && messagingUid != null) {
+
+      notificationData = new NotificationData(
+              currentUid,
+              message,
+              getResources().getString(R.string.new_message) + currentUserName,
+              currentImageUrl,
+              currentUserName,
+              "message"
+      );
+
+    } else if (notificationData != null) {
+      notificationData.setBody(message);
+    }
+
+    CloudMessagingNotificationsSender.sendNotification(messagingUid, notificationData);
 
   }
 
 
-
   //database messages functions
-
   private void fetchPreviousMessages(){
 
     adapter = new PrivateMessagingAdapter(privateMessages,
@@ -251,7 +363,6 @@ public class PrivateMessagingActivity extends AppCompatActivity
     privateMessagingRv.setAdapter(adapter);
 
     Log.d("privateMessaging","start fetching");
-
 
           databaseReference.child(currentUid+"-"+messagingUid)
             .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -275,7 +386,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
                       }else{
 
-                        currentMessagingRef = databaseReference.child(currentUid+"/"+messagingUid);
+                        currentMessagingRef = databaseReference.child(currentUid+"-"+messagingUid);
                         firebaseMessageDocRef = FirebaseFirestore.getInstance()
                                 .collection("PrivateMessages")
                                 .document(currentMessagingRef.getKey());
@@ -503,7 +614,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
         final PrivateMessage privateMessage = new PrivateMessage(
                 content,
-                System.currentTimeMillis()/1000,
+                System.currentTimeMillis(),
                 currentUid,
                 Files.TEXT);
 
@@ -528,7 +639,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
         PrivateMessage privateMessage = new PrivateMessage(
                 content,
-                System.currentTimeMillis()/1000,
+                System.currentTimeMillis(),
                 currentUid,
                 Files.TEXT);
 
@@ -581,11 +692,14 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
       firebaseMessageDocRef.set(messageDocumentPreviewMap);
 
-      privateMessages.add(privateMessage);
-      adapter.notifyDataSetChanged();
+//      privateMessages.add(privateMessage);
+//      adapter.notifyDataSetChanged();
 
       firstKeyRef = "0";
       lastKeyRef = "0";
+
+
+      createMessagesListener();
 
       messageSendIv.setOnClickListener(new TextMessageSenderClickListener());
       messageSendIv.setClickable(true);
@@ -611,11 +725,13 @@ public class PrivateMessagingActivity extends AppCompatActivity
       return;
     }
 
+    Log.d("PrivateMessaging","added message at: "+(Integer.parseInt(lastKeyRef) + 1));
     final DatabaseReference childRef =  currentMessagingRef.child("messages")
-            .child(String.valueOf(Integer.parseInt(lastKeyRef) + 1));
+            .child(String.valueOf((Integer.parseInt(lastKeyRef) + 1)));
 
     childRef.setValue(privateMessage).addOnSuccessListener(v -> {
 
+      checkUserActivityAndSendNotifications(privateMessage.getContent());
 
 //            checkUserActivityAndSendNotifications(messageMap.getContent());
       messageSendIv.setClickable(true);
@@ -626,12 +742,9 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
       messageSendIv.setClickable(true);
 
-    }).addOnCompleteListener(new OnCompleteListener<Void>() {
-      @Override
-      public void onComplete(@NonNull Task<Void> task) {
-        if(task.isSuccessful()){
-          firebaseMessageDocRef.update("latestMessageTime",privateMessage.getTime());
-        }
+    }).addOnCompleteListener(task -> {
+      if(task.isSuccessful()){
+        firebaseMessageDocRef.update("latestMessageTime",privateMessage.getTime());
       }
     });
 
@@ -645,50 +758,33 @@ public class PrivateMessagingActivity extends AppCompatActivity
     final View parentView = getLayoutInflater().inflate(R.layout.message_options_bsd,null);
     parentView.setBackgroundColor(Color.TRANSPARENT);
 
-    parentView.findViewById(R.id.imageIv).setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
+    parentView.findViewById(R.id.imageIv).setOnClickListener(view -> {
 
-        bsd.dismiss();
+      bsd.dismiss();
 
-        Files.startImageFetchIntent(PrivateMessagingActivity.this);
-      }
+      Files.startImageFetchIntent(PrivateMessagingActivity.this);
     });
 
-    parentView.findViewById(R.id.audioIv).setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
+    parentView.findViewById(R.id.audioIv).setOnClickListener(view -> {
 
 //        bsd.dismiss();
 //
 //        Files.startImageFetchIntent(PrivateMessagingActivity.this);
-      }
     });
 
-    parentView.findViewById(R.id.videoIv).setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
+    parentView.findViewById(R.id.videoIv).setOnClickListener(view -> {
 
-        bsd.dismiss();
-        Files.startVideoFetchIntent(PrivateMessagingActivity.this);
-      }
+      bsd.dismiss();
+      Files.startVideoFetchIntent(PrivateMessagingActivity.this);
     });
 
-    parentView.findViewById(R.id.documentIv).setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
+    parentView.findViewById(R.id.documentIv).setOnClickListener(view -> {
 
-        bsd.dismiss();
-        Files.startDocumentFetchIntent(PrivateMessagingActivity.this);
-      }
+      bsd.dismiss();
+      Files.startDocumentFetchIntent(PrivateMessagingActivity.this);
     });
 
-    bsd.setOnDismissListener(new DialogInterface.OnDismissListener() {
-      @Override
-      public void onDismiss(DialogInterface dialogInterface) {
-        messageAttachIv.setClickable(true);
-      }
-    });
+    bsd.setOnDismissListener(dialogInterface -> messageAttachIv.setClickable(true));
 
     bsd.setContentView(parentView);
     bsd.show();
@@ -705,22 +801,19 @@ public class PrivateMessagingActivity extends AppCompatActivity
     messagingEd.setEnabled(false);
     messagingEd.setFocusable(false);
 
-    new Handler().post(new Runnable() {
-      @Override
-      public void run() {
-        messageAttachIv.setVisibility(View.GONE);
-        messageSendIv.setVisibility(View.GONE);
-        cancelIv.setVisibility(View.VISIBLE);
+    new Handler().post(() -> {
+      messageAttachIv.setVisibility(View.GONE);
+      messageSendIv.setVisibility(View.GONE);
+      cancelIv.setVisibility(View.VISIBLE);
 
-        DrawableCompat.setTint(
-                DrawableCompat.wrap(micIv.getDrawable()),
-                getResources().getColor(R.color.red)
-        );
+      DrawableCompat.setTint(
+              DrawableCompat.wrap(micIv.getDrawable()),
+              getResources().getColor(R.color.red)
+      );
 
-        messagingEd.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
-        messagingEd.setText("00:00");
+      messagingEd.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
+      messagingEd.setText("00:00");
 
-      }
     });
 
       startAudioRecorder();
@@ -777,24 +870,18 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
     progressHandle.postDelayed(progressRunnable, 0);
 
-    micIv.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        progressHandle.removeCallbacks(progressRunnable);
-        stopAudioRecorder(fileName,startTime,false);
-        progressHandle = null;
-        progressRunnable = null;
-      }
+    micIv.setOnClickListener(view -> {
+      progressHandle.removeCallbacks(progressRunnable);
+      stopAudioRecorder(fileName,startTime,false);
+      progressHandle = null;
+      progressRunnable = null;
     });
 
-    cancelIv.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        progressHandle.removeCallbacks(progressRunnable);
-        stopAudioRecorder(null,0,true);
-        progressHandle = null;
-        progressRunnable = null;
-      }
+    cancelIv.setOnClickListener(view -> {
+      progressHandle.removeCallbacks(progressRunnable);
+      stopAudioRecorder(null,0,true);
+      progressHandle = null;
+      progressRunnable = null;
     });
 
 
@@ -824,23 +911,20 @@ public class PrivateMessagingActivity extends AppCompatActivity
     messagingEd.setFocusable(true);
     messagingEd.setFocusableInTouchMode(true);
 
-    new Handler().post(new Runnable() {
-      @Override
-      public void run() {
+    new Handler().post(() -> {
 
-        messageAttachIv.setVisibility(View.VISIBLE);
-        messageSendIv.setVisibility(View.VISIBLE);
-        cancelIv.setVisibility(View.GONE);
+      messageAttachIv.setVisibility(View.VISIBLE);
+      messageSendIv.setVisibility(View.VISIBLE);
+      cancelIv.setVisibility(View.GONE);
 
-        DrawableCompat.setTint(
-                DrawableCompat.wrap(micIv.getDrawable()),
-                getResources().getColor(R.color.black)
-        );
+      DrawableCompat.setTint(
+              DrawableCompat.wrap(micIv.getDrawable()),
+              getResources().getColor(R.color.black)
+      );
 
-        messagingEd.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
-        messagingEd.setText("");
+      messagingEd.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+      messagingEd.setText("");
 
-      }
     });
 
   }
@@ -857,7 +941,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
     messageAttachmentUploadedIndex = privateMessages.size();
 
     privateMessages.add(new PrivateMessage(message,
-            System.currentTimeMillis()/1000, currentUid, fileType));
+            System.currentTimeMillis(), currentUid, fileType));
     adapter.notifyItemInserted(privateMessages.size());
     scrollToBottom();
 
@@ -876,70 +960,57 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
     final StorageReference reference = FirebaseStorage.getInstance().getReference()
             .child(storageRef).child(UUID.randomUUID().toString() +"-"+
-                    System.currentTimeMillis()/1000);
+                    System.currentTimeMillis());
 
 
     final UploadTask uploadTask = reference.putFile(uri);
 
     StorageTask<UploadTask.TaskSnapshot> onSuccessListener =
-            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-      @Override
-      public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+            uploadTask.addOnSuccessListener(taskSnapshot -> {
 
-        uploadTasks.remove(uploadTask);
+              uploadTasks.remove(uploadTask);
 
-        reference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-          @Override
-          public void onSuccess(Uri uri) {
+              reference.getDownloadUrl().addOnSuccessListener(uri1 -> {
 
-            PrivateMessage privateMessage = null;
+                PrivateMessage privateMessage = null;
 
-            if(fileType == Files.AUDIO){
+                if (fileType == Files.AUDIO) {
 
-              privateMessage = new PrivateMessage(
-                      audioLength,
-                      System.currentTimeMillis()/1000,
-                      currentUid,
-                      fileType,
-                      uri.toString());
+                  privateMessage = new PrivateMessage(
+                          audioLength,
+                          System.currentTimeMillis(),
+                          currentUid,
+                          fileType,
+                          uri1.toString());
 
-              micIv.setClickable(true);
+                  micIv.setClickable(true);
 
-            }else if(fileType == Files.IMAGE){
+                } else if (fileType == Files.IMAGE) {
 
-              privateMessage = new PrivateMessage(
-                      message,
-                      System.currentTimeMillis()/1000,
-                      currentUid,
-                      fileType,
-                      uri.toString());
+                  privateMessage = new PrivateMessage(
+                          message,
+                          System.currentTimeMillis(),
+                          currentUid,
+                          fileType,
+                          uri1.toString());
 
-            }else if(fileType == Files.DOCUMENT){
+                } else if (fileType == Files.DOCUMENT) {
 
-              privateMessage = new PrivateMessage(
-                      System.currentTimeMillis()/1000,
-                      message,
-                      currentUid,
-                      fileType,
-                      uri.toString(),
-                      fileName);
+                  privateMessage = new PrivateMessage(
+                          System.currentTimeMillis(),
+                          message,
+                          currentUid,
+                          fileType,
+                          uri1.toString(),
+                          fileName);
 
-            }
+                }
 
-            sendMessage(privateMessage);
+                sendMessage(privateMessage);
 
-          }
-        });
+              });
 
-      }
-    }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-              @Override
-              public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-
-                new File(uri.getPath()).delete();
-
-              }
-            });
+            }).addOnCompleteListener(task -> new File(uri.getPath()).delete());
 
 
     uploadTasks.put(uploadTask,onSuccessListener);
@@ -951,7 +1022,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
     messageAttachmentUploadedIndex = privateMessages.size();
 
     privateMessages.add(new PrivateMessage(message,
-            System.currentTimeMillis()/1000, currentUid, Files.VIDEO));
+            System.currentTimeMillis(), currentUid, Files.VIDEO));
     adapter.notifyItemInserted(privateMessages.size());
     scrollToBottom();
 
@@ -965,58 +1036,42 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
     final StorageReference videoThumbnailRef= FirebaseStorage.getInstance().getReference()
               .child(Files.MESSAGE_IMAGE_REF).child(UUID.randomUUID().toString() +"-"+
-                      System.currentTimeMillis()/1000);
+                      System.currentTimeMillis());
 
     final UploadTask thumbnailUploadTask =  videoThumbnailRef.putBytes(baos.toByteArray());
 
     StorageTask<UploadTask.TaskSnapshot> thumbnailOnSuccessListener =
-            thumbnailUploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-      @Override
-      public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+            thumbnailUploadTask.addOnSuccessListener(taskSnapshot -> videoThumbnailRef.getDownloadUrl().addOnSuccessListener(thumbnailDownloadUrl -> {
 
-        videoThumbnailRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-          @Override
-          public void onSuccess(Uri thumbnailDownloadUrl) {
+              uploadTasks.remove(thumbnailUploadTask);
 
-            uploadTasks.remove(thumbnailUploadTask);
+              final StorageReference videoRef = FirebaseStorage.getInstance().getReference()
+                      .child(Files.MESSAGE_VIDEO_REF).child(UUID.randomUUID().toString() + "-" +
+                              System.currentTimeMillis());
 
-            final StorageReference videoRef = FirebaseStorage.getInstance().getReference()
-                    .child(Files.MESSAGE_VIDEO_REF).child(UUID.randomUUID().toString() +"-"+
-                            System.currentTimeMillis()/1000);
+              final UploadTask videoUploadTask = videoRef.putFile(videoUri);
 
-            final UploadTask videoUploadTask = videoRef.putFile(videoUri);
+              StorageTask<UploadTask.TaskSnapshot> videoOnSuccessListener =
+                      videoUploadTask.addOnSuccessListener(taskSnapshot1 -> {
 
-            StorageTask<UploadTask.TaskSnapshot> videoOnSuccessListener =
-                    videoUploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-              @Override
-              public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        uploadTasks.remove(videoUploadTask);
 
-                uploadTasks.remove(videoUploadTask);
+                        videoRef.getDownloadUrl().addOnSuccessListener(videoDownloadUrl -> {
+                          PrivateMessage privateMessage = new PrivateMessage(
+                                  message,
+                                  System.currentTimeMillis(),
+                                  currentUid,
+                                  Files.VIDEO,
+                                  videoDownloadUrl.toString(),
+                                  thumbnailDownloadUrl.toString());
 
-                videoRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                  @Override
-                  public void onSuccess(Uri videoDownloadUrl) {
-                    PrivateMessage privateMessage = new PrivateMessage(
-                            message,
-                            System.currentTimeMillis()/1000,
-                            currentUid,
-                            Files.VIDEO,
-                            videoDownloadUrl.toString(),
-                            thumbnailDownloadUrl.toString());
+                          sendMessage(privateMessage);
 
-                    sendMessage(privateMessage);
+                        });
+                      });
 
-                  }
-                });
-              }
-            });
-
-            uploadTasks.put(videoUploadTask,videoOnSuccessListener);
-          }
-        });
-
-      }
-    });
+              uploadTasks.put(videoUploadTask, videoOnSuccessListener);
+            }));
 
     uploadTasks.put(thumbnailUploadTask,thumbnailOnSuccessListener);
 
@@ -1085,24 +1140,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
           }
 
-          uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-              uploadTask.getSnapshot().getStorage().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                  Log.d("ttt","ref delete sucess");
-                }
-              }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                  Log.d("ttt","ref delete failed: "+e.getMessage());
-                }
-              });
-
-            }
-          });
+          uploadTask.addOnSuccessListener(taskSnapshot -> uploadTask.getSnapshot().getStorage().delete().addOnSuccessListener(aVoid -> Log.d("ttt", "ref delete sucess")).addOnFailureListener(e -> Log.d("ttt", "ref delete failed: " + e.getMessage())));
 
         }
       }
@@ -1216,9 +1254,17 @@ public class PrivateMessagingActivity extends AppCompatActivity
             String.valueOf(Integer.parseInt(firstKeyRef) + privateMessages.indexOf(message));
 
     currentMessagingRef.child("messages").child(id).child("deleted").setValue(true).
-            addOnSuccessListener(v -> currentMessagingRef.child("lastDeleted").setValue(id)
-                    .addOnSuccessListener(vo -> dialog.dismiss()).addOnFailureListener(e ->
-                            dialog.dismiss())).addOnFailureListener(e -> {
+            addOnSuccessListener(aVoid -> currentMessagingRef.child("lastDeleted").setValue(id)
+                    .addOnSuccessListener(aVoid1 -> {
+
+                      if (privateMessages.indexOf(message) == privateMessages.size() - 1) {
+                        firebaseMessageDocRef.update("lastMessageDeleted",
+                                Integer.valueOf(id));
+                      }
+
+                      dialog.dismiss();
+
+                    }).addOnFailureListener(e -> dialog.dismiss())).addOnFailureListener(e -> {
       dialog.dismiss();
 
       Toast.makeText(this, "لقد فشل حذف الرسالة", Toast.LENGTH_SHORT).show();
@@ -1347,10 +1393,10 @@ public class PrivateMessagingActivity extends AppCompatActivity
   @Override
   public void onDestroy() {
     super.onDestroy();
-//    sharedPreferences.edit()
-//            .remove("isPaused")
-//            .remove("currentMessagingUserId")
-//            .remove("currentMessagingPromoId").apply();
+
+    if(sharedPreferences!=null){
+      sharedPreferences.edit().remove("isPaused").remove("currentlyMessagingUid").apply();
+    }
 
     privateMessagingRv.removeOnLayoutChangeListener(this);
 
@@ -1384,6 +1430,16 @@ public class PrivateMessagingActivity extends AppCompatActivity
     }
   }
 
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+
+    if(currentUid != null){
+      usersRef.document(currentUid).update("ActivelyMessaging",messagingUid);
+    }
+  }
+
   @Override
   protected void onPause() {
     super.onPause();
@@ -1393,8 +1449,17 @@ public class PrivateMessagingActivity extends AppCompatActivity
       progressHandle.removeCallbacks(progressRunnable);
     }
 
+    if(currentMessagingRef != null && lastKeyRef != null){
       currentMessagingRef.child("LastSeenMessage:"+currentUid).setValue(lastKeyRef);
+    }
 
+    if(currentUid != null){
+      usersRef.document(currentUid).update("ActivelyMessaging",null);
+    }
+
+    if(sharedPreferences!=null){
+      sharedPreferences.edit().putBoolean("isPaused",true).apply();
+    }
   }
 
   @Override
@@ -1414,7 +1479,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
         finish();
       });
 
-      alert.setNegativeButton("No", (dialog, which) -> {dialog.cancel();});
+      alert.setNegativeButton("No", (dialog, which) -> dialog.cancel());
       alert.create().show();
 
     }else{
@@ -1589,34 +1654,26 @@ public class PrivateMessagingActivity extends AppCompatActivity
       firebaseMessageDocRef.delete();
 
       currentMessagingRef.child("messages")
-              .get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
-        @Override
-        public void onSuccess(DataSnapshot snapshot) {
+              .get().addOnSuccessListener(snapshot -> {
 
-          if (snapshot.exists() && snapshot.getChildrenCount() > 0) {
+                if (snapshot.exists() && snapshot.getChildrenCount() > 0) {
 
-            for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-              if (snapshot1.hasChild("attachmentUrl")) {
-                firebaseStorage.getReferenceFromUrl(Objects.requireNonNull(snapshot1
-                        .child("attachmentUrl").getValue(String.class)))
-                        .delete();
-              }
+                  for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                    if (snapshot1.hasChild("attachmentUrl")) {
+                      firebaseStorage.getReferenceFromUrl(Objects.requireNonNull(snapshot1
+                              .child("attachmentUrl").getValue(String.class)))
+                              .delete();
+                    }
 
-              if(snapshot1.hasChild("videoThumbnail")){
-                firebaseStorage.getReferenceFromUrl(Objects.requireNonNull(snapshot1
-                        .child("videoThumbnail").getValue(String.class)))
-                        .delete();
-              }
-            }
-          }
+                    if(snapshot1.hasChild("videoThumbnail")){
+                      firebaseStorage.getReferenceFromUrl(Objects.requireNonNull(snapshot1
+                              .child("videoThumbnail").getValue(String.class)))
+                              .delete();
+                    }
+                  }
+                }
 
-        }
-      }).addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-        @Override
-        public void onComplete(@NonNull Task<DataSnapshot> task) {
-          currentMessagingRef.getRef().removeValue();
-        }
-      });
+              }).addOnCompleteListener(task -> currentMessagingRef.getRef().removeValue());
 
     }
   }

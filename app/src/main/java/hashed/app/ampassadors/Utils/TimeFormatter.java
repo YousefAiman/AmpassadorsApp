@@ -1,18 +1,20 @@
 package hashed.app.ampassadors.Utils;
 
+import android.text.format.DateUtils;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 public class TimeFormatter {
 
-  private static final long SECOND_MILLIS = 1000,
-          MINUTE_MILLIS = 60 * SECOND_MILLIS,
-          HOUR_MILLIS = 60 * MINUTE_MILLIS,
-          DAY_MILLIS = 24 * HOUR_MILLIS,
-          WEEK_MILLIS = 7 * DAY_MILLIS,
-          MONTH_MILLIS = 30 * DAY_MILLIS,
-          YEAR_MILLIS = 12 * MONTH_MILLIS;
+//  public static final long SECOND_MILLIS = 1000,
+//          MINUTE_MILLIS = 60 * SECOND_MILLIS,
+//          HOUR_MILLIS = 60 * MINUTE_MILLIS,
+//          DAY_MILLIS = 24 * HOUR_MILLIS,
+//          WEEK_MILLIS = 7 * DAY_MILLIS,
+//          MONTH_MILLIS = 30 * DAY_MILLIS,
+//          YEAR_MILLIS = 12 * MONTH_MILLIS;
 
   public static final String
           HOUR_MINUTE= "h:mm a",
@@ -29,14 +31,14 @@ public class TimeFormatter {
     final long timeAgo = System.currentTimeMillis() - time;
 
     String format ="";
-    if(timeAgo < DAY_MILLIS){
+    if(timeAgo < DateUtils.DAY_IN_MILLIS){
 
       format = HOUR_MINUTE;
 
-    }else if(timeAgo < WEEK_MILLIS){
+    }else if(timeAgo < DateUtils.WEEK_IN_MILLIS){
 
       format = WEEK_DAY;
-    }else if(timeAgo < YEAR_MILLIS){
+    }else if(timeAgo < DateUtils.YEAR_IN_MILLIS){
 
       format = MONTH_DAY;
     }else{

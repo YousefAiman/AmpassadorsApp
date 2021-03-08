@@ -104,34 +104,6 @@
 
 
         <ImageView
-            android:id="@+id/skypeIv"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="6dp"
-            android:background="@drawable/grey_circle_border_back"
-            android:scaleType="center"
-            android:src="@drawable/skype_icon"
-            app:layout_constraintDimensionRatio="1"
-            app:layout_constraintStart_toStartOf="@+id/videoIv"
-            app:layout_constraintTop_toBottomOf="@+id/textView"
-            app:layout_constraintWidth_percent="0.205" />
-
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
-            android:fontFamily="@font/segoe_ui"
-            android:text="@string/skype"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/skypeIv"
-            app:layout_constraintStart_toStartOf="@+id/skypeIv"
-            app:layout_constraintTop_toBottomOf="@+id/skypeIv" />
-
-
-        <ImageView
             android:id="@+id/documentIv"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -152,32 +124,10 @@
             android:text="@string/document"
             android:textColor="@color/black"
             android:textSize="16sp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/documentIv"
             app:layout_constraintStart_toStartOf="@+id/documentIv"
-            app:layout_constraintTop_toBottomOf="@+id/documentIv" />
-
-        <ImageView
-            android:id="@+id/zoomIv"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/grey_circle_border_back"
-            android:scaleType="centerInside"
-            android:src="@drawable/zoom_icon"
-            app:layout_constraintDimensionRatio="1"
-            app:layout_constraintEnd_toEndOf="@+id/imageIv"
-            app:layout_constraintStart_toStartOf="@+id/imageIv"
-            app:layout_constraintTop_toTopOf="@+id/documentIv"
-            app:layout_constraintWidth_percent="0.205" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/segoe_ui"
-            android:text="@string/zoom"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="@+id/zoomIv"
-            app:layout_constraintStart_toStartOf="@+id/zoomIv"
             app:layout_constraintTop_toBottomOf="@+id/documentIv" />
 
 

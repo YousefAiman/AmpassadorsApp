@@ -2,6 +2,7 @@ package hashed.app.ampassadors.Objects;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
 import com.google.firebase.firestore.DocumentReference;
@@ -12,10 +13,13 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.core.DocumentViewChangeSet;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @IgnoreExtraProperties
 public class PostData {
+
+    public static final int TYPE_NEWS = 1,TYPE_POLL = 2;
 
     @PropertyName("postId")
     private String postId;
@@ -23,10 +27,6 @@ public class PostData {
     private String title;
     @PropertyName("publisherId")
     private String publisherId;
-    @PropertyName("publisherName")
-    private String publisherName;
-    @PropertyName("publisherImage")
-    private String publisherImage;
     @PropertyName("imageUrl")
     private String imageUrl;
     @PropertyName("publishTime")
@@ -39,6 +39,21 @@ public class PostData {
     private String description;
     @PropertyName("type")
     private int type;
+    @PropertyName("duration")
+    private long pollDuration;
+    @PropertyName("totalVotes")
+    private long totalVotes;
+    @PropertyName("pollEnded")
+    private boolean pollEnded;
+    @Exclude
+    private String publisherName;
+    @Exclude
+    private String publisherImage;
+    @Exclude
+    private int chosenPollOption;
+    @Exclude
+    private ArrayList<PollOption> pollOptions;
+
 
     public PostData(){
     }
@@ -202,5 +217,45 @@ public class PostData {
 
     public void setPostId(String postId) {
         this.postId = postId;
+    }
+
+    public long getPollDuration() {
+        return pollDuration;
+    }
+
+    public void setPollDuration(long pollDuration) {
+        this.pollDuration = pollDuration;
+    }
+
+    public int getChosenPollOption() {
+        return chosenPollOption;
+    }
+
+    public void setChosenPollOption(int chosenPollOption) {
+        this.chosenPollOption = chosenPollOption;
+    }
+
+    public long getTotalVotes() {
+        return totalVotes;
+    }
+
+    public void setTotalVotes(long totalVotes) {
+        this.totalVotes = totalVotes;
+    }
+
+    public ArrayList<PollOption> getPollOptions() {
+        return pollOptions;
+    }
+
+    public void setPollOptions(ArrayList<PollOption> pollOptions) {
+        this.pollOptions = pollOptions;
+    }
+
+    public boolean isPollEnded() {
+        return pollEnded;
+    }
+
+    public void setPollEnded(boolean pollEnded) {
+        this.pollEnded = pollEnded;
     }
 }

@@ -1,88 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginLeft="30dp"
-    android:layout_marginTop="20dp"
-    android:layout_marginRight="30dp"
-    android:background="#f2f2f2"
-    android:layout_marginBottom="20dp"
-    tools:context=".Fragments.CommentFragment">
-
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    android:layout_height="wrap_content"
+    android:layout_marginTop="50dp"
+    android:background="@drawable/comments_layout_card_back"
+    tools:context=".Fragments.CommentsFragment">
 
         <TextView
-            android:id="@+id/comment_number"
+            android:id="@+id/commentTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="36dp"
-            android:layout_marginTop="8dp"
-            android:text="0"
-            android:textColor="#000"
-
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_marginTop="13dp"
+            android:layout_marginEnd="18dp"
+            android:textSize="12sp"
+            android:fontFamily="@font/segoe_ui_light"
+            android:text="@string/comments"
+            android:textColor="@color/black"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"/>
 
         <TextView
-            android:id="@+id/title"
+            android:id="@+id/commentCountTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="32dp"
-            android:text="Comments"
-            android:textColor="#000"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_marginTop="21dp"
+            android:layout_marginStart="12dp"
+            android:textSize="12sp"
+            android:fontFamily="@font/segoe_ui"
+            android:textColor="@color/black"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"/>
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/swipeRefresh"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/comment_design"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view4">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/comment_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent" />
-
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <View
             android:id="@+id/view4"
             android:layout_width="wrap_content"
-            android:layout_height="2dp"
-            android:layout_marginTop="36dp"
-            android:background="#000"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="1dp"
+            android:layout_below="@id/commentTv"
+            android:layout_marginTop="8dp"
+            android:layout_marginHorizontal="13dp"
+            android:background="@color/black_transparent" />
+
+        <FrameLayout
+            android:id="@+id/repliesFrameLayout"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/view4" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/commentsRv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"
+            android:paddingStart="36dp"
+            android:paddingEnd="12dp"
+            android:layout_below="@+id/view4"
+            android:layout_above="@+id/commentLayoutEd"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
         <include
-            android:id="@+id/comment_design"
-            layout="@layout/comment_edit_design"
+            android:id="@+id/commentLayoutEd"
+            layout="@layout/comment_edittext_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:layout_alignParentBottom="true"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

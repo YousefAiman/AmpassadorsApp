@@ -118,7 +118,7 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                     dataMap.put("likes",0);
                     dataMap.put("comments",0);
                     dataMap.put("description",postTexting);
-                    dataMap.put("type",1);
+                    dataMap.put("type",PostData.TYPE_NEWS);
 
                     reference.document(postId).set(dataMap)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -176,6 +176,9 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Files.PICK_IMAGE  &&
                 resultCode == RESULT_OK && data != null) {
+
+            Picasso.get().load(data.getData()).fit().centerInside().into(postImage);
+
             uploading = true;
             mProgressDialog.setMessage("جاري التحميل ......");
             mProgressDialog.show();
@@ -196,12 +199,11 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
 
                 }
-            })
-                    .addOnFailureListener(new OnFailureListener() {
+            }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(PostActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-
+                            Toast.makeText(PostActivity.this, e.getMessage(),
+                                    Toast.LENGTH_SHORT).show();
                         }
                     });
         }

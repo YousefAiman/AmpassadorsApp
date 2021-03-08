@@ -32,6 +32,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -50,27 +51,33 @@ import hashed.app.ampassadors.Utils.GlobalVariables;
 
 public class Home_Activity extends AppCompatActivity  {
 
-    TextView newpost;
-    TextView newPoll;
-    BottomNavigationView nav_btom;
+    private BottomNavigationView nav_btom;
+    private FrameLayout homeFrameLayout;
+    private DrawerLayout drawer_layout;
+    private List<ListenerRegistration> listenerRegistrations;
 
-    FrameLayout homeFrameLayout;
-    DrawerLayout drawer_layout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
 
+
+
         SetUpCompetent();
+
+        replaceFragment(new ChattingFragment());
+
         OnClickButtons();
+
         createUserLikesListener();
 
     }
 
-
     private void createUserLikesListener(){
 
+        listenerRegistrations = new ArrayList<>();
 
+        listenerRegistrations.add(
         FirebaseFirestore.getInstance().collection("Users")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .addSnapshotListener(new EventListener<DocumentSnapshot>() {
@@ -93,15 +100,12 @@ public class Home_Activity extends AppCompatActivity  {
 
 
                     }
-                });
-
+                })
+        );
 
     }
     public void SetUpCompetent() {
 
-
-        newPoll = findViewById(R.id.new_poll);
-        newpost = findViewById(R.id.new_post);
         nav_btom = findViewById(R.id.nav_btom);
         homeFrameLayout = findViewById(R.id.homeFrameLayout);
         drawer_layout = findViewById(R.id.drawer_layout);
@@ -148,7 +152,7 @@ public class Home_Activity extends AppCompatActivity  {
             return true;
         });
 
-        nav_btom.setSelectedItemId(R.id.home);
+//        nav_btom.setSelectedItemId(R.id.home);
     }
 
 
@@ -159,51 +163,20 @@ public class Home_Activity extends AppCompatActivity  {
         ).commit();
 
     }
-    private void showPostOptionsBottomSheet() {
-        final BottomSheetDialog bsd = new BottomSheetDialog(this, R.style.SheetDialog);
-        final View parentView = getLayoutInflater().inflate(R.layout.post_options_bsd, null);
-        parentView.setBackgroundColor(Color.TRANSPARENT);
-
-        parentView.findViewById(R.id.new_post).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                bsd.dismiss();
-                Intent intent = new Intent(getApplicationContext(), PostActivity.class);
-                startActivity(intent);
-            }
-        });
-        parentView.findViewById(R.id.new_poll).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                bsd.dismiss();
-                Intent intent = new Intent(getApplicationContext(), PollActivity.class);
-                startActivity(intent);
-            }
-        });
-        bsd.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                dialogInterface.dismiss();
-            }
-        });
-
-                bsd.setContentView(parentView);
-        bsd.show();
-
-    }
 
     @Override
     public void onBackPressed() {
 
-        if(nav_btom.getSelectedItemId()!=R.id.home){
-            nav_btom.setSelectedItemId(R.id.home);
-            replaceFragment(new PostsFragment());
+        if(drawer_layout.isDrawerOpen(GravityCompat.START)){
+            drawer_layout.closeDrawer(GravityCompat.START);
         }else{
-            super.onBackPressed();
+            if(nav_btom.getSelectedItemId()!=R.id.home){
+                nav_btom.setSelectedItemId(R.id.home);
+                replaceFragment(new PostsFragment());
+            }else{
+                super.onBackPressed();
+            }
         }
-
 
     }
 
@@ -226,5 +199,15 @@ public class Home_Activity extends AppCompatActivity  {
 
     public void showDrawer() {
         drawer_layout.openDrawer(GravityCompat.START);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(listenerRegistrations!=null && !listenerRegistrations.isEmpty()){
+            for(ListenerRegistration listenerRegistration:listenerRegistrations){
+                listenerRegistration.remove();
+            }
+        }
     }
 }

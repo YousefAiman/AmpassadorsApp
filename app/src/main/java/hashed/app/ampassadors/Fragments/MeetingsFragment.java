@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,14 +29,15 @@ import hashed.app.ampassadors.Objects.Meeting;
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
 
-public class MeetingsFragment extends Fragment {
+public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
   //views
   private RecyclerView meetingsRv;
   private TextView noMessagesTv;
-
   private ArrayList<Meeting> meetings;
   private MeetingsAdapter adapter;
+  private SwipeRefreshLayout swipeRefreshLayout;
+
   private ScrollListener scrollListener;
 
   //database
@@ -53,7 +55,7 @@ public class MeetingsFragment extends Fragment {
     super.onCreate(savedInstanceState);
 
     //adapter
-    String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     meetings = new ArrayList<>();
     adapter = new MeetingsAdapter(meetings);
 
@@ -67,7 +69,8 @@ public class MeetingsFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-    View view =  inflater.inflate(R.layout.fragment_recycler_child, container, false);
+    View view =  inflater.inflate(R.layout.online_users_fragment, container, false);
+    swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
     meetingsRv = view.findViewById(R.id.childRv);
     noMessagesTv = view.findViewById(R.id.emptyTv);
     noMessagesTv.setText(R.string.no_current_meetings);
@@ -94,6 +97,8 @@ public class MeetingsFragment extends Fragment {
         }
       }
     });
+
+    swipeRefreshLayout.setOnRefreshListener(this);
 
     return view;
   }
@@ -159,65 +164,22 @@ public class MeetingsFragment extends Fragment {
         }
         isLoading = false;
 
-//
-//        for(Meeting meeting : meetings){
-//
-//
-//        }
+
       }
 
     });
 
-//
-//    adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-//      @Override
-//      public void onItemRangeInserted(int positionStart, int itemCount) {
-//        super.onItemRangeInserted(positionStart, itemCount);
-//
-//        for(int i = positionStart;i < (positionStart + itemCount-1);i++){
-//
-//          Timer timer = new Timer();
-//          timer.schedule(, meetings.get(i).getStartTime());
-//
-//
-//
-//        }
-//
-//      }
-//    });
   }
 
-//  private static class MyTimeTask extends TimerTask {
-//
-//    int index;
-//    MyTimeTask(int index){
-//      this.index = index;
-//    }
-//
-//    public void run()
-//    {
-//
-//
-//      //write your code here
-//    }
-//  }
-//
-//
-//  public static class Reminder {
-//    Timer timer;
-//
-//    public Reminder(int seconds) {
-//      timer = new Timer();
-//      timer.schedule(new RemindTask(),seconds*5);
-//    }
-//
-//    class RemindTask extends TimerTask {
-//      public void run() {
-//        Log.d("ttt","time up");
-//        timer.cancel();
-//      }
-//    }
-//  }
+  @Override
+  public void onRefresh() {
+
+    meetings.clear();
+    adapter.notifyDataSetChanged();
+    lastDocSnap = null;
+    getMoreMeetings(true);
+
+  }
 
   private class ScrollListener extends RecyclerView.OnScrollListener {
     @Override
@@ -230,6 +192,15 @@ public class MeetingsFragment extends Fragment {
         getMoreMeetings(false);
 
       }
+    }
+  }
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+
+    if(meetingsRv != null && scrollListener!=null){
+      meetingsRv.removeOnScrollListener(scrollListener);
     }
   }
 }

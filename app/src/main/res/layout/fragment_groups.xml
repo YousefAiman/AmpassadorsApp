@@ -9,7 +9,7 @@
     tools:context=".Fragments.GroupsFragment">
 
     <include android:id="@+id/groupToolbar"
-        layout="@layout/home_toolbar"/>
+        layout="@layout/home_toolbar" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/groupsTabLayout"

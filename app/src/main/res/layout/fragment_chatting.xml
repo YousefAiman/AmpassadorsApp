@@ -8,7 +8,9 @@
     android:orientation="vertical"
     tools:context=".Fragments.ChattingFragment">
 
-    <include layout="@layout/chatting_toolbar"/>
+    <include
+        android:id="@+id/chattingToolbar"
+        layout="@layout/chatting_toolbar"/>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/chattingTabLayout"

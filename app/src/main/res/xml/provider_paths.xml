@@ -2,5 +2,5 @@
 <paths
     xmlns:android="http://schemas.android.com/apk/res/android">
     <external-path name="external_files" path="."/>
-    <external-files-path name="my_images" path="Android/data/hashed.app.ampassadors/files/Pictures" />
+    <external-files-path name="my_images" path="Android/notificationData/hashed.app.ampassadors/files/Pictures" />
 </paths>

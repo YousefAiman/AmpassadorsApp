@@ -463,7 +463,7 @@ public class GroupMessagingActivity extends AppCompatActivity
 
         final PrivateMessage privateMessage = new PrivateMessage(
                 content,
-                System.currentTimeMillis()/1000,
+                System.currentTimeMillis(),
                 currentUid,
                 Files.TEXT);
 
@@ -488,7 +488,7 @@ public class GroupMessagingActivity extends AppCompatActivity
 
         PrivateMessage privateMessage = new PrivateMessage(
                 content,
-                System.currentTimeMillis()/1000,
+                System.currentTimeMillis(),
                 currentUid,
                 Files.TEXT);
 
@@ -752,7 +752,7 @@ public class GroupMessagingActivity extends AppCompatActivity
     messageAttachmentUploadedIndex = privateMessages.size();
 
     privateMessages.add(new PrivateMessage(message,
-            System.currentTimeMillis()/1000, currentUid, fileType));
+            System.currentTimeMillis(), currentUid, fileType));
     adapter.notifyItemInserted(privateMessages.size());
     scrollToBottom();
 
@@ -771,7 +771,7 @@ public class GroupMessagingActivity extends AppCompatActivity
 
     final StorageReference reference = FirebaseStorage.getInstance().getReference()
             .child(storageRef).child(UUID.randomUUID().toString() +"-"+
-                    System.currentTimeMillis()/1000);
+                    System.currentTimeMillis());
 
 
     final UploadTask uploadTask = reference.putFile(uri);
@@ -793,7 +793,7 @@ public class GroupMessagingActivity extends AppCompatActivity
 
                       privateMessage = new PrivateMessage(
                               audioLength,
-                              System.currentTimeMillis()/1000,
+                              System.currentTimeMillis(),
                               currentUid,
                               fileType,
                               uri.toString());
@@ -804,7 +804,7 @@ public class GroupMessagingActivity extends AppCompatActivity
 
                       privateMessage = new PrivateMessage(
                               message,
-                              System.currentTimeMillis()/1000,
+                              System.currentTimeMillis(),
                               currentUid,
                               fileType,
                               uri.toString());
@@ -812,7 +812,7 @@ public class GroupMessagingActivity extends AppCompatActivity
                     }else if(fileType == Files.DOCUMENT){
 
                       privateMessage = new PrivateMessage(
-                              System.currentTimeMillis()/1000,
+                              System.currentTimeMillis(),
                               message,
                               currentUid,
                               fileType,
@@ -846,7 +846,7 @@ public class GroupMessagingActivity extends AppCompatActivity
     messageAttachmentUploadedIndex = privateMessages.size();
 
     privateMessages.add(new PrivateMessage(message,
-            System.currentTimeMillis()/1000, currentUid, Files.VIDEO));
+            System.currentTimeMillis(), currentUid, Files.VIDEO));
     adapter.notifyItemInserted(privateMessages.size());
     scrollToBottom();
 
@@ -860,7 +860,7 @@ public class GroupMessagingActivity extends AppCompatActivity
 
     final StorageReference videoThumbnailRef= FirebaseStorage.getInstance().getReference()
             .child(Files.MESSAGE_IMAGE_REF).child(UUID.randomUUID().toString() +"-"+
-                    System.currentTimeMillis()/1000);
+                    System.currentTimeMillis());
 
     final UploadTask thumbnailUploadTask =  videoThumbnailRef.putBytes(baos.toByteArray());
 
@@ -877,7 +877,7 @@ public class GroupMessagingActivity extends AppCompatActivity
 
                     final StorageReference videoRef = FirebaseStorage.getInstance().getReference()
                             .child(Files.MESSAGE_VIDEO_REF).child(UUID.randomUUID().toString() +"-"+
-                                    System.currentTimeMillis()/1000);
+                                    System.currentTimeMillis());
 
                     final UploadTask videoUploadTask = videoRef.putFile(videoUri);
 
@@ -893,7 +893,7 @@ public class GroupMessagingActivity extends AppCompatActivity
                                   public void onSuccess(Uri videoDownloadUrl) {
                                     PrivateMessage privateMessage = new PrivateMessage(
                                             message,
-                                            System.currentTimeMillis()/1000,
+                                            System.currentTimeMillis(),
                                             currentUid,
                                             Files.VIDEO,
                                             videoDownloadUrl.toString(),

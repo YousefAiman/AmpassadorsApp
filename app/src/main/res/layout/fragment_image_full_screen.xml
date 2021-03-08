@@ -3,22 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="true"
     android:background="?attr/fullscreenBackgroundColor"
     android:theme="@style/ThemeOverlay.AmpassadorsApp.FullscreenContainer"
-    tools:context=".Fragments.VideoFullScreenFragment">
-
-
-    <include
-        android:id="@+id/fullScreenToolbar"
-        layout="@layout/fullscreen_toolbar"/>
-
+    tools:context=".Fragments.ImageFullScreenFragment">
 
     <ImageView
         android:id="@+id/fullScreenIv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:contentDescription="@string/fullscreen_image"
         />
+
+    <include
+        android:id="@+id/fullScreenToolbar"
+        layout="@layout/fullscreen_toolbar"/>
 
 </FrameLayout>

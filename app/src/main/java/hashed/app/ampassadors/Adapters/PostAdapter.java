@@ -1,11 +1,13 @@
 package hashed.app.ampassadors.Adapters;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +21,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -31,47 +35,79 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import hashed.app.ampassadors.Activities.Home_Activity;
-import hashed.app.ampassadors.Activities.PollActivity;
-import hashed.app.ampassadors.Activities.PostActivity;
-import hashed.app.ampassadors.Fragments.CommentFragment;
-import hashed.app.ampassadors.Objects.ChatItem;
+import hashed.app.ampassadors.Fragments.ImageFullScreenFragment;
+import hashed.app.ampassadors.Objects.PollOption;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.GlobalVariables;
+import hashed.app.ampassadors.Utils.TimeFormatter;
 
-public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.PostHolder>  {
+public class PostAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder>  {
 
     private static List<PostData> posts;
     Context context;
+    private static final String dateFormat = "dd/MM/yyyy";
 
     private static final CollectionReference usersCollectionRef =
-            FirebaseFirestore.getInstance().collection("Users");
+            FirebaseFirestore.getInstance().collection("Users"),
+            postsCollectionRef = FirebaseFirestore.getInstance().collection("Posts");
 
+  private final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-    public PostAdapter(List<PostData> posts , Context context){
-        PostAdapter.posts = posts ;
+    private final CommentsInterface commentsInterface;
+
+    public interface CommentsInterface{
+
+      void showComments(String postId,int comments);
+
+    }
+
+    public PostAdapter(List<PostData> posts , Context context,CommentsInterface commentsInterface){
+        PostAdapter.posts = posts;
         this.context = context;
+        this.commentsInterface = commentsInterface;
     }
 
 
     @NonNull
     @Override
-    public PostHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        return new PostHolder(LayoutInflater.from(context).inflate(R.layout.home_post_news_item
-                , parent , false));
+      switch (viewType){
 
+        case PostData.TYPE_NEWS:
+          return new NewsVh(LayoutInflater.from(context).inflate(R.layout.home_post_news_item
+                  , parent , false));
+
+        case PostData.TYPE_POLL:
+          return new PollVh(LayoutInflater.from(context).inflate(R.layout.poll_item_layout
+                  , parent, false));
+
+      }
+
+    return null;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PostHolder holder, int position) {
-        holder.bind(posts.get(position));
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+
+      switch (holder.getItemViewType()){
+        case PostData.TYPE_NEWS:
+          ((NewsVh)holder).bind(posts.get(position));
+          break;
+
+        case PostData.TYPE_POLL:
+          ((PollVh)holder).bind(posts.get(position));
+          break;
+      }
+
     }
 
     @Override
@@ -79,12 +115,192 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.PostHolder>  
         return posts.size();
     }
 
-    public class PostHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class PollVh extends RecyclerView.ViewHolder implements View.OnClickListener{
+
+      private final CircleImageView imageIv;
+      private final TextView usernameTv;
+      private final TextView dateTv;
+      private final TextView questionTv;
+      private final ImageView menuIv;
+      private final RecyclerView pollRv;
+      private final TextView likeTv;
+      private final TextView commentTv;
+      private final TextView votesTv;
+      private final String voteRes,num_of_people;
+
+      public PollVh(@NonNull View itemView) {
+        super(itemView);
+        imageIv = itemView.findViewById(R.id.imageIv);
+        usernameTv = itemView.findViewById(R.id.usernameTv);
+        dateTv = itemView.findViewById(R.id.dateTv);
+        questionTv = itemView.findViewById(R.id.questionTv);
+        menuIv = itemView.findViewById(R.id.menuIv);
+        likeTv = itemView.findViewById(R.id.likeTv);
+        commentTv = itemView.findViewById(R.id.commentTv);
+        pollRv = itemView.findViewById(R.id.pollRv);
+        votesTv = itemView.findViewById(R.id.votesTv);
+        voteRes = itemView.getResources().getString(R.string.vote);
+        num_of_people = itemView.getResources().getString(R.string.num_of_people);
+
+      }
+
+
+      @SuppressLint("SetTextI18n")
+      private void bind(PostData postData){
+
+          if(postData.getPollOptions() == null){
+
+            if(postData.isPollEnded()){
+
+              getPollRecycler(true);
+
+            }else{
+
+              if(System.currentTimeMillis() >
+                      postData.getPublishTime() + postData.getPollDuration()){
+
+                postsCollectionRef.document(postData.getPostId())
+                        .update("pollEnded",true);
+
+                getPollRecycler(true);
+
+              }else{
+
+                getPollRecycler(false);
+
+              }
+
+            }
+
+        }
+
+        if(postData.getPublisherName() == null){
+          getUserInfo(postData,postData.getPublisherId(),imageIv,usernameTv);
+        }else{
+          if(postData.getPublisherImage()!=null){
+            Picasso.get().load(postData.getPublisherImage()).fit().into(imageIv);
+          }
+          usernameTv.setText(postData.getPublisherName());
+        }
+
+        questionTv.setText(postData.getTitle());
+        dateTv.setText(TimeFormatter.formatWithPattern(postData.getPublishTime(),dateFormat));
+
+        if(GlobalVariables.getLikesList().contains(postData.getPostId())){
+
+          likeTv.setTextColor(itemView.getContext()
+                  .getResources().getColor(R.color.red));
+
+        }else{
+
+          likeTv.setTextColor(itemView.getContext()
+                  .getResources().getColor(R.color.black));
+
+        }
+        likeTv.setOnClickListener(this);
+        menuIv.setOnClickListener(this);
+        commentTv.setOnClickListener(this);
+
+        votesTv.setText(voteRes+" "+postData.getTotalVotes()+" "+num_of_people);
+
+
+      }
+
+
+      private void getPollRecycler(boolean hasEnded){
+
+        final PostData postData = posts.get(getAdapterPosition());
+        postData.setPollOptions(new ArrayList<>());
+
+        final PollPostAdapter adapter = new PollPostAdapter(postData.getPollOptions()
+                ,postData.getPostId(), hasEnded,postData.getTotalVotes());
+
+        pollRv.setHasFixedSize(true);
+        adapter.setHasStableIds(true);
+        pollRv.setAdapter(adapter);
+
+        postsCollectionRef.document(postData.getPostId())
+                .collection("UserVotes").whereEqualTo("userId",currentUid)
+        .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+          int chosenOption = -1;
+          @Override
+          public void onSuccess(QuerySnapshot snapshots) {
+
+            if(!snapshots.isEmpty()){
+              chosenOption =  snapshots.getDocuments().get(0).get("voteOption",Integer.class);
+            }
+
+            postsCollectionRef.document(postData.getPostId())
+                    .collection("Options").get()
+                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                      @Override
+                      public void onSuccess(QuerySnapshot snapshots) {
+                        if(!snapshots.isEmpty()){
+                          postData.getPollOptions().addAll(snapshots.toObjects(PollOption.class));
+                        }
+                      }
+                    }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+              @Override
+              public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful() && !postData.getPollOptions().isEmpty()){
+
+                  if(chosenOption != -1){
+                    postData.getPollOptions().get(chosenOption).setChosen(true);
+                    adapter.showProgress = true;
+                  }
+
+                  adapter.notifyDataSetChanged();
+                }
+              }
+            });
+          }
+        });
+
+      }
+
+      @Override
+      public void onClick(View view) {
+
+        if(view.getId() == R.id.likeTv){
+
+          if(likeTv.getCurrentTextColor() ==
+                  itemView.getContext()
+                          .getResources().getColor(R.color.red)){
+
+
+            likeTv.setTextColor(itemView.getContext()
+                    .getResources().getColor(R.color.black));
+
+            PostData.likePost(posts.get(getAdapterPosition()).getPostId(),2);
+
+          }else{
+
+            likeTv.setTextColor(itemView.getContext()
+                    .getResources().getColor(R.color.red));
+
+            PostData.likePost(posts.get(getAdapterPosition()).getPostId(),1);
+
+          }
+
+        }else if(view.getId() == R.id.commentTv){
+
+          final PostData postData = posts.get(getAdapterPosition());
+
+          commentsInterface.showComments(postData.getPostId(),postData.getComments());
+
+        }else if(view.getId() == R.id.menuIv){
+
+        }
+
+      }
+    }
+
+  public class NewsVh extends RecyclerView.ViewHolder implements View.OnClickListener {
       private final CircleImageView imageIv ;
         private final TextView usernameTv ;
         private final TextView dateTv ;
         private final TextView titleTv ;
-        private ImageView menuIv ;
+        private final ImageView menuIv;
         private final ImageView postIv ;
         private final TextView likesTv ;
         private final TextView commentsTv ;
@@ -93,11 +309,7 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.PostHolder>  
         private final TextView commentTv;
         private final TextView descriptionTv;
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy",
-                Locale.getDefault());
-
-
-        public PostHolder(@NonNull View itemView) {
+        public NewsVh(@NonNull View itemView) {
             super(itemView);
             imageIv = itemView.findViewById(R.id.imageIv);
             usernameTv = itemView.findViewById(R.id.usernameTv);
@@ -115,7 +327,7 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.PostHolder>  
 
 
         //        private void showPostOptionsBottomSheet() {
-//            final View parentView = new CommentFragment().getLayoutInflater
+//            final View parentView = new CommentsFragment().getLayoutInflater
 //                    ().inflate(R.layout.fragment_commnet, null);
 //            parentView.setBackgroundColor(Color.TRANSPARENT);
 //
@@ -126,31 +338,29 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.PostHolder>  
 //
 //        }
 
-
-
-
-
-
         private void bind(PostData postData){
 
             Picasso.get().load(postData.getImageUrl()).fit().into(postIv);
 
-            if(postData.getPublisherName() == null){
+            if(postData.getImageUrl() == null){
 
-                getUserInfo(postData,postData.getPublisherId());
+                getUserInfo(postData,postData.getPublisherId(),imageIv,usernameTv);
 
             }else{
 
-              if(postData.getPublisherImage()!=null){
+              if(postData.getPublisherImage()!=null
+               && !postData.getPublisherImage().isEmpty()){
+
                 Picasso.get().load(postData.getPublisherImage()).fit().into(imageIv);
+
               }
 
               usernameTv.setText(postData.getPublisherName());
 
             }
 
-            titleTv.setText(postData.getDescription());
-            dateTv.setText(dateFormat.format(postData.getPublishTime()));
+            titleTv.setText(postData.getTitle());
+            dateTv.setText(TimeFormatter.formatWithPattern(postData.getPublishTime(),dateFormat));
 
             if(GlobalVariables.getLikesList().contains(postData.getPostId())){
 
@@ -171,49 +381,11 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.PostHolder>  
             likeTv.setOnClickListener(this);
             redMoreTv.setOnClickListener(this);
             menuIv.setOnClickListener(this);
-
-            commentTv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                }
-            });
+            postIv.setOnClickListener(this);
+            commentTv.setOnClickListener(this);
 
         }
 
-        private void getUserInfo(PostData postData, String userId){
-
-            usersCollectionRef.document(userId).get()
-                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                      @Override
-                      public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-                        if(documentSnapshot.exists()){
-
-                          postData.setImageUrl(documentSnapshot.getString("imageUrl"));
-                          postData.setPublisherName(documentSnapshot.getString("username"));
-
-                        }
-
-                      }
-                    }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-              @Override
-              public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-
-                Picasso.get().load(postData.getImageUrl()).into(imageIv);
-                usernameTv.setText(postData.getPublisherName());
-
-              }
-            });
-            commentTv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-
-                }
-            });
-
-        }
 
 
         @Override
@@ -252,6 +424,9 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.PostHolder>  
 
             }else if(view.getId() == R.id.commentTv){
 
+              final PostData postData = posts.get(getAdapterPosition());
+
+              commentsInterface.showComments(postData.getPostId(),postData.getComments());
 
             }else if(view.getId() == R.id.redMoreTv){
 
@@ -266,10 +441,39 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.PostHolder>  
 
             }else if(view.getId() == R.id.menuIv){
 
+            }else if(view.getId() == R.id.postIv){
+
+              new ImageFullScreenFragment(posts.get(getAdapterPosition()).getImageUrl()).show();
+
             }
 
         }
     }
 
 
+  public static void getUserInfo(PostData postData,String userId, ImageView imageIv,
+                                         TextView usernameTv){
+
+    usersCollectionRef.document(userId).get()
+            .addOnSuccessListener(documentSnapshot -> {
+              if(documentSnapshot.exists()){
+                postData.setPublisherImage(documentSnapshot.getString("imageUrl"));
+                postData.setPublisherName(documentSnapshot.getString("username"));
+              }
+            }).addOnCompleteListener(task -> {
+
+              if(postData.getPublisherImage() != null && !postData.getPublisherImage().isEmpty()){
+                Picasso.get().load(postData.getPublisherImage()).into(imageIv);
+              }
+
+              usernameTv.setText(postData.getPublisherName());
+            });
+
+  }
+
+
+  @Override
+  public int getItemViewType(int position) {
+    return posts.get(position).getType();
+  }
 }
