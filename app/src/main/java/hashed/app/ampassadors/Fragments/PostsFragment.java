@@ -152,20 +152,20 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
     }
 
-    updatedQuery.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-      @Override
-      public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-        if (!queryDocumentSnapshots.isEmpty()) {
+        updatedQuery.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+          @Override
+          public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+            if (!queryDocumentSnapshots.isEmpty()) {
 
-          lastDocSnap = queryDocumentSnapshots.getDocuments().get(
-                  queryDocumentSnapshots.size()-1
-          );
+              lastDocSnap = queryDocumentSnapshots.getDocuments().get(
+                      queryDocumentSnapshots.size()-1
+              );
 
-          postData.addAll(queryDocumentSnapshots.toObjects(PostData.class));
+              postData.addAll(queryDocumentSnapshots.toObjects(PostData.class));
 
-        }
+            }
 
-      }
+          }
     }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
       @Override
       public void onComplete(@NonNull Task<QuerySnapshot> task) {
