@@ -41,5 +41,8 @@
     <string name="no_online_users">No Online Users</string>
     <string name="no_current_meetings">No Current Meetings</string>
     <string name="profile">Profile</string>
+    <string name="away">away</string>
+    <string name="showmore">Showmore</string>
+    <string name="About">About</string>
 
 </resources>

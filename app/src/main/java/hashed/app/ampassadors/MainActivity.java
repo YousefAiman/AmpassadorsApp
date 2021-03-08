@@ -13,6 +13,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import hashed.app.ampassadors.Activities.Home_Activity;
+import hashed.app.ampassadors.Activities.UsersPost;
+import hashed.app.ampassadors.Activities.posts_profile;
 import hashed.app.ampassadors.Activities.profile;
 import hashed.app.ampassadors.Activities.profile_edit;
 import hashed.app.ampassadors.Activities.sign_in;
@@ -30,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
       new Handler().postDelayed(new Runnable() {
         @Override
         public void run() {
-          startActivity( new Intent(MainActivity.this, sign_up.class));
+          startActivity( new Intent(MainActivity.this, posts_profile.class));
           finish();
         }
       },1000);
@@ -40,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
       new Handler().postDelayed(new Runnable() {
         @Override
         public void run() {
-          startActivity( new Intent(MainActivity.this, sign_in.class));
+          startActivity( new Intent(MainActivity.this, UsersPost.class));
           finish();
         }
       },2000);

@@ -1,12 +1,4 @@
-package hashed.app.ampassadors.Activities;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
+package hashed.app.ampassadors.Fragments;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -14,24 +6,32 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -48,11 +48,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
+import hashed.app.ampassadors.Activities.profile_edit;
+import hashed.app.ampassadors.Activities.sign_in;
 import hashed.app.ampassadors.Objects.UserInfo;
 import hashed.app.ampassadors.R;
 
-public class profile_edit extends AppCompatActivity {
-
+public class ProfileEditFragment extends Fragment {
     EditText username, email, country, city, phone;
     Button save;
     FirebaseAuth fAuth;
@@ -71,26 +72,41 @@ public class profile_edit extends AppCompatActivity {
     boolean uploading = false;
     String cameraImageFilePath;
     FirebaseStorage storage;
+    public static final int RESULT_OK = -1;
 
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile_edit);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+         View view =  inflater.inflate(R.layout.fragment_profile_edit, container, false);
+        username = view.findViewById(R.id.input_username);
+        email = view.findViewById(R.id.input_email);
+        country = view.findViewById(R.id.input_country);
+        city = view.findViewById(R.id.input_city);
+        phone = view.findViewById(R.id.input_phone);
+        save = view.findViewById(R.id.save);
+//
+        imageView = view.findViewById(R.id.profile_picture);
 
-        init();
-        updatedata();
+        fAuth = FirebaseAuth.getInstance();
+        userid = fAuth.getCurrentUser().getUid();
 
+        fStore = FirebaseFirestore.getInstance();
+
+
+        storage = FirebaseStorage.getInstance();
+        sreference = storage.getReference();
+        mProgressDialog = new ProgressDialog(getActivity());
 
 
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                ActivityCompat.requestPermissions(profile_edit.this, new String[]{Manifest.permission.CAMERA,
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
-                SelectImage(profile_edit.this);
+                SelectImage(getActivity());
 
             }
         });
@@ -114,44 +130,17 @@ public class profile_edit extends AppCompatActivity {
 
                     }
                 }else {
-                    Toast.makeText(profile_edit.this, "Error"+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Error"+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
+
+
+        return view ;
     }
 
-//    private void drawer(){
-//        final DrawerLayout drawerLayout_b = findViewById(R.id.drawer_layout_b);
-//        findViewById(R.id.image_menu_b).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                drawerLayout_b.openDrawer(GravityCompat.START);
-//            }
-//        });
-//    }
-    private void init(){
-        username = findViewById(R.id.input_username);
-        email = findViewById(R.id.input_email);
-        country = findViewById(R.id.input_country);
-        city = findViewById(R.id.input_city);
-        phone = findViewById(R.id.input_phone);
-        save = findViewById(R.id.save);
-//
-        imageView = findViewById(R.id.profile_picture);
-
-        fAuth = FirebaseAuth.getInstance();
-        userid = fAuth.getCurrentUser().getUid();
-
-        fStore = FirebaseFirestore.getInstance();
-
-
-        storage = FirebaseStorage.getInstance();
-        sreference = storage.getReference();
-        mProgressDialog = new ProgressDialog(this);
-
-    }
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         // CAMERA
@@ -177,7 +166,7 @@ public class profile_edit extends AppCompatActivity {
                             Log.d("ttt",imageUrl);
                         }
                     });
-                    Toast.makeText(profile_edit.this, "انتهى التحميل...", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "انتهى التحميل...", Toast.LENGTH_SHORT).show();
                 }
             });
         }else if (requestCode == CAMERA_REQUEST_CODE) {
@@ -198,15 +187,15 @@ public class profile_edit extends AppCompatActivity {
                             String imageUrl = uri.toString();
                             Picasso.get().load(imageUrl).fit().into(imageView);
                             Log.d("ttt",imageUrl);
-                            Toast.makeText(profile_edit.this, imageUrl, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), imageUrl, Toast.LENGTH_SHORT).show();
                         }
                     });
-                    Toast.makeText(profile_edit.this, "انتهى التحميل...", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "انتهى التحميل...", Toast.LENGTH_SHORT).show();
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(profile_edit.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -232,7 +221,7 @@ public class profile_edit extends AppCompatActivity {
                         }
                         // Continue only if the File was successfully created
                         if (photoFile != null) {
-                            Uri photoURI = FileProvider.getUriForFile(profile_edit.this,
+                            Uri photoURI = FileProvider.getUriForFile(getActivity(),
                                     "hashed.app.ampassadors.provider", photoFile);
                             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                             startActivityForResult(takePictureIntent, CAMERA_REQUEST_CODE);
@@ -271,21 +260,21 @@ public class profile_edit extends AppCompatActivity {
 
     private void register(String username,String email, String country,  String city, String phone) {
 
-                userInfo = new UserInfo();
-                // Picasso.get().load(userInfo.getImageUrl()).fit().into(circleImageView);
+        userInfo = new UserInfo();
+        // Picasso.get().load(userInfo.getImageUrl()).fit().into(circleImageView);
 
-                FirebaseUser firebaseUser = fAuth.getCurrentUser();
+        FirebaseUser firebaseUser = fAuth.getCurrentUser();
 
-                userInfo.setUsername(username);
-                userInfo.setEmail(firebaseUser.getEmail());
-                userInfo.setCountry(country);
-                userInfo.setCity(city);
-                userInfo.setPhone(phone);
-                userInfo.setUserid(firebaseUser.getUid());
-                userInfo.setStatus(true);
+        userInfo.setUsername(username);
+        userInfo.setEmail(firebaseUser.getEmail());
+        userInfo.setCountry(country);
+        userInfo.setCity(city);
+        userInfo.setPhone(phone);
+        userInfo.setUserid(firebaseUser.getUid());
+        userInfo.setStatus(true);
 
 
-            }
+    }
 
 
 
@@ -309,19 +298,24 @@ public class profile_edit extends AppCompatActivity {
 
                 if (TextUtils.isEmpty(txt_username) ||TextUtils.isEmpty(txt_email)
                         || TextUtils.isEmpty(txt_country) || TextUtils.isEmpty(txt_city ) || TextUtils.isEmpty(txt_phone)) {
-                    Toast.makeText(profile_edit.this, "All field are required", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "All field are required", Toast.LENGTH_SHORT).show();
                 }else {
                     register(txt_username, txt_email,
                             txt_country, txt_city,txt_phone);
-                    Intent intent = new Intent(profile_edit.this, sign_in.class);
+                    Intent intent = new Intent(getActivity(), sign_in.class);
                     startActivity(intent);
-                    finish();
 
                 }
             }
         });
 
     }
+    public PackageManager getPackageManager() {
+        throw new RuntimeException("Stub!");
+    }
 
+    public File getExternalFilesDir(String type) {
+        throw new RuntimeException("Stub!");
+    }
 
 }

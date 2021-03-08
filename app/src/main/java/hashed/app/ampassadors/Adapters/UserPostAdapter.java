@@ -23,35 +23,36 @@ import java.util.List;
 import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import hashed.app.ampassadors.Objects.PostData;
+import hashed.app.ampassadors.Objects.UserPostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 
-public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.PostHolder>  {
+public class UserPostAdapter extends RecyclerView.Adapter<UserPostAdapter.UserPostHolder> {
 
-    private static List<PostData> posts;
+    private static List<UserPostData> posts;
     Context context;
 
     private static final CollectionReference usersCollectionRef =
             FirebaseFirestore.getInstance().collection("Users");
 
 
-    public PostAdapter(List<PostData> posts , Context context){
-        PostAdapter.posts = posts ;
+    public UserPostAdapter(List<UserPostData> posts , Context context){
+        UserPostAdapter.posts = posts ;
         this.context = context;
     }
 
 
     @NonNull
     @Override
-    public PostHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public UserPostHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        return new PostHolder(LayoutInflater.from(context).inflate(R.layout.home_post_news_item
+        return new UserPostHolder(LayoutInflater.from(context).inflate(R.layout.home_post_news_item
                 , parent , false));
 
     }
+
     @Override
-    public void onBindViewHolder(@NonNull PostHolder holder, int position) {
+    public void onBindViewHolder(@NonNull UserPostHolder holder, int position) {
         holder.bind(posts.get(position));
     }
 
@@ -60,8 +61,8 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.PostHolder>  
         return posts.size();
     }
 
-    public class PostHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-      private final CircleImageView imageIv ;
+    public static class UserPostHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private final CircleImageView imageIv ;
         private final TextView usernameTv ;
         private final TextView dateTv ;
         private final TextView titleTv ;
@@ -78,7 +79,7 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.PostHolder>  
                 Locale.getDefault());
 
 
-        public PostHolder(@NonNull View itemView) {
+        public UserPostHolder(@NonNull View itemView) {
             super(itemView);
             imageIv = itemView.findViewById(R.id.imageIv);
             usernameTv = itemView.findViewById(R.id.usernameTv);
@@ -94,25 +95,7 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.PostHolder>  
             menuIv = itemView.findViewById(R.id.menuIv);
         }
 
-
-        //        private void showPostOptionsBottomSheet() {
-//            final View parentView = new CommentFragment().getLayoutInflater
-//                    ().inflate(R.layout.fragment_commnet, null);
-//            parentView.setBackgroundColor(Color.TRANSPARENT);
-//
-//
-//
-//            bsd.setContentView(parentView);
-//            bsd.show();
-//
-//        }
-
-
-
-
-
-
-        private void bind(PostData postData){
+        private void bind(UserPostData postData){
 
             Picasso.get().load(postData.getImageUrl()).fit().into(postIv);
 
@@ -122,11 +105,11 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.PostHolder>  
 
             }else{
 
-              if(postData.getPublisherImage()!=null){
-                Picasso.get().load(postData.getPublisherImage()).fit().into(imageIv);
-              }
+                if(postData.getPublisherImage()!=null){
+                    Picasso.get().load(postData.getPublisherImage()).fit().into(imageIv);
+                }
 
-              usernameTv.setText(postData.getPublisherName());
+                usernameTv.setText(postData.getPublisherName());
 
             }
 
@@ -135,13 +118,13 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.PostHolder>  
 
             if(GlobalVariables.getLikesList().contains(postData.getPostId())){
 
-              likeTv.setTextColor(itemView.getContext()
-                      .getResources().getColor(R.color.red));
+                likeTv.setTextColor(itemView.getContext()
+                        .getResources().getColor(R.color.red));
 
             }else{
 
-              likeTv.setTextColor(itemView.getContext()
-                      .getResources().getColor(R.color.black));
+                likeTv.setTextColor(itemView.getContext()
+                        .getResources().getColor(R.color.black));
 
             }
 
@@ -150,46 +133,33 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.PostHolder>  
             descriptionTv.setText(postData.getDescription());
 
             likeTv.setOnClickListener(this);
+            commentTv.setOnClickListener(this);
             redMoreTv.setOnClickListener(this);
             menuIv.setOnClickListener(this);
 
-            commentTv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                }
-            });
-
         }
 
-        private void getUserInfo(PostData postData, String userId){
+        private void getUserInfo(UserPostData postData, String userId){
 
             usersCollectionRef.document(userId).get()
                     .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                      @Override
-                      public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                        if(documentSnapshot.exists()){
+                            if(documentSnapshot.exists()){
 
-                          postData.setImageUrl(documentSnapshot.getString("imageUrl"));
-                          postData.setPublisherName(documentSnapshot.getString("username"));
+                                postData.setImageUrl(documentSnapshot.getString("imageUrl"));
+                                postData.setPublisherName(documentSnapshot.getString("username"));
+
+                            }
 
                         }
-
-                      }
                     }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-              @Override
-              public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-
-                Picasso.get().load(postData.getImageUrl()).into(imageIv);
-                usernameTv.setText(postData.getPublisherName());
-
-              }
-            });
-            commentTv.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
+                    Picasso.get().load(postData.getImageUrl()).into(imageIv);
+                    usernameTv.setText(postData.getPublisherName());
 
                 }
             });
@@ -202,34 +172,34 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.PostHolder>  
 
             if(view.getId() == R.id.likeTv){
 
-              if(likeTv.getCurrentTextColor() ==
-                      itemView.getContext()
-                              .getResources().getColor(R.color.red)
-              ){
+                if(likeTv.getCurrentTextColor() ==
+                        itemView.getContext()
+                                .getResources().getColor(R.color.red)
+                ){
 
 
-                likeTv.setTextColor(itemView.getContext()
-                        .getResources().getColor(R.color.black));
+                    likeTv.setTextColor(itemView.getContext()
+                            .getResources().getColor(R.color.black));
 
-                likesTv.setText(String.valueOf(
-                        (Integer.parseInt(likesTv.getText().toString())-1)
-                ));
+                    likesTv.setText(String.valueOf(
+                            (Integer.parseInt(likesTv.getText().toString())-1)
+                    ));
 
-                PostData.likePost(posts.get(getAdapterPosition()).getPostId(),2);
+                    UserPostData.likePost(posts.get(getAdapterPosition()).getPostId(),2);
 
 
-              }else{
+                }else{
 
-                likeTv.setTextColor(itemView.getContext()
-                        .getResources().getColor(R.color.red));
+                    likeTv.setTextColor(itemView.getContext()
+                            .getResources().getColor(R.color.red));
 
-                likesTv.setText(String.valueOf(
-                        (Integer.parseInt(likesTv.getText().toString())+1)
-                ));
+                    likesTv.setText(String.valueOf(
+                            (Integer.parseInt(likesTv.getText().toString())+1)
+                    ));
 
-                PostData.likePost(posts.get(getAdapterPosition()).getPostId(),1);
+                    UserPostData.likePost(posts.get(getAdapterPosition()).getPostId(),1);
 
-              }
+                }
 
             }else if(view.getId() == R.id.commentTv){
 
@@ -251,6 +221,4 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.PostHolder>  
 
         }
     }
-
-
 }

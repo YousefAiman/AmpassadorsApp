@@ -6,8 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -19,44 +18,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AmpassadorsApp">
-        <activity android:name=".Activities.ComplanitsListActivity"/>
-
-        <activity android:name=".Activities.Complanits_DetailsActivity" />
-        <activity android:name=".Activities.Suggestions_DtailesActivity" />
-        <activity android:name=".Activities.List_Sug_Activity" />
-
-        <activity android:name=".Activities.SuggestionsActivity" />
-
-
-
-
-        <activity android:name=".Activities.ComplaintsActivity"/>
-
-        <activity android:name=".Activities.posts_profile" />
-        <activity android:name=".Activities.Home_Activity" />
+        <activity android:name=".Activities.posts_profile"/>
+        <activity android:name=".Activities.Home_Activity"/>
         <activity android:name=".Activities.Admin" />
         <activity android:name=".Activities.profile_edit" />
         <activity android:name=".Activities.profile" />
-        <activity android:name=".Activities.PostActivity">
+        <activity android:name=".Activities.PostActivity" />
+        <activity android:name=".Activities.sign_up" />
+        <activity android:name=".Activities.sign_in" />
+        <activity android:name=".Activities.PrivateMessagingActivity" />
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-
-        <activity android:name=".Activities.sign_up" />
-        <activity android:name=".Activities.sign_in" />
-        <activity android:name=".Activities.PrivateMessagingActivity" />
-        <activity android:name=".MainActivity">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
         </activity>
 
         <provider

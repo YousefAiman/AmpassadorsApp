@@ -1,6 +1,7 @@
 package hashed.app.ampassadors.Fragments;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +22,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.squareup.picasso.Picasso;
 
 import hashed.app.ampassadors.Activities.profile;
 import hashed.app.ampassadors.Activities.profile_edit;
@@ -31,6 +34,7 @@ public class ProfileFragment extends Fragment {
     FirebaseAuth fAuth;
     FirebaseFirestore fStore;
     String userid ;
+    ImageView imageView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,6 +49,7 @@ public class ProfileFragment extends Fragment {
         country = view.findViewById(R.id.in_country);
         city = view.findViewById(R.id.in_city);
         phone = view.findViewById(R.id.in_phone);
+        imageView = view.findViewById(R.id.profile_picture);
 //
         fAuth = FirebaseAuth.getInstance();
         userid = fAuth.getCurrentUser().getUid();
@@ -61,6 +66,9 @@ public class ProfileFragment extends Fragment {
                         String coun = task.getResult().getString("country");
                         String cit = task.getResult().getString("city");
                         String pho = task.getResult().getString("phone");
+                        String imgUrl = task.getResult().getString("ImageUrl");
+
+
 
                         username.setText(user_name);
                         password.setText(pass);
@@ -68,6 +76,7 @@ public class ProfileFragment extends Fragment {
                         country.setText(coun);
                         city.setText(cit);
                         phone.setText(pho);
+                        Picasso.get().load(imgUrl).fit().into(imageView);
 
                     }
                 }else {
@@ -75,7 +84,6 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });
-
 
         edit_profile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,9 +101,6 @@ public class ProfileFragment extends Fragment {
                 drawerLayout.openDrawer(GravityCompat.START);
             }
         });
-
-
         return view;
     }
-
 }

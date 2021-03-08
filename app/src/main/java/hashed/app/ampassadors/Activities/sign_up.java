@@ -132,6 +132,10 @@ public class sign_up extends AppCompatActivity {
         task.addOnSuccessListener(new OnSuccessListener<AuthResult>() {
             @Override
             public void onSuccess(AuthResult authResult) {
+
+
+
+
                 userInfo = new UserInfo();
                // Picasso.get().load(userInfo.getImageUrl()).fit().into(circleImageView);
 
@@ -145,12 +149,26 @@ public class sign_up extends AppCompatActivity {
                 userInfo.setPhone(phone);
                 userInfo.setUserid(firebaseUser.getUid());
                 userInfo.setImageUrl(imageUrl);
+                userInfo.setStatus(true);
 
 
                reference.document(firebaseUser.getUid()).set(userInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
                    @Override
                    public void onComplete(@NonNull Task<Void> task) {
                        if (task.isSuccessful()){
+                           FirebaseUser user = auth.getCurrentUser();
+                           user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
+                               @Override
+                               public void onSuccess(Void aVoid) {
+                                   Toast.makeText(sign_up.this, "Verification Email Has been Sent. ", Toast.LENGTH_SHORT).show();
+                               }
+                           }).addOnFailureListener(new OnFailureListener() {
+                               @Override
+                               public void onFailure(@NonNull Exception e) {
+                                   Toast.makeText(sign_up.this, "Email not Sent", Toast.LENGTH_SHORT).show();
+                               }
+                           });
+
                            Toast.makeText(sign_up.this, "Added successfully", Toast.LENGTH_LONG).show();
 
                        }

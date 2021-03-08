@@ -9,7 +9,7 @@ public class UserInfo {
     String phone;
     String imageUrl;
     String userid;
-
+    boolean status;
 
     public String getUsername() {
         return username;
@@ -76,5 +76,13 @@ public class UserInfo {
         this.userid = userid;
     }
 
+    //
 
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
+    }
 }

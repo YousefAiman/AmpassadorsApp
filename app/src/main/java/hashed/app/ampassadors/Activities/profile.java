@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +41,7 @@ public class profile extends AppCompatActivity {
     FirebaseAuth fAuth;
     FirebaseFirestore fStore;
     String userid ;
-
+    ImageView imageView;
 
 
 
@@ -50,7 +52,6 @@ public class profile extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
         init();
         goToEditprofile();
-        drawer();
 
 
 
@@ -59,12 +60,15 @@ public class profile extends AppCompatActivity {
            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                if (task.isSuccessful()){
                    if (task.getResult().exists()){
-                       String user_name = task.getResult().getString("usernam");
+                       String user_name = task.getResult().getString("username");
                        String pass = task.getResult().getString("password");
                        String ema = task.getResult().getString("email");
                        String coun = task.getResult().getString("country");
                        String cit = task.getResult().getString("city");
                        String pho = task.getResult().getString("phone");
+
+                       String imgUrl = task.getResult().getString("imageUrl");
+
 
                        username.setText(user_name);
                        password.setText(pass);
@@ -72,32 +76,13 @@ public class profile extends AppCompatActivity {
                        country.setText(coun);
                        city.setText(cit);
                        phone.setText(pho);
-
+                       Picasso.get().load(imgUrl).fit().into(imageView);
                    }
                }else {
                    Toast.makeText(profile.this, "Error"+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                }
            }
        });
-
-
-//        DocumentReference documentReference = fStore.collection("users").document(userid);
-//
-//        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
-//            @Override
-//            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException error) {
-//                if (documentSnapshot.exists()) {
-//                    username.setText(documentSnapshot.getString("usernam"));
-//                    phone.setText(documentSnapshot.getString("phone"));
-//                    password.setText(documentSnapshot.getString("password"));
-//                    email.setText(documentSnapshot.getString("email"));
-//                    country.setText(documentSnapshot.getString("country"));
-//                    city.setText(documentSnapshot.getString("city"));
-//                }else {
-//                    Log.d("ttt", "On Event do not exists");
-//                }
-//            }
-//        });
     }
 
     private void init(){
@@ -108,7 +93,9 @@ public class profile extends AppCompatActivity {
         country = findViewById(R.id.in_country);
         city = findViewById(R.id.in_city);
         phone = findViewById(R.id.in_phone);
-//
+
+       imageView = findViewById(R.id.profile_picture);
+
         fAuth = FirebaseAuth.getInstance();
         userid = fAuth.getCurrentUser().getUid();
 
@@ -122,16 +109,6 @@ public class profile extends AppCompatActivity {
                 Intent intent = new Intent(profile.this, profile_edit.class);
                 startActivity(intent);
 
-            }
-        });
-    }
-
-    private void drawer(){
-        final DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
-        findViewById(R.id.image_menu).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                drawerLayout.openDrawer(GravityCompat.START);
             }
         });
     }

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:orientation="vertical"
+    tools:context=".Activities.PostActivity">
+
+    <include
+        android:id="@+id/home_activity_toolbar"
+        layout="@layout/post_toolbar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="117dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="20dp">
+
+        <android.widget.Button
+            android:id="@+id/create_post_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="30sp"
+            android:background="#ff22"
+            android:text="post" />
+
+
+        <TextView
+            android:id="@+id/username_post_in_create_psot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="70dp"
+            android:layout_marginTop="40dp"
+            android:text="Name"
+            android:textColor="#000"
+            android:textSize="24sp" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/image_user_posting_in_create_post"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:src="@drawable/ic_blackuser" />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/posting_filed"
+        android:layout_width="match_parent"
+        android:layout_height="67dp"
+        android:layout_marginLeft="20sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="20dp"
+        android:background="#f2f2f2"
+        android:hint="posting"
+        android:inputType="textMultiLine"
+        android:textAlignment="textEnd"
+
+        android:textColor="#000" />
+
+    <ImageView
+        android:id="@+id/image_create_post"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@drawable/ic_picture"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="#f2f2f2"
+        />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="20dp">
+
+        <android.widget.Button
+            android:id="@+id/poll_btn_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/btn_design_post"
+            android:drawableStart="@drawable/pdf"
+            android:paddingLeft="30dp" />
+
+        <android.widget.Button
+            android:id="@+id/pdf_btn_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/btn_design_post"
+            android:drawableStart="@drawable/pdf"
+            android:paddingLeft="30dp" />
+
+        <android.widget.Button
+            android:id="@+id/vedio_btn_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/btn_design_post"
+            android:drawableStart="@drawable/pdf"
+            android:paddingLeft="30dp" />
+
+        <android.widget.Button
+
+            android:id="@+id/image_btn_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/btn_design_post"
+            android:drawableStart="@drawable/pdf"
+            android:paddingLeft="30dp" />
+
+
+    </LinearLayout>
+
+</LinearLayout>

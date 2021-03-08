@@ -1,21 +1,20 @@
-package hashed.app.ampassadors.Activities;
+package hashed.app.ampassadors.Fragments;
+
+import android.content.Intent;
+import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,7 +24,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -36,19 +34,16 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-import hashed.app.ampassadors.Adapters.PostAdapter;
+import hashed.app.ampassadors.Activities.UsersPost;
+import hashed.app.ampassadors.Activities.profile;
 import hashed.app.ampassadors.Adapters.UserPostAdapter;
-import hashed.app.ampassadors.Adapters.UsersAdapter;
-import hashed.app.ampassadors.Fragments.PostsFragment;
-import hashed.app.ampassadors.MainActivity;
-import hashed.app.ampassadors.Objects.PostData;
-import hashed.app.ampassadors.Objects.UserInfo;
 import hashed.app.ampassadors.Objects.UserPostData;
 import hashed.app.ampassadors.R;
 
-
-public class posts_profile extends AppCompatActivity implements Toolbar.OnMenuItemClickListener,
+public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItemClickListener,
         SwipeRefreshLayout.OnRefreshListener {
+
+
     FirebaseFirestore firebaseFirestore;
     Query query;
     List<UserPostData> postData;
@@ -67,57 +62,44 @@ public class posts_profile extends AppCompatActivity implements Toolbar.OnMenuIt
     Toolbar toolbar;
 
 
-    public posts_profile() {
+    public PostsProfileFragment() {
         // Required empty public constructor
     }
 
 
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_posts_profile);
-
-        floatingButton = findViewById(R.id.floatingbtn);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view =  inflater.inflate(R.layout.fragment_posts_profile, container, false);
+        floatingButton = view.findViewById(R.id.floatingbtn);
         floatingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), UsersPost.class);
+                Intent intent = new Intent(getActivity(), UsersPost.class);
                 startActivity(intent);
 
             }
         });
-
-
-
-        toolbar = findViewById(R.id.toolbar);
+        toolbar = view.findViewById(R.id.toolbar);
         getUserNaImg();
         firebaseFirestore = FirebaseFirestore.getInstance();
         query = firebaseFirestore.collection("Users").
                 document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .collection("UserPosts")
                 .orderBy("publishTime",
-                Query.Direction.DESCENDING).limit(10);
+                        Query.Direction.DESCENDING).limit(10);
         postData = new ArrayList<>();
 
-        adapter = new UserPostAdapter(postData, posts_profile.this);
-        post_list = findViewById(R.id.userpost_recycler);
+        adapter = new UserPostAdapter(postData, getActivity());
+        post_list = view.findViewById(R.id.userpost_recycler);
 
-        post_list.setLayoutManager(new LinearLayoutManager(posts_profile.this, RecyclerView.VERTICAL, false));
+        post_list.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
 
 
-//        swipeRefresh = findViewById(R.id.swipeRefreesh);
-//        swipeRefresh.setOnRefreshListener(this);
-//
-//        Toolbar toolbar = findViewById(R.id.home_activity_toolbar);
 
-//        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                ((Home_Activity)getApplicationContext())
-//                        .showDrawer();
-//            }
-//        });
+
+
+        return view;
     }
 
 
@@ -150,7 +132,7 @@ public class posts_profile extends AppCompatActivity implements Toolbar.OnMenuIt
                 return true;
 
             case R.id.action_about:
-                startActivity( new Intent(posts_profile.this, profile.class));
+                startActivity( new Intent(getActivity(), profile.class));
 
         }
 
@@ -182,7 +164,6 @@ public class posts_profile extends AppCompatActivity implements Toolbar.OnMenuIt
             }
         }
     }
-
 
     private void ReadPost(boolean isInitial) {
         swipeRefresh.setRefreshing(true);
@@ -220,23 +201,23 @@ public class posts_profile extends AppCompatActivity implements Toolbar.OnMenuIt
 
     private void setUpToolBarAndActions() {
 
-        final Toolbar toolbar = findViewById(R.id.toolbar);
+        final Toolbar toolbar = getView().findViewById(R.id.toolbar);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(posts_profile.this, "tool", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "tool", Toast.LENGTH_SHORT).show();
             }
         });
         toolbar.setOnMenuItemClickListener(this);
     }
 
     private void getUserNaImg(){
-        username = findViewById(R.id.textView6);
+        username = getView().findViewById(R.id.textView6);
         fAuth = FirebaseAuth.getInstance();
         userid = fAuth.getCurrentUser().getUid();
         fStore = FirebaseFirestore.getInstance();
-        imageView = findViewById(R.id.profile_picture);
+        imageView = getView().findViewById(R.id.profile_picture);
 
         fStore.collection("Users").document(userid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -249,15 +230,16 @@ public class posts_profile extends AppCompatActivity implements Toolbar.OnMenuIt
 
 
                         task.getResult().getBoolean("status");
-                        toolbar.setOnMenuItemClickListener(posts_profile.this);
+                        toolbar.setOnMenuItemClickListener(PostsProfileFragment.this);
 
                         username.setText(user_name);
                         Picasso.get().load(imgUrl).fit().into(imageView);
                     }
                 }else {
-                    Toast.makeText(posts_profile.this, "Error"+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Error"+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
+
 }

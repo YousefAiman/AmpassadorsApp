@@ -1,20 +1,26 @@
 package hashed.app.ampassadors.Activities;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import hashed.app.ampassadors.Fragments.ProfileFragment;
 import hashed.app.ampassadors.R;
@@ -23,6 +29,9 @@ public class sign_in extends AppCompatActivity {
     EditText email, password ;
     Button btn_login , create_account_btn;
     FirebaseAuth auth;
+    TextView verifyEmail, forgetPass;
+    String userid;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +40,72 @@ public class sign_in extends AppCompatActivity {
         init();
         LogIn();
         CreateAccount();
+        verify();
+        resetPass();
+    }
 
+    public void resetPass(){
+        forgetPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditText resetMail = new EditText(view.getContext());
+                AlertDialog.Builder passwordResetDaialog = new AlertDialog.Builder(view.getContext());
 
+                passwordResetDaialog.setTitle("Reset Password");
+                passwordResetDaialog.setMessage("Enter your Email Ro Recived Reset Link");
+                passwordResetDaialog.setView(resetMail);
+
+                passwordResetDaialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String mail = resetMail.getText().toString();
+                        auth.sendPasswordResetEmail(mail).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Toast.makeText(sign_in.this, "Reset Link To Your Email. ", Toast.LENGTH_SHORT).show();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(sign_in.this, "Error! Reset Link is Not Sent" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
+                passwordResetDaialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+
+                passwordResetDaialog.create().show();
+            }
+        });
+    }
+
+    public void verify(){
+        userid = auth.getCurrentUser().getUid();
+        FirebaseUser user = auth.getCurrentUser();
+
+        if (user.isEmailVerified()){
+            verifyEmail.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(sign_in.this, "Verification Email Has been Sent. ", Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(sign_in.this, "Email not Sent", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            });
+        }
     }
 
     public void init() {
@@ -41,6 +114,9 @@ public class sign_in extends AppCompatActivity {
         email = findViewById(R.id.input_email);
         password = findViewById(R.id.imput_password);
         btn_login = findViewById(R.id.sign_in_btn);
+        verifyEmail = findViewById(R.id.verify_email);
+        forgetPass = findViewById(R.id.forget_pass);
+
     }
 
     private void LogIn(){
