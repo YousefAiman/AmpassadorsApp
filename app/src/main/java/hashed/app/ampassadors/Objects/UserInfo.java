@@ -1,23 +1,6 @@
 package hashed.app.ampassadors.Objects;
 
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.squareup.picasso.Picasso;
-
 public class UserInfo {
-
-    private static final CollectionReference usersRef =
-            FirebaseFirestore.getInstance().collection("Users");
-
     String username;
     String password;
     String email;
@@ -26,7 +9,7 @@ public class UserInfo {
     String phone;
     String imageUrl;
     String userid;
-
+    boolean status;
 
     public String getUsername() {
         return username;
@@ -93,37 +76,13 @@ public class UserInfo {
         this.userid = userid;
     }
 
+    //
 
+    public Boolean getStatus() {
+        return status;
+    }
 
-//    public static void getUserNameAndImage(Object object,String userId, ImageView imageIv,
-//                                           TextView usernameTv){
-//
-//        usersRef.document(userId).get()
-//                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//                        @Override
-//                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-//
-//                            if(documentSnapshot.exists()){
-//
-//                                object.setImageUrl(documentSnapshot.getString("imageUrl"));
-//                                postData.setPublisherImage(documentSnapshot.getString("username"));
-//
-//                            }
-//
-//                        }
-//                    }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                @Override
-//                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//
-//                    if(postData.getPublisherImage()!=null){
-//                        Picasso.get().load(postData.getPublisherImage()).into(imageIv);
-//                    }
-//
-//                    usernameTv.setText(postData.getPublisherName());
-//                }
-//            });
-//
-//        }
-
-
+    public void setStatus(Boolean status) {
+        this.status = status;
+    }
 }

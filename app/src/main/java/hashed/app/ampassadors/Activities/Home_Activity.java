@@ -65,7 +65,7 @@ public class Home_Activity extends AppCompatActivity  {
 
         SetUpCompetent();
 
-        replaceFragment(new ChattingFragment());
+//        replaceFragment(new ChattingFragment());
 
         OnClickButtons();
 
@@ -90,7 +90,6 @@ public class Home_Activity extends AppCompatActivity  {
                                 GlobalVariables.setCurrentUsername(value.getString("username"));
                                 GlobalVariables.setCurrentUserImageUrl(value.getString("imageUrl"));
                             }
-
 
                             if(value.contains("Likes")){
                                 List<String> likes = (List<String>) value.get("Likes");
@@ -156,7 +155,7 @@ public class Home_Activity extends AppCompatActivity  {
     }
 
 
-    private void replaceFragment(Fragment fragment){
+    public void replaceFragment(Fragment fragment){
 
         getSupportFragmentManager().beginTransaction().replace(
                 homeFrameLayout.getId(),fragment

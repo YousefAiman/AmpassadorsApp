@@ -1,6 +1,7 @@
 package hashed.app.ampassadors.Fragments;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,17 +13,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.squareup.picasso.Picasso;
 
-import hashed.app.ampassadors.Activities.profile;
 import hashed.app.ampassadors.Activities.profile_edit;
+import hashed.app.ampassadors.Objects.UserInfo;
 import hashed.app.ampassadors.R;
 
 public class ProfileFragment extends Fragment {
@@ -31,12 +35,13 @@ public class ProfileFragment extends Fragment {
     FirebaseAuth fAuth;
     FirebaseFirestore fStore;
     String userid ;
+    ImageView imageView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.activity_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         edit_profile = view.findViewById(R.id.edit_data);
         username = view.findViewById(R.id.in_username);
@@ -45,30 +50,37 @@ public class ProfileFragment extends Fragment {
         country = view.findViewById(R.id.in_country);
         city = view.findViewById(R.id.in_city);
         phone = view.findViewById(R.id.in_phone);
+        imageView = view.findViewById(R.id.profile_picture);
 //
         fAuth = FirebaseAuth.getInstance();
         userid = fAuth.getCurrentUser().getUid();
 
         fStore = FirebaseFirestore.getInstance();
-        fStore.collection("Users").document(userid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+
+        final UserInfo[] userInfo = new UserInfo[1];
+
+        fStore.collection("Users").document(userid).get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                        if(documentSnapshot.exists()){
+                            userInfo[0] = documentSnapshot.toObject(UserInfo.class);
+                        }
+
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()){
                     if (task.getResult().exists()){
-//                        String user_name = task.getResult().getString("username");
-//                        String pass = task.getResult().getString("password");
-//                        String ema = task.getResult().getString("email");
-//                        String coun = task.getResult().getString("country");
-//                        String cit = task.getResult().getString("city");
-//                        String pho = task.getResult().getString("phone");
-//
-//                        username.setText(user_name);
-//                        password.setText(pass);
-//                        email.setText(ema);
-//                        country.setText(coun);
-//                        city.setText(cit);
-//                        phone.setText(pho);
-
+                        username.setText(userInfo[0].getUsername());
+                        password.setText(userInfo[0].getPassword());
+                        email.setText(userInfo[0].getEmail());
+                        country.setText(userInfo[0].getCountry());
+                        city.setText(userInfo[0].getCity());
+                        phone.setText(userInfo[0].getPhone());
+                        Picasso.get().load(userInfo[0].getImageUrl()).fit().into(imageView);
                     }
                 }else {
                     Toast.makeText(getActivity(), "Error"+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -76,26 +88,15 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-
         edit_profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), profile_edit.class);
                 startActivity(intent);
-
-            }
-        });
-
-        final DrawerLayout drawerLayout = view.findViewById(R.id.drawer_layout);
-        view.findViewById(R.id.image_menu).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                drawerLayout.openDrawer(GravityCompat.START);
             }
         });
 
 
         return view;
     }
-
 }

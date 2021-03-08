@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:fontFamily="@font/segoe_ui_bold"
-            android:layout_marginLeft="100dp"
+            android:layout_marginLeft="70dp"
             android:layout_gravity="center"
             android:text="@string/profile"
             android:textSize="24sp" />

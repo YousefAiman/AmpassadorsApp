@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+
+    <com.google.android.material.navigation.NavigationView
+
+        android:id="@+id/navigationview"
+        android:layout_width="320dp"
+        android:layout_height="match_parent"
+        app:menu="@menu/navigation_menu"
+        android:background="@color/black"
+        app:itemTextColor="@color/white"
+        android:layout_marginTop="55dp"
+        app:headerLayout="@layout/layout_navegation_header"
+        android:layout_gravity="start"/>
+
+    <!--
+    <ScrollView android:layout_height="match_parent"
+        android:layout_width="match_parent">
+    -->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".profile">
+
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/profile_toolbar"
+
+            />
+
+
+
+
+        <Button
+            android:id="@+id/aja"
+            android:layout_width="98dp"
+            android:layout_height="43dp"
+            android:layout_marginBottom="20dp"
+            android:text="Create Post"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/profile_picture"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.515"
+            app:layout_constraintStart_toEndOf="@+id/profile_picture"
+            app:layout_constraintTop_toBottomOf="@+id/textView6"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content"
+
+            android:orientation="vertical"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteX="20dp">
+
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:background="@color/dark_green"
+            android:paddingTop="50dp"
+            android:paddingRight="30dp"
+            android:text="Name "
+            android:textAlignment="viewEnd"
+            android:textColor="#fff"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_picture"
+            android:layout_width="149dp"
+            android:layout_height="147dp"
+            android:layout_marginTop="36dp"
+            android:background="@drawable/profile_background"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+        <androidx.recyclerview.widget.RecyclerView
+
+            android:id="@+id/userpost_recycler"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_picture" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="20dp"
+            android:contentDescription="@string/add_group"
+            android:src="@drawable/feather_icon"
+            app:fabSize="normal"
+            app:layout_constraintBottom_toBottomOf="@+id/userpost_recycler"
+            app:layout_constraintStart_toStartOf="parent"
+            app:maxImageSize="40dp"
+            app:tint="@color/white" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

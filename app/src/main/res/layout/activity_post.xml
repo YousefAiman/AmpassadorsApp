@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,120 +7,146 @@
     android:orientation="vertical"
     tools:context=".Activities.PostActivity">
 
+
     <include
         android:id="@+id/home_activity_toolbar"
-        layout="@layout/post_toolbar" />
+        layout="@layout/post_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
+
+    <android.widget.Button
+        android:id="@+id/create_post_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/publish_btn_back"
+        android:text="post"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/home_activity_toolbar" />
+
+    <TextView
+        android:id="@+id/username_post_in_create_psot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="8dp"
+        android:text="Name"
+        android:textColor="#000"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toStartOf="@+id/image_create_post"
+        app:layout_constraintTop_toTopOf="@+id/image_create_post" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/image_create_post"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:src="@drawable/ic_blackuser"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/home_activity_toolbar" />
+
+    <EditText
+        android:id="@+id/post_title"
         android:layout_width="match_parent"
-        android:layout_height="117dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="20dp">
-
-        <android.widget.Button
-            android:id="@+id/create_post_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="30sp"
-            android:background="#ff22"
-            android:text="post" />
-
-
-        <TextView
-            android:id="@+id/username_post_in_create_psot"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="100dp"
-            android:layout_marginTop="40dp"
-            android:text="Name"
-            android:textColor="#000"
-            android:textSize="24sp" />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/image_user_posting_in_create_post"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            android:src="@drawable/ic_blackuser" />
-    </LinearLayout>
+        android:layout_height="50dp"
+        android:layout_marginTop="72dp"
+        android:background="#f2f2f2"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:ems="10"
+        android:hint="عنوان الخبر "
+        android:inputType="textPersonName"
+        android:textColor="#000"
+        app:layout_constraintEnd_toEndOf="@+id/image_create_post"
+        app:layout_constraintHorizontal_bias="0.696"
+        app:layout_constraintStart_toStartOf="@+id/create_post_btn"
+        app:layout_constraintTop_toBottomOf="@+id/username_post_in_create_psot" />
 
     <EditText
         android:id="@+id/posting_filed"
         android:layout_width="match_parent"
         android:layout_height="67dp"
-        android:layout_marginLeft="20sp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="10dp"
         android:background="#f2f2f2"
-        android:hint="posting"
-        android:inputType="textMultiLine"
-        android:textAlignment="textEnd"
 
-        android:textColor="#000" />
+        android:hint="التفاصيل "
+        android:inputType="textMultiLine"
+        android:padding="10dp"
+        android:textAlignment="textStart"
+        android:textColor="#000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/post_title" />
 
     <ImageView
-        android:id="@+id/image_create_post"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:src="@drawable/ic_picture"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
+        android:id="@+id/postIv"
+        android:layout_width="0dp"
+        android:layout_height="196dp"
+
         android:background="#f2f2f2"
-        />
+        app:layout_constraintEnd_toEndOf="@+id/posting_filed"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/posting_filed"
+        app:layout_constraintTop_toBottomOf="@+id/posting_filed" />
+
+    <android.widget.Button
+        android:id="@+id/image_btn_post"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:background="@drawable/btn_design_post"
+        android:drawableStart="@drawable/image_icon"
+        android:paddingLeft="30dp"
+        app:layout_constraintEnd_toStartOf="@+id/vedio_btn_post"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/pdf_btn_post"
+        app:layout_constraintTop_toBottomOf="@+id/postIv" />
+
+    <android.widget.Button
+        android:id="@+id/vedio_btn_post"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:background="@drawable/btn_design_post"
+        android:drawableStart="@drawable/video_icon"
+        android:paddingLeft="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/image_btn_post"
+        app:layout_constraintTop_toBottomOf="@+id/postIv" />
+
+    <android.widget.Button
+        android:id="@+id/poll_btn_post"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:background="#fff"
+        android:drawableStart="@drawable/ic_baseline_poll"
+        android:paddingLeft="30dp"
+        app:layout_constraintEnd_toStartOf="@+id/pdf_btn_post"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/postIv" />
+
+    <android.widget.Button
+        android:id="@+id/pdf_btn_post"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="68dp"
+        android:background="@drawable/btn_design_post"
+        android:drawableStart="@drawable/pdf_icon"
+        android:paddingLeft="30dp"
+        app:layout_constraintEnd_toStartOf="@+id/image_btn_post"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/poll_btn_post"
+        app:layout_constraintTop_toBottomOf="@+id/postIv" />
 
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="20dp">
-
-            <android.widget.Button
-                android:id="@+id/poll_btn_post"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="0dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/btn_design_post"
-                android:drawableStart="@drawable/pdf_icon"
-                android:paddingLeft="30dp" />
-
-            <android.widget.Button
-                android:id="@+id/pdf_btn_post"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/btn_design_post"
-                android:drawableStart="@drawable/pdf_icon"
-                android:paddingLeft="30dp" />
-
-            <android.widget.Button
-                android:id="@+id/vedio_btn_post"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/btn_design_post"
-                android:drawableStart="@drawable/pdf_icon"
-                android:paddingLeft="30dp" />
-
-            <android.widget.Button
-                android:id="@+id/image_btn_post"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/btn_design_post"
-                android:drawableStart="@drawable/pdf_icon"
-                android:paddingLeft="30dp" />
-
-
-        </LinearLayout>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

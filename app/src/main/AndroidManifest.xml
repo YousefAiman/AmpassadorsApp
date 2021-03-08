@@ -28,23 +28,22 @@
             android:screenOrientation="portrait" />
         <activity android:name=".Activities.Admin" />
         <activity android:name=".Activities.profile_edit" />
-        <activity android:name=".Activities.profile" />
         <activity android:name=".Activities.PostActivity" />
         <activity android:name=".Activities.sign_up" />
         <activity android:name=".Activities.CreateMeetingActivity" />
         <activity android:name=".Activities.CreatePollActivity" />
         <activity android:name=".Activities.UsersPickerActivity" />
         <activity android:name=".Activities.ZoomActivity" >
+
+        </activity>
+        <activity android:name=".Activities.sign_in" />
+        <activity android:name=".Activities.PrivateMessagingActivity" />
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity android:name=".Activities.sign_in" />
-        <activity android:name=".Activities.PrivateMessagingActivity" />
-        <activity android:name=".MainActivity">
-
         </activity>
 
         <provider

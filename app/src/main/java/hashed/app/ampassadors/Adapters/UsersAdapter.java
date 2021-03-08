@@ -31,8 +31,10 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
+import hashed.app.ampassadors.Activities.posts_profile;
 import hashed.app.ampassadors.Objects.ChatItem;
 import hashed.app.ampassadors.Objects.PrivateMessagePreview;
+import hashed.app.ampassadors.Objects.UserPostData;
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
@@ -71,7 +73,8 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersVh> imp
     this.selectedUserIds = selectedUserIds;
   }
 
-  @Override
+
+    @Override
   public int getItemCount() {
     return filteredUsers.size();
   }
