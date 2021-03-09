@@ -9,9 +9,7 @@
     app:navigationContentDescription="navigate back"
     android:layout_height="?actionBarSize"
     android:elevation="4dp"
-    app:title="Suggestion"
     app:titleTextColor="#fff"
-    android:textAlignment="center"
     android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
     android:fitsSystemWindows="true"
@@ -19,11 +17,10 @@
     android:background="@color/dark_green">
 
 
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Suggestion"
+        android:text="Complaints"
         android:textColor="#fff"
         android:textAlignment="center"
         android:paddingTop="15dp"
