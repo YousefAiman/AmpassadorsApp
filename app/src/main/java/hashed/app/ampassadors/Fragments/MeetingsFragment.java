@@ -163,7 +163,7 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
 
         }
         isLoading = false;
-
+        swipeRefreshLayout.setRefreshing(false);
 
       }
 

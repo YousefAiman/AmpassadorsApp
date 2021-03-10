@@ -22,7 +22,7 @@ import hashed.app.ampassadors.R;
 
 public class WifiUtil {
 
-  static boolean checkWifiConnection(Context context) {
+  public static boolean checkWifiConnection(Context context) {
     if (!GlobalVariables.isWifiIsOn()) {
       Toast.makeText(context, R.string.please_check_your_internet_connection_and_try_again,
               Toast.LENGTH_SHORT).show();

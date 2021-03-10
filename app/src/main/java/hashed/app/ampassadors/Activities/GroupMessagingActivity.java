@@ -19,7 +19,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.MediaRecorder;
@@ -56,7 +55,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
@@ -81,7 +79,9 @@ import hashed.app.ampassadors.Fragments.FilePickerPreviewFragment;
 import hashed.app.ampassadors.Fragments.ImageFullScreenFragment;
 import hashed.app.ampassadors.Fragments.VideoFullScreenFragment;
 import hashed.app.ampassadors.Fragments.VideoPickerPreviewFragment;
+import hashed.app.ampassadors.Fragments.ZoomMeetingCreationFragment;
 import hashed.app.ampassadors.Objects.PrivateMessage;
+import hashed.app.ampassadors.Objects.ZoomMeeting;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
 
@@ -196,8 +196,6 @@ public class GroupMessagingActivity extends AppCompatActivity
     messagingTbProfileIv = findViewById(R.id.messagingTbProfileIv);
     messagingTbNameTv = findViewById(R.id.messagingTbNameTv);
 
-
-
     privateMessagingRv.addOnLayoutChangeListener(this);
     messageAttachIv.setOnClickListener(this);
     micIv.setOnClickListener(this);
@@ -235,27 +233,32 @@ public class GroupMessagingActivity extends AppCompatActivity
     currentMessagingRef = databaseReference.child(groupId);
 
     firebaseMessageDocRef = FirebaseFirestore.getInstance().collection("Meetings")
-            .document(Objects.requireNonNull(currentMessagingRef.getKey()));
+            .document(groupId);
 
-    currentMessagingRef
-            .get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
-      @Override
-      public void onSuccess(DataSnapshot snapshot) {
-        if(snapshot.exists()){
+    Log.d("ttt","looking to group");
+    currentMessagingRef.addListenerForSingleValueEvent(new ValueEventListener() {
+              @Override
+              public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-          if(snapshot.hasChild("Messages")){
+                if(snapshot.exists()){
+                  Log.d("ttt","found group");
+                  if(snapshot.hasChild("Messages")){
 
-            createMessagesListener();
+                    createMessagesListener();
 
-          }else{
+                  }else{
+                    Log.d("ttt","didn't find group");
+                    messageSendIv.setOnClickListener(new FirstMessageClickListener());
+                  }
+                }
 
-            messageSendIv.setOnClickListener(new FirstMessageClickListener());
+              }
 
-          }
-        }
-      }
-    });
+              @Override
+              public void onCancelled(@NonNull DatabaseError error) {
 
+              }
+            });
   }
 
   private void createMessagesListener(){
@@ -305,10 +308,10 @@ public class GroupMessagingActivity extends AppCompatActivity
               @Override
               public void onSuccess(Void aVoid) {
 
-                privateMessages.add(privateMessage);
-                adapter.notifyDataSetChanged();
                 firstKeyRef = "0";
                 lastKeyRef = "0";
+
+                createMessagesListener();
 
                 messageSendIv.setOnClickListener(new TextMessageSenderClickListener());
                 messageSendIv.setClickable(true);
@@ -324,8 +327,6 @@ public class GroupMessagingActivity extends AppCompatActivity
         messageSendIv.setClickable(true);
       }
     });
-
-
   }
 
 
@@ -454,6 +455,7 @@ public class GroupMessagingActivity extends AppCompatActivity
     @Override
     public void onClick(View view) {
 
+      Log.d("ttt","clicked send button");
       final String content = messagingEd.getText().toString();
       if (!content.isEmpty()) {
 
@@ -575,6 +577,22 @@ public class GroupMessagingActivity extends AppCompatActivity
 
         bsd.dismiss();
         Files.startDocumentFetchIntent(GroupMessagingActivity.this);
+      }
+    });
+
+    parentView.findViewById(R.id.zoomIv).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+
+        pickerFrameLayout.setVisibility(View.VISIBLE);
+
+        getSupportFragmentManager().beginTransaction().replace(pickerFrameLayout.getId(),
+                new ZoomMeetingCreationFragment()).commit();
+
+
+        bsd.dismiss();
+
+
       }
     });
 
@@ -914,6 +932,32 @@ public class GroupMessagingActivity extends AppCompatActivity
             });
 
     uploadTasks.put(thumbnailUploadTask,thumbnailOnSuccessListener);
+
+
+  }
+
+  public void sendZoomMessage(String content, ZoomMeeting zoomMeeting){
+
+    PrivateMessage privateMessage = new PrivateMessage(
+            content,
+            System.currentTimeMillis(),
+            currentUid,
+            Files.ZOOM);
+
+    privateMessage.setZoomMeeting(zoomMeeting);
+
+    sendMessage(privateMessage);
+
+    final Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(zoomMeeting.getStartUrl()));
+    try{
+
+      if (urlIntent.resolveActivity(getPackageManager()) != null) {
+        startActivity(urlIntent);
+      }
+
+    } catch (NullPointerException ignored){
+
+    }
 
 
   }
@@ -1305,7 +1349,7 @@ public class GroupMessagingActivity extends AppCompatActivity
   }
 
   @Override
-  public boolean startDownload(int position,String url, String fileName) {
+  public void startDownload(int position, String url, String fileName) {
 
     final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
     alertDialogBuilder.setMessage("Do you want to download "+fileName);
@@ -1321,7 +1365,6 @@ public class GroupMessagingActivity extends AppCompatActivity
     alertDialogBuilder.show();
 
 
-    return false;
   }
 
   @Override

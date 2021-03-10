@@ -1,16 +1,30 @@
 package hashed.app.ampassadors.Objects;
 
+import com.google.firebase.database.PropertyName;
+
 public class UserInfo {
+
+    @PropertyName("username")
     String username;
+    @PropertyName("password")
     String password;
+    @PropertyName("email")
     String email;
+    @PropertyName("country")
     String country;
+    @PropertyName("city")
     String city;
+    @PropertyName("phone")
     String phone;
+    @PropertyName("imageUrl")
     String imageUrl;
+    @PropertyName("userid")
     String userid;
+    @PropertyName("status")
     boolean status;
 
+    public UserInfo(){
+    }
     public String getUsername() {
         return username;
     }

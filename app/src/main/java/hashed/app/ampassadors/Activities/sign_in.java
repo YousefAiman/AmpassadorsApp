@@ -30,7 +30,6 @@ public class sign_in extends AppCompatActivity {
     Button btn_login , create_account_btn;
     FirebaseAuth auth;
     TextView verifyEmail, forgetPass;
-    String userid;
 
 
     @Override
@@ -85,10 +84,10 @@ public class sign_in extends AppCompatActivity {
     }
 
     public void verify(){
-        userid = auth.getCurrentUser().getUid();
+
         FirebaseUser user = auth.getCurrentUser();
 
-        if (user.isEmailVerified()){
+        if (user!=null && user.isEmailVerified()){
             verifyEmail.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

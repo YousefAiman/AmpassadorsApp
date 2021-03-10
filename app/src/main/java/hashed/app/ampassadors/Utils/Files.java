@@ -44,7 +44,8 @@ public class Files {
           IMAGE = 2,
           AUDIO = 3,
           VIDEO = 4,
-          DOCUMENT = 5;
+          DOCUMENT = 5,
+          ZOOM = 6;
 
 
   public final static int EXTERNAL_STORAGE_PERMISSION = 1,

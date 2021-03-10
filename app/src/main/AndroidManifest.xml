@@ -22,7 +22,6 @@
         android:theme="@style/Theme.AmpassadorsApp">
         <activity android:name=".Activities.ConnectionActivity"/>
         <activity android:name=".Activities.GroupMessagingActivity" />
-        <activity android:name=".Activities.posts_profile" />
         <activity
             android:name=".Activities.Home_Activity"
             android:screenOrientation="portrait" />
