@@ -64,7 +64,7 @@
         android:textColor="#000" />
 
     <ImageView
-        android:id="@+id/image_create_post"
+        android:id="@+id/user_image"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:src="@drawable/ic_picture"

@@ -81,7 +81,7 @@ public class UsersPost extends AppCompatActivity implements Toolbar.OnMenuItemCl
         .collection("UserPosts");
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
-        postImage = findViewById(R.id.image_create_post);
+        postImage = findViewById(R.id.user_image);
         mProgressDialog = new ProgressDialog(this);
     }
     public void clickListiners() {

@@ -1,8 +1,6 @@
 package hashed.app.ampassadors.Adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,33 +10,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.auth.User;
+
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
-import hashed.app.ampassadors.Activities.posts_profile;
-import hashed.app.ampassadors.Objects.ChatItem;
-import hashed.app.ampassadors.Objects.PrivateMessagePreview;
-import hashed.app.ampassadors.Objects.UserPostData;
+
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
-import hashed.app.ampassadors.Utils.Files;
-import hashed.app.ampassadors.Utils.TimeFormatter;
 
 public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersVh> implements Filterable {
 

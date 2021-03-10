@@ -849,7 +849,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
     mediaRecorder.start();
 
-    final long startTime = System.currentTimeMillis();
+      final long startTime = System.currentTimeMillis();
 
     progressHandle = new Handler();
 
