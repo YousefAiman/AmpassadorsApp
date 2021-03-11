@@ -107,6 +107,7 @@ public class profile_edit extends AppCompatActivity {
                         String pho = task.getResult().getString("phone");
 
 
+
                         username.setText(user_name);
                         country.setText(coun);
                         city.setText(cit);

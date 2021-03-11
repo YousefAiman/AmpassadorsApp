@@ -11,7 +11,7 @@
         android:id="@+id/view2"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/sent_audio_message_back"
+        android:background="@drawable/chat_item_sent_text_message_back"
         app:layout_constraintDimensionRatio="4.2:1"
         app:layout_constraintEnd_toEndOf="parent"
         android:elevation="5dp"
@@ -39,10 +39,10 @@
             android:layout_marginStart="15dp"
             android:src="@drawable/play_icon_new"
             android:rotation="180"
-            android:layout_marginEnd="15dp"
             app:layout_constraintBottom_toBottomOf="@+id/imageIv"
             app:layout_constraintEnd_toStartOf="@+id/imageIv"
             app:layout_constraintTop_toTopOf="@+id/imageIv" />
+
 
         <com.google.android.material.slider.Slider
             android:id="@+id/audioProgressSlider"
@@ -61,6 +61,18 @@
             app:layout_constraintEnd_toStartOf="@+id/playIv"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/timeTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:fontFamily="@font/segoe_ui_bold"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="7dp" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

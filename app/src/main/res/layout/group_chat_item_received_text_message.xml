@@ -15,9 +15,6 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginStart="15dp"
         android:elevation="4dp"
-        android:paddingBottom="5dp"
-        android:paddingStart="18dp"
-        android:paddingEnd="25dp"
         android:background="@drawable/chat_item_received_text_message_back"
         android:orientation="vertical">
 
@@ -26,26 +23,41 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:fontFamily="@font/segoe_ui_light"
+            android:fontFamily="@font/segoe_ui"
             android:textColor="@color/white"
-            android:textSize="14sp"
+            android:textSize="12sp"
+            android:layout_marginStart="5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/messageTv"
-            android:fontFamily="@font/segoe_ui_light"
+            android:fontFamily="@font/segoe_ui"
             android:textIsSelectable="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
             android:autoLink="web"
             android:textColorLink="@color/white"
             android:focusable="true"
+            android:layout_marginVertical="5dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="40dp"
             android:enabled="true"
             android:longClickable="true"
             android:textColor="#fff"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
+
+
+        <TextView
+            android:id="@+id/timeTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="4dp"
+            android:fontFamily="@font/segoe_ui_bold"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:layout_gravity="end"
+            android:layout_marginEnd="7dp" />
 
 
     </LinearLayout>

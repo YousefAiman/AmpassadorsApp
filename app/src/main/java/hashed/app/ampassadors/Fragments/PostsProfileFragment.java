@@ -5,6 +5,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -240,5 +242,13 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
             }
         });
     }
-
+    private void drawer(){
+        final DrawerLayout drawerLayout_b = getView().findViewById(R.id.drawer_layout_b);
+        getView().findViewById(R.id.profile_toolbar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawerLayout_b.openDrawer(GravityCompat.START);
+            }
+        });
+    }
 }

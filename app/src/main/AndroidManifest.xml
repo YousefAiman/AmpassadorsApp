@@ -20,7 +20,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AmpassadorsApp">
-        <activity android:name=".Activities.ConnectionActivity"/>
+        <activity
+            android:name=".Activities.SideDrawer"
+            android:label="@string/title_activity_side_drawer"
+            android:theme="@style/Theme.AmpassadorsApp.NoActionBar"></activity>
+        <activity android:name=".Activities.ConnectionActivity" />
         <activity android:name=".Activities.GroupMessagingActivity" />
         <activity
             android:name=".Activities.Home_Activity"
@@ -32,9 +36,7 @@
         <activity android:name=".Activities.CreateMeetingActivity" />
         <activity android:name=".Activities.CreatePollActivity" />
         <activity android:name=".Activities.UsersPickerActivity" />
-        <activity android:name=".Activities.ZoomActivity" >
-
-        </activity>
+        <activity android:name=".Activities.ZoomActivity"></activity>
         <activity android:name=".Activities.sign_in" />
         <activity android:name=".Activities.PrivateMessagingActivity" />
         <activity android:name=".MainActivity">
@@ -79,9 +81,7 @@
             android:stopWithTask="false" />
 
         <receiver android:name=".NotificationUtil.NotificationClickReceiver" />
-
         <receiver android:name=".NotificationUtil.NotificationDeleteListener" />
-
     </application>
 
 </manifest>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/number_picker_border_back"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:paddingHorizontal="40dp"
+    tools:context=".Fragments.NumberPickerDialogFragment">
+
+    <TextView
+        android:id="@+id/setTimeTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="7dp"
+        android:fontFamily="@font/segoe_ui"
+        android:text="@string/set_duration"
+        android:textColor="@color/black_transparent"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/minutesTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:fontFamily="@font/segoe_ui"
+        android:text="@string/minutes"
+        android:textColor="@color/black_transparent"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/setTimeTv" />
+
+
+    <NumberPicker
+        android:id="@+id/minutePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/minutesTv" />
+
+
+    <TextView
+        android:id="@+id/setTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:fontFamily="@font/segoe_ui"
+        android:padding="5dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginBottom="5dp"
+        android:text="@string/set"
+        android:textColor="@color/black_transparent"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/minutePicker" />
+
+
+    <TextView
+        android:id="@+id/cancelTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:fontFamily="@font/segoe_ui"
+        android:padding="5dp"
+        android:text="@string/cancel"
+        android:textColor="@color/black_transparent"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/setTv"
+        app:layout_constraintStart_toEndOf="@id/setTv"
+        app:layout_constraintTop_toTopOf="@id/setTv" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

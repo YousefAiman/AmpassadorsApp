@@ -54,7 +54,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
@@ -235,6 +237,20 @@ public class GroupMessagingActivity extends AppCompatActivity
     firebaseMessageDocRef = FirebaseFirestore.getInstance().collection("Meetings")
             .document(groupId);
 
+    firebaseMessageDocRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+      @Override
+      public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+
+        if(value!=null){
+          if(value.getBoolean("hasEnded")){
+            Toast.makeText(GroupMessagingActivity.this,
+                    "Sorry this meeting has ended and all participants will be kicked out",
+                    Toast.LENGTH_SHORT).show();
+            finish();
+          }
+        }
+      }
+    });
     Log.d("ttt","looking to group");
     currentMessagingRef.addListenerForSingleValueEvent(new ValueEventListener() {
               @Override
@@ -981,6 +997,13 @@ public class GroupMessagingActivity extends AppCompatActivity
 
   @Override
   public boolean onMenuItemClick(MenuItem item) {
+
+    if(item.getItemId() == R.id.action_end_meeting){
+
+      if(firebaseMessageDocRef!=null){
+        firebaseMessageDocRef.update("hasEnded",true).addOnSuccessListener(v -> finish());
+      }
+    }
     return false;
   }
 

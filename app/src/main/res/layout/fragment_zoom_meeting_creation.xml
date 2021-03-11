@@ -20,20 +20,13 @@
         app:titleTextColor="@color/white" />
 
 
-    <ScrollView
-        android:layout_width="match_parent"
-        app:layout_constraintTop_toBottomOf="@id/fullScreenToolbar"
-        android:paddingBottom="15dp"
-        android:clipToPadding="false"
-        app:layout_constraintBottom_toTopOf="@id/messaging_picker_edittext"
-        android:layout_height="0dp">
-
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/materialCardView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginHorizontal="5dp"
         app:cardCornerRadius="20dp"
+        android:layout_marginBottom="12dp"
         app:cardElevation="0dp"
         app:layout_constraintBottom_toTopOf="@id/messaging_picker_edittext"
         app:layout_constraintEnd_toEndOf="parent"
@@ -41,126 +34,268 @@
         app:strokeColor="@color/medium_grey"
         app:strokeWidth="1dp" >
 
+        <ScrollView
+            android:layout_width="match_parent"
+            app:layout_constraintTop_toBottomOf="@id/fullScreenToolbar"
+            android:clipToPadding="false"
+            app:layout_constraintBottom_toTopOf="@id/messaging_picker_edittext"
+            android:layout_height="wrap_content">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:src="@drawable/zoom_icon"
-        app:layout_constraintDimensionRatio="1"
-        android:layout_marginTop="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_percent="0.2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <EditText
-        android:id="@+id/topicEd"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/enter_meeting_topic"
-        android:layout_marginHorizontal="20dp"
-        android:inputType="text"
-        android:maxLength="100"
-        android:textColorHint="@color/medium_grey"
-        android:textColor="@color/black"
-        android:fontFamily="@font/segoe_ui"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="15dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
-
-    <EditText
-        android:id="@+id/descriptionEd"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:hint="Enter agenda/description"
-        android:inputType="textMultiLine"
-        android:maxLines="3"
-        android:layout_marginTop="15dp"
-        android:textColorHint="@color/medium_grey"
-        android:textColor="@color/black"
-        android:fontFamily="@font/segoe_ui"
-        android:textSize="16sp"
-        android:maxLength="100"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/topicEd" />
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="40dp"
+            android:src="@drawable/zoom_icon"
+            android:layout_marginStart="12dp"
+            app:layout_constraintDimensionRatio="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.2" />
 
 
-    <TextView
-        android:id="@+id/textView9"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/segoe_ui"
-        android:text="Meeting duration in minutes"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/meetingDurationNumberPicker"
-        app:layout_constraintStart_toStartOf="@+id/descriptionEd"
-        app:layout_constraintTop_toTopOf="@+id/meetingDurationNumberPicker" />
+        <EditText
+            android:id="@+id/topicEd"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="15dp"
+            android:fontFamily="@font/segoe_ui"
+            android:hint="@string/enter_meeting_topic"
+            android:inputType="text"
+            android:maxLength="100"
+            android:textColor="@color/black"
+            android:textColorHint="@color/medium_grey"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imageView"
+            app:layout_constraintTop_toTopOf="@+id/imageView" />
+
+        <EditText
+            android:id="@+id/descriptionEd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:background="@drawable/meeting_topic_ed_border"
+            android:fontFamily="@font/segoe_ui"
+            android:layout_marginTop="20dp"
+            android:gravity="start"
+            android:hint="@string/meeting_talk_points"
+            android:inputType="textMultiLine"
+            android:lines="3"
+            android:maxLength="500"
+            android:padding="8dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/medium_grey"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:fontFamily="@font/segoe_ui"
+            android:text="@string/meeting_duration"
+            android:textColor="@color/black_transparent"
+            android:layout_marginTop="25dp"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="@+id/descriptionEd"
+            app:layout_constraintTop_toBottomOf="@+id/descriptionEd" />
 
 
-    <NumberPicker
-        android:id="@+id/meetingDurationNumberPicker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="@+id/zoomLinkTv"
-        app:layout_constraintStart_toEndOf="@+id/textView9"
-        app:layout_constraintTop_toBottomOf="@+id/descriptionEd" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:fontFamily="@font/segoe_ui"
+            android:text="@string/minute"
+            android:textColor="@color/black_transparent"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/minutesTv"
+            app:layout_constraintStart_toEndOf="@+id/minutesTv"
+            app:layout_constraintTop_toTopOf="@+id/minutesTv" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/zoomLinkTv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginVertical="10dp"
-        android:drawableEnd="@drawable/copy_icon"
-        android:fontFamily="@font/segoe_ui_bold"
-        android:gravity="center"
-        android:hint="Zoom link"
-        android:textColor="@color/light_blue_600"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/meetingDurationNumberPicker" />
+        <TextView
+            android:id="@+id/minutesTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/meeting_topic_ed_border"
+            android:fontFamily="@font/segoe_ui_bold"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="8dp"
+            android:text="00"
+            android:textColor="@color/black_transparent"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/textView9"
+            app:layout_constraintStart_toEndOf="@+id/textView9"
+            app:layout_constraintTop_toTopOf="@+id/textView9" />
 
 
-    <android.widget.Button
-        android:id="@+id/createMeetBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/create_zoom_meet_btn_back"
-        android:textSize="16sp"
-        android:paddingVertical="5dp"
-        android:paddingHorizontal="15dp"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:text="Create Zoom Meeting"
-        android:layout_marginBottom="15dp"
-        android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@id/zoomLinkTv"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/createNowCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:button="@drawable/check_box_selector"
+            android:checked="true"
+            app:layout_constraintStart_toStartOf="@+id/textView9"
+            app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
-<!--    <com.google.android.material.button.MaterialButtonToggleGroup-->
+        <TextView
+            android:id="@+id/textView12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/segoe_ui"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="8dp"
+            android:text="@string/create_meeting_now"
+            android:textColor="@color/black_transparent"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/createNowCheckbox"
+            app:layout_constraintStart_toEndOf="@+id/createNowCheckbox"
+            app:layout_constraintTop_toTopOf="@+id/createNowCheckbox" />
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/scheduleCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@drawable/check_box_selector"
+            app:layout_constraintStart_toStartOf="@+id/textView9"
+            app:layout_constraintTop_toBottomOf="@+id/createNowCheckbox" />
+
+        <TextView
+            android:id="@+id/textView13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/segoe_ui"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="8dp"
+            android:text="@string/schedule_meeting"
+            android:textColor="@color/black_transparent"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/scheduleCheckBox"
+            app:layout_constraintStart_toEndOf="@+id/scheduleCheckBox"
+            app:layout_constraintTop_toTopOf="@id/scheduleCheckBox" />
+
+
+        <TextView
+            android:id="@+id/dateTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:fontFamily="@font/segoe_ui"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="8dp"
+            android:text="@string/date"
+            android:textColor="@color/black_fully_transparent"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="@+id/scheduleCheckBox"
+            app:layout_constraintTop_toBottomOf="@+id/scheduleCheckBox" />
+
+
+        <TextView
+            android:id="@+id/dateSetterTv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintWidth_percent=".25"
+            app:layout_constraintWidth_min="wrap"
+            android:clickable="false"
+            android:layout_marginStart="9dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/meeting_topic_ed_border"
+            android:fontFamily="@font/segoe_ui_bold"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="8dp"
+            android:text="00/00/0000"
+            android:textColor="@color/black_fully_transparent"
+            android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@+id/dateTv"
+            app:layout_constraintTop_toBottomOf="@+id/scheduleCheckBox" />
+
+
+        <ImageView
+            android:id="@+id/settingsIv1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8.5dp"
+            android:src="@drawable/settings_icon"
+            app:layout_constraintBottom_toBottomOf="@+id/dateSetterTv"
+            app:layout_constraintStart_toEndOf="@+id/dateSetterTv"
+            app:layout_constraintTop_toTopOf="@+id/dateSetterTv"
+            app:tint="@color/black_fully_transparent" />
+
+
+        <TextView
+            android:id="@+id/timeTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:fontFamily="@font/segoe_ui"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="8dp"
+            android:layout_marginBottom="15dp"
+            android:text="@string/time"
+            android:textColor="@color/black_fully_transparent"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/dateTv"
+            app:layout_constraintTop_toBottomOf="@+id/dateTv" />
+
+
+        <TextView
+            android:id="@+id/timeSetterTv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/meeting_topic_ed_border"
+            android:fontFamily="@font/segoe_ui_bold"
+            android:gravity="center"
+            android:clickable="false"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="8dp"
+            android:text="00:00"
+            android:textColor="@color/black_fully_transparent"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/timeTv"
+            app:layout_constraintEnd_toEndOf="@+id/dateSetterTv"
+            app:layout_constraintStart_toStartOf="@+id/dateSetterTv"
+            app:layout_constraintTop_toTopOf="@+id/timeTv"
+            app:layout_constraintWidth_min="wrap"/>
+
+        <ImageView
+            android:id="@+id/settingsIv2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/settings_icon"
+            android:layout_marginStart="8.5dp"
+            app:layout_constraintBottom_toBottomOf="@+id/timeTv"
+            app:layout_constraintStart_toEndOf="@+id/timeSetterTv"
+            app:layout_constraintTop_toTopOf="@+id/timeTv"
+            app:tint="@color/black_fully_transparent" />
+
+
+
+        <!--        <NumberPicker-->
+<!--        android:id="@+id/meetingDurationNumberPicker"-->
 <!--        android:layout_width="wrap_content"-->
 <!--        android:layout_height="wrap_content"-->
-<!--        />-->
-<!--    -->
-        </androidx.constraintlayout.widget.ConstraintLayout>
+<!--        app:layout_constraintEnd_toEndOf="@+id/zoomLinkTv"-->
+<!--            android:visibility="invisible"-->
+<!--        app:layout_constraintStart_toEndOf="@+id/textView9"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/descriptionEd" />-->
 
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
     </com.google.android.material.card.MaterialCardView>
-    </ScrollView>
 
 
     <include

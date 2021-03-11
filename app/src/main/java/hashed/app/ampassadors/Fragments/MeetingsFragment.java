@@ -16,11 +16,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -41,11 +47,12 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
   private ScrollListener scrollListener;
 
   //database
+  private String currentUid;
   private Query query;
   private DocumentSnapshot lastDocSnap;
   private static final int MEETING_LIMIT = 8;
   private boolean isLoading;
-
+  private ListenerRegistration listenerRegistration;
   public MeetingsFragment() {
     // Required empty public constructor
   }
@@ -55,7 +62,7 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
     super.onCreate(savedInstanceState);
 
     //adapter
-    final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    currentUid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
     meetings = new ArrayList<>();
     adapter = new MeetingsAdapter(meetings);
 
@@ -150,6 +157,10 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
               meetingsRv.addOnScrollListener(scrollListener = new ScrollListener());
             }
 
+            if(listenerRegistration == null){
+              addMeetingEndedListener();
+            }
+
           }
         } else {
 
@@ -195,12 +206,53 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
     }
   }
 
+
+  private void addMeetingEndedListener(){
+    listenerRegistration =
+            FirebaseFirestore.getInstance().collection("Meetings")
+                    .whereArrayContains("members", currentUid)
+                    .whereEqualTo("hasEnded",true).addSnapshotListener(new EventListener<QuerySnapshot>() {
+              @Override
+              public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+
+                if(value!=null && !value.getDocumentChanges().isEmpty()){
+
+                  for(DocumentChange dc:value.getDocumentChanges()){
+                    if(dc.getType() == DocumentChange.Type.ADDED){
+
+
+                      if(meetings == null || meetings.isEmpty())
+                        return;
+
+                      final String meetingId = dc.getDocument().getString("meetingId");
+
+                      if(meetingId == null)
+                        return;
+
+                      for(int i=0;i<meetings.size();i++){
+                        if(meetings.get(i).getMeetingId()
+                                .equals(meetingId)){
+                          meetings.get(i).setHasEnded(true);
+                          break;
+                        }
+                      }
+                    }
+                  }
+                }
+
+              }
+            });
+  }
+
   @Override
   public void onDestroy() {
     super.onDestroy();
 
     if(meetingsRv != null && scrollListener!=null){
       meetingsRv.removeOnScrollListener(scrollListener);
+    }
+    if(listenerRegistration!=null){
+      listenerRegistration.remove();
     }
   }
 }

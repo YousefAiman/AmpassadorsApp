@@ -22,6 +22,8 @@ public class UserInfo {
     String userid;
     @PropertyName("status")
     boolean status;
+    String userRole;
+    boolean approvement;
 
     public UserInfo(){
     }
@@ -98,5 +100,26 @@ public class UserInfo {
 
     public void setStatus(Boolean status) {
         this.status = status;
+    }
+
+
+
+
+    public String getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(String userRole) {
+        this.userRole = userRole;
+    }
+
+
+
+    public Boolean getApprovement() {
+        return approvement;
+    }
+
+    public void setApprovement(boolean approvement) {
+        this.approvement = approvement;
     }
 }
