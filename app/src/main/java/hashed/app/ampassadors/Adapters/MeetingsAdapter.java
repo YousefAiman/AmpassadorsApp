@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -48,7 +49,7 @@ public class MeetingsAdapter extends RecyclerView.Adapter<MeetingsAdapter.Meetin
     holder.bindItem(meetings.get(position));
   }
 
-   static class MeetingsVh extends RecyclerView.ViewHolder implements View.OnClickListener{
+   class MeetingsVh extends RecyclerView.ViewHolder implements View.OnClickListener{
 
     private final Button joinBtn;
     private final TextView titleTv,dateTv,timeTv;
@@ -78,6 +79,16 @@ public class MeetingsAdapter extends RecyclerView.Adapter<MeetingsAdapter.Meetin
 
      @Override
      public void onClick(View view) {
+
+       if(meetings.get(getAdapterPosition()).isHasEnded()){
+
+         Toast.makeText(itemView.getContext(),
+                 "This Meeting has ended!", Toast.LENGTH_SHORT).show();
+
+         meetings.remove(getAdapterPosition());
+         notifyItemRemoved(getAdapterPosition());
+         return;
+       }
 
        itemView.getContext().startActivity(
                new Intent(itemView.getContext(), GroupMessagingActivity.class)

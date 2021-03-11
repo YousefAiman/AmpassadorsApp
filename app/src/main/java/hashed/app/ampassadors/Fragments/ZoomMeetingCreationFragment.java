@@ -1,26 +1,26 @@
 package hashed.app.ampassadors.Fragments;
 
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.fragment.app.Fragment;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -34,7 +34,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import hashed.app.ampassadors.Activities.GroupMessagingActivity;
@@ -44,16 +47,19 @@ import hashed.app.ampassadors.Utils.ZoomRequester;
 import hashed.app.ampassadors.Utils.ZoomUtil;
 
 
-public class ZoomMeetingCreationFragment extends Fragment implements View.OnClickListener {
+public class ZoomMeetingCreationFragment extends Fragment implements View.OnClickListener,
+      MinutePickerDialogFragment.OnTimePass, CompoundButton.OnCheckedChangeListener {
 
-  private EditText topicEd;
-  private EditText descriptionEd;
-  private NumberPicker meetingDurationNumberPicker;
-  private TextView zoomLinkTv;
-  private Button createMeetBtn;
-  private EditText messagingPickerEd;
-  private ImageView messagingPickerSendIv;
+  private EditText topicEd,descriptionEd,messagingPickerEd;
+  private CheckBox createNowCheckbox,scheduleCheckBox;
+  private TextView minutesTv,dateTv,timeTv,dateSetterTv,timeSetterTv;
+  private ImageView messagingPickerSendIv,settingsIv1,settingsIv2;
   private ZoomMeeting zoomMeeting;
+  private int duration;
+  private int meetingType;
+  private Integer[] meetingStartTime = new Integer[5];
+  private long scheduleTime;
+  private boolean timeWasSelected,dateWasSelected;
 
   public ZoomMeetingCreationFragment() {
     // Required empty public constructor
@@ -74,23 +80,21 @@ public class ZoomMeetingCreationFragment extends Fragment implements View.OnClic
 
     final Toolbar fullScreenToolbar = view.findViewById(R.id.fullScreenToolbar);
 
-    fullScreenToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        getActivity().onBackPressed();
-      }
-    });
+    fullScreenToolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
 
     topicEd = view.findViewById(R.id.topicEd);
     descriptionEd = view.findViewById(R.id.descriptionEd);
-    meetingDurationNumberPicker = view.findViewById(R.id.meetingDurationNumberPicker);
-    zoomLinkTv = view.findViewById(R.id.zoomLinkTv);
-    createMeetBtn = view.findViewById(R.id.createMeetBtn);
     messagingPickerEd = view.findViewById(R.id.messagingPickerEd);
     messagingPickerSendIv = view.findViewById(R.id.messagingPickerSendIv);
-
-    meetingDurationNumberPicker.setMinValue(1);
-    meetingDurationNumberPicker.setMaxValue(40);
+    minutesTv = view.findViewById(R.id.minutesTv);
+    createNowCheckbox = view.findViewById(R.id.createNowCheckbox);
+    scheduleCheckBox = view.findViewById(R.id.scheduleCheckBox);
+    dateTv = view.findViewById(R.id.dateTv);
+    timeTv = view.findViewById(R.id.timeTv);
+    dateSetterTv = view.findViewById(R.id.dateSetterTv);
+    timeSetterTv = view.findViewById(R.id.timeSetterTv);
+    settingsIv1 = view.findViewById(R.id.settingsIv1);
+    settingsIv2 = view.findViewById(R.id.settingsIv2);
 
     return view;
   }
@@ -106,59 +110,72 @@ public class ZoomMeetingCreationFragment extends Fragment implements View.OnClic
 
   private void initializeClickers(){
 
-    zoomLinkTv.setOnClickListener(this);
-    createMeetBtn.setOnClickListener(this);
+
     messagingPickerSendIv.setOnClickListener(this);
+    minutesTv.setOnClickListener(this);
+    dateSetterTv.setOnClickListener(this);
+    timeSetterTv.setOnClickListener(this);
+    settingsIv1.setOnClickListener(this);
+    settingsIv2.setOnClickListener(this);
+
+
+    createNowCheckbox.setOnCheckedChangeListener(this);
+    scheduleCheckBox.setOnCheckedChangeListener(this);
+
 
   }
 
 
   @Override
   public void onClick(View view) {
-    if(view.getId() == R.id.zoomLinkTv){
 
-      if(!zoomLinkTv.getText().toString().trim().isEmpty()){
+//    requestMeetingCreation();
 
-        final ClipboardManager clipboard = (ClipboardManager)
-                getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+     if(view.getId() == R.id.messagingPickerSendIv){
+       final String topic = topicEd.getText().toString();
+       final String description = descriptionEd.getText().toString();
 
-        clipboard.setPrimaryClip(
-                ClipData.newPlainText("zoomJoinUrl",zoomLinkTv.getText().toString()));
-
-        Toast.makeText(getContext(),
-                "Meeting url has been copied to the clipboard!",
-                Toast.LENGTH_SHORT).show();
-
+      if(!messagingPickerEd.getText().toString().isEmpty() &&
+              !topic.isEmpty() && !description.isEmpty() && duration > 0
+              && meetingType!=0 || meetingType == 1 || (meetingType == 2 && timeWasSelected &&
+              dateWasSelected)){
+          requestMeetingCreation(topic,description);
       }else{
 
-        Toast.makeText(getContext(),
-                "You need to create a meeting to get the meeting join url",
+        Toast.makeText(requireContext(),"Please fill in the fields!",
                 Toast.LENGTH_SHORT).show();
-
       }
 
-    }else if(view.getId() == R.id.createMeetBtn){
+    }else if(view.getId() == R.id.minutesTv){
 
-      requestMeetingCreation();
+       MinutePickerDialogFragment minutePickerDialogFragment;
 
-    }else if(view.getId() == R.id.messagingPickerSendIv){
+       if(duration > 0){
+         minutePickerDialogFragment = new MinutePickerDialogFragment(duration,this);
+       }else{
+         minutePickerDialogFragment = new MinutePickerDialogFragment(this);
+       }
 
-      final String message = messagingPickerEd.getText().toString();
-      if(!message.isEmpty() && zoomMeeting != null){
-        ((GroupMessagingActivity)requireActivity()).sendZoomMessage(message,zoomMeeting);
-      }
-    }
+       minutePickerDialogFragment.show(getChildFragmentManager(),"minutePicker");
+
+    }else if(view.getId() == R.id.dateSetterTv || view.getId() == R.id.settingsIv1){
+
+       getMeetingDate();
+
+     }else if(view.getId() == R.id.timeSetterTv || view.getId() == R.id.settingsIv2){
+
+       getMeetingTime();
+
+     }
+
+
   }
 
-  private void requestMeetingCreation(){
+  private void requestMeetingCreation(String topic,String description){
 
-    final String topic = topicEd.getText().toString();
-    final String description = descriptionEd.getText().toString();
-    final int duration = meetingDurationNumberPicker.getValue();
 
-    if(!topic.isEmpty() && !description.isEmpty()){
-      createMeetBtn.setClickable(false);
 
+//      createMeetBtn.setClickable(true);
       final ProgressDialog zoomDialog = new ProgressDialog(getContext());
       zoomDialog.setTitle("Creating meeting!");
       zoomDialog.setCancelable(false);
@@ -172,25 +189,33 @@ public class ZoomMeetingCreationFragment extends Fragment implements View.OnClic
                           response.getString("host_id"),
                           response.getString("host_email"),
                           response.getString("topic"),
+                          meetingType,
                           duration,
                           response.getString("status"),
                           response.getString("start_url"),
                           response.getString("join_url"));
 
-          Log.d("ttt","zoomMeeting: "+ zoomMeeting.toString());
+          if(meetingType == 2){
+
+            zoomMeeting.setStartTime(scheduleTime);
+
+          }
 
           Log.d("ttt","zoomMeeting: "+ zoomMeeting.toString());
 
-          zoomLinkTv.post(()-> zoomLinkTv.setText(zoomMeeting.getJoinUrl()));
+          Log.d("ttt","zoomMeeting: "+ zoomMeeting.toString());
 
-          createMeetBtn.post(()-> createMeetBtn.setVisibility(View.INVISIBLE));
 
           zoomDialog.dismiss();
 
+          ((GroupMessagingActivity)requireActivity()).sendZoomMessage(
+                  messagingPickerEd.getText().toString(), zoomMeeting);
+
+          requireActivity().onBackPressed();
         } catch (JSONException e) {
 
           zoomDialog.dismiss();
-          createMeetBtn.setClickable(true);
+//          createMeetBtn.setClickable(true);
           Toast.makeText(getContext(), "Meeting creation failed! Please try again",
                   Toast.LENGTH_SHORT).show();
           Log.d("ttt","JSONException: "+e.getMessage());
@@ -198,7 +223,7 @@ public class ZoomMeetingCreationFragment extends Fragment implements View.OnClic
         }
       };
 
-      final RequestQueue queue = Volley.newRequestQueue(getContext());
+      final RequestQueue queue = Volley.newRequestQueue(requireContext());
 
       new Thread(new Runnable() {
         @Override
@@ -224,7 +249,7 @@ public class ZoomMeetingCreationFragment extends Fragment implements View.OnClic
             @Override
             public void onErrorResponse(VolleyError error) {
 
-              createMeetBtn.setClickable(true);
+//              createMeetBtn.setClickable(true);
               zoomDialog.dismiss();
 
 
@@ -256,13 +281,167 @@ public class ZoomMeetingCreationFragment extends Fragment implements View.OnClic
       }).start();
 
 
-    }else{
-      Toast.makeText(getContext(), "Please fill in the fields!", Toast.LENGTH_SHORT).show();
-    }
+
   }
 
 
+  @Override
+  public void passTime(int duration) {
+    this.duration = duration;
+
+    minutesTv.setText(String.valueOf(duration));
+
+  }
+
+  @Override
+  public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+    if(compoundButton.getId() == R.id.createNowCheckbox){
+
+      meetingType = 1;
+
+      if(b && scheduleCheckBox.isChecked()){
+        scheduleCheckBox.setChecked(false);
+        setScheduleViewsVisibility(false);
+      }
+
+    }else if(compoundButton.getId() == R.id.scheduleCheckBox){
 
 
+      meetingType = 2;
 
+      setScheduleViewsVisibility(b);
+
+      if(b && createNowCheckbox.isChecked()){
+        createNowCheckbox.setChecked(false);
+      }
+
+    }
+  }
+
+  private void setScheduleViewsVisibility(boolean visibility){
+
+    final int color = ResourcesCompat.getColor(getResources(),
+            visibility?R.color.black:R.color.black_fully_transparent
+            ,null);
+
+    dateTv.setTextColor(color);
+    timeTv.setTextColor(color);
+    dateSetterTv.setTextColor(color);
+    timeSetterTv.setTextColor(color);
+
+    DrawableCompat.setTint(
+            DrawableCompat.wrap(settingsIv1.getDrawable()),
+            color
+    );
+
+    DrawableCompat.setTint(
+            DrawableCompat.wrap(settingsIv2.getDrawable()),
+            color
+    );
+
+      dateSetterTv.setClickable(visibility);
+      timeSetterTv.setClickable(visibility);
+      settingsIv1.setClickable(visibility);
+      settingsIv2.setClickable(visibility);
+  }
+
+  private void getMeetingDate(){
+
+    Calendar mcurrentDate = Calendar.getInstance(Locale.getDefault());
+
+
+    DatePickerDialog StartTime = new DatePickerDialog(getContext(),
+            (view, year, monthOfYear, dayOfMonth) -> {
+
+              if(mcurrentDate.get(Calendar.YEAR) > year ||
+
+              (mcurrentDate.get(Calendar.YEAR) == year &&
+                      mcurrentDate.get(Calendar.MONTH) > monthOfYear) ||
+
+                      (mcurrentDate.get(Calendar.YEAR) == year &&
+                              mcurrentDate.get(Calendar.MONTH) == monthOfYear &&
+                              mcurrentDate.get(Calendar.DAY_OF_MONTH) > dayOfMonth)
+              ){
+
+                String text;
+                if((timeWasSelected &&
+                        mcurrentDate.get(Calendar.YEAR) == year &&
+                        mcurrentDate.get(Calendar.MONTH) == monthOfYear &&
+                        mcurrentDate.get(Calendar.DAY_OF_MONTH) == dayOfMonth &&
+                        (meetingStartTime[3] < mcurrentDate.get(Calendar.HOUR))
+                        && meetingStartTime[4] < mcurrentDate.get(Calendar.MINUTE))){
+
+                  text = "Meeting time cannot be scheduled to this time!" +
+                          "Please Selected a different time day or change the day";
+
+                }else{
+                  text = "Meeting time cannot be scheduled to this time!";
+                }
+                Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
+              }else{
+
+                dateWasSelected = true;
+                meetingStartTime[0] = year;
+                meetingStartTime[1] = monthOfYear;
+                meetingStartTime[2] = dayOfMonth;
+                dateSetterTv.setText(year+"/"+monthOfYear+"/"+dayOfMonth);
+
+
+                if(timeWasSelected){
+                  calculateTime();
+                }
+              }
+
+            }, mcurrentDate.get(Calendar.YEAR), mcurrentDate.get(Calendar.MONTH),
+            mcurrentDate.get(Calendar.DAY_OF_MONTH));
+    StartTime.show();
+
+  }
+
+  private void getMeetingTime(){
+
+    Calendar mcurrentTime = Calendar.getInstance(Locale.getDefault());
+    TimePickerDialog mTimePicker = new TimePickerDialog(
+            getContext(), (timePicker, selectedHour, selectedMinute) -> {
+
+      final Calendar calendar = Calendar.getInstance(Locale.getDefault());
+      calendar.setTime(new Date(System.currentTimeMillis()));
+
+      calendar.set(Calendar.HOUR, selectedHour);
+      calendar.set(Calendar.MINUTE, selectedMinute);
+
+
+      if (calendar.getTimeInMillis() >= calendar.getTimeInMillis()) {
+
+        timeWasSelected = true;
+        meetingStartTime[3] = selectedHour;
+        meetingStartTime[4] = selectedMinute;
+        dateSetterTv.setText(selectedHour+":"+selectedMinute);
+
+        if(dateWasSelected){
+          calculateTime();
+        }
+      } else {
+        Toast.makeText(getContext(),
+                "Meeting time can't be at selected time!", Toast.LENGTH_SHORT).show();
+      }
+
+    }, mcurrentTime.get(Calendar.HOUR_OF_DAY), mcurrentTime.get(Calendar.MINUTE),
+            true);
+    mTimePicker.setTitle("Select Meeting Time");
+    mTimePicker.show();
+
+  }
+
+  private void calculateTime(){
+
+    final Calendar calendar = Calendar.getInstance(Locale.getDefault());
+    calendar.set(meetingStartTime[0],meetingStartTime[1],meetingStartTime[2],
+            meetingStartTime[3],meetingStartTime[4]);
+
+    scheduleTime = calendar.getTimeInMillis();
+    Log.d("ttt","scheduleTime: "+scheduleTime);
+
+  }
 }

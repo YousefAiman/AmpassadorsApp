@@ -219,7 +219,7 @@ public class VideoPickerPreviewFragment extends Fragment {
 
         }
 
-        getActivity().onBackPressed();
+        requireActivity().onBackPressed();
 
       }else{
 

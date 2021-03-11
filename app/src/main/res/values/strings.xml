@@ -73,7 +73,13 @@
     <string name="try_again">Try again</string>
     <string name="you_are_not_currently_connected_to_the_internet">You are not currently connected to the internet!</string>
     <string name="please_check_your_internet_connection_and_try_again">Please check your internet connection and try again.</string>
-    <string name="enter_meeting_topic">Enter meeting topic</string>
+    <string name="enter_meeting_topic">Meeting topic…</string>
     <string name="news">News</string>
+    <string name="meeting_talk_points">Meeting talk points</string>
+    <string name="meeting_duration">Meeting duration</string>
+    <string name="create_meeting_now">Create Meeting now</string>
+    <string name="schedule_meeting">Schedule meeting</string>
+    <string name="date">Date:</string>
+    <string name="time">Time:</string>
 
 </resources>

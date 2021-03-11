@@ -39,9 +39,11 @@ import java.util.Locale;
 import java.util.Map;
 
 import hashed.app.ampassadors.Objects.PrivateMessage;
+import hashed.app.ampassadors.Objects.ZoomMeeting;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.AudioPlayer;
 import hashed.app.ampassadors.Utils.Files;
+import hashed.app.ampassadors.Utils.TimeFormatter;
 
 public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -372,8 +374,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
       case MSG_TYPE_LEFT_DELETED_GROUP:
 
-         ((PrivateMessagingDeletedGroupVh)holder)
-                        .bindUserName(privateMessages.get(position).getId());
+         ((PrivateMessagingDeletedGroupVh)holder).bindUserName();
 
           break;
     }
@@ -444,7 +445,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         messageTv.setText(message.getContent());
 
-        if(bindUsername){
+        if(bindUsername && !message.getSender().equals(currentUid)){
           getUserName(message.getSender(),senderTv);
         }
 
@@ -533,7 +534,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
         picasso.load(message.getAttachmentUrl()).fit().into(imageIv);
       }
 
-      if(bindUsername){
+      if(bindUsername && !message.getSender().equals(currentUid)){
         getUserName(message.getSender(),senderTv);
       }
 
@@ -627,7 +628,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
       }
 
-      if(bindUsername){
+      if(bindUsername && !message.getSender().equals(currentUid)){
         getUserName(message.getSender(),senderTv);
       }
 
@@ -767,7 +768,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
       messageTv.setText(message.getContent());
 
-      if(bindUsername){
+      if(bindUsername && !message.getSender().equals(currentUid)){
         getUserName(message.getSender(),senderTv);
       }
 
@@ -842,7 +843,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
       messageTv.setText(message.getContent());
       documentNameTv.setText(message.getFileName());
 
-      if(bindUsername){
+      if(bindUsername && !message.getSender().equals(currentUid)){
         getUserName(message.getSender(),senderTv);
       }
       if(message.getAttachmentUrl()!=null){
@@ -935,7 +936,9 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
       picasso.load(R.drawable.zoom_icon).fit().into(imageIv);
 //      imageIv.setImageResource(R.drawable.zoom_icon);
 
-      getUserName(message.getSender(),senderTv);
+      if(!message.getSender().equals(currentUid)){
+        getUserName(message.getSender(),senderTv);
+      }
 
       messageTv.setText(message.getContent());
 
@@ -956,6 +959,13 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
     @Override
     public void onClick(View view) {
 
+      final ZoomMeeting meeting = privateMessages.get(getAdapterPosition()).getZoomMeeting();
+      if(meeting.getType() == 2 && meeting.getStartTime() < System.currentTimeMillis()){
+        Toast.makeText(itemView.getContext(),
+                "Meeting will start on: "+ TimeFormatter.formatTime(meeting.getStartTime())
+                , Toast.LENGTH_SHORT).show();
+        return;
+      }
       PackageManager pm = itemView.getContext().getPackageManager();
 //      Intent intent = pm.getLaunchIntentForPackage("us.zoom.videomeetings");
 //
@@ -1035,8 +1045,12 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
       senderTv = itemView.findViewById(R.id.senderTv);
     }
 
-    private void bindUserName(String userId){
-      getUserName(userId,senderTv);
+    private void bindUserName(){
+
+      if(!privateMessages.get(getAdapterPosition()).getSender().equals(currentUid)){
+        getUserName(privateMessages.get(getAdapterPosition()).getSender(),senderTv);
+      }
+
     }
 
   }

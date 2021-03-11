@@ -72,7 +72,6 @@ public class ImageFullScreenFragment extends DialogFragment {
     }
   };
 
-  //video
   private ImageView fullScreenIv;
   private final String imageUrl;
 
@@ -84,6 +83,12 @@ public class ImageFullScreenFragment extends DialogFragment {
     }
   };
 
+  @Override
+  public void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialogTheme);
+  }
+
   public ImageFullScreenFragment(String imageUrl){
     this.imageUrl = imageUrl;
   }
@@ -93,14 +98,18 @@ public class ImageFullScreenFragment extends DialogFragment {
   public View onCreateView(@NonNull LayoutInflater inflater,
                            @Nullable ViewGroup container,
                            @Nullable Bundle savedInstanceState) {
-    View view =  inflater.inflate(R.layout.fragment_image_full_screen, container, false);
+    View view =  inflater.inflate(R.layout.fragment_image_full_screen, container,
+            false);
 
-    setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialogTheme);
+    Objects.requireNonNull(getDialog()).getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT);
+
+
 
     fullScreenIv = view.findViewById(R.id.fullScreenIv);
 
     final Toolbar fullScreenToolbar = view.findViewById(R.id.fullScreenToolbar);
-    fullScreenToolbar.setNavigationOnClickListener(v-> requireActivity().onBackPressed());
+    fullScreenToolbar.setNavigationOnClickListener(v-> dismiss());
 
     return view;
   }
@@ -146,13 +155,15 @@ public class ImageFullScreenFragment extends DialogFragment {
   @SuppressLint("InlinedApi")
   public void show() {
     // Show the system bar
-    fullScreenIv.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-    mVisible = true;
+    if(fullScreenIv!=null){
+      fullScreenIv.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+              | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+      mVisible = true;
 
-    // Schedule a runnable to display UI elements after a delay
-    mHideHandler.removeCallbacks(mHidePart2Runnable);
+      // Schedule a runnable to display UI elements after a delay
+      mHideHandler.removeCallbacks(mHidePart2Runnable);
 
+    }
   }
 
 

@@ -36,7 +36,6 @@
             android:id="@+id/playIv"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginStart="15dp"
             android:src="@drawable/play_icon_new"
             app:layout_constraintBottom_toBottomOf="@+id/imageIv"
             app:layout_constraintStart_toEndOf="@+id/imageIv"
@@ -58,6 +57,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/playIv"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/timeTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:fontFamily="@font/segoe_ui_bold"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="7dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
