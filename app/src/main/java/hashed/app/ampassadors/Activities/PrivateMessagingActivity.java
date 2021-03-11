@@ -187,8 +187,6 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
   }
 
-
-
   //Activity actions and views
   private void initializeViews(){
 
@@ -659,10 +657,8 @@ public class PrivateMessagingActivity extends AppCompatActivity
   //messaging methods
   private void createMessagingDocument(PrivateMessage privateMessage){
 
-
     final Map<String, Object> messagingDocumentMap = new HashMap<>();
-//    messagingDocumentMap.put("sender", currentUid);
-//    messagingDocumentMap.put("receiver", messagingUid);
+
     messagingDocumentMap.put("LastSeenMessage:"+currentUid, "0");
     messagingDocumentMap.put("LastSeenMessage:"+messagingUid, "0");
     messagingDocumentMap.put("DeletedFor:"+currentUid,false);
@@ -942,6 +938,9 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
     privateMessages.add(new PrivateMessage(message,
             System.currentTimeMillis(), currentUid, fileType));
+
+
+
     adapter.notifyItemInserted(privateMessages.size());
     scrollToBottom();
 
@@ -973,6 +972,9 @@ public class PrivateMessagingActivity extends AppCompatActivity
               reference.getDownloadUrl().addOnSuccessListener(uri1 -> {
 
                 PrivateMessage privateMessage = null;
+
+                HashMap<String, Object> messageMap = new HashMap<>();
+
 
                 if (fileType == Files.AUDIO) {
 
@@ -1041,7 +1043,8 @@ public class PrivateMessagingActivity extends AppCompatActivity
     final UploadTask thumbnailUploadTask =  videoThumbnailRef.putBytes(baos.toByteArray());
 
     StorageTask<UploadTask.TaskSnapshot> thumbnailOnSuccessListener =
-            thumbnailUploadTask.addOnSuccessListener(taskSnapshot -> videoThumbnailRef.getDownloadUrl().addOnSuccessListener(thumbnailDownloadUrl -> {
+            thumbnailUploadTask.addOnSuccessListener(taskSnapshot ->
+                    videoThumbnailRef.getDownloadUrl().addOnSuccessListener(thumbnailDownloadUrl -> {
 
               uploadTasks.remove(thumbnailUploadTask);
 
@@ -1514,7 +1517,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
   }
 
   @Override
-  public boolean startDownload(int position,String url, String fileName) {
+  public void startDownload(int position, String url, String fileName) {
 
     final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
     alertDialogBuilder.setMessage("Do you want to download "+fileName);
@@ -1530,7 +1533,6 @@ public class PrivateMessagingActivity extends AppCompatActivity
     alertDialogBuilder.show();
 
 
-    return false;
   }
 
   @Override

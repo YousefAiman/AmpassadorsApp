@@ -5,6 +5,7 @@ import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
 
 import java.io.Serializable;
+import java.util.Map;
 
 @IgnoreExtraProperties
 public class PrivateMessage implements Serializable {
@@ -32,6 +33,9 @@ public class PrivateMessage implements Serializable {
   @Exclude
   private UploadTask uploadTask;
 
+  @PropertyName("zoomMeeting")
+  private ZoomMeeting zoomMeeting;
+
   public PrivateMessage() {
   }
 //
@@ -43,6 +47,13 @@ public class PrivateMessage implements Serializable {
     this.uploadTask = uploadTask;
   }
 
+  public ZoomMeeting getZoomMeeting() {
+    return zoomMeeting;
+  }
+
+  public void setZoomMeeting(ZoomMeeting zoomMeeting) {
+    this.zoomMeeting = zoomMeeting;
+  }
 
   public static class UploadTask{
 

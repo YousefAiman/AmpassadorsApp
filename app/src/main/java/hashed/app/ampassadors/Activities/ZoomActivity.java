@@ -45,13 +45,13 @@ public class ZoomActivity extends AppCompatActivity {
             return;
           }
 
-          ZoomUtil.createZoomMeeting(
-                  ZoomActivity.this,
-                  topic,
-                  durationInt,
-                  description,
-                  joinUrlTv,
-                  startUrlTv);
+//          ZoomUtil.createZoomMeeting(
+//                  ZoomActivity.this,
+//                  topic,
+//                  durationInt,
+//                  description,
+//                  joinUrlTv,
+//                  startUrlTv);
 
         }
 

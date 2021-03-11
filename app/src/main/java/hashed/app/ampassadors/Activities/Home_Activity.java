@@ -4,16 +4,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -25,6 +29,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -47,13 +52,16 @@ import hashed.app.ampassadors.Fragments.PostsFragment;
 import hashed.app.ampassadors.Fragments.ProfileFragment;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Services.FirebaseMessaging;
 import hashed.app.ampassadors.Utils.GlobalVariables;
+import hashed.app.ampassadors.Utils.WifiUtil;
 
-public class Home_Activity extends AppCompatActivity  {
+public class Home_Activity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener {
 
     private BottomNavigationView nav_btom;
     private FrameLayout homeFrameLayout;
     private DrawerLayout drawer_layout;
+    private NavigationView navigationview;
     private List<ListenerRegistration> listenerRegistrations;
 
     @Override
@@ -61,11 +69,9 @@ public class Home_Activity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
 
-
-
         SetUpCompetent();
 
-//        replaceFragment(new ChattingFragment());
+        replaceFragment(new PostsFragment());
 
         OnClickButtons();
 
@@ -82,22 +88,26 @@ public class Home_Activity extends AppCompatActivity  {
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .addSnapshotListener(new EventListener<DocumentSnapshot>() {
                     @Override
-                    public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                    public void onEvent(@Nullable DocumentSnapshot value,
+                                        @Nullable FirebaseFirestoreException error) {
 
                         if(value!=null && value.exists()){
 
                             if(GlobalVariables.getCurrentUsername() == null){
-                                GlobalVariables.setCurrentUsername(value.getString("username"));
-                                GlobalVariables.setCurrentUserImageUrl(value.getString("imageUrl"));
+
+                                GlobalVariables.setCurrentUsername(
+                                        value.getString("username"));
+
+                                GlobalVariables.setCurrentUserImageUrl(
+                                        value.getString("imageUrl"));
+
                             }
 
                             if(value.contains("Likes")){
-                                List<String> likes = (List<String>) value.get("Likes");
+                                final List<String> likes = (List<String>) value.get("Likes");
                                 GlobalVariables.setLikesList(likes);
                             }
                         }
-
-
                     }
                 })
         );
@@ -108,16 +118,17 @@ public class Home_Activity extends AppCompatActivity  {
         nav_btom = findViewById(R.id.nav_btom);
         homeFrameLayout = findViewById(R.id.homeFrameLayout);
         drawer_layout = findViewById(R.id.drawer_layout);
+        navigationview = findViewById(R.id.navigationview);
 
     }
-
-    // Tool bar
 
 
     // Buttons Click
     public void OnClickButtons() {
 
+        navigationview.setNavigationItemSelectedListener(this);
 
+        drawer_layout.closeDrawer(GravityCompat.START);
         nav_btom.setOnNavigationItemSelectedListener(item -> {
 
             if(item.getItemId() == R.id.home){
@@ -151,7 +162,6 @@ public class Home_Activity extends AppCompatActivity  {
             return true;
         });
 
-//        nav_btom.setSelectedItemId(R.id.home);
     }
 
 
@@ -208,5 +218,39 @@ public class Home_Activity extends AppCompatActivity  {
                 listenerRegistration.remove();
             }
         }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        Log.d("ttt","navigation clicked");
+
+            if(item.getItemId() == R.id.log_out){
+                Log.d("ttt","log_out clicked");
+//                if(WifiUtil.checkWifiConnection(this)){
+
+                    Log.d("ttt","internet exists");
+
+                    NotificationManagerCompat.from(this).cancelAll();
+
+                    FirebaseAuth.getInstance().signOut();
+
+                    getPackageManager().setComponentEnabledSetting(
+                            new ComponentName(Home_Activity.this, FirebaseMessaging.class),
+                            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                            PackageManager.DONT_KILL_APP);
+
+                    Toast.makeText(Home_Activity.this, "Logged out successfully",
+                            Toast.LENGTH_SHORT).show();
+
+                    startActivity(new Intent(Home_Activity.this, sign_in.class));
+                    finish();
+
+//                }
+            }
+
+
+
+        return true;
     }
 }

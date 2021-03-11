@@ -1,12 +1,5 @@
 package hashed.app.ampassadors.Utils;
 
-import hashed.app.ampassadors.Objects.ZoomMeetingResponse;
-import retrofit2.Call;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.Headers;
-import retrofit2.http.POST;
-
 public interface ZoomRequester {
 
   // Endpoints
@@ -23,7 +16,7 @@ public interface ZoomRequester {
 //  })
 //  @FormUrlEncoded
 //  @POST("/meetings")
-//  Call<ZoomMeetingResponse> createMeeting(@Field("userId") String userId, @Field("topic") String topic, @Field("type") Integer type);
+//  Call<ZoomMeeting> createMeeting(@Field("userId") String userId, @Field("topic") String topic, @Field("type") Integer type);
 
 
 }

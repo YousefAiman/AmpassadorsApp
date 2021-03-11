@@ -36,7 +36,7 @@
     <ImageView
         android:id="@+id/messagingPickerSendIv"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:src="@drawable/send_icon"
         android:contentDescription="@string/send_message" />
 

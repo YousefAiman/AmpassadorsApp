@@ -1,14 +1,12 @@
 package hashed.app.ampassadors.Adapters;
 
 import android.app.AlertDialog;
-import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,7 +61,8 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
             MSG_TYPE_RIGHT_IMAGE = 22,
             MSG_TYPE_RIGHT_AUDIO = 23,
             MSG_TYPE_RIGHT_VIDEO = 24,
-            MSG_TYPE_RIGHT_DOCUMENT = 25;
+            MSG_TYPE_RIGHT_DOCUMENT = 25,
+            MSG_TYPE_RIGHT_ZOOM = 26;
 
 
   //received group message items
@@ -72,7 +71,8 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
           MSG_TYPE_LEFT_IMAGE_GROUP = 32,
           MSG_TYPE_LEFT_AUDIO_GROUP = 33,
           MSG_TYPE_LEFT_VIDEO_GROUP = 34,
-          MSG_TYPE_LEFT_DOCUMENT_GROUP = 35;
+          MSG_TYPE_LEFT_DOCUMENT_GROUP = 35,
+          MSG_TYPE_LEFT_ZOOM_GROUP = 36;
 
   //received group message items
   static final int
@@ -120,7 +120,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
   public interface DocumentMessageListener{
 
-    boolean startDownload(int adapterPosition,String url, String fileName);
+    void startDownload(int adapterPosition, String url, String fileName);
     boolean cancelDownload(int adapterPosition,long downloadId);
 
   }
@@ -271,6 +271,21 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
                 .inflate(R.layout.group_chat_item_received_document_message, parent,
                         false));
 
+//      case MSG_TYPE_LEFT_ZOOM:
+//        return new PrivateMessagingDocumentVh(LayoutInflater.from(parent.getContext())
+//                .inflate(R.layout.private_chat_item_sent_document_message, parent,
+//                        false));
+
+      case MSG_TYPE_RIGHT_ZOOM:
+
+        return new PrivateMessagingZoomVh(LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.private_chat_item_sent_image_message, parent,
+                        false));
+
+      case MSG_TYPE_LEFT_ZOOM_GROUP:
+        return new PrivateMessagingZoomVh(LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.group_chat_item_received_image_message, parent,
+                        false));
 
     }
 
@@ -335,8 +350,6 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
                 true);
         break;
 
-
-
       case MSG_TYPE_LEFT_DOCUMENT:
       case MSG_TYPE_RIGHT_DOCUMENT:
 
@@ -350,9 +363,18 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
         break;
 
 
+      case MSG_TYPE_RIGHT_ZOOM:
+      case MSG_TYPE_LEFT_ZOOM_GROUP:
+
+        ((PrivateMessagingZoomVh)holder).bindMessage(privateMessages.get(position));
+
+        break;
+
       case MSG_TYPE_LEFT_DELETED_GROUP:
-                ((PrivateMessagingDeletedGroupVh)holder)
+
+         ((PrivateMessagingDeletedGroupVh)holder)
                         .bindUserName(privateMessages.get(position).getId());
+
           break;
     }
 
@@ -390,6 +412,10 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
       case Files.DOCUMENT:
         return  message.getSender().equals(currentUid)?MSG_TYPE_RIGHT_DOCUMENT:
                 isForGroup?MSG_TYPE_LEFT_DOCUMENT_GROUP:MSG_TYPE_LEFT_DOCUMENT;
+
+      case Files.ZOOM:
+        return  message.getSender().equals(currentUid)?MSG_TYPE_RIGHT_ZOOM:
+                MSG_TYPE_LEFT_ZOOM_GROUP;
 
       default:
         return 0;
@@ -861,89 +887,11 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
     @Override
     public void onClick(View view) {
 
-//      final PrivateMessage message = privateMessages.get(getAdapterPosition());
-//      final FileDownloadTask downloadTask =
-//              Files.downloadFile((Activity)itemView.getContext(),
-//                      message.getAttachmentUrl(),message.getFileName());
-//
-//      if(downloadTask == null){
-//        Toast.makeText(itemView.getContext(),
-//                "These was an error while attempting to download the file!",
-//                Toast.LENGTH_SHORT).show();
-//        return;
-//      }
-//
-//      downloadIv.setImageResource(R.drawable.close_icon);
-//      downloadProgressBar.setVisibility(View.VISIBLE);
-//
-//      downloadTask.addOnCompleteListener(new OnCompleteListener<FileDownloadTask.TaskSnapshot>() {
-//        @Override
-//        public void onComplete(@NonNull Task<FileDownloadTask.TaskSnapshot> task) {
-//
-//          downloadProgressBar.setVisibility(View.GONE);
-//
-//          if(task.isSuccessful()){
-//
-//            Toast.makeText(itemView.getContext(), "File downloaded successfully!",
-//                    Toast.LENGTH_SHORT).show();
-//
-//            downloadIv.setVisibility(View.GONE);
-//
-//          }else{
-//
-//            downloadIv.setImageResource(R.drawable.download_icon);
-//            downloadIv.setVisibility(View.VISIBLE);
-//            downloadIv.setOnClickListener(PrivateMessagingDocumentVh.this);
-//
-//            Toast.makeText(itemView.getContext(), "Download Failed! Please try again",
-//                    Toast.LENGTH_SHORT).show();
-//
-//          }
-//        }
-//      }).addOnFailureListener(new OnFailureListener() {
-//        @Override
-//        public void onFailure(@NonNull Exception e) {
-//
-//          downloadIv.setImageResource(R.drawable.download_icon);
-//          downloadIv.setVisibility(View.VISIBLE);
-//          downloadIv.setOnClickListener(PrivateMessagingDocumentVh.this);
-//
-//          Toast.makeText(itemView.getContext(), "Download Failed! Please try again",
-//                  Toast.LENGTH_SHORT).show();
-//
-//          int errorCode = ((StorageException) e).getErrorCode();
-//          int httpResultCode = ((StorageException) e).getHttpResultCode();
-//
-//
-//          Log.d("ttt","e.getMessage(): "+e.getMessage());
-//          Log.d("ttt","errorCode: "+errorCode);
-//          Log.d("ttt","httpResultCode: "+httpResultCode);
-//
-//        }
-//      }).addOnCanceledListener(new OnCanceledListener() {
-//        @Override
-//        public void onCanceled() {
-//
-//          downloadTask.cancel();
-//          downloadProgressBar.setVisibility(View.GONE);
-//          downloadIv.setImageResource(R.drawable.download_icon);
-//          downloadIv.setOnClickListener(PrivateMessagingDocumentVh.this);
-//
-//        }
-//      });
-//
-//      downloadIv.setOnClickListener(v-> downloadTask.cancel());
-//      if(Files.checkStorageWritePermission((Activity) itemView.getContext())){
 
       final PrivateMessage message = privateMessages.get(getAdapterPosition());
 
       if(message.getUploadTask()!=null &&
               message.getUploadTask().isDownloading()){
-
-//        downloadIv.setImageResource(R.drawable.download_icon);
-//        downloadIv.setVisibility(View.VISIBLE);
-//        downloadIv.setOnClickListener(PrivateMessagingDocumentVh.this);
-//        message.getUploadTask().setDownloading(false);
 
         if(!documentMessageListener.cancelDownload(
                 getAdapterPosition(),message.getUploadTask().getDownloadId())){
@@ -951,83 +899,96 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
 
       }else{
-//
-//        downloadIv.setImageResource(R.drawable.cancel_icon);
-//        downloadProgressBar.setVisibility(View.VISIBLE);
-//        message.getUploadTask().setDownloading(false);
         documentMessageListener.startDownload(
                 getAdapterPosition(),
                 message.getAttachmentUrl(),
                 message.getFileName());
 
-//        if(!documentMessageListener.startDownload(
-//                getAdapterPosition(),
-//                message.getAttachmentUrl(),
-//                message.getFileName())){
-//          Toast.makeText(context, "Failed to start download!", Toast.LENGTH_SHORT).show();
-//        }
-
       }
-
-//      notifyItemChanged(getAdapterPosition());
-//      DownloadManager downloadManager = (DownloadManager)itemView.getContext().
-//                getSystemService(Context.DOWNLOAD_SERVICE);
-//
-//        final Uri uri = Uri.parse(message.getAttachmentUrl());
-//
-//        DownloadManager.Request request = new DownloadManager.Request(uri);
-//
-//        request.setNotificationVisibility(
-//                DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-//
-//        String downloadPath =
-//                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-//                .getAbsolutePath();
-//
-//
-//
-//        request.setDestinationInExternalFilesDir(itemView.getContext(),
-//                Environment.DIRECTORY_DOWNLOADS,
-//                message.getFileName());
-//
-//
-//
-//
-//        downloadManager.enqueue(request);
-
-//      FileProvider.getUriForFile(context,
-//              BuildConfig.APPLICATION_ID + ".provider", file)
-//
-//      setUpDownloadCompleteReceiver();
-//
-//      itemView.getContext().
-//              registerReceiver(downloadReceiver
-//                      , new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-
 
 
     }
 
+  }
 
 
-//    private void setUpDownloadCompleteReceiver(){
-//        if(downloadReceiver == null){
-//          downloadReceiver = new DownloadReceiver(){
+  static class PrivateMessagingZoomVh extends RecyclerView.ViewHolder
+          implements View.OnLongClickListener, View.OnClickListener{
+
+    private final TextView messageTv;
+    private final ImageView imageIv;
+    private final Picasso picasso = Picasso.get();
+    private final TextView senderTv;
+
+    public PrivateMessagingZoomVh(@NonNull View itemView) {
+      super(itemView);
+      messageTv = itemView.findViewById(R.id.messageTv);
+      imageIv = itemView.findViewById(R.id.imageIv);
+      senderTv = itemView.findViewById(R.id.senderTv);
+    }
+
+    private void bindMessage(PrivateMessage message) {
+
+      if(message == null)
+        return;
+
+      picasso.load(R.drawable.zoom_icon).fit().into(imageIv);
+//      imageIv.setImageResource(R.drawable.zoom_icon);
+
+      getUserName(message.getSender(),senderTv);
+
+      messageTv.setText(message.getContent());
+
+      itemView.setOnClickListener(this);
+
+//      if(!message.getDeleted()){
+//        itemView.setOnLongClickListener(this);
+//      }
+
+    }
+
+    @Override
+    public boolean onLongClick(View view) {
+
+      return false;
+    }
+
+    @Override
+    public void onClick(View view) {
+
+      PackageManager pm = itemView.getContext().getPackageManager();
+//      Intent intent = pm.getLaunchIntentForPackage("us.zoom.videomeetings");
 //
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//              super.onReceive(context, intent);
+//      if (intent != null) {
 //
-//              getAdapterPosition();
-//              downloadProgressBar.setVisibility(View.INVISIBLE);
+//        itemView.getContext().startActivity(intent);
 //
-//            }
-//          };
-//
-//        }
-//    }
+//      }else{
+
+        final Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(
+                privateMessages.get(getAdapterPosition()).getZoomMeeting().getJoinUrl()));
+        try{
+
+          if (urlIntent.resolveActivity(pm) != null) {
+            itemView.getContext().startActivity(urlIntent);
+          }
+
+        }catch (NullPointerException ignored){
+
+        }
+//      }
+
+
+
+//      if(view.getId() == R.id.imageIv){
+//        imageMessageListener.showImage(privateMessages.get(getAdapterPosition())
+//                .getAttachmentUrl());
+//      }
+
+    }
 
   }
+
 
 
   private static void getUserName(String userId,TextView tv){
@@ -1040,9 +1001,14 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
         @Override
         public void onSuccess(DocumentSnapshot documentSnapshot) {
           if(documentSnapshot.exists()){
-            final String userName = documentSnapshot.getString("username");
-            tv.setText(userName);
-            userNamesMap.put(userId,userName);
+            userNamesMap.put(userId,documentSnapshot.getString("username"));
+          }
+        }
+      }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        @Override
+        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+          if(task.isSuccessful() && userNamesMap.containsKey(userId)){
+            tv.setText(userNamesMap.get(userId));
           }
         }
       });
@@ -1074,5 +1040,6 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
   }
+
 
 }

@@ -30,11 +30,9 @@ import hashed.app.ampassadors.Objects.UserInfo;
 import hashed.app.ampassadors.R;
 
 public class ProfileFragment extends Fragment {
+
     TextView username, password, email, country, city, phone;
     Button edit_profile;
-    FirebaseAuth fAuth;
-    FirebaseFirestore fStore;
-    String userid ;
     ImageView imageView;
 
     @Override
@@ -52,14 +50,11 @@ public class ProfileFragment extends Fragment {
         phone = view.findViewById(R.id.in_phone);
         imageView = view.findViewById(R.id.profile_picture);
 //
-        fAuth = FirebaseAuth.getInstance();
-        userid = fAuth.getCurrentUser().getUid();
-
-        fStore = FirebaseFirestore.getInstance();
 
         final UserInfo[] userInfo = new UserInfo[1];
 
-        fStore.collection("Users").document(userid).get()
+        FirebaseFirestore.getInstance().collection("Users").document(
+                FirebaseAuth.getInstance().getCurrentUser().getUid()).get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -73,7 +68,6 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()){
-                    if (task.getResult().exists()){
                         username.setText(userInfo[0].getUsername());
                         password.setText(userInfo[0].getPassword());
                         email.setText(userInfo[0].getEmail());
@@ -81,9 +75,9 @@ public class ProfileFragment extends Fragment {
                         city.setText(userInfo[0].getCity());
                         phone.setText(userInfo[0].getPhone());
                         Picasso.get().load(userInfo[0].getImageUrl()).fit().into(imageView);
-                    }
                 }else {
-                    Toast.makeText(getActivity(), "Error"+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Error"+task.getException().getMessage(),
+                            Toast.LENGTH_SHORT).show();
                 }
             }
         });
