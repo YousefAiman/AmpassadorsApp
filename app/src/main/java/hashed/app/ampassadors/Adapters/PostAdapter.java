@@ -62,17 +62,21 @@ public class PostAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
   private final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     private final CommentsInterface commentsInterface;
+    private final ImageInterface imageInterface;
 
     public interface CommentsInterface{
-
       void showComments(String postId,int comments);
-
     }
+  public interface ImageInterface{
+    void showImage(String imageUrl);
+  }
 
-    public PostAdapter(List<PostData> posts , Context context,CommentsInterface commentsInterface){
+    public PostAdapter(List<PostData> posts , Context context,CommentsInterface commentsInterface,
+                       ImageInterface imageInterface){
         PostAdapter.posts = posts;
         this.context = context;
         this.commentsInterface = commentsInterface;
+        this.imageInterface = imageInterface;
     }
 
 
@@ -443,7 +447,10 @@ public class PostAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             }else if(view.getId() == R.id.postIv){
 
-              new ImageFullScreenFragment(posts.get(getAdapterPosition()).getImageUrl()).show();
+              if(posts.get(getAdapterPosition()).getImageUrl()!=null){
+                imageInterface.showImage(posts.get(getAdapterPosition()).getImageUrl());
+              }
+
 
             }
 

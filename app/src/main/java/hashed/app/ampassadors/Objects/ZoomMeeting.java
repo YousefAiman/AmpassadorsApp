@@ -1,7 +1,9 @@
 package hashed.app.ampassadors.Objects;
 
+import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
 
+@IgnoreExtraProperties
 public class ZoomMeeting {
 
     @PropertyName("id")
@@ -12,6 +14,8 @@ public class ZoomMeeting {
     private String hostEmail;
     @PropertyName("topic")
     private String topic;
+    @PropertyName("type")
+    private int type;
     @PropertyName("duration")
     private int duration;
     @PropertyName("status")
@@ -20,11 +24,13 @@ public class ZoomMeeting {
     private String startUrl;
     @PropertyName("joinUrl")
     private String joinUrl;
+    @PropertyName("startTime")
+    private long startTime;
 
   public ZoomMeeting(){
   }
 
-  public ZoomMeeting(String id, String hostId, String hostEmail, String topic, int duration,
+  public ZoomMeeting(String id, String hostId, String hostEmail, String topic,int type, int duration,
                      String status, String startUrl, String joinUrl) {
     this.setId(id);
     this.setHostId(hostId);
@@ -34,6 +40,21 @@ public class ZoomMeeting {
     this.setStatus(status);
     this.setStartUrl(startUrl);
     this.setJoinUrl(joinUrl);
+    this.setType(type);
+  }
+
+  public ZoomMeeting(String id, String hostId, String hostEmail, String topic,int type, long startTime,
+                     int duration, String status, String startUrl, String joinUrl) {
+    this.setId(id);
+    this.setHostId(hostId);
+    this.setHostEmail(hostEmail);
+    this.setTopic(topic);
+    this.setDuration(duration);
+    this.setStatus(status);
+    this.setStartUrl(startUrl);
+    this.setJoinUrl(joinUrl);
+    this.setType(type);
+    this.setStartTime(startTime);
   }
 
   public String getId() {
@@ -112,5 +133,21 @@ public class ZoomMeeting {
 
   public void setDuration(int duration) {
     this.duration = duration;
+  }
+
+  public int getType() {
+    return type;
+  }
+
+  public void setType(int type) {
+    this.type = type;
+  }
+
+  public long getStartTime() {
+    return startTime;
+  }
+
+  public void setStartTime(long startTime) {
+    this.startTime = startTime;
   }
 }

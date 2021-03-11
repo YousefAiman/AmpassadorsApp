@@ -7,6 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#000000</color>
     <color name="black_transparent">#F2000000</color>
+    <color name="black_fully_transparent">#26000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="dark_green">#1B5E20</color>
     <color name="light_green">#02723A</color>
@@ -16,12 +17,16 @@
     <color name="light_medium_grey">#E0E0E0</color>
     <color name="medium_grey">#707070</color>
     <color name="red">#E50707</color>
+    <color name="messages_red">#C80000</color>
+    <color name="pink_red">#CE1125</color>
     <color name="dark_red">#B71C1C</color>
     <color name="transparent">#00000000</color>
     <color name="light_blue_600">#FF039BE5</color>
     <color name="light_blue_900">#FF01579B</color>
+    <color name="zoom_blue">#4A8CFF</color>
     <color name="light_blue_A200">#FF40C4FF</color>
     <color name="light_blue_A400">#FF00B0FF</color>
+    <color name="light_white_green">#F2F8F5</color>
     <color name="black_overlay">#66000000</color>
 
 </resources>
