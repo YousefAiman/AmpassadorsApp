@@ -13,9 +13,11 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +36,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -42,7 +46,9 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -69,7 +75,7 @@ public class sign_up extends AppCompatActivity {
     private Uri filePath;
     String cameraImageFilePath;
     FirebaseStorage storage;
-
+    Spinner spinner;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +110,29 @@ public class sign_up extends AppCompatActivity {
                 String txt_country = country.getText().toString();
                 String txt_city = city.getText().toString();
                 String txt_phone = phone.getText().toString();
+              //  String spin = spinner.getSelectedItem().toString();
+
+
+//                List<String> persons = new ArrayList<>();
+//                ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, persons);
+//                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//                spinner.setAdapter(adapter);
+//                reference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if (task.isSuccessful()) {
+//                            for (QueryDocumentSnapshot document : task.getResult()) {
+//                                String name = document.getString("Role");
+//                                persons.add(name);
+//                            }
+//                            adapter.notifyDataSetChanged();
+//                        }
+//                    }
+//                });
+
+
+
+
 
                 if (TextUtils.isEmpty(txt_username) || TextUtils.isEmpty(txt_password)||TextUtils.isEmpty(txt_email)
                         || TextUtils.isEmpty(txt_country) || TextUtils.isEmpty(txt_city ) || TextUtils.isEmpty(txt_phone)) {
@@ -129,9 +158,6 @@ public class sign_up extends AppCompatActivity {
             @Override
             public void onSuccess(AuthResult authResult) {
 
-
-
-
                 userInfo = new UserInfo();
                // Picasso.get().load(userInfo.getImageUrl()).fit().into(circleImageView);
 
@@ -146,9 +172,13 @@ public class sign_up extends AppCompatActivity {
                 userInfo.setUserid(firebaseUser.getUid());
                 userInfo.setImageUrl(imageUrl);
                 userInfo.setStatus(true);
+              //  userInfo.setUserRole(spin);
+                userInfo.setApprovement(false);
 
 
-               reference.document(firebaseUser.getUid()).set(userInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+
+                reference.document(firebaseUser.getUid()).set(userInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
                    @Override
                    public void onComplete(@NonNull Task<Void> task) {
                        if (task.isSuccessful()){
@@ -216,7 +246,7 @@ public class sign_up extends AppCompatActivity {
         sreference = storage.getReference();
         mProgressDialog = new ProgressDialog(this);
         userid = auth.getUid();
-
+        spinner = findViewById(R.id.options);
 
     }
 
