@@ -64,7 +64,6 @@ public class sign_up extends AppCompatActivity {
     FirebaseFirestore firebaseFirestore;
     CollectionReference reference;
     UserInfo userInfo;
-
     String imageUrl;
     String userid ;
     ImageView iamge;
@@ -173,7 +172,7 @@ public class sign_up extends AppCompatActivity {
                 userInfo.setImageUrl(imageUrl);
                 userInfo.setStatus(true);
               //  userInfo.setUserRole(spin);
-                userInfo.setApprovement(false);
+//                userInfo.setApprovement(false);
 
 
 

@@ -65,8 +65,24 @@
     <string name="vote">صوت</string>
     <string name="num_of_people">من الاشخاص</string>
     <string name="vote_check">Vote check</string>
-
-
+    
+    <!--Post-->
+    <string name="Post">Post</string>
+    <string name="username">Name</string>
+    <string name="title_interface">post</string>
+    <string name="title_string">عنوان الخبر </string> 
+    <string name="Details">التفاصيل</string>
+    
+    <!--Suggestions And Complaints-->
+    <string name="Complaints">Complaints</string>
+    <string name="title">we would like to hear from you</string>
+    <string name="com_title">عنوان الشكوى</string>
+    <string name="defendant">المشتكى عليه</string>
+    <string name="subject" >الموضوع</string>
+    <string name="send_btn">send</string>
+    <string name="Suggestion">Suggestion</string>
+    <string name="suggest_title">عنوان الاقتراح</string>
+    
     <!--Notifications-->
     <string name="new_message">New message from </string>
     <string name="fullscreen_image">Fullscreen image</string>
@@ -106,5 +122,5 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
-
+    
 </resources>

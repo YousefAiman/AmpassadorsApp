@@ -127,7 +127,7 @@ public class sign_in extends AppCompatActivity {
 
 
         fAuth = FirebaseAuth.getInstance();
-        userid = fAuth.getCurrentUser().getUid();
+       // userid = fAuth.getCurrentUser().getUid();
 
         fStore = FirebaseFirestore.getInstance();
 
@@ -135,64 +135,97 @@ public class sign_in extends AppCompatActivity {
 
     }
 
-    private void LogIn(){
-        btn_login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                progressDialog = new ProgressDialog(sign_in.this);
-                progressDialog.setMessage("Wait for approval from the administrator");
-                progressDialog.show();
+//    private void LogIn(){
+//        btn_login.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                progressDialog = new ProgressDialog(sign_in.this);
+//                progressDialog.setMessage("Wait for approval from the administrator");
+//                progressDialog.show();
+//
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        progressDialog.setCanceledOnTouchOutside(true);
+//                        progressDialog.dismiss();
+//                    }
+//                },5000);
+//
+//
+//               fStore.collection("Users").document(userid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                   @Override
+//                   public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                       if (task.isSuccessful()) {
+//                           if (task.getResult().exists()) {
+//                               String approvment = task.getResult().getString("approvment");
+//                               if (approvment.equals("true")){
+//                                   String txt_email = email.getText().toString();
+//                                   String txt_password = password.getText().toString();
+//                                   if (TextUtils.isEmpty(txt_email) || TextUtils.isEmpty(txt_password)){
+//                                       Toast.makeText(sign_in.this, "All field are required", Toast.LENGTH_SHORT).show();
+//                                   }else {
+//                                       auth.signInWithEmailAndPassword(txt_email, txt_password)
+//                                               .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+//                                                   @Override
+//                                                   public void onComplete(@NonNull Task<AuthResult> task) {
+//                                                       if (task.isSuccessful()){
+//                                                           Intent intent = new Intent(sign_in.this, Home_Activity.class);
+//                                                           intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                                                           startActivity(intent);
+//                                                           finish();
+//                                                       }else{
+//                                                           Toast.makeText(sign_in.this, "Error Authentication!", Toast.LENGTH_SHORT).show();
+//                                                       }
+//                                                   }
+//                                               });
+//                                   }
+//
+//
+//
+//                               }else{
+//                                   Toast.makeText(sign_in.this, "Admin Not Approved" , Toast.LENGTH_SHORT).show();
+//                               }
+//
+//                           }
+//                       }
+//                   }
+//               });
+//            }
+//        });
+//    }
+private void LogIn(){
+    btn_login.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            String txt_email = email.getText().toString();
+            String txt_password = password.getText().toString();
 
-                new Handler().postDelayed(new Runnable() {
+            if (TextUtils.isEmpty(txt_email) || TextUtils.isEmpty(txt_password)){
+                Toast.makeText(sign_in.this, "All field are required", Toast.LENGTH_SHORT).show();
+            }else {
+                auth.signInWithEmailAndPassword(txt_email, txt_password)
+                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()){
+                                    Intent intent = new Intent(sign_in.this, Home_Activity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                    finish();
+                                }else{
+                                    Toast.makeText(sign_in.this, "Error Authentication!", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
                     @Override
-                    public void run() {
-                        progressDialog.setCanceledOnTouchOutside(true);
-                        progressDialog.dismiss();
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(sign_in.this, "Error: "+e.getMessage() , Toast.LENGTH_SHORT).show();
                     }
-                },5000);
-
-
-               fStore.collection("Users").document(userid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                   @Override
-                   public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                       if (task.isSuccessful()) {
-                           if (task.getResult().exists()) {
-                               String approvment = task.getResult().getString("approvment");
-                               if (approvment.equals("true")){
-                                   String txt_email = email.getText().toString();
-                                   String txt_password = password.getText().toString();
-                                   if (TextUtils.isEmpty(txt_email) || TextUtils.isEmpty(txt_password)){
-                                       Toast.makeText(sign_in.this, "All field are required", Toast.LENGTH_SHORT).show();
-                                   }else {
-                                       auth.signInWithEmailAndPassword(txt_email, txt_password)
-                                               .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                                   @Override
-                                                   public void onComplete(@NonNull Task<AuthResult> task) {
-                                                       if (task.isSuccessful()){
-                                                           Intent intent = new Intent(sign_in.this, Home_Activity.class);
-                                                           intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                           startActivity(intent);
-                                                           finish();
-                                                       }else{
-                                                           Toast.makeText(sign_in.this, "Error Authentication!", Toast.LENGTH_SHORT).show();
-                                                       }
-                                                   }
-                                               });
-                                   }
-
-
-
-                               }else{
-                                   Toast.makeText(sign_in.this, "Admin Not Approved" , Toast.LENGTH_SHORT).show();
-                               }
-
-                           }
-                       }
-                   }
-               });
+                });
             }
-        });
-    }
+        }
+    });
+}
     private void CreateAccount(){
         create_account_btn.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -41,7 +42,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
 
+import static hashed.app.ampassadors.Utils.Files.DOCUMENT;
 import static hashed.app.ampassadors.Utils.Files.IMAGE;
+import static hashed.app.ampassadors.Utils.Files.VIDEO;
+import static hashed.app.ampassadors.Utils.Files.getFileInfo;
+import static hashed.app.ampassadors.Utils.Files.getFileLaunchIntentFromUri;
+import static hashed.app.ampassadors.Utils.Files.getFileSizeInMB;
 
 public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener {
     EditText post_text;
@@ -70,6 +76,9 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     MediaController mediaController;
     Uri uri;
     int attachmentType = 0;
+    String postTexting;
+    String posttitle;
+    TextView title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,50 +113,19 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         posting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                postTexting = post_text.getText().toString();
+                posttitle = postTitle.getText().toString();
 
-                String postTexting = post_text.getText().toString();
-                String posttitle = postTitle.getText().toString();
 
-
-                if (!postTexting.isEmpty() || !posttitle.isEmpty() || !downloadUrl.isEmpty()) {
+                if (!postTexting.isEmpty() && !posttitle.isEmpty() || !downloadUrl.isEmpty()) {
                     mProgressDialog.setMessage("publishing form");
                     mProgressDialog.show();
 
-                    HashMap<String, Object> dataMap = new HashMap<>();
-                    String postId = UUID.randomUUID().toString();
-                    dataMap.put("postId", postId);
-                    dataMap.put("tilte", posttitle);
-                    dataMap.put("publisherId", FirebaseAuth.getInstance().getCurrentUser().getUid());
-                    dataMap.put("attachmentUrl", downloadUrl);
-                    dataMap.put("attachmentType", attachmentType);
-                    dataMap.put("publishTime", System.currentTimeMillis());
-                    dataMap.put("likes", 0);
-                    dataMap.put("comments", 0);
-                    dataMap.put("description", postTexting);
-                    dataMap.put("type", 1);
-
-                    reference.document(postId).set(dataMap)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    mProgressDialog.dismiss();
-                                    dataMap.put("attachmentUrl", downloadUrl);
-                                    dataMap.put("attachmentType", IMAGE);
-                                    loadFile();
-                                    finish();
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-
-                            mProgressDialog.dismiss();
-
-                            Toast.makeText(PostActivity.this, "Failed to post!" +
-                                    " Please try again", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-                } else {
+                    Upload(uri);
+                } else if (posttitle.isEmpty()) {
+                    Toast.makeText(PostActivity.this, "You have to fill the Title", Toast.LENGTH_SHORT).show();
+                } else if (postTexting.isEmpty()) {
+                    Toast.makeText(PostActivity.this, "You have to fill the Post", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -180,6 +158,7 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             if (resultCode == RESULT_OK && data != null) {
                 uri = data.getData();
                 Picasso.get().load(uri).fit().into(postImage);
+                attachmentType = IMAGE;
             } else {
                 //problem with image retrieving
             }
@@ -187,15 +166,25 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             if (resultCode == RESULT_OK && data != null) {
                 uri = data.getData();
                 getVideo(uri);
+
+                attachmentType = VIDEO;
+
             } else {
                 //problem with image retrieving
             }
         } else if (requestCode == Files.PICK_FILE) {
             if (resultCode == RESULT_OK && data != null) {
+                uri = data.getData();
+
+                getFileInfo(PostActivity.this, uri);
+                attachmentType = DOCUMENT;
                 if (Files.getFileSizeInMB(this, data.getData()) > Files.MAX_FILE_SIZE) {
+                    getFileSizeInMB(PostActivity.this, uri);
+
                     Toast.makeText(this, "You can't send files bigger than "
                             + Files.MAX_FILE_SIZE + " MB!", Toast.LENGTH_SHORT).show();
-                    uri = data.getData();
+
+
                 } else {
                 }
             } else {
@@ -239,50 +228,131 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         }).start();
     }
 
-    public String getExtention(Uri uri) {
-        ContentResolver resolver = getContentResolver();
-        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-        return mimeTypeMap.getExtensionFromMimeType(resolver.getType(uri));
-    }
+    public void AddPost() {
 
-    public void loadImage() {
-        downloadUrl = uri.toString();
-        attachmentType = IMAGE;
+        HashMap<String, Object> dataMap = new HashMap<>();
+        String postId = UUID.randomUUID().toString();
+        dataMap.put("postId", postId);
+        dataMap.put("title", posttitle);
+        dataMap.put("publisherId", FirebaseAuth.getInstance().getCurrentUser().getUid());
+        dataMap.put("imageUrl", downloadUrl);
+        dataMap.put("attachmentType", attachmentType);
+        dataMap.put("publishTime", System.currentTimeMillis());
+        dataMap.put("likes", 0);
+        dataMap.put("comments", 0);
+        dataMap.put("description", postTexting);
+        dataMap.put("type", 1);
 
-        StorageReference reference = storage.getReference().child("img").child(uri.getLastPathSegment());
-        reference.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(PostActivity.this, "Successfully loading", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    public void loadVideo() {
-        StorageReference reference = storage.getReference().child("videoPost").child(uri.getLastPathSegment());
-
-        reference.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(PostActivity.this, "Successfully loading", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-    }
-
-    public void loadFile() {
-        StorageReference reference = storage.getReference().child("File").child(uri.getLastPathSegment());
-        reference.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Files.getFileInfo(PostActivity.this, uri);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
+        reference.document(postId).set(dataMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        mProgressDialog.dismiss();
+                        dataMap.put("attachmentUrl", downloadUrl);
+                        dataMap.put("attachmentType", IMAGE);
+                        finish();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(PostActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
 
+                mProgressDialog.dismiss();
+
+                Toast.makeText(PostActivity.this, "Failed to post!" +
+                        " Please try again", Toast.LENGTH_SHORT).show();
             }
         });
+
+
     }
+
+    public void Upload(Uri uri) {
+        String fileName = "";
+        if (attachmentType == IMAGE) {
+            fileName = "img";
+            StorageReference storageReference = storage.getReference().child(fileName).child(uri.getLastPathSegment());
+            storageReference.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    downloadUrl = uri.toString();
+                    AddPost();
+                    Toast.makeText(PostActivity.this, "Successfully Add ", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(PostActivity.this, "Error : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+
+
+                }
+            });
+        } else if (attachmentType == VIDEO) {
+            fileName = "videoPost";
+            StorageReference storageReference = storage.getReference().child(fileName).child(uri.getLastPathSegment());
+            storageReference.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    downloadUrl = uri.toString();
+                    AddPost();
+                    Toast.makeText(PostActivity.this, "Successfully Add ", Toast.LENGTH_SHORT).show();
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(PostActivity.this, "Error : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+
+                }
+            });
+        } else if (attachmentType == DOCUMENT) {
+            fileName = "DocumentsPost";
+            StorageReference reference = storage.getReference().child(fileName).child(uri.getLastPathSegment());
+            reference.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    downloadUrl = uri.toString();
+                    AddPost();
+                    Toast.makeText(PostActivity.this, "Successfully Add ", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(PostActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+
+                }
+            });
+
+        }
+    }
+
+//
+//    private void cancelUploadTasks(){
+//
+//        if(uploadTasks!=null && !uploadTasks.isEmpty()){
+//            for(UploadTask uploadTask:uploadTasks.keySet()){
+//
+//                if(uploadTask.isComplete()){
+//
+//
+//                }else{
+//
+//                    Log.d("ttt","task not complete so adding new listener, " +
+//                            "and trying to cancel: "+uploadTask.cancel());
+//
+//                    if(uploadTasks.containsKey(uploadTask)){
+//
+//                        uploadTask.removeOnSuccessListener(
+//                                (OnSuccessListener<? super UploadTask.TaskSnapshot>) uploadTasks.get(uploadTask));
+//
+//                    }
+//
+//                    uploadTask.addOnSuccessListener(taskSnapshot -> uploadTask.getSnapshot().getStorage().delete().addOnSuccessListener(aVoid -> Log.d("ttt", "ref delete sucess")).addOnFailureListener(e -> Log.d("ttt", "ref delete failed: " + e.getMessage())));
+//
+//                }
+//            }
+//        }
+
+
+
+
 }
