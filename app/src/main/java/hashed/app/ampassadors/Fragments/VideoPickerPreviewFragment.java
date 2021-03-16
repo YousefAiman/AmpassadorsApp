@@ -165,8 +165,7 @@ public class VideoPickerPreviewFragment extends Fragment {
 
   private SimpleExoPlayer SetupPlayer(){
 
-    simpleExoPlayer = new SimpleExoPlayer.Builder(getContext(),
-            new DefaultRenderersFactory(getContext())).build();
+    simpleExoPlayer = new SimpleExoPlayer.Builder(getContext(), new DefaultRenderersFactory(getContext())).build();
 
     DataSpec dataSpec = new DataSpec(videoUri);
     final FileDataSource fileDataSource = new FileDataSource();

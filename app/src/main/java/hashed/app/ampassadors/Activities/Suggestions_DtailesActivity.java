@@ -16,7 +16,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.net.Inet4Address;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +45,7 @@ public class Suggestions_DtailesActivity extends AppCompatActivity {
     public void SetUpCompntet() {
         firebaseFirestore = FirebaseFirestore.getInstance();
         reference = firebaseFirestore.collection("Suggestions");
-        title = findViewById(R.id.readmore);
+        title = findViewById(R.id.title_com);
         subject = findViewById(R.id.subject);
         delete = findViewById(R.id.deletebtn);
         suggestions = new ArrayList<>();

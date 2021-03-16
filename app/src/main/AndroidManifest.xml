@@ -20,6 +20,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AmpassadorsApp">
+        <activity
+            android:name=".SideDrawer"
+            android:label="@string/title_activity_side_drawer"
+            android:theme="@style/Theme.AmpassadorsApp.NoActionBar"></activity>
         <activity android:name=".Activities.PostPollActivity"></activity>
         <activity android:name=".Activities.PostNewsActivity" />
         <activity android:name=".Activities.NotificationsActivity" />

@@ -55,7 +55,7 @@
             tools:ignore="RtlCompat" />
 
         <TextView
-            android:id="@+id/readmore"
+            android:id="@+id/title_com"
             android:layout_width="79dp"
             android:layout_height="23dp"
             android:layout_marginStart="16dp"

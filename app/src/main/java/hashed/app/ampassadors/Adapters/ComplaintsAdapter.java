@@ -76,7 +76,7 @@ public class  ComplaintsAdapter extends RecyclerView.Adapter<ComplaintsAdapter.C
             super(itemView);
             username= itemView.findViewById(R.id.username);
             tile = itemView.findViewById(R.id.title);
-            readmore = itemView.findViewById(R.id.readmore);
+            readmore = itemView.findViewById(R.id.title_com);
 
         }
         private void getUserInfo(PostData postData, String userId) {

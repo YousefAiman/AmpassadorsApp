@@ -43,7 +43,7 @@ public class ComplaintsActivity extends AppCompatActivity {
     }
 
     public void setupCompontet() {
-        titleSubject = findViewById(R.id.readmore);
+        titleSubject = findViewById(R.id.title_com);
         send = findViewById(R.id.sendd);
         defendant = findViewById(R.id.defendant);
         subject = findViewById(R.id.subject);
