@@ -74,7 +74,6 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
   private ViewPager headerViewPager;
   private LinearLayout dotsLinear;
 
-
   //header Pager
   private Handler handler;
   private Runnable pagerRunnable;

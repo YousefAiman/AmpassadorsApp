@@ -2,7 +2,6 @@ package hashed.app.ampassadors.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,7 +77,7 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<SuggestionsAdapter.
             super(itemView);
             username = itemView.findViewById(R.id.username);
             tile = itemView.findViewById(R.id.title);
-            readmore = itemView.findViewById(R.id.readmore);
+            readmore = itemView.findViewById(R.id.title_com);
 
         }
 

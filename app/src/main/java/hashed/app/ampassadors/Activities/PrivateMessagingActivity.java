@@ -1,3 +1,4 @@
+
 package hashed.app.ampassadors.Activities;
 
 import androidx.annotation.NonNull;
@@ -87,7 +88,6 @@ import hashed.app.ampassadors.Objects.PrivateMessage;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
 import hashed.app.ampassadors.Utils.GlobalVariables;
-
 public class PrivateMessagingActivity extends AppCompatActivity
         implements Toolbar.OnMenuItemClickListener,PrivateMessagingAdapter.DeleteMessageListener,
         PrivateMessagingAdapter.VideoMessageListener,PrivateMessagingAdapter.DocumentMessageListener,

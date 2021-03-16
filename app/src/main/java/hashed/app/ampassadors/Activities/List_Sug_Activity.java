@@ -65,24 +65,6 @@ public class List_Sug_Activity extends AppCompatActivity {
 
     }
 
-//
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (resultCode == 3) {
-//            String suggest = data.getStringExtra("Deleted");
-//
-//            for (int i = 0; i < suggestions.size(); i++) {
-//                if (suggest.equals(suggestions.get(i).getSuggestionId())) {
-//                    suggestions.remove(i);
-//                    adapter.notifyItemRemoved(i);
-//                    break;
-//                }
-//            }
-//        }
-//
-//    }
-
     public void showSuggestions(boolean isInitial) {
 
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -102,28 +84,5 @@ public class List_Sug_Activity extends AppCompatActivity {
                 Toast.makeText(List_Sug_Activity.this,"Error"+ e.getMessage() , Toast.LENGTH_SHORT).show();
             }
         });
-//        task.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-//            @Override
-//            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-//                suggestions.addAll(queryDocumentSnapshots.toObjects(Suggestions.class));
-//            }
-//        }).addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-//            @Override
-//            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-//
-//                if (isInitial) {
-//                    adapter.notifyDataSetChanged();
-//
-//                } else {
-//                    adapter.notifyItemRangeInserted((suggestions.size() - task.getResult().size()) - 1,
-//                            task.getResult().size());
-//                }
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//                Toast.makeText(List_Sug_Activity.this, "Error" + e.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-//        });
     }
 }

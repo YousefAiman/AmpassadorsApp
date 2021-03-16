@@ -21,7 +21,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AmpassadorsApp">
         <activity
-            android:name=".Activities.SideDrawer"
+            android:name=".SideDrawer"
             android:label="@string/title_activity_side_drawer"
             android:theme="@style/Theme.AmpassadorsApp.NoActionBar"></activity>
         <activity android:name=".Activities.ConnectionActivity" />
