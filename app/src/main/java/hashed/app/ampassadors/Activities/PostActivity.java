@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
@@ -18,11 +19,22 @@ import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DataSpec;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.FileDataSource;
+import com.google.android.exoplayer2.util.Util;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -36,9 +48,12 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import hashed.app.ampassadors.Fragments.VideoPickerPreviewFragment;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
 
@@ -66,20 +81,18 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     StorageReference storageReference;
     EditText postTitle;
     private Bitmap videoThumbnailBitmap = null;
-    User user;
     String downloadUrl;
-    private Uri filePath;
-    boolean uploading = false;
-    FirebaseStorage video;
-    StorageReference videoRef;
-    Uri vedioUrl;
     MediaController mediaController;
     Uri uri;
     int attachmentType = 0;
     String postTexting;
     String posttitle;
-    TextView title;
+    ImageView videoPlayIv;
 
+    private FrameLayout pickerFrameLayout;
+
+    private PlayerView playerView;
+    private SimpleExoPlayer simpleExoPlayer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,6 +119,8 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         mProgressDialog = new ProgressDialog(this);
         mediaController = new MediaController(this);
         postTitle = findViewById(R.id.post_title);
+        playerView = findViewById(R.id.exoPlayer);
+        videoPlayIv = findViewById(R.id.videoPlayIv);
     }
 
     public void clickListiners() {
@@ -120,7 +135,6 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 if (!postTexting.isEmpty() && !posttitle.isEmpty() || !downloadUrl.isEmpty()) {
                     mProgressDialog.setMessage("publishing form");
                     mProgressDialog.show();
-
                     Upload(uri);
                 } else if (posttitle.isEmpty()) {
                     Toast.makeText(PostActivity.this, "You have to fill the Title", Toast.LENGTH_SHORT).show();
@@ -178,6 +192,11 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
                 getFileInfo(PostActivity.this, uri);
                 attachmentType = DOCUMENT;
+                TextView documentNameTv = findViewById(R.id.documentNameTv);
+                Map<String,Object> fileInfoMap = Files.getFileInfo(PostActivity.this,uri);
+
+                final String fileName = (String) fileInfoMap.get("fileName");
+                documentNameTv.setText(fileName);
                 if (Files.getFileSizeInMB(this, data.getData()) > Files.MAX_FILE_SIZE) {
                     getFileSizeInMB(PostActivity.this, uri);
 
@@ -186,6 +205,7 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
 
                 } else {
+
                 }
             } else {
                 //problem with image retrieving
@@ -226,6 +246,14 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 }
             }
         }).start();
+
+        Objects.requireNonNull(playerView.getVideoSurfaceView()).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                playPauseOrrInitializeVideo();
+                playerView.getVideoSurfaceView().setOnClickListener(null);
+            }
+        });
     }
 
     public void AddPost() {
@@ -265,7 +293,6 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
 
     }
-
     public void Upload(Uri uri) {
         String fileName = "";
         if (attachmentType == IMAGE) {
@@ -282,7 +309,6 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Toast.makeText(PostActivity.this, "Error : " + e.getMessage(), Toast.LENGTH_SHORT).show();
-
 
                 }
             });
@@ -354,5 +380,68 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
 
 
+    private void playPauseOrrInitializeVideo(){
+
+        if(simpleExoPlayer==null ){
+            postImage.setImageBitmap(null);
+            postImage.setVisibility(View.GONE);
+            videoPlayIv.setVisibility(View.GONE);
+            playerView.setPlayer(SetupPlayer());
+        }
+
+    }
+    private SimpleExoPlayer SetupPlayer(){
+
+        simpleExoPlayer = new SimpleExoPlayer.Builder(PostActivity.this,
+                new DefaultRenderersFactory(PostActivity.this)).build();
+
+        DataSpec dataSpec = new DataSpec(uri);
+        final FileDataSource fileDataSource = new FileDataSource();
+        try {
+            fileDataSource.open(dataSpec);
+        } catch (FileDataSource.FileDataSourceException e) {
+            e.printStackTrace();
+        }
+
+
+        DataSource.Factory dataSourceFactory =
+                new DefaultDataSourceFactory(PostActivity.this, Util.getUserAgent(PostActivity.this,
+                        "simpleExoPlayer"));
+
+        MediaSource firstSource = new ProgressiveMediaSource.Factory(dataSourceFactory)
+                .createMediaSource(fileDataSource.getUri());
+
+        simpleExoPlayer.prepare(firstSource, true, true);
+
+        simpleExoPlayer.setPlayWhenReady(true);
+
+        return simpleExoPlayer;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (simpleExoPlayer != null) {
+            simpleExoPlayer.setPlayWhenReady(false);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (simpleExoPlayer != null) {
+            simpleExoPlayer.setPlayWhenReady(true);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (simpleExoPlayer != null) {
+            playerView.setPlayer(null);
+            simpleExoPlayer.release();
+            simpleExoPlayer = null;
+        }
+    }
 
 }
