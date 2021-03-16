@@ -71,6 +71,8 @@ public class PostAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
     void showImage(String imageUrl);
   }
 
+
+
     public PostAdapter(List<PostData> posts , Context context,CommentsInterface commentsInterface,
                        ImageInterface imageInterface){
         PostAdapter.posts = posts;
@@ -78,6 +80,7 @@ public class PostAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.commentsInterface = commentsInterface;
         this.imageInterface = imageInterface;
     }
+
 
 
     @NonNull

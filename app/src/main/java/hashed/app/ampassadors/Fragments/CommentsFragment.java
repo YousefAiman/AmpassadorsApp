@@ -77,7 +77,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
     FrameLayout repliesFrameLayout;
     int commentsCount;
 
-    CommentsFragment(String postId, int commentsCount){
+    public CommentsFragment(String postId, int commentsCount){
         this.postId = postId;
         this.commentsCount = commentsCount;
     }

@@ -36,6 +36,9 @@
         <activity android:name=".Activities.CreateMeetingActivity" />
         <activity android:name=".Activities.CreatePollActivity" />
         <activity android:name=".Activities.UsersPickerActivity" />
+        <activity android:name=".Activities.ComplaintsActivity" />
+
+
         <activity android:name=".Activities.ZoomActivity"></activity>
         <activity android:name=".Activities.sign_in" />
         <activity android:name=".Activities.PrivateMessagingActivity" />

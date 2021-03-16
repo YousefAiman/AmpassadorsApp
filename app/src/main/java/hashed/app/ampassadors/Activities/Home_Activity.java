@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import hashed.app.ampassadors.A_Fragment;
 import hashed.app.ampassadors.Adapters.PostAdapter;
 import hashed.app.ampassadors.Fragments.ChattingFragment;
 import hashed.app.ampassadors.Fragments.GroupsFragment;
@@ -72,7 +73,6 @@ public class Home_Activity extends AppCompatActivity  implements NavigationView.
         SetUpCompetent();
 
         replaceFragment(new PostsFragment());
-
         OnClickButtons();
 
         createUserLikesListener();
@@ -82,7 +82,6 @@ public class Home_Activity extends AppCompatActivity  implements NavigationView.
     private void createUserLikesListener(){
 
         listenerRegistrations = new ArrayList<>();
-
         listenerRegistrations.add(
         FirebaseFirestore.getInstance().collection("Users")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -111,7 +110,6 @@ public class Home_Activity extends AppCompatActivity  implements NavigationView.
                     }
                 })
         );
-
     }
     public void SetUpCompetent() {
 
@@ -204,12 +202,9 @@ public class Home_Activity extends AppCompatActivity  implements NavigationView.
 
         }
     }
-
-
     public void showDrawer() {
         drawer_layout.openDrawer(GravityCompat.START);
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -219,7 +214,6 @@ public class Home_Activity extends AppCompatActivity  implements NavigationView.
             }
         }
     }
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
@@ -230,26 +224,44 @@ public class Home_Activity extends AppCompatActivity  implements NavigationView.
 //                if(WifiUtil.checkWifiConnection(this)){
 
                     Log.d("ttt","internet exists");
-
                     NotificationManagerCompat.from(this).cancelAll();
-
                     FirebaseAuth.getInstance().signOut();
-
                     getPackageManager().setComponentEnabledSetting(
                             new ComponentName(Home_Activity.this, FirebaseMessaging.class),
                             PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                             PackageManager.DONT_KILL_APP);
-
                     Toast.makeText(Home_Activity.this, "Logged out successfully",
                             Toast.LENGTH_SHORT).show();
-
                     startActivity(new Intent(Home_Activity.this, sign_in.class));
                     finish();
-
 //                }
+            }else if (item.getItemId() == R.id.news){
+
+
             }
+            else if (item.getItemId() == R.id.awreaness_post){
 
+            }
+            else if (item.getItemId() == R.id.courses){
 
+            }
+            else if (item.getItemId() == R.id.polls){
+                    getSupportFragmentManager().beginTransaction().replace(R.id.relative, new A_Fragment()).commit();
+            }
+            else if (item.getItemId() == R.id.policy){
+
+            }
+            else if (item.getItemId() == R.id.complaints) {
+                Intent mapIntent = new Intent(Home_Activity.this, ComplaintsActivity.class);
+                startActivity(mapIntent);
+
+            }else if (item.getItemId() == R.id.proposals){
+                Intent mapIntent = new Intent(Home_Activity.this, SuggestionsActivity.class);
+                startActivity(mapIntent);
+
+            }
+            else if (item.getItemId() == R.id.about){
+            }
 
         return true;
     }

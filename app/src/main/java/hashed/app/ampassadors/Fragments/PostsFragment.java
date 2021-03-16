@@ -98,8 +98,6 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     query = FirebaseFirestore.getInstance().collection("Posts")
             .orderBy("publishTime", Query.Direction.DESCENDING).limit(POSTS_LIMIT);
     postData = new ArrayList<>();
-
-
     adapter = new PostAdapter(postData, getContext(),this,this);
 
   }
@@ -210,11 +208,8 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     Query updatedQuery = query;
 
     if(lastDocSnap!=null){
-
       updatedQuery = query.startAfter(lastDocSnap);
-
     }
-
     updatedQuery.get().addOnSuccessListener(queryDocumentSnapshots -> {
       if (!queryDocumentSnapshots.isEmpty()) {
 
@@ -321,8 +316,6 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     bsd.show();
 
   }
-
-
 
   private void createHeaderPager(){
 
