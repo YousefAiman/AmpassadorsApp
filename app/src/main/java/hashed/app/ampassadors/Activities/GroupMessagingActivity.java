@@ -13,11 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -82,10 +84,15 @@ import hashed.app.ampassadors.Fragments.ImageFullScreenFragment;
 import hashed.app.ampassadors.Fragments.VideoFullScreenFragment;
 import hashed.app.ampassadors.Fragments.VideoPickerPreviewFragment;
 import hashed.app.ampassadors.Fragments.ZoomMeetingCreationFragment;
+import hashed.app.ampassadors.NotificationUtil.BadgeUtil;
+import hashed.app.ampassadors.NotificationUtil.CloudMessagingNotificationsSender;
+import hashed.app.ampassadors.NotificationUtil.Data;
+import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.Objects.PrivateMessage;
 import hashed.app.ampassadors.Objects.ZoomMeeting;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
+import hashed.app.ampassadors.Utils.GlobalVariables;
 
 public class GroupMessagingActivity extends AppCompatActivity
         implements Toolbar.OnMenuItemClickListener,PrivateMessagingAdapter.DeleteMessageListener,
@@ -103,7 +110,9 @@ public class GroupMessagingActivity extends AppCompatActivity
           = FirebaseDatabase.getInstance().getReference().child("GroupMessages").getRef();
 
   private static final CollectionReference meetingsRef
-          = FirebaseFirestore.getInstance().collection("Meetings");
+          = FirebaseFirestore.getInstance().collection("Meetings"),
+          usersRef = FirebaseFirestore.getInstance().collection("Users");
+
 
   private DatabaseReference currentMessagingRef;
   private String firstKeyRef;
@@ -149,19 +158,36 @@ public class GroupMessagingActivity extends AppCompatActivity
   private Runnable progressRunnable;
 
 
+  //notifications
+  private SharedPreferences sharedPreferences;
+  private Data data;
+  private String currentGroupName;
+  private String currentGroupImage;
+  private String currentUserName;
+  private List<String> groupMembers;
+
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_private_messaging);
 
 
-    groupId = getIntent().getStringExtra("groupId");
+    //getting group id
+    getGroupId();
 
     //setting up toolbar and its actions
     setUpToolBarAndActions();
 
     //initializing Views
     initializeViews();
+
+
+    //handling notification is it exists
+    handleNotification();
+
+    //getting current user data
+    getMyData();
 
     //groupData
     getGroupData();
@@ -203,6 +229,40 @@ public class GroupMessagingActivity extends AppCompatActivity
     micIv.setOnClickListener(this);
   }
 
+  private void getGroupId(){
+
+    final Intent intent = getIntent();
+
+    if(intent.hasExtra("destinationBundle")){
+
+      final String sourceId = intent.getStringExtra("sourceId");
+      final String sourceType = intent.getStringExtra("sourceType");
+
+      if(sourceType.equals("zoomMeeting")){
+
+        groupId = sourceId.split("-")[0];
+        final String joinUrl = sourceId.split("-")[1];
+
+        if(joinUrl!=null && !joinUrl.isEmpty()){
+          startZoomMeetingIntent(joinUrl);
+        }
+
+      }else{
+        groupId = sourceId;
+      }
+    }else{
+      groupId = intent.getStringExtra("messagingUid");
+    }
+
+
+    if(intent.hasExtra("isFromNotification") && Build.VERSION.SDK_INT < 26){
+      BadgeUtil.decrementBadgeNum(this);
+    }
+
+    usersRef.document(currentUid).update("ActivelyMessaging",groupId);
+
+  }
+
 
   //firestore user data
   private void getGroupData(){
@@ -210,18 +270,44 @@ public class GroupMessagingActivity extends AppCompatActivity
     meetingsRef.document(groupId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
       @Override
       public void onSuccess(DocumentSnapshot ds) {
-
         if(ds.exists()){
 
           if(ds.contains("imageUrl")){
-            Picasso.get().load(ds.getString("imageUrl")).fit().into(messagingTbProfileIv);
+            currentGroupImage = ds.getString("imageUrl");
           }
-          messagingTbNameTv.setText(ds.getString("title"));
-
+          currentGroupName = ds.getString("title");
+          groupMembers = (List<String>) ds.get("members");
+        }
+      }
+    }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+      @Override
+      public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+        if(task.isSuccessful()){
+          Picasso.get().load(currentGroupImage).fit().into(messagingTbProfileIv);
+          messagingTbNameTv.setText(currentGroupName);
         }
       }
     });
 
+  }
+
+  //my data
+  private void getMyData(){
+
+    usersRef.document(currentUid).get().addOnSuccessListener(documentSnapshot -> {
+      if(documentSnapshot.exists()){
+//        currentImageUrl = documentSnapshot.getString("imageUrl");
+        currentUserName = documentSnapshot.getString("username");
+      }
+    }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+      @Override
+      public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+        if(task.isSuccessful()){
+//          Picasso.get().load(currentImageUrl).fit().into(messagingTbProfileIv);
+          messagingTbNameTv.setText(currentUserName);
+        }
+      }
+    });
   }
 
   //Group messages
@@ -536,6 +622,13 @@ public class GroupMessagingActivity extends AppCompatActivity
             .child(String.valueOf(Integer.parseInt(lastKeyRef) + 1));
 
     childRef.setValue(privateMessage).addOnSuccessListener(v -> {
+
+      if(privateMessage.getType() == Files.ZOOM){
+        sendZoomMeetingNotification(privateMessage.getZoomMeeting().getTopic(),
+                privateMessage.getZoomMeeting().getJoinUrl());
+      }else{
+        checkUserActivityAndSendNotifications(privateMessage.getContent(),privateMessage.getType());
+      }
 
       messageSendIv.setClickable(true);
 
@@ -964,19 +1057,26 @@ public class GroupMessagingActivity extends AppCompatActivity
 
     sendMessage(privateMessage);
 
-    final Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(zoomMeeting.getStartUrl()));
-    try{
 
-      if (urlIntent.resolveActivity(getPackageManager()) != null) {
-        startActivity(urlIntent);
-      }
-
-    } catch (NullPointerException ignored){
-
+    if(zoomMeeting.getStartUrl()!=null && !zoomMeeting.getStartUrl().isEmpty()){
+      startZoomMeetingIntent(zoomMeeting.getStartUrl());
     }
-
-
   }
+
+  private void startZoomMeetingIntent(String url){
+
+      final Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+      try{
+
+        if (urlIntent.resolveActivity(getPackageManager()) != null) {
+          startActivity(urlIntent);
+        }
+
+      } catch (NullPointerException ignored){
+
+      }
+  }
+
 
   //clickers
   @Override
@@ -1483,4 +1583,129 @@ public class GroupMessagingActivity extends AppCompatActivity
 
   }
 
+  // remove messaging notifcation if one exists
+  private void handleNotification(){
+
+    sharedPreferences = getSharedPreferences(getResources().getString(R.string.app_name),
+            Context.MODE_PRIVATE);
+
+    sharedPreferences.edit()
+            .putString("currentlyMessagingUid", groupId).apply();
+
+    if (GlobalVariables.getMessagesNotificationMap() != null) {
+
+      final String identifierTitle = groupId + "message";
+
+      if (GlobalVariables.getMessagesNotificationMap().containsKey(identifierTitle)) {
+        Log.d("ttt", "removing: " + identifierTitle);
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        notificationManager.cancel(GlobalVariables.getMessagesNotificationMap().get(identifierTitle));
+
+        GlobalVariables.getMessagesNotificationMap().remove(identifierTitle);
+      }
+    }
+
+  }
+
+  private void sendZoomMeetingNotification(String topic,String joinUrl){
+
+   String body = "Zoom meeting started! "+topic;
+
+    if (data == null) {
+
+      data = new Data(
+              currentUid,
+              body,
+              currentGroupName,
+              currentGroupImage,
+              "message",
+              "zoomMeeting",
+              groupId +"-" +joinUrl
+      );
+
+    } else {
+      data.setBody(body);
+    }
+
+
+    sendNotificationsToMembers(body);
+  }
+
+  //notifications methods
+  private void checkUserActivityAndSendNotifications(String message,int messageType){
+
+
+    String body;
+    switch (messageType){
+
+      case Files.IMAGE:
+        body = currentUserName+" send an image";
+        break;
+
+      case Files.DOCUMENT:
+      case Files.AUDIO:
+        body = currentUserName+" send an attachment";
+        break;
+
+      case Files.VIDEO:
+        body = currentUserName+" send an video";
+        break;
+
+
+      default:
+        body = currentUserName+": "+message;
+    }
+
+    if (data == null) {
+
+      data = new Data(
+              currentUid,
+              body,
+              currentGroupName,
+              currentGroupImage,
+              "message",
+              "privateMessaging",
+              groupId
+      );
+
+    } else {
+      data.setBody(body);
+    }
+
+    sendNotificationsToMembers(body);
+
+  }
+
+
+  private void sendNotificationsToMembers(String body){
+    for(String userId:groupMembers){
+
+      usersRef.document(userId).get().addOnSuccessListener(documentSnapshot -> {
+        if(documentSnapshot.exists()){
+          if(documentSnapshot.contains("ActivelyMessaging")){
+            final String messaging = documentSnapshot.getString("ActivelyMessaging");
+            if(messaging == null || !messaging.equals(groupId)){
+              Log.d("ttt","sendBothNotifs");
+              sendBothNotifs(body,userId);
+            }
+          }else{
+            Log.d("ttt","sendBothNotifs");
+            sendBothNotifs(body,userId);
+          }
+        }
+      });
+    }
+
+  }
+  private void sendBothNotifs(String body,String userId){
+
+    FirestoreNotificationSender.sendFirestoreNotification(userId, data.getSourceType(), body,
+            currentGroupName,groupId);
+
+    CloudMessagingNotificationsSender.sendNotification(userId, data);
+
+  }
 }

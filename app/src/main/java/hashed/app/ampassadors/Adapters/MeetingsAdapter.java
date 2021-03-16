@@ -90,9 +90,17 @@ public class MeetingsAdapter extends RecyclerView.Adapter<MeetingsAdapter.Meetin
          return;
        }
 
+       if(meetings.get(getAdapterPosition()).getStartTime() > System.currentTimeMillis()){
+
+         Toast.makeText(itemView.getContext(),
+                 "This Meeting hasn't started yet!", Toast.LENGTH_SHORT).show();
+
+         return;
+       }
+
        itemView.getContext().startActivity(
                new Intent(itemView.getContext(), GroupMessagingActivity.class)
-                       .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("groupId",
+                       .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("messagingUid",
                        meetings.get(getAdapterPosition()).getMeetingId()));
 
      }

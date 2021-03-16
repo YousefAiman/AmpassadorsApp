@@ -5,7 +5,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -20,9 +19,10 @@ public class CloudMessagingNotificationsSender {
   private static final APIService apiService =
           Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
 
-  public static void sendNotification(String toUid, NotificationData notificationData) {
 
-    if (notificationData != null) {
+  public static void sendNotification(String toUid, Data data) {
+
+    if (data != null) {
 
       Log.d("ttt", "sending to userid: " + toUid);
       FirebaseFirestore.getInstance().collection("Users").document(toUid)
@@ -39,7 +39,28 @@ public class CloudMessagingNotificationsSender {
               return;
 
             Log.d("ttt", "sending to token: " + token);
-            Sender sender = new Sender(notificationData, token);
+            Sender sender = new Sender(data, token);
+
+//            String msgID = token + System.currentTimeMillis();
+//
+//            RemoteMessage.Builder RMBuilder =
+//                    new RemoteMessage.Builder(token + "@gcm.googleapis.com");
+//            RMBuilder.setMessageId(msgID);
+//
+//            Map<String, Object> mapData = new HashMap<>();
+//            mapData.put("sender",data.getSender());
+//            mapData.put("body",data.getBody());
+//            mapData.put("title",data.getTitle());
+//            mapData.put("image",data.getImage());
+//            mapData.put("type",data.getType());
+//            mapData.put("source",data.getSource());
+//            mapData.put("identifier",data.getIdentifier());
+//
+//            for (Map.Entry<String, Object> entry : mapData.entrySet()) {
+//              RMBuilder.addData(entry.getKey(), entry.getValue().toString());
+//            }
+//
+//            FirebaseMessaging.getInstance().send(RMBuilder.build());
 
             apiService.sendNotification(sender).enqueue(new Callback<MyResponse>() {
               @Override
@@ -54,6 +75,8 @@ public class CloudMessagingNotificationsSender {
                 Log.d("ttt", "notification send error: " + t.getMessage());
               }
             });
+
+
           }else{
             Log.d("ttt","user has no token");
           }

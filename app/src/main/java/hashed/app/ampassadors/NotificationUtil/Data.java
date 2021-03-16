@@ -1,22 +1,24 @@
 package hashed.app.ampassadors.NotificationUtil;
 
-public class NotificationData {
-  
+public class Data {
+
   private String senderUid;
-  private String senderUsername;
   private String body;
   private String title;
   private String senderImageUrl;
   private String type;
+  private String sourceType;
+  private String sourceId;
 
-  public NotificationData(String senderUid, String body, String title, String senderImageUrl,
-                          String senderUsername, String type) {
-    this.senderUid = senderUid;
-    this.body = body;
-    this.title = title;
-    this.senderImageUrl = senderImageUrl;
-    this.senderUsername = senderUsername;
-    this.type = type;
+  public Data(String senderUid, String body, String title, String senderImageUrl,
+              String type, String sourceType,String sourceId) {
+    this.setSenderUid(senderUid);
+    this.setBody(body);
+    this.setTitle(title);
+    this.setSenderImageUrl(senderImageUrl);
+    this.setType(type);
+    this.setSourceType(sourceType);
+    this.setSourceId(sourceId);
   }
 
 
@@ -44,6 +46,7 @@ public class NotificationData {
     this.type = type;
   }
 
+
   public String getSenderUid() {
     return senderUid;
   }
@@ -52,13 +55,6 @@ public class NotificationData {
     this.senderUid = senderUid;
   }
 
-  public String getSenderUsername() {
-    return senderUsername;
-  }
-
-  public void setSenderUsername(String senderUsername) {
-    this.senderUsername = senderUsername;
-  }
 
   public String getSenderImageUrl() {
     return senderImageUrl;
@@ -66,5 +62,21 @@ public class NotificationData {
 
   public void setSenderImageUrl(String senderImageUrl) {
     this.senderImageUrl = senderImageUrl;
+  }
+
+  public String getSourceType() {
+    return sourceType;
+  }
+
+  public void setSourceType(String sourceType) {
+    this.sourceType = sourceType;
+  }
+
+  public String getSourceId() {
+    return sourceId;
+  }
+
+  public void setSourceId(String sourceId) {
+    this.sourceId = sourceId;
   }
 }

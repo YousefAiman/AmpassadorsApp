@@ -31,7 +31,7 @@ import hashed.app.ampassadors.Adapters.UsersAdapter;
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
 
-public class OnlineUsersFragment extends Fragment implements UsersAdapter.UserClickListener,
+public class OnlineUsersFragment extends Fragment implements
         SwipeRefreshLayout.OnRefreshListener {
 
 
@@ -54,7 +54,7 @@ public class OnlineUsersFragment extends Fragment implements UsersAdapter.UserCl
     super.onCreate(savedInstanceState);
 
     users = new ArrayList<>();
-    usersAdapter = new UsersAdapter(users,getContext(),this);
+    usersAdapter = new UsersAdapter(users,R.layout.user_item_layout);
 
     query = FirebaseFirestore.getInstance().collection("Users")
             .whereEqualTo("online",true)
@@ -181,14 +181,6 @@ public class OnlineUsersFragment extends Fragment implements UsersAdapter.UserCl
       }
       isLoading = false;
     });
-
-  }
-
-  @Override
-  public void clickUser(String userId,int position) {
-
-    startActivity(new Intent(getContext(), PrivateMessagingActivity.class)
-            .putExtra("messagingUid",userId));
 
   }
 

@@ -20,12 +20,14 @@
     <color name="messages_red">#C80000</color>
     <color name="pink_red">#CE1125</color>
     <color name="dark_red">#B71C1C</color>
+    <color name="red_notifications">#D50000</color>
     <color name="transparent">#00000000</color>
     <color name="light_blue_600">#FF039BE5</color>
     <color name="light_blue_900">#FF01579B</color>
     <color name="zoom_blue">#4A8CFF</color>
     <color name="light_blue_A200">#FF40C4FF</color>
     <color name="light_blue_A400">#FF00B0FF</color>
+    <color name="blue_notifications">#2644C4A1</color>
     <color name="light_white_green">#F2F8F5</color>
     <color name="black_overlay">#66000000</color>
 

@@ -15,9 +15,11 @@ public class FirestoreNotificationSender {
 
   private static final String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-  public static void sendFirestoreNotification(String userId, String type) {
+  public static void sendFirestoreNotification(String userId, String type,String body,
+                                               String senderName,String destinationId) {
 
-    final String notificationPath = currentUserId + "_" + userId + "_" + type;
+    final String notificationPath =
+            currentUserId + "_" + destinationId + "_" + type;
 
     notificationRef.document(notificationPath)
             .get().addOnSuccessListener(documentSnapshot -> {
@@ -28,26 +30,31 @@ public class FirestoreNotificationSender {
         notification.put("senderId", currentUserId);
         notification.put("receiverId", userId);
         notification.put("type", type);
-        notification.put("timeCreated", System.currentTimeMillis() / 1000);
-        notification.put("sent", false);
+        notification.put("timeCreated", System.currentTimeMillis());
+        notification.put("content", body);
+        notification.put("senderName", senderName);
+        notification.put("destinationId", destinationId);
 
         notificationRef.document(notificationPath).set(notification);
       } else {
 
         if (type.equals("message")) {
           documentSnapshot.getReference().update("timeCreated",
-                  System.currentTimeMillis() / 1000);
+                  System.currentTimeMillis(),"content",body);
         } else {
+
           Log.d("ttt", "deleting notification firestore");
-          documentSnapshot.getReference().delete();
+//          documentSnapshot.getReference().delete();
+
         }
 
       }
     });
   }
 
-  static void deleteFirestoreNotification(long promoId, String promoUid, String type) {
-    notificationRef.document(promoId + "_" + currentUserId
-            + "_" + promoUid + "_" + type).delete();
+  public static void deleteFirestoreNotification(String destinationId,String type) {
+    final String notificationPath = currentUserId + "_" + destinationId + "_" + type;
+    notificationRef.document(notificationPath).delete();
   }
+
 }

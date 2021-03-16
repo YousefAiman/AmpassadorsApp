@@ -9,10 +9,12 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -27,58 +29,76 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.auth.User;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import hashed.app.ampassadors.Adapters.UsersAdapter;
+import hashed.app.ampassadors.NotificationUtil.CloudMessagingNotificationsSender;
+import hashed.app.ampassadors.NotificationUtil.Data;
+import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.Objects.Meeting;
 import hashed.app.ampassadors.Objects.PrivateMessage;
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.Files;
+import hashed.app.ampassadors.Utils.TimeFormatter;
 
-public class CreateMeetingActivity extends AppCompatActivity implements View.OnClickListener,
-        UsersAdapter.UserClickListener {
+public class CreateMeetingActivity extends AppCompatActivity implements View.OnClickListener {
 
 
   //time
   private DateFormat todayYearMonthDayFormat;
-  long startMillis;
+  private final Integer[] meetingStartTime = new Integer[5];
+  private long scheduleTime;
+  private boolean timeWasSelected,dateWasSelected;
+
 
   //database
   private CollectionReference meetingsRef;
   private CollectionReference usersRef;
-
+  private Map<UploadTask, StorageTask<UploadTask.TaskSnapshot>> uploadTaskMap;
 
   //seleceted users
-  private static final int USERS_LIMIT = 10;
   private String currentUid;
   private ArrayList<String> selectedUserIdsList;
   private ArrayList<UserPreview> selectedUsers;
-  private boolean isLoadingUsers;
-  private scrollListener scrollListener;
-
 
   //views
-  private RecyclerView selectedUserRv;
-  private TextView meetingTimeTv,usersEd,showSelectedUsersTv;
-  private EditText titleEd,descreptionEd;
-  private Button doneButton;
   private Toolbar toolbar;
+  private CircleImageView groupIv;
+  private EditText groupNameEd;
+  private FloatingActionButton doneFloatingBtn;
+  private TextView contributorsTv,dateSetterTv,timeSetterTv;;
+  private RecyclerView usersPickedRv;
 
-  UsersAdapter selectedUsersAdapter;
+  private Uri imageUri;
+  private UsersAdapter selectedUsersAdapter;
+  private String meetingImageUrl;
+
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -91,22 +111,37 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
 
     setViewClickers();
 
+    selectedUserIdsList = getIntent().getStringArrayListExtra("selectedUserIdsList");
+
+    if(getIntent().hasExtra("meetingBundle")){
+
+      final Bundle meetingBundle = getIntent().getBundleExtra("meetingBundle");
+      if(meetingBundle.containsKey("groupName")){
+        groupNameEd.setText(meetingBundle.getString("meetingBundle"));
+      }
+      if(meetingBundle.containsKey("imageUri")){
+        imageUri = Uri.parse(meetingBundle.getString("imageUri"));
+        Picasso.get().load(imageUri).fit().into(groupIv);
+      }
+    }
+
+    updateContributorsCount();
+
+    createSelectedUserAdapter();
 
   }
 
   private void initViews(){
 
-    meetingTimeTv = findViewById(R.id.meetingTimeTv);
-    selectedUserRv = findViewById(R.id.selectedUserRv);
-    titleEd = findViewById(R.id.titleEd);
-    descreptionEd = findViewById(R.id.descreptionEd);
-    doneButton = findViewById(R.id.doneButton);
-    usersEd = findViewById(R.id.usersEd);
+//    meetingTimeTv = findViewById(R.id.meetingTimeTv);
     toolbar = findViewById(R.id.toolbar);
-    showSelectedUsersTv = findViewById(R.id.showSelectedUsersTv);
-    NestedScrollView nestedScrollView = findViewById(R.id.nestedScrollView);
-
-    nestedScrollView.setNestedScrollingEnabled(false);
+    groupIv = findViewById(R.id.groupIv);
+    groupNameEd = findViewById(R.id.groupNameEd);
+    doneFloatingBtn = findViewById(R.id.doneFloatingBtn);
+    contributorsTv = findViewById(R.id.contributorsTv);
+    usersPickedRv = findViewById(R.id.usersPickedRv);
+    dateSetterTv = findViewById(R.id.dateSetterTv);
+    timeSetterTv = findViewById(R.id.timeSetterTv);
 
   }
 
@@ -123,11 +158,36 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
 
   private void setViewClickers(){
 
-    toolbar.setNavigationOnClickListener(v->finish());
-    usersEd.setOnClickListener(this);
-    meetingTimeTv.setOnClickListener(this);
-    doneButton.setOnClickListener(this);
-    showSelectedUsersTv.setOnClickListener(this);
+    toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+
+        Intent intent = new Intent(CreateMeetingActivity.this,UsersPickerActivity.class);
+        intent.putExtra("previousSelectedUserIdsList",selectedUserIdsList);
+
+        final String name = groupNameEd.getText().toString().trim();
+
+        if(imageUri!=null || name.isEmpty()){
+
+          final Bundle bundle = new Bundle();
+          if(imageUri!=null){
+            bundle.putString("imageUri",imageUri.toString());
+          }
+          if(!name.isEmpty()){
+            bundle.putString("groupName",name);
+          }
+
+          intent.putExtra("meetingBundle",bundle);
+        }
+
+        startActivityForResult(intent,3);
+
+      }
+    });
+    doneFloatingBtn.setOnClickListener(this);
+    groupIv.setOnClickListener(this);
+    dateSetterTv.setOnClickListener(this);
+    timeSetterTv.setOnClickListener(this);
 
   }
 
@@ -135,82 +195,122 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
   protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
 
-    if(requestCode == 3 && data!=null){
+    if(requestCode == 3 && data!=null && data.hasExtra("selectedUserIdsList")){
 
-      if(data.hasExtra("selectedUserIds")){
+        selectedUserIdsList = data.getStringArrayListExtra("selectedUserIdsList");
+        updateContributorsCount();
+        selectedUsers.clear();
+        selectedUsersAdapter.notifyDataSetChanged();
 
-
-        if(selectedUsersAdapter!=null){
-          selectedUsers.clear();
-          selectedUsersAdapter.notifyDataSetChanged();
-          selectedUsersAdapter = null;
-        }
-
-        selectedUserIdsList = data.getStringArrayListExtra("selectedUserIds");
-
-        showSelectedUsersTv.setVisibility(View.VISIBLE);
-
-
+        getUsers();
         Log.d("ttt","selectedUserIdsList: "+ selectedUserIdsList.size());
-      }
+
+    }else if(resultCode == RESULT_OK && requestCode == Files.PICK_IMAGE && data!=null){
+
+      imageUri = data.getData();
+      Picasso.get().load(imageUri).fit().into(groupIv);
 
     }
   }
 
-  private void pickTime() {
+//  private void pickTime() {
+//
+//    Calendar mcurrentDate = Calendar.getInstance(Locale.getDefault());
+//    DatePickerDialog StartTime = new DatePickerDialog(this,
+//            new DatePickerDialog.OnDateSetListener() {
+//      String date;
+//
+//      public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+//        Calendar newDate = Calendar.getInstance(Locale.getDefault());
+//        newDate.set(year, monthOfYear, dayOfMonth);
+//        date = todayYearMonthDayFormat.format(newDate.getTime());
+//        Calendar mcurrentTime = Calendar.getInstance(Locale.getDefault());
+//        TimePickerDialog mTimePicker = new TimePickerDialog(
+//                CreateMeetingActivity.this, (timePicker, selectedHour, selectedMinute) -> {
+//          final Calendar calendar = Calendar.getInstance(Locale.getDefault());
+//          final long currentTime = calendar.getTimeInMillis();
+//          calendar.set(Calendar.YEAR, year);
+//          calendar.set(Calendar.MONTH, monthOfYear);
+//          calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+//          calendar.set(Calendar.HOUR, selectedHour);
+////          calendar.set(Calendar.AM, selectedHour);
+//          calendar.set(Calendar.MINUTE, selectedMinute);
+//          calendar.set(Calendar.SECOND, 0);
+//          calendar.set(Calendar.MILLISECOND, 0);
+//
+//            if (calendar.getTimeInMillis() >= currentTime) {
+//              startMillis = calendar.getTimeInMillis();
+//              date = date.concat(" " + selectedHour + ":" + selectedMinute);
+//              meetingTimeTv.setText(date);
+//            } else {
+//              Toast.makeText(CreateMeetingActivity.this,
+//                      "Meeting time can't be at selected time!", Toast.LENGTH_SHORT).show();
+//            }
+//
+//        }, mcurrentTime.get(Calendar.HOUR_OF_DAY), mcurrentTime.get(Calendar.MINUTE),
+//                true);
+//        mTimePicker.setTitle("Select Meeting Time");
+//        mTimePicker.show();
+//      }
+//
+//    }, mcurrentDate.get(Calendar.YEAR), mcurrentDate.get(Calendar.MONTH),
+//            mcurrentDate.get(Calendar.DAY_OF_MONTH));
+//    StartTime.show();
+//
+//  }
+//
 
-    Calendar mcurrentDate = Calendar.getInstance(Locale.getDefault());
-    DatePickerDialog StartTime = new DatePickerDialog(this,
-            new DatePickerDialog.OnDateSetListener() {
-      String date;
+  private void createSelectedUserAdapter(){
 
-      public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-        Calendar newDate = Calendar.getInstance(Locale.getDefault());
-        newDate.set(year, monthOfYear, dayOfMonth);
-        date = todayYearMonthDayFormat.format(newDate.getTime());
-        Calendar mcurrentTime = Calendar.getInstance(Locale.getDefault());
-        TimePickerDialog mTimePicker = new TimePickerDialog(
-                CreateMeetingActivity.this, (timePicker, selectedHour, selectedMinute) -> {
-          final Calendar calendar = Calendar.getInstance(Locale.getDefault());
-          final long currentTime = calendar.getTimeInMillis();
-          calendar.set(Calendar.YEAR, year);
-          calendar.set(Calendar.MONTH, monthOfYear);
-          calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-          calendar.set(Calendar.HOUR, selectedHour);
-//          calendar.set(Calendar.AM, selectedHour);
-          calendar.set(Calendar.MINUTE, selectedMinute);
-          calendar.set(Calendar.SECOND, 0);
-          calendar.set(Calendar.MILLISECOND, 0);
+    usersRef = FirebaseFirestore.getInstance().collection("Users");
 
-            if (calendar.getTimeInMillis() >= currentTime) {
-              startMillis = calendar.getTimeInMillis();
-              date = date.concat(" " + selectedHour + ":" + selectedMinute);
-              meetingTimeTv.setText(date);
-            } else {
-              Toast.makeText(CreateMeetingActivity.this,
-                      "Meeting time can't be at selected time!", Toast.LENGTH_SHORT).show();
-            }
+    selectedUsers = new ArrayList<>();
 
-        }, mcurrentTime.get(Calendar.HOUR_OF_DAY), mcurrentTime.get(Calendar.MINUTE),
-                true);
-        mTimePicker.setTitle("Select Meeting Time");
-        mTimePicker.show();
-      }
+    selectedUsersAdapter = new UsersAdapter(selectedUsers,R.layout.user_picked_preview_item_layout);
+    usersPickedRv.setAdapter(selectedUsersAdapter);
 
-    }, mcurrentDate.get(Calendar.YEAR), mcurrentDate.get(Calendar.MONTH),
-            mcurrentDate.get(Calendar.DAY_OF_MONTH));
-    StartTime.show();
+    getUsers();
+
+//    getUsersPage(true,0,
+//            selectedUserIdsList.size() > USERS_LIMIT? USERS_LIMIT - 1:
+//                    selectedUserIdsList.size());
 
   }
 
+  private void getUsers(){
+
+    for(String id:selectedUserIdsList){
+
+      usersRef.document(id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        @Override
+        public void onSuccess(DocumentSnapshot documentSnapshot) {
+          selectedUsers.add(documentSnapshot.toObject(UserPreview.class));
+        }
+      }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        @Override
+        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+          if(task.isSuccessful()){
+            selectedUsersAdapter.notifyItemInserted(selectedUsers.size()-1);
+          }
+        }
+      });
+
+
+    }
+  }
+
+  private void updateContributorsCount(){
+    contributorsTv.setText(getResources().getString(R.string.contributors) + ": "+
+            selectedUserIdsList.size());
+  }
+
+
   private void publishMeeting(){
 
-    final String title = titleEd.getText().toString();
-    final String description = descreptionEd.getText().toString();
+    final String name = groupNameEd.getText().toString().trim();
 
-    if(!title.isEmpty() && !description.isEmpty() && startMillis!=0 &&
-            selectedUserIdsList != null && !selectedUserIdsList.isEmpty() &&
-            selectedUserIdsList.size() > 1){
+    if(!name.isEmpty() && scheduleTime!=0 && selectedUserIdsList != null &&
+            !selectedUserIdsList.isEmpty() && selectedUserIdsList.size() > 1){
 
       ProgressDialog progressDialog = new ProgressDialog(CreateMeetingActivity.this);
       progressDialog.setTitle("Publishing Meeting!");
@@ -218,211 +318,278 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
       progressDialog.show();
 
       String meetingId = UUID.randomUUID().toString();
-
       selectedUserIdsList.add(currentUid);
+
       Meeting meeting = new Meeting(
               currentUid,
-              title,
-              description,
-              startMillis,
+              name,
+              scheduleTime,
               System.currentTimeMillis(),
               selectedUserIdsList,
               meetingId,
               false
       );
 
-      meetingsRef.document(meetingId).set(meeting)
-             .addOnCompleteListener(new OnCompleteListener<Void>() {
-               @Override
-               public void onComplete(@NonNull Task<Void> task) {
-                 if(task.isSuccessful()){
+      if(imageUri!=null){
 
-                   final Map<String, Object> meetingMap = new HashMap<>();
-                   meetingMap.put("Moderator",currentUid);
-                   meetingMap.put("groupId",meetingId);
+        final StorageReference reference = FirebaseStorage.getInstance().getReference()
+                .child("Meetings-Images/").child(UUID.randomUUID().toString() +"-"+
+                        System.currentTimeMillis());
+
+        final UploadTask uploadTask = reference.putFile(imageUri);
+
+        uploadTaskMap = new HashMap<>();
+
+        StorageTask<UploadTask.TaskSnapshot> onSuccessListener =
+                uploadTask.addOnSuccessListener(taskSnapshot -> {
+                  uploadTaskMap.remove(uploadTask);
+                  reference.getDownloadUrl().addOnSuccessListener(uri1 -> {
+                    meetingImageUrl = uri1.toString();
+                    meeting.setImageUrl(meetingImageUrl);
+
+                    createMeeting(meeting,meetingId,name,progressDialog);
+                  });
+                }).addOnCompleteListener(task -> new File(imageUri.getPath()).delete());
+
+        uploadTaskMap.put(uploadTask,onSuccessListener);
+
+      }else{
+        createMeeting(meeting,meetingId,name,progressDialog);
+      }
+
+
+
+
+    }
+
+  }
+
+
+  private void createMeeting(Meeting meeting,String meetingId,String name,ProgressDialog progressDialog){
+    meetingsRef.document(meetingId).set(meeting)
+            .addOnCompleteListener(new OnCompleteListener<Void>() {
+              @Override
+              public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+
+                  final Map<String, Object> meetingMap = new HashMap<>();
+                  meetingMap.put("Moderator",currentUid);
+                  meetingMap.put("groupId",meetingId);
 
 //                   meetingMap.put("Messages",new ArrayList<>());
 
 
-                   FirebaseDatabase.getInstance().getReference()
-                           .child("GroupMessages").child(meetingId)
-                           .setValue(meetingMap)
-                           .addOnSuccessListener(new OnSuccessListener<Void>() {
-                             @Override
-                             public void onSuccess(Void aVoid) {
-                               progressDialog.dismiss();
-                               finish();
-                             }
-                           });
+                  FirebaseDatabase.getInstance().getReference()
+                          .child("GroupMessages").child(meetingId)
+                          .setValue(meetingMap)
+                          .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
 
-                 }
-               }
-             }).addOnFailureListener(new OnFailureListener() {
-        @Override
-        public void onFailure(@NonNull Exception e) {
 
-          Toast.makeText(CreateMeetingActivity.this,
-                  "Failed to create meeting please try again!", Toast.LENGTH_SHORT).show();
-          progressDialog.dismiss();
+                              final Data data = new Data(
+                                      currentUid,
+                                      "Meeting starts at: "+
+                                              TimeFormatter.formatTime(scheduleTime),
+                                      "Meeting about: "+name,
+                                      meetingImageUrl,
+                                      "meeting",
+                                      "meetingCreated",
+                                      meetingId);
 
-        }
-      });
 
-    }
+                              selectedUserIdsList.remove(currentUid);
 
-  }
+                              for(String userId:selectedUserIdsList){
+                                CloudMessagingNotificationsSender.sendNotification(userId, data);
+                                FirestoreNotificationSender.sendFirestoreNotification(
+                                        userId,"meetingCreated",
+                                        getResources().getString(R.string.invited_meeting),
+                                        name,
+                                        meetingId
+                                );
+                              }
 
-  private void createSelectedUserAdapter(){
 
-    usersRef = FirebaseFirestore.getInstance().collection("Users");
-
-    selectedUserRv.setLayoutManager(new LinearLayoutManager(this,
-            RecyclerView.VERTICAL, false) {
+                              progressDialog.dismiss();
+                              finish();
+                            }
+                          });
+                }
+              }
+            }).addOnFailureListener(new OnFailureListener() {
       @Override
-      public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
-        lp.height = (int) (getWidth() * 0.21);
-        return true;
+      public void onFailure(@NonNull Exception e) {
+
+        Toast.makeText(CreateMeetingActivity.this,
+                "Failed to create meeting please try again!", Toast.LENGTH_SHORT).show();
+        progressDialog.dismiss();
+
       }
     });
-
-    selectedUsers = new ArrayList<>();
-
-    selectedUsersAdapter = new UsersAdapter(selectedUsers,this, this);
-    selectedUserRv.setAdapter(selectedUsersAdapter);
-
-    getUsersPage(true,0,
-            selectedUserIdsList.size() > USERS_LIMIT? USERS_LIMIT - 1:
-                    selectedUserIdsList.size());
-
-  }
-
-  private void getUsersPage(boolean isInitial,int startAt,int endAt){
-
-    isLoadingUsers = true;
-    for(String id:selectedUserIdsList.subList(startAt,endAt)){
-
-      usersRef.document(id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-        @Override
-        public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-            selectedUsers.add(documentSnapshot.toObject(UserPreview.class));
-
-        }
-      }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-        @Override
-        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-
-          selectedUsersAdapter.notifyItemInserted(selectedUsers.size()-1);
-
-          if(selectedUserIdsList.indexOf(id) == endAt){
-            isLoadingUsers = false;
-          }
-
-        }
-      });
-
-
-    }
-
-    if(isInitial && (selectedUserIdsList.size() - 10) > USERS_LIMIT){
-      selectedUserRv.addOnScrollListener(scrollListener = new scrollListener());
-    }else if((selectedUserIdsList.size() - 10) <= USERS_LIMIT){
-
-      selectedUserRv.removeOnScrollListener(scrollListener);
-
-    }
 
   }
 
   @Override
   public void onClick(View view) {
 
-    if(view.getId() == R.id.meetingTimeTv){
-
-      pickTime();
-
-    }else if(view.getId() == R.id.usersEd){
-
-      if(selectedUserIdsList!=null && !selectedUserIdsList.isEmpty()){
-
-        startActivityForResult(new Intent(CreateMeetingActivity.this,
-                UsersPickerActivity.class).putStringArrayListExtra(
-                        "selectedUserIdsList",selectedUserIdsList
-        ),3);
-
-      }else{
-
-        startActivityForResult(new Intent(CreateMeetingActivity.this,
-                UsersPickerActivity.class),3);
-
-      }
-
-    }else if(view.getId() == R.id.doneButton){
-
+    if(view.getId() == R.id.doneFloatingBtn){
       publishMeeting();
+    }else if(view.getId() == R.id.groupIv){
 
-    }else if(view.getId() == R.id.showSelectedUsersTv){
+      Files.startImageFetchIntent(this);
 
-      if(selectedUserIdsList!=null && !selectedUserIdsList.isEmpty()){
-        if(selectedUsersAdapter == null){
+    }else if(view.getId() == R.id.dateSetterTv || view.getId() == R.id.settingsIv1){
 
-          setShowSelectedUsersTvDrawable(R.drawable.down_arrow);
-          selectedUserRv.setVisibility(View.VISIBLE);
-          createSelectedUserAdapter();
+      getMeetingDate();
 
-        }else if(selectedUserRv.getVisibility() == View.VISIBLE){
+    }else if(view.getId() == R.id.timeSetterTv || view.getId() == R.id.settingsIv2){
+
+      getMeetingTime();
+
+    }
+  }
 
 
-          setShowSelectedUsersTvDrawable(R.drawable.down_arrow);
-          selectedUserRv.setVisibility(View.GONE);
 
-        }else{
+  private void getMeetingDate(){
 
-          setShowSelectedUsersTvDrawable(R.drawable.up_arrow_icon);
-          selectedUserRv.setVisibility(View.VISIBLE);
+    Calendar mcurrentDate = Calendar.getInstance(Locale.getDefault());
 
+
+    DatePickerDialog StartTime = new DatePickerDialog(this,
+            (view, year, monthOfYear, dayOfMonth) -> {
+
+              if(mcurrentDate.get(Calendar.YEAR) > year ||
+
+                      (mcurrentDate.get(Calendar.YEAR) == year &&
+                              mcurrentDate.get(Calendar.MONTH) > monthOfYear) ||
+
+                      (mcurrentDate.get(Calendar.YEAR) == year &&
+                              mcurrentDate.get(Calendar.MONTH) == monthOfYear &&
+                              mcurrentDate.get(Calendar.DAY_OF_MONTH) > dayOfMonth)
+              ){
+
+                String text;
+                if((timeWasSelected &&
+                        mcurrentDate.get(Calendar.YEAR) == year &&
+                        mcurrentDate.get(Calendar.MONTH) == monthOfYear &&
+                        mcurrentDate.get(Calendar.DAY_OF_MONTH) == dayOfMonth &&
+                        (meetingStartTime[3] < mcurrentDate.get(Calendar.HOUR))
+                        && meetingStartTime[4] < mcurrentDate.get(Calendar.MINUTE))){
+
+                  text = "Meeting time cannot be scheduled to this time!" +
+                          "Please Selected a different time day or change the day";
+
+                }else{
+                  text = "Meeting time cannot be scheduled to this time!";
+                }
+                Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+              }else{
+
+                dateWasSelected = true;
+                meetingStartTime[0] = year;
+                meetingStartTime[1] = monthOfYear;
+                meetingStartTime[2] = dayOfMonth;
+                dateSetterTv.setText(year+"/"+monthOfYear+"/"+dayOfMonth);
+
+
+                if(timeWasSelected){
+                  calculateTime();
+                }
+              }
+
+            }, mcurrentDate.get(Calendar.YEAR), mcurrentDate.get(Calendar.MONTH),
+            mcurrentDate.get(Calendar.DAY_OF_MONTH));
+    StartTime.show();
+
+  }
+
+  private void getMeetingTime(){
+
+    Calendar mcurrentTime = Calendar.getInstance(Locale.getDefault());
+    TimePickerDialog mTimePicker = new TimePickerDialog(
+            this, (timePicker, selectedHour, selectedMinute) -> {
+
+      final Calendar calendar = Calendar.getInstance(Locale.getDefault());
+      calendar.setTime(new Date(System.currentTimeMillis()));
+
+      calendar.set(Calendar.HOUR, selectedHour);
+      calendar.set(Calendar.MINUTE, selectedMinute);
+
+
+      if (calendar.getTimeInMillis() >= calendar.getTimeInMillis()) {
+
+        timeWasSelected = true;
+        meetingStartTime[3] = selectedHour;
+        meetingStartTime[4] = selectedMinute;
+        timeSetterTv.setText(selectedHour+":"+selectedMinute);
+
+        if(dateWasSelected){
+          calculateTime();
         }
+      } else {
+        Toast.makeText(this,
+                "Meeting time can't be at selected time!", Toast.LENGTH_SHORT).show();
       }
 
+    }, mcurrentTime.get(Calendar.HOUR_OF_DAY), mcurrentTime.get(Calendar.MINUTE),
+            true);
+    mTimePicker.setTitle("Select Meeting Time");
+    mTimePicker.show();
 
-    }
+  }
 
+  private void calculateTime(){
+
+    final Calendar calendar = Calendar.getInstance(Locale.getDefault());
+    calendar.set(meetingStartTime[0],meetingStartTime[1],meetingStartTime[2],
+            meetingStartTime[3],meetingStartTime[4]);
+
+    scheduleTime = calendar.getTimeInMillis();
+    Log.d("ttt","scheduleTime: "+scheduleTime);
 
   }
 
 
-  private void setShowSelectedUsersTvDrawable(int drawable){
+  private void cancelUploadTasks(){
 
-    showSelectedUsersTv.setCompoundDrawablesWithIntrinsicBounds(
-            null,null,
-            ResourcesCompat.getDrawable(
-                    getResources(),drawable,null
-            ),null
-    );
+
+    final UploadTask uploadTask = uploadTaskMap.keySet().iterator().next();
+
+    uploadTask.removeOnSuccessListener(
+              (OnSuccessListener<? super UploadTask.TaskSnapshot>) uploadTaskMap.get(uploadTask));
+
+    uploadTask.addOnSuccessListener(taskSnapshot ->
+            uploadTask.getSnapshot().getStorage().delete()
+                    .addOnSuccessListener(v -> Log.d("ttt", "ref delete sucess")).
+                    addOnFailureListener(e -> Log.d("ttt", "ref delete failed: " +
+                            e.getMessage())));
 
   }
+
+
   @Override
-  public void clickUser(String userId,int position) {
+  public void onBackPressed() {
+    super.onBackPressed();
+    if(uploadTaskMap!=null && !uploadTaskMap.isEmpty()){
 
+      AlertDialog.Builder alert = new AlertDialog.Builder(this);
+      alert.setTitle("Do you want to leave message is sending?");
+      alert.setMessage("leaving while message is sending while cancel the message!");
 
+      alert.setPositiveButton("Yes",(dialogInterface, i) -> {
+        cancelUploadTasks();
+        dialogInterface.dismiss();
+        finish();
+      });
 
-  }
+      alert.setNegativeButton("No", (dialog, which) -> dialog.cancel());
+      alert.create().show();
 
-  private class scrollListener extends RecyclerView.OnScrollListener {
-    @Override
-    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-      super.onScrollStateChanged(recyclerView, newState);
-
-      if (!isLoadingUsers && !recyclerView.canScrollVertically(1) &&
-              newState == RecyclerView.SCROLL_STATE_IDLE) {
-
-        getUsersPage(false,selectedUserIdsList.size()-1,
-                selectedUserIdsList.size() >= USERS_LIMIT?
-                        selectedUserIdsList.size()+USERS_LIMIT:
-                  selectedUserIdsList.size());
-
-      }
+    }else{
+      super.onBackPressed();
     }
-  }
 
+  }
 }

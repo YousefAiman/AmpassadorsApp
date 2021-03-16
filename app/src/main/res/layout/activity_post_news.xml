@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white_grey"
+    tools:context=".Activities.PostNewsActivity">
+
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_alignParentTop="true"
+        android:background="@color/dark_green"
+        app:navigationIcon="@drawable/back_arrow_icon"
+        app:menu="@menu/suggestions_toolbar_menu"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="13dp"
+        android:layout_below="@id/toolbar"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="17dp"
+        android:background="@drawable/post_activity_card_back">
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            app:layout_constraintBottom_toTopOf="@+id/textView8"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardView"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginHorizontal="6dp"
+                    android:layout_marginTop="20dp"
+                    app:cardCornerRadius="10dp"
+                    app:layout_constraintDimensionRatio="1.9:1"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="@color/medium_grey"
+                    app:strokeWidth="1dp">
+
+                    <ImageView
+                        android:id="@+id/newsIv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/userIv"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="9dp"
+                    android:layout_marginTop="10dp"
+                    android:src="@color/white"
+                    app:civ_border_color="@color/light_green"
+                    app:civ_border_width="1dp"
+                    app:layout_constraintDimensionRatio="1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/cardView"
+                    app:layout_constraintWidth_percent="0.15" />
+
+                <TextView
+                    android:id="@+id/usernameTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:fontFamily="@font/segoe_ui_bold"
+                    android:textColor="#060606"
+                    android:textSize="15sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/userIv"
+                    app:layout_constraintStart_toEndOf="@+id/userIv"
+                    app:layout_constraintTop_toTopOf="@+id/userIv" />
+
+
+                <TextView
+                    android:id="@+id/dateTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:fontFamily="@font/segoe_ui"
+                    android:textColor="#060606"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="@+id/usernameTv"
+                    app:layout_constraintStart_toStartOf="@+id/usernameTv"
+                    app:layout_constraintTop_toBottomOf="@+id/usernameTv" />
+
+                <TextView
+                    android:id="@+id/titleTv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="12dp"
+                    android:layout_marginTop="30dp"
+                    android:fontFamily="@font/segoe_ui"
+                    android:textColor="#060606"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/userIv" />
+
+
+                <TextView
+                    android:id="@+id/descriptionTv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
+                    android:fontFamily="@font/segoe_ui"
+                    android:paddingBottom="20dp"
+                    android:textColor="#060606"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toEndOf="@id/titleTv"
+                    app:layout_constraintStart_toStartOf="@id/titleTv"
+                    app:layout_constraintTop_toBottomOf="@id/titleTv" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/segoe_ui_light"
+            android:text="@string/likes"
+            android:textColor="@color/black"
+            android:layout_marginBottom="3dp"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@id/nestedScrollView"
+            android:layout_marginStart="12dp"
+            app:layout_constraintBottom_toTopOf="@id/linearLayout"/>
+
+        <TextView
+            android:id="@+id/likesTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:fontFamily="@font/segoe_ui_light"
+            android:text="0"
+            android:textColor="@color/black"
+            android:layout_marginStart="5dp"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@id/textView8"
+            app:layout_constraintTop_toTopOf="@+id/textView8" />
+
+        <TextView
+            android:id="@+id/das"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/segoe_ui_light"
+            android:text="@string/comments"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="23dp"
+            app:layout_constraintStart_toEndOf="@id/likesTv"
+            app:layout_constraintTop_toTopOf="@+id/likesTv" />
+
+        <TextView
+            android:id="@+id/commentsTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:fontFamily="@font/segoe_ui_light"
+            android:layout_marginStart="5dp"
+            android:text="0"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/das"
+            app:layout_constraintTop_toTopOf="@+id/das" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/post_interaction_back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/likeTv"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/segoe_ui_bold"
+                android:text="@string/like"
+                android:gravity="center"
+                android:paddingVertical="10dp"
+                android:textColor="@color/black"
+                android:textSize="20sp"/>
+
+            <View
+                android:layout_width="0.5dp"
+                android:layout_height="match_parent"
+                android:background="@color/medium_grey"
+                />
+            <TextView
+                android:id="@+id/commentTv"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/segoe_ui_bold"
+                android:paddingVertical="10dp"
+                android:text="@string/comment"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="20sp"/>
+
+
+
+        </LinearLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</RelativeLayout>

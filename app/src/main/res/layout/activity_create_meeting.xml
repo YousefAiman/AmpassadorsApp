@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -15,129 +15,284 @@
         android:layout_height="wrap_content"
         android:background="@color/dark_green"
         app:navigationIcon="@drawable/back_arrow_icon"
-        app:title="Create Meeting"
+        app:title="@string/new_group"
+        app:layout_constraintTop_toTopOf="parent"
+        app:subtitle="Add a name"
         app:titleTextColor="@color/white"
+        app:subtitleTextAppearance="@style/CreateMeetingToolbarSubtitle"
+        app:subtitleTextColor="@color/white"
         app:titleTextAppearance="@style/ToolbarTitleAppearance"/>
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedScrollView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/groupIv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginTop="21dp"
+        android:src="@color/white"
+        app:civ_border_color="@color/dark_green"
+        app:civ_border_width="1dp"
+        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintWidth_percent=".126" />
+
+    <EditText
+        android:id="@+id/groupNameEd"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/create_meeting_ed_underline_back"
+        android:hint="@string/enter_group_name_here"
+        android:inputType="text"
+        android:paddingTop="15dp"
+        android:paddingHorizontal="2dp"
+        android:paddingBottom="15dp"
+        android:fontFamily="@font/segoe_ui"
+        android:maxLength="150"
+        android:layout_marginStart="22dp"
+        android:layout_marginEnd="36dp"
+        android:textColor="#000"
+        android:textColorHint="#CDCED2"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/groupIv"
+        app:layout_constraintStart_toEndOf="@+id/groupIv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/groupIv" />
+
+
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="17dp"
+        android:layout_marginTop="3dp"
+        android:fontFamily="@font/segoe_ui_light"
+        android:text="@string/select_name_and_group_image_image_is_optional"
+        android:textColor="@color/black_transparent"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/groupIv" />
+
+    <TextView
+        android:id="@+id/dateTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/segoe_ui"
+        android:paddingVertical="8dp"
+        android:text="@string/date"
+        android:textColor="@color/black_transparent"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="@+id/textView11"
+        app:layout_constraintTop_toBottomOf="@+id/textView11" />
+
+
+    <TextView
+        android:id="@+id/dateSetterTv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:background="@drawable/meeting_topic_ed_border"
+        android:clickable="false"
+        android:fontFamily="@font/segoe_ui_bold"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="8dp"
+        android:hint="00/00/0000"
+        android:textColorHint="@color/black_fully_transparent"
+        android:textColor="@color/black_transparent"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/dateTv"
+        app:layout_constraintStart_toEndOf="@+id/dateTv"
+        app:layout_constraintTop_toTopOf="@+id/dateTv"
+        app:layout_constraintWidth_min="wrap"
+        app:layout_constraintWidth_percent=".25" />
+
+    <TextView
+        android:id="@+id/timeTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/segoe_ui"
+        android:paddingVertical="8dp"
+        android:layout_marginStart="20dp"
+        android:text="@string/time"
+        android:textColor="@color/black_transparent"
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@+id/dateSetterTv"
+        app:layout_constraintTop_toTopOf="@+id/dateSetterTv" />
+
+
+    <TextView
+        android:id="@+id/timeSetterTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/meeting_topic_ed_border"
+        android:clickable="false"
+        android:fontFamily="@font/segoe_ui_bold"
+        android:gravity="center"
+        android:hint="00:00"
+        android:layout_marginStart="10dp"
+        android:textColorHint="@color/black_fully_transparent"
+        android:textColor="@color/black_transparent"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="8dp"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/timeTv"
+        app:layout_constraintStart_toEndOf="@+id/timeTv"
+        app:layout_constraintTop_toTopOf="@+id/timeTv"
+        app:layout_constraintWidth_min="wrap" />
+
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/doneFloatingBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:contentDescription="@string/add_group"
+        android:src="@drawable/check_icon_grey"
+        android:theme="@style/floatingGreenTheme"
+        app:fabSize="normal"
+        android:layout_marginEnd="9dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/linearLayout3"
+        app:tint="@color/white" />
+
 
     <LinearLayout
+        android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-    <EditText
-        android:id="@+id/titleEd"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#fff"
-        android:elevation="2dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginStart="20dp"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
-        android:textSize="16sp"
+        android:layout_height="0dp"
+        android:background="#F2F2F2"
         android:layout_marginTop="15dp"
-        android:textColor="#000"
-        android:textColorHint="#CDCED2"
-        android:hint="Meeting title *"
-        android:inputType="text"
-        android:paddingStart="20dp"/>
-
-
-    <EditText
-        android:id="@+id/descreptionEd"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#fff"
-        android:elevation="2dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginStart="20dp"
-        android:paddingTop="15dp"
-        android:gravity="top"
-        android:paddingBottom="15dp"
-        android:textSize="16sp"
-        android:layout_marginTop="15dp"
-        android:minLines="3"
-        android:textColor="#000"
-        android:textColorHint="#CDCED2"
-        android:hint="Meeting description *"
-        android:inputType="textMultiLine"
-        android:paddingStart="20dp"/>
-
-    <TextView
-        android:id="@+id/meetingTimeTv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#fff"
-        android:elevation="2dp"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
-        android:textColor="#000"
-        android:textSize="16sp"
-        android:textColorHint="#CDCED2"
-        android:hint="Meeting time *"
-        android:layout_marginEnd="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="15dp"
-        android:paddingStart="20dp" />
-
-    <TextView
-        android:id="@+id/usersEd"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#fff"
-        android:elevation="2dp"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
-        android:textColor="#000"
-        android:hint="Meeting Members *"
-        android:textSize="16sp"
-        android:textColorHint="#CDCED2"
-        android:layout_marginEnd="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="15dp"
-        android:paddingStart="20dp" />
-
-
-
-    <Button
-        android:id="@+id/doneButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:text="Done"
-        android:layout_marginEnd="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="15dp"
-        android:layout_gravity="bottom"
-        android:importantForAutofill="no" />
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timeSetterTv">
 
         <TextView
-            android:id="@+id/showSelectedUsersTv"
-            android:layout_width="match_parent"
+            android:id="@+id/contributorsTv"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:text="Show selected users"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="15dp"
-            app:drawableEndCompat="@drawable/down_arrow" />
+            android:layout_gravity="start"
+            android:layout_marginStart="9dp"
+            android:layout_marginTop="12dp" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/selectedUserRv"
+            android:id="@+id/usersPickedRv"
             android:layout_width="match_parent"
-            android:visibility="gone"
-            android:overScrollMode="never"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:layout_marginHorizontal="20dp" />
-
-
-    </LinearLayout>
-
-    </androidx.core.widget.NestedScrollView>
+            android:overScrollMode="never"
+            android:paddingHorizontal="15dp"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="5" />
 
     </LinearLayout>
+
+    <!--    <androidx.core.widget.NestedScrollView-->
+<!--        android:id="@+id/nestedScrollView"-->
+<!--        android:layout_width="match_parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/groupIv"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        android:layout_height="0dp">-->
+
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="vertical">-->
+
+<!--    <EditText-->
+<!--        android:id="@+id/descreptionEd"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:background="#fff"-->
+<!--        android:elevation="2dp"-->
+<!--        android:layout_marginEnd="20dp"-->
+<!--        android:layout_marginStart="20dp"-->
+<!--        android:paddingTop="15dp"-->
+<!--        android:gravity="top"-->
+<!--        android:paddingBottom="15dp"-->
+<!--        android:textSize="16sp"-->
+<!--        android:layout_marginTop="15dp"-->
+<!--        android:minLines="3"-->
+<!--        android:textColor="#000"-->
+<!--        android:textColorHint="#CDCED2"-->
+<!--        android:hint="Meeting description *"-->
+<!--        android:inputType="textMultiLine"-->
+<!--        android:paddingStart="20dp"/>-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/meetingTimeTv"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:background="#fff"-->
+<!--        android:elevation="2dp"-->
+<!--        android:paddingTop="15dp"-->
+<!--        android:paddingBottom="15dp"-->
+<!--        android:textColor="#000"-->
+<!--        android:textSize="16sp"-->
+<!--        android:textColorHint="#CDCED2"-->
+<!--        android:hint="Meeting time *"-->
+<!--        android:layout_marginEnd="20dp"-->
+<!--        android:layout_marginStart="20dp"-->
+<!--        android:layout_marginTop="15dp"-->
+<!--        android:paddingStart="20dp" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/usersEd"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:background="#fff"-->
+<!--        android:elevation="2dp"-->
+<!--        android:paddingTop="15dp"-->
+<!--        android:paddingBottom="15dp"-->
+<!--        android:textColor="#000"-->
+<!--        android:hint="Meeting Members *"-->
+<!--        android:textSize="16sp"-->
+<!--        android:textColorHint="#CDCED2"-->
+<!--        android:layout_marginEnd="20dp"-->
+<!--        android:layout_marginStart="20dp"-->
+<!--        android:layout_marginTop="15dp"-->
+<!--        android:paddingStart="20dp" />-->
+
+
+
+<!--    <Button-->
+<!--        android:id="@+id/doneButton"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:textColor="@color/white"-->
+<!--        android:text="Done"-->
+<!--        android:layout_marginEnd="20dp"-->
+<!--        android:layout_marginStart="20dp"-->
+<!--        android:layout_marginTop="15dp"-->
+<!--        android:layout_gravity="bottom"-->
+<!--        android:importantForAutofill="no" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/showSelectedUsersTv"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:visibility="gone"-->
+<!--            android:text="Show selected users"-->
+<!--            android:layout_marginHorizontal="20dp"-->
+<!--            android:layout_marginTop="15dp"-->
+<!--            app:drawableEndCompat="@drawable/down_arrow" />-->
+
+<!--        <androidx.recyclerview.widget.RecyclerView-->
+<!--            android:id="@+id/selectedUserRv"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:visibility="gone"-->
+<!--            android:overScrollMode="never"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:layout_marginHorizontal="20dp" />-->
+
+
+<!--    </LinearLayout>-->
+
+<!--    </androidx.core.widget.NestedScrollView>-->
+
+    </androidx.constraintlayout.widget.ConstraintLayout>

@@ -30,6 +30,16 @@
 
     </style>
 
+    <style name="CreateMeetingToolbar" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">@font/segoe_ui</item>
+    </style>
+
+    <style name="CreateMeetingToolbarSubtitle" parent="TextAppearance.AppCompat.Widget.ActionBar.Subtitle">
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">@font/segoe_ui_light</item>
+    </style>
+
     <style name="ToolbarTitleAppearanceEnd" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
 
         <item name="android:textSize">18sp</item>

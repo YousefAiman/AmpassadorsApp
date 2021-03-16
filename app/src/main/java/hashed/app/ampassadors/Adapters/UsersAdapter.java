@@ -1,6 +1,7 @@
 package hashed.app.ampassadors.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,62 +23,168 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
+import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
 
-public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersVh> implements Filterable {
+public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable{
 
-  private static ArrayList<UserPreview> users;
-  private static ArrayList<UserPreview> filteredUsers;
-  Context context;
+  private ArrayList<UserPreview> users;
+  private ArrayList<UserPreview> filteredUsers;
+  private final int itemLayout;
+  private UserAdapterClicker userAdapterClicker;
 
-  public ArrayList<String> selectedUserIds;
-//  public ArrayList<String> previousSelectedUserIds;
-
-  private final UserClickListener userClickListener;
-
-  public interface UserClickListener{
-    void clickUser(String userId,int position);
+  public interface UserAdapterClicker{
+    void clickUser(String userId);
+  }
+  public UsersAdapter(ArrayList<UserPreview> users,int itemLayout){
+    this.users = users;
+    this.itemLayout = itemLayout;
   }
 
-  public UsersAdapter(ArrayList<UserPreview> users, Context context,UserClickListener
-                      userClickListener){
-    UsersAdapter.users = users;
-    filteredUsers = users;
-    this.userClickListener = userClickListener;
-    this.context = context;
-    selectedUserIds = new ArrayList<>();
+  public UsersAdapter(ArrayList<UserPreview> users,int itemLayout,
+                      UserAdapterClicker userAdapterClicker){
+    this.users = users;
+    this.filteredUsers = users;
+    this.userAdapterClicker = userAdapterClicker;
+    this.itemLayout = itemLayout;
   }
 
-  public UsersAdapter(ArrayList<UserPreview> users, Context context,UserClickListener
-          userClickListener,ArrayList<String> selectedUserIds){
-    UsersAdapter.users = users;
-    filteredUsers = users;
-    this.userClickListener = userClickListener;
-    this.context = context;
-    this.selectedUserIds = selectedUserIds;
-  }
-
-
-    @Override
+  @Override
   public int getItemCount() {
-    return filteredUsers.size();
+    return users.size();
   }
 
   @NonNull
   @Override
-  public UsersVh onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+  public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-    return new UsersVh(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.user_item_layout, parent, false));
+    if(itemLayout == R.layout.user_item_layout){
+      return new UsersVh(LayoutInflater.from(parent.getContext())
+              .inflate(itemLayout, parent, false));
+
+    }else{
+      return new UsersPickedVh(LayoutInflater.from(parent.getContext())
+              .inflate(itemLayout, parent, false));
+    }
+
   }
 
   @Override
-  public void onBindViewHolder(@NonNull UsersVh holder, int position) {
+  public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
-    holder.bindChat(filteredUsers.get(position));
+    if(itemLayout == R.layout.user_item_layout){
+      ((UsersVh)holder).bindChat(users.get(position));
+    }else if(itemLayout == R.layout.user_picked_preview_item_layout){
+      ((UsersPickedVh)holder).bindChat(users.get(position));
+    }
 
   }
+
+  public class UsersPickedVh extends RecyclerView.ViewHolder implements View.OnClickListener{
+
+    private final CircleImageView userIv;
+    private final TextView usernameTv;
+    private final Picasso picasso = Picasso.get();
+
+    public UsersPickedVh(@NonNull View itemView) {
+      super(itemView);
+      userIv = itemView.findViewById(R.id.userIv);
+      usernameTv = itemView.findViewById(R.id.usernameTv);
+    }
+
+    private void bindChat(UserPreview user){
+
+      if(user.getUserId() == null)
+        return;
+
+
+      if(user.getImageUrl()!=null){
+        picasso.load(user.getImageUrl()).fit().into(userIv);
+      }
+
+      usernameTv.setText(user.getUsername());
+
+    }
+
+    @Override
+    public void onClick(View view) {
+
+
+//      itemView.getContext().startActivity(new Intent(itemView.getContext(),
+//              PrivateMessagingActivity.class).putExtra("messagingUid",
+//              users.get(getAdapterPosition()).getUserId()));
+
+    }
+
+  }
+
+
+  public class UsersVh extends RecyclerView.ViewHolder implements View.OnClickListener{
+
+    private final CircleImageView imageIv;
+    private final ImageView statusIv;
+    private final TextView nameTv,statusTv;
+    private final Picasso picasso = Picasso.get();
+
+     public UsersVh(@NonNull View itemView) {
+       super(itemView);
+       imageIv = itemView.findViewById(R.id.imageIv);
+       nameTv = itemView.findViewById(R.id.nameTv);
+       statusTv = itemView.findViewById(R.id.statusTv);
+       statusIv = itemView.findViewById(R.id.statusIv);
+     }
+
+      private void bindChat(UserPreview user){
+
+       if(user.getUserId() == null)
+         return;
+
+
+       if(user.getImageUrl()!=null){
+         picasso.load(user.getImageUrl()).fit().into(imageIv);
+       }
+
+        nameTv.setText(user.getUsername());
+
+       if(user.isOnline()){
+
+         DrawableCompat.setTint(
+                 DrawableCompat.wrap(statusIv.getDrawable()),
+                 itemView.getContext().getResources().getColor(R.color.neon_green)
+         );
+
+         statusTv.setText(R.string.online);
+       }else{
+
+         DrawableCompat.setTint(
+                 DrawableCompat.wrap(statusIv.getDrawable()),
+                 itemView.getContext().getResources().getColor(R.color.red)
+         );
+         statusTv.setText(R.string.offline);
+       }
+        itemView.setOnClickListener(this);
+//         itemView.setOnClickListener(v->
+//                 userClickListener.clickUser(user.getUserId(),getAdapterPosition()));
+
+     }
+
+     @Override
+     public void onClick(View view) {
+
+       if(userAdapterClicker!=null){
+         userAdapterClicker.clickUser(users.get(getAdapterPosition()).getUserId());
+       }else{
+         itemView.getContext().startActivity(new Intent(itemView.getContext(),
+                 PrivateMessagingActivity.class).putExtra("messagingUid",
+                 users.get(getAdapterPosition()).getUserId())
+                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+       }
+
+
+     }
+
+   }
 
   @Override
   public Filter getFilter() {
@@ -108,77 +215,13 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersVh> imp
 
       @Override
       protected void publishResults(CharSequence constraint, FilterResults results) {
+
         filteredUsers = (ArrayList<UserPreview>) results.values;
+        users = filteredUsers;
         notifyDataSetChanged();
       }
     };
   }
 
-  public class UsersVh extends RecyclerView.ViewHolder implements View.OnClickListener{
-
-    private final CircleImageView imageIv;
-    private final ImageView statusIv,selectedIv;
-    private final TextView nameTv,statusTv;
-    private final Picasso picasso = Picasso.get();
-
-     public UsersVh(@NonNull View itemView) {
-       super(itemView);
-       imageIv = itemView.findViewById(R.id.imageIv);
-       nameTv = itemView.findViewById(R.id.nameTv);
-       statusTv = itemView.findViewById(R.id.statusTv);
-       statusIv = itemView.findViewById(R.id.statusIv);
-       selectedIv = itemView.findViewById(R.id.selectedIv);
-     }
-
-      private void bindChat(UserPreview user){
-
-       if(user.getUserId() == null)
-         return;
-
-       if(selectedUserIds.contains(user.getUserId())){
-         selectedIv.setVisibility(View.VISIBLE);
-
-       }else{
-         selectedIv.setVisibility(View.GONE);
-       }
-
-       if(user.getImageUrl()!=null){
-         picasso.load(user.getImageUrl()).fit().into(imageIv);
-       }
-
-        nameTv.setText(user.getUsername());
-
-       if(user.isOnline()){
-
-         DrawableCompat.setTint(
-                 DrawableCompat.wrap(statusIv.getDrawable()),
-                 itemView.getContext().getResources().getColor(R.color.neon_green)
-         );
-
-         statusTv.setText(R.string.online);
-       }else{
-
-         DrawableCompat.setTint(
-                 DrawableCompat.wrap(statusIv.getDrawable()),
-                 itemView.getContext().getResources().getColor(R.color.red)
-         );
-         statusTv.setText(R.string.offline);
-       }
-
-         itemView.setOnClickListener(v-> userClickListener.clickUser(user.getUserId(),getAdapterPosition()));
-
-     }
-
-     @Override
-     public void onClick(View view) {
-
-
-//       itemView.getContext().startActivity(new Intent(itemView.getContext(),
-//               PrivateMessagingActivity.class).putExtra("messagingUid",
-//               chatItems.get(getAdapterPosition()).getMessagingUid()));
-
-     }
-
-   }
 
 }

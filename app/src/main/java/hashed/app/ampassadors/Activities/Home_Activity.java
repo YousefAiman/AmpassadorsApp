@@ -3,38 +3,27 @@ package hashed.app.ampassadors.Activities;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.ComponentName;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -42,21 +31,20 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-import hashed.app.ampassadors.Adapters.PostAdapter;
+import hashed.app.ampassadors.BroadcastReceivers.NotificationIndicatorReceiver;
+import hashed.app.ampassadors.BuildConfig;
 import hashed.app.ampassadors.Fragments.ChattingFragment;
 import hashed.app.ampassadors.Fragments.GroupsFragment;
 import hashed.app.ampassadors.Fragments.PostsFragment;
 import hashed.app.ampassadors.Fragments.ProfileFragment;
-import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
-import hashed.app.ampassadors.Services.FirebaseMessaging;
+import hashed.app.ampassadors.Services.FirebaseMessagingService;
 import hashed.app.ampassadors.Utils.GlobalVariables;
-import hashed.app.ampassadors.Utils.WifiUtil;
 
-public class Home_Activity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener {
+public class Home_Activity extends AppCompatActivity  implements
+        NavigationView.OnNavigationItemSelectedListener {
 
     private BottomNavigationView nav_btom;
     private FrameLayout homeFrameLayout;
@@ -69,6 +57,8 @@ public class Home_Activity extends AppCompatActivity  implements NavigationView.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
 
+        GlobalVariables.setAppIsRunning(true);
+
         SetUpCompetent();
 
         replaceFragment(new PostsFragment());
@@ -77,6 +67,7 @@ public class Home_Activity extends AppCompatActivity  implements NavigationView.
 
         createUserLikesListener();
 
+        createNotificationListener();
     }
 
     private void createUserLikesListener(){
@@ -236,7 +227,7 @@ public class Home_Activity extends AppCompatActivity  implements NavigationView.
                     FirebaseAuth.getInstance().signOut();
 
                     getPackageManager().setComponentEnabledSetting(
-                            new ComponentName(Home_Activity.this, FirebaseMessaging.class),
+                            new ComponentName(Home_Activity.this, FirebaseMessagingService.class),
                             PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                             PackageManager.DONT_KILL_APP);
 
@@ -249,8 +240,64 @@ public class Home_Activity extends AppCompatActivity  implements NavigationView.
 //                }
             }
 
-
-
         return true;
+    }
+
+
+    private void createNotificationListener(){
+
+    final String indicatorAction = BuildConfig.APPLICATION_ID + ".notificationIndicator";
+    final IntentFilter intentFilter = new IntentFilter();
+    intentFilter.addAction(indicatorAction);
+    registerReceiver(new NotificationIndicatorReceiver(), intentFilter);
+
+        final AtomicInteger notificationCount = new AtomicInteger();
+
+        listenerRegistrations.add(
+                FirebaseFirestore.getInstance().collection("Notifications")
+                .whereEqualTo("receiverId", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value,
+                                        @Nullable FirebaseFirestoreException error) {
+
+                        if(value==null)
+                            return;
+                        for(DocumentChange dc:value.getDocumentChanges()){
+
+                            switch (dc.getType()){
+                                case ADDED:
+
+                                    Log.d("ttt","added notificationn");
+
+                                    Log.d("ttt","notificationCount: "+
+                                            notificationCount.get());
+                                    if(notificationCount.getAndIncrement() == 0){
+                                        Intent intent = new Intent(indicatorAction);
+                                        intent.putExtra("showIndicator",true);
+                                        sendBroadcast(intent);
+                                    }
+
+                                    Log.d("ttt","notificationCount: "+
+                                            notificationCount.get());
+
+                                    break;
+                                case REMOVED:
+
+                                   if(notificationCount.decrementAndGet() == 0){
+
+                                       Intent intent = new Intent(indicatorAction);
+                                       intent.putExtra("showIndicator",false);
+                                       sendBroadcast(intent);
+
+                                   }
+                                   break;
+                            }
+
+                        }
+                    }
+                })
+        );
+
     }
 }

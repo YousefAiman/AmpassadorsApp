@@ -19,6 +19,7 @@ import com.google.android.material.tabs.TabLayout;
 
 import hashed.app.ampassadors.Activities.CreateMeetingActivity;
 import hashed.app.ampassadors.Activities.Home_Activity;
+import hashed.app.ampassadors.Activities.UsersPickerActivity;
 import hashed.app.ampassadors.Adapters.TabAdapterTitle;
 import hashed.app.ampassadors.R;
 
@@ -85,8 +86,7 @@ public class GroupsFragment extends Fragment implements View.OnClickListener{
 
       if(groupsViewPager.getCurrentItem() == MEETINGS_PAGE){
 
-        startActivityForResult(new Intent(getContext(),
-                CreateMeetingActivity.class),3);
+        startActivity(new Intent(getContext(),UsersPickerActivity.class));
 
       }else{
 

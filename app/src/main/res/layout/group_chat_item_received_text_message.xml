@@ -26,7 +26,7 @@
             android:fontFamily="@font/segoe_ui"
             android:textColor="@color/white"
             android:textSize="12sp"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

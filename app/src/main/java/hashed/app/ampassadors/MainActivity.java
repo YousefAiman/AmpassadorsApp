@@ -15,8 +15,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import hashed.app.ampassadors.Activities.ConnectionActivity;
+import hashed.app.ampassadors.Activities.GroupMessagingActivity;
 import hashed.app.ampassadors.Activities.Home_Activity;
 import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
+import hashed.app.ampassadors.Services.FirebaseMessagingService;
 import hashed.app.ampassadors.Utils.WifiUtil;
 
 public class MainActivity extends AppCompatActivity {
@@ -31,17 +33,54 @@ public class MainActivity extends AppCompatActivity {
       final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
       if(user!=null){
-        if(getIntent().hasExtra("messagingUid")){
 
-          new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-              startMessagingActivity();
+        if(!user.isAnonymous()){
+          FirebaseMessagingService.startMessagingService(this);
+
+          if(getIntent().hasExtra("destinationBundle")){
+
+            final Bundle destinationBundle = getIntent().getBundleExtra("destinationBundle");
+
+            final String sourceType = destinationBundle.getString("sourceType");
+            final String sourceId = destinationBundle.getString("sourceId");
+
+            Intent intent = null;
+
+            switch (sourceType) {
+              case "privateMessaging":
+                intent = startPrivateMessagingActivity(sourceId);
+                break;
+              case "groupMessaging":
+                intent = startGroupMessagingActivity(sourceId);
+                break;
+              case "meetingStarted":
+                intent = startMeetingsHomeActivity();
+                break;
+              default:
+                startHomeActivity();
+                break;
             }
-          },1000);
+
+
+            Intent finalIntent = intent;
+            new Handler().postDelayed(new Runnable() {
+              @Override
+              public void run() {
+                startActivity(finalIntent);
+              }
+            },800);
+
+          }else{
+
+            new Handler().postDelayed(new Runnable() {
+              @Override
+              public void run() {
+                startHomeActivity();
+              }
+            },1000);
+          }
 
         }else{
-
           new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -49,6 +88,9 @@ public class MainActivity extends AppCompatActivity {
             }
           },1000);
         }
+
+
+
       }else{
 
         FirebaseAuth.getInstance().signInAnonymously().addOnSuccessListener(new OnSuccessListener<AuthResult>() {
@@ -82,14 +124,22 @@ public class MainActivity extends AppCompatActivity {
     }, 800);
   }
 
-  private void startMessagingActivity(){
-    startActivity( new Intent(MainActivity.this,
-            PrivateMessagingActivity.class)
-            .putExtra("messagingUid",getIntent().getStringExtra("messagingUid"))
-            .putExtra("isFromNotification",false));
-
-    finish();
+  private Intent startPrivateMessagingActivity(String userId){
+    return new Intent(MainActivity.this,
+            PrivateMessagingActivity.class).putExtra("messagingUid",userId);
   }
+
+  private Intent startGroupMessagingActivity(String groupId){
+    return new Intent(MainActivity.this,
+            GroupMessagingActivity.class).putExtra("messagingUid",groupId);
+  }
+
+
+  private Intent startMeetingsHomeActivity(){
+    return new Intent(MainActivity.this,
+            Home_Activity.class).putExtra("showMeetings",true);
+  }
+
 
   private void startHomeActivity(){
     startActivity(new Intent(MainActivity.this, Home_Activity.class));
@@ -103,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
     if(resultCode == ConnectionActivity.CONNECTION_RESULT){
 
       if(getIntent().hasExtra("messagingBundle")){
-        startMessagingActivity();
+//        startMessagingActivity();
       }else{
         startHomeActivity();
       }

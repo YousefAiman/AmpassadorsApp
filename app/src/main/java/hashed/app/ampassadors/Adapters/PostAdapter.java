@@ -34,6 +34,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,14 +43,19 @@ import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import hashed.app.ampassadors.Activities.PostNewsActivity;
+import hashed.app.ampassadors.Activities.PostPollActivity;
 import hashed.app.ampassadors.Fragments.ImageFullScreenFragment;
 import hashed.app.ampassadors.Objects.PollOption;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.Files;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.TimeFormatter;
 
 public class PostAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder>  {
+
+    private static final int IMAGE_NEWS = 3,VIDEO_NEWS = 4,ATTACHMENT_NEWS = 5;
 
     private static List<PostData> posts;
     Context context;
@@ -59,7 +65,7 @@ public class PostAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
             FirebaseFirestore.getInstance().collection("Users"),
             postsCollectionRef = FirebaseFirestore.getInstance().collection("Posts");
 
-  private final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    private final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     private final CommentsInterface commentsInterface;
     private final ImageInterface imageInterface;
@@ -67,9 +73,10 @@ public class PostAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public interface CommentsInterface{
       void showComments(String postId,int comments);
     }
-  public interface ImageInterface{
-    void showImage(String imageUrl);
-  }
+
+    public interface ImageInterface{
+      void showImage(String imageUrl);
+    }
 
     public PostAdapter(List<PostData> posts , Context context,CommentsInterface commentsInterface,
                        ImageInterface imageInterface){
@@ -86,9 +93,18 @@ public class PostAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
       switch (viewType){
 
-        case PostData.TYPE_NEWS:
-          return new NewsVh(LayoutInflater.from(context).inflate(R.layout.home_post_news_item
-                  , parent , false));
+        case IMAGE_NEWS:
+          return new NewsImageVh(LayoutInflater.from(context).inflate(R.layout.news_image_item_layout
+                  , parent, false));
+
+        case VIDEO_NEWS:
+          return new NewsVideosVh(LayoutInflater.from(context).inflate(R.layout.news_video_item_layout
+                  , parent, false));
+
+        case ATTACHMENT_NEWS:
+          return new NewsAttachmentVh(LayoutInflater.from(context).inflate(R.layout.news_attachment_item_layout
+                  , parent, false));
+
 
         case PostData.TYPE_POLL:
           return new PollVh(LayoutInflater.from(context).inflate(R.layout.poll_item_layout
@@ -103,8 +119,16 @@ public class PostAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
       switch (holder.getItemViewType()){
-        case PostData.TYPE_NEWS:
-          ((NewsVh)holder).bind(posts.get(position));
+        case IMAGE_NEWS:
+          ((NewsImageVh)holder).bind(posts.get(position));
+          break;
+
+        case VIDEO_NEWS:
+          ((NewsVideosVh)holder).bind(posts.get(position));
+          break;
+
+        case ATTACHMENT_NEWS:
+          ((NewsAttachmentVh)holder).bind(posts.get(position));
           break;
 
         case PostData.TYPE_POLL:
@@ -115,11 +139,11 @@ public class PostAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     @Override
-    public int getItemCount() {
+  public int getItemCount() {
         return posts.size();
     }
 
-    public class PollVh extends RecyclerView.ViewHolder implements View.OnClickListener{
+  public class PollVh extends RecyclerView.ViewHolder implements View.OnClickListener{
 
       private final CircleImageView imageIv;
       private final TextView usernameTv;
@@ -152,9 +176,15 @@ public class PostAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
       @SuppressLint("SetTextI18n")
       private void bind(PostData postData){
 
+
+
           if(postData.getPollOptions() == null){
 
             if(postData.isPollEnded()){
+
+              if(postData.getTitle().equals("quetion")){
+                Log.d("ttt","total votes for quetion: "+postData.getTotalVotes());
+              }
 
               getPollRecycler(true);
 
@@ -205,11 +235,18 @@ public class PostAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
         menuIv.setOnClickListener(this);
         commentTv.setOnClickListener(this);
 
+        itemView.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+
+            view.getContext().startActivity(new Intent(view.getContext(),
+                    PostPollActivity.class).putExtra("postData",(Serializable)
+                    posts.get(getAdapterPosition())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+
+          }
+        });
         votesTv.setText(voteRes+" "+postData.getTotalVotes()+" "+num_of_people);
-
-
       }
-
 
       private void getPollRecycler(boolean hasEnded){
 
@@ -219,6 +256,7 @@ public class PostAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
         final PollPostAdapter adapter = new PollPostAdapter(postData.getPollOptions()
                 ,postData.getPostId(), hasEnded,postData.getTotalVotes());
 
+        pollRv.setNestedScrollingEnabled(false);
         pollRv.setHasFixedSize(true);
         adapter.setHasStableIds(true);
         pollRv.setAdapter(adapter);
@@ -275,14 +313,16 @@ public class PostAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
             likeTv.setTextColor(itemView.getContext()
                     .getResources().getColor(R.color.black));
 
-            PostData.likePost(posts.get(getAdapterPosition()).getPostId(),2);
+            PostData.likePost(posts.get(getAdapterPosition()).getPostId(),2
+                    ,posts.get(getAdapterPosition()).getPublisherId(),view.getContext());
 
           }else{
 
             likeTv.setTextColor(itemView.getContext()
                     .getResources().getColor(R.color.red));
 
-            PostData.likePost(posts.get(getAdapterPosition()).getPostId(),1);
+            PostData.likePost(posts.get(getAdapterPosition()).getPostId(),1,
+                    posts.get(getAdapterPosition()).getPublisherId(),view.getContext());
 
           }
 
@@ -298,6 +338,90 @@ public class PostAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
       }
     }
+
+  public static class NewsImageVh extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+    private final ImageView newsIv;
+    private final TextView newsTitleTv;
+
+    public NewsImageVh(@NonNull View itemView) {
+      super(itemView);
+      newsIv = itemView.findViewById(R.id.newsIv);
+      newsTitleTv = itemView.findViewById(R.id.newsTitleTv);
+    }
+
+    private void bind(PostData postData){
+
+      if(postData.getAttachmentUrl()!=null){
+        Picasso.get().load(postData.getAttachmentUrl()).fit().into(newsIv);
+      }
+      newsTitleTv.setText(postData.getTitle());
+      itemView.setOnClickListener(this);
+
+    }
+    @Override
+    public void onClick(View view) {
+
+      view.getContext().startActivity(new Intent(view.getContext(),
+              PostNewsActivity.class).putExtra("postData",(Serializable)
+              posts.get(getAdapterPosition())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+
+      }
+    }
+
+
+  public static class NewsVideosVh extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+    private final ImageView newsIv;
+    private final TextView newsTitleTv;
+
+    public NewsVideosVh(@NonNull View itemView) {
+      super(itemView);
+      newsIv = itemView.findViewById(R.id.newsIv);
+      newsTitleTv = itemView.findViewById(R.id.newsTitleTv);
+    }
+
+    private void bind(PostData postData){
+      Picasso.get().load(postData.getAttachmentUrl()).fit().into(newsIv);
+      newsTitleTv.setText(postData.getTitle());
+      itemView.setOnClickListener(this);
+    }
+    @Override
+    public void onClick(View view) {
+
+      view.getContext().startActivity(new Intent(view.getContext(),
+              PostNewsActivity.class).putExtra("postData",(Serializable)
+              posts.get(getAdapterPosition())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+
+
+    }
+  }
+
+  public static class NewsAttachmentVh extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+    private final TextView newsTitleTv;
+
+    public NewsAttachmentVh(@NonNull View itemView) {
+      super(itemView);
+      newsTitleTv = itemView.findViewById(R.id.newsTitleTv);
+
+    }
+
+    private void bind(PostData postData){
+      newsTitleTv.setText(postData.getTitle());
+      itemView.setOnClickListener(this);
+    }
+    @Override
+    public void onClick(View view) {
+
+      view.getContext().startActivity(new Intent(view.getContext(),
+              PostNewsActivity.class).putExtra("postData",(Serializable)
+              posts.get(getAdapterPosition())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+
+    }
+  }
+
+
 
   public class NewsVh extends RecyclerView.ViewHolder implements View.OnClickListener {
       private final CircleImageView imageIv ;
@@ -410,7 +534,8 @@ public class PostAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
                         (Integer.parseInt(likesTv.getText().toString())-1)
                 ));
 
-                PostData.likePost(posts.get(getAdapterPosition()).getPostId(),2);
+                PostData.likePost(posts.get(getAdapterPosition()).getPostId(),2,
+                        posts.get(getAdapterPosition()).getPublisherId(),view.getContext());
 
 
               }else{
@@ -422,7 +547,8 @@ public class PostAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
                         (Integer.parseInt(likesTv.getText().toString())+1)
                 ));
 
-                PostData.likePost(posts.get(getAdapterPosition()).getPostId(),1);
+                PostData.likePost(posts.get(getAdapterPosition()).getPostId(),1,
+                        posts.get(getAdapterPosition()).getPublisherId(),view.getContext());
 
               }
 
@@ -457,7 +583,6 @@ public class PostAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-
   public static void getUserInfo(PostData postData,String userId, ImageView imageIv,
                                          TextView usernameTv){
 
@@ -481,6 +606,30 @@ public class PostAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
   @Override
   public int getItemViewType(int position) {
-    return posts.get(position).getType();
+
+   final PostData postData = posts.get(position);
+
+    if(postData.getType() == PostData.TYPE_NEWS){
+
+      switch (postData.getAttachmentType()){
+        case Files.IMAGE:
+          return IMAGE_NEWS;
+
+        case Files.DOCUMENT:
+          return ATTACHMENT_NEWS;
+
+        case Files.VIDEO:
+          return VIDEO_NEWS;
+
+        default:
+          return IMAGE_NEWS;
+      }
+
+    }else if(postData.getType() == PostData.TYPE_POLL){
+      return PostData.TYPE_POLL;
+    }else{
+      return PostData.TYPE_NEWS;
+    }
+
   }
 }

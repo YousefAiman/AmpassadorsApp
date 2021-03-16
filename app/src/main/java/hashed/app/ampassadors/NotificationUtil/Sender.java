@@ -1,11 +1,11 @@
 package hashed.app.ampassadors.NotificationUtil;
 
 class Sender {
-  private final NotificationData notificationData;
-  private final String to;
+  private Data data;
+  private  String to;
 
-  Sender(NotificationData notificationData, String to) {
-    this.notificationData = notificationData;
+  Sender(Data data, String to) {
+    this.data = data;
     this.to = to;
   }
 }

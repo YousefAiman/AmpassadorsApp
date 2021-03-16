@@ -35,7 +35,6 @@
         app:layout_constraintEnd_toStartOf="@+id/imageIv"
         app:layout_constraintTop_toTopOf="@+id/imageIv" />
 
-
     <TextView
         android:id="@+id/dateTv"
         android:layout_width="wrap_content"

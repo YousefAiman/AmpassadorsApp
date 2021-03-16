@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:orientation="vertical"
-    android:background="#F2F2F2"
+    android:background="#E6EDE6"
     android:layout_height="match_parent"
     tools:context=".Activities.UsersPickerActivity">
 
@@ -15,25 +15,37 @@
         android:layout_height="wrap_content"
         android:background="@color/dark_green"
         app:navigationIcon="@drawable/back_arrow_icon"
-        app:title="Pick Users"
+        app:title="@string/new_group"
         app:menu="@menu/selection_menu"
+        app:subtitleTextAppearance="@style/CreateMeetingToolbarSubtitle"
+        app:subtitleTextColor="@color/white"
         app:titleTextColor="@color/white"
-        app:titleTextAppearance="@style/ToolbarTitleAppearance" />
+        app:titleTextAppearance="@style/CreateMeetingToolbar" />
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/searchUserSearchView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/light_grey"
-        android:layout_margin="10dp"
-        android:elevation="3dp"
-        android:hint="Search user"
-        app:searchIcon="@drawable/search_icon"
-        />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/userRv"
         android:layout_width="match_parent"
+        android:paddingHorizontal="3dp"
+        android:paddingBottom="10dp"
+        android:layout_below="@id/pickUserToolbar"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:clipToPadding="false"
         android:layout_height="match_parent"/>
 
-</LinearLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/nextFloatingBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/add_group"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:theme="@style/floatingGreenTheme"
+        app:fabSize="normal"
+        app:tint="@color/white"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="14dp"
+        android:src="@drawable/back_arrow_icon" />
+
+</RelativeLayout>
