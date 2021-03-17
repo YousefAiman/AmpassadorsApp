@@ -89,7 +89,7 @@
         android:layout_marginRight="120dp"
         android:background="@drawable/publish_btn_back"
         android:fontFamily="@font/segoe_ui"
-        android:text="Send"
+        android:text="@string/Send"
         android:textAllCaps="false"
         android:textColor="#fff"
         app:layout_constraintBottom_toTopOf="@+id/guideline3"

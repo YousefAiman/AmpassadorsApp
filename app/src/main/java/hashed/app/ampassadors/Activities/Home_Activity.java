@@ -47,6 +47,7 @@ import java.util.Map;
 import de.hdodenhof.circleimageview.CircleImageView;
 import hashed.app.ampassadors.A_Fragment;
 import hashed.app.ampassadors.Adapters.PostAdapter;
+import hashed.app.ampassadors.B_Fragment;
 import hashed.app.ampassadors.Fragments.ChattingFragment;
 import hashed.app.ampassadors.Fragments.GroupsFragment;
 import hashed.app.ampassadors.Fragments.PostsFragment;
@@ -236,7 +237,7 @@ public class Home_Activity extends AppCompatActivity  implements NavigationView.
                     finish();
 //                }
             }else if (item.getItemId() == R.id.news){
-
+                replaceFragment(new B_Fragment());
 
             }
             else if (item.getItemId() == R.id.awreaness_post){
@@ -246,7 +247,9 @@ public class Home_Activity extends AppCompatActivity  implements NavigationView.
 
             }
             else if (item.getItemId() == R.id.polls){
-                    getSupportFragmentManager().beginTransaction().replace(R.id.relative, new A_Fragment()).commit();
+                replaceFragment(new A_Fragment());
+
+                //getSupportFragmentManager().beginTransaction().replace( new A_Fragment()).commit();
             }
             else if (item.getItemId() == R.id.policy){
 
@@ -256,8 +259,8 @@ public class Home_Activity extends AppCompatActivity  implements NavigationView.
                 startActivity(mapIntent);
 
             }else if (item.getItemId() == R.id.proposals){
-                Intent mapIntent = new Intent(Home_Activity.this, SuggestionsActivity.class);
-                startActivity(mapIntent);
+                Intent pIntent = new Intent(Home_Activity.this, SuggestionsActivity.class);
+                startActivity(pIntent);
 
             }
             else if (item.getItemId() == R.id.about){

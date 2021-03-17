@@ -1,5 +1,6 @@
 package hashed.app.ampassadors;
 
+
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -61,9 +62,10 @@ import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.TimeFormatter;
 
+import static hashed.app.ampassadors.Objects.PostData.TYPE_NEWS;
 import static hashed.app.ampassadors.Objects.PostData.TYPE_POLL;
 
-public class A_Fragment extends Fragment implements Toolbar.OnMenuItemClickListener,
+public class B_Fragment extends Fragment implements Toolbar.OnMenuItemClickListener,
         SwipeRefreshLayout.OnRefreshListener , View.OnClickListener ,
         PostAdapter.CommentsInterface,PostAdapter.ImageInterface{
 
@@ -82,7 +84,7 @@ public class A_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
     private Runnable pagerRunnable;
     private ArrayList<String> titles;
 
-    public A_Fragment() {
+    public B_Fragment() {
         // Required empty public constructor
     }
 
@@ -93,7 +95,7 @@ public class A_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
 
         titles = new ArrayList<>(5);
         query = FirebaseFirestore.getInstance().collection("Posts")
-                .orderBy("publishTime", Query.Direction.DESCENDING).whereEqualTo("type", TYPE_POLL).limit(POSTS_LIMIT);
+                .orderBy("publishTime", Query.Direction.DESCENDING).whereEqualTo("type", TYPE_NEWS).limit(POSTS_LIMIT);
         postData = new ArrayList<>();
         adapter = new PostAdapter(postData, getContext(),this,this);
 
@@ -103,11 +105,11 @@ public class A_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_a_, container, false);
-        post_list = view.findViewById(R.id.home_listt);
+        View view =  inflater.inflate(R.layout.fragment_b_, container, false);
+        post_list = view.findViewById(R.id.home_listb);
         post_list.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
 
-        Toolbar toolbar = view.findViewById(R.id.toolbaraa);
+        Toolbar toolbar = view.findViewById(R.id.toolbarbb);
         toolbar.setOnMenuItemClickListener(this);
         return view;
     }
@@ -235,7 +237,7 @@ public class A_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
                         postData.add(snapshot.toObject(PostData.class));
                     }
                 }
-             //   postData.addAll(queryDocumentSnapshots.toObjects(PostData.class));
+              //  postData.addAll(queryDocumentSnapshots.toObjects(PostData.class));
 
             }
 
