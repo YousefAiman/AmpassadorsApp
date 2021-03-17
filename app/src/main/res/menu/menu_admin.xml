@@ -1,37 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-
     <item
         android:id="@+id/news"
         android:title="@string/news" />
     <item
         android:id="@+id/awreaness_post"
         android:title="@string/AwarenessPosts" />
-
-    <item
-        android:id="@+id/courses"
-        android:title="@string/Courses" />
     <item
         android:id="@+id/polls"
-        android:title="@string/Polls" />
+        android:title="@string/poll" />
+
+    <item
+        android:id="@+id/complaints"
+        android:title="@string/listSuggestion" />
+
+    <item
+        android:id="@+id/proposals"
+        android:title="@string/listComplaints" />
+
     <item
         android:id="@+id/policy"
         android:title="@string/PolicyPrivacy" />
 
-    <item
-        android:id="@+id/complaints"
-        android:title="@string/Complaints" />
-
-    <item
-        android:id="@+id/proposals"
-        android:title="@string/Proposals" />
 
     <item
         android:id="@+id/about"
-        android:title="@string/Aboutus" />
+        android:title="@string/aboutus" />
 
     <item
         android:id="@+id/log_out"
-        android:title="@string/Logout" />
+        android:title="@string/logout" />
 </menu>

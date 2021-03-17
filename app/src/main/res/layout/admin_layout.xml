@@ -33,7 +33,7 @@
             android:layout_marginTop="30dp"
             android:layout_marginRight="20dp"
             android:gravity="center_horizontal"
-            android:text="Email "
+            android:text="@string/email"
             android:textAlignment="viewStart"
             android:textColor="#000"
             android:textSize="20sp"
@@ -46,7 +46,7 @@
             android:layout_marginTop="60dp"
             android:layout_marginRight="20dp"
             android:gravity="center_horizontal"
-            android:text="Password "
+            android:text="@string/password"
             android:textAlignment="viewStart"
             android:textColor="#000"
             android:textSize="20sp"
@@ -65,7 +65,7 @@
                 android:background="@color/dark_red"
                 android:layout_marginRight="20dp"
                 android:layout_marginLeft="10dp"
-                android:text="delete"
+                android:text="@string/delete"
                 />
 
             <Button
@@ -76,7 +76,7 @@
                 android:background="@color/dark_green"
                 android:layout_marginRight="20dp"
                 android:layout_marginLeft="100dp"
-                android:text="Approve"
+                android:text="@string/approve"
                 />
 
 
