@@ -22,6 +22,8 @@ public class GlobalVariables extends Application {
   private static WifiReceiver currentWifiReceiver;
   private static boolean wifiIsOn;
   private static NetworkCallback registeredNetworkCallback;
+  private static int notificationsCount;
+
 
   public static GlobalVariables getInstance() {
     return globalSingleton;
@@ -104,6 +106,14 @@ public class GlobalVariables extends Application {
 
   public static void setRegisteredNetworkCallback(NetworkCallback registeredNetworkCallback) {
     GlobalVariables.registeredNetworkCallback = registeredNetworkCallback;
+  }
+
+  public static int getNotificationsCount() {
+    return notificationsCount;
+  }
+
+  public static void setNotificationsCount(int notificationsCount) {
+    GlobalVariables.notificationsCount = notificationsCount;
   }
 
 

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#E6EDE6"
+    tools:context=".Activities.UserSearchActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/pickUserToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/dark_green"
+        app:navigationIcon="@drawable/back_arrow_icon">
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchUserSearchView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/light_grey"
+            android:layout_margin="10dp"
+            android:hint="@string/search_user"
+            app:searchIcon="@drawable/search_icon" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/userRv"
+        android:layout_width="match_parent"
+        android:paddingHorizontal="3dp"
+        android:paddingBottom="10dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:clipToPadding="false"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

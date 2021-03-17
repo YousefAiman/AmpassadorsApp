@@ -44,6 +44,7 @@ import java.util.UUID;
 
 import hashed.app.ampassadors.Adapters.CommentsAdapter;
 import hashed.app.ampassadors.Adapters.RepliesAdapter;
+import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.Objects.Comment;
 import hashed.app.ampassadors.Objects.CommentReply;
 import hashed.app.ampassadors.R;
@@ -222,6 +223,9 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                                 }
                             });
 
+
+                    sendCommentNotification(getResources().getString(R.string.commented_post));
+
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -238,6 +242,50 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
 
     }
 
+
+    private void sendCommentNotification(String message){
+
+        postsRef.document(postId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot snapshot) {
+
+                if(snapshot.exists()){
+
+                    final String creatorId =snapshot.getString("publisherId");
+
+                    if(!creatorId.
+                            equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+
+
+                        final DocumentReference userRef =
+                                FirebaseFirestore.getInstance().collection("Users")
+                                        .document(FirebaseAuth.getInstance()
+                                                .getCurrentUser().getUid());
+
+
+                        userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot snapshot) {
+                                if(snapshot.exists()){
+                                    final String username = snapshot.getString("username");
+
+                                    FirestoreNotificationSender.sendFirestoreNotification(
+                                            creatorId ,
+                                            "postComment",
+                                            username + message,
+                                            username,
+                                            postId
+                                    );
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
+
+    }
     @Override
     public void showReplies(RecyclerView repliesRv,int position, boolean isReplying) {
 
@@ -329,6 +377,9 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                             replies.add(new CommentReply(replyMap));
                             adapter.notifyItemInserted(replies.size()-1);
                             rv.smoothScrollToPosition(replies.size()-1);
+
+                            sendCommentNotification(getResources().getString(R.string.replied_comment));
+
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                 @Override

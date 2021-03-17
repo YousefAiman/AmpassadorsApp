@@ -17,9 +17,6 @@
     android:fitsSystemWindows="true"
     app:menu="@menu/suggestions_toolbar_menu"
     android:background="@color/dark_green">
-
-
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

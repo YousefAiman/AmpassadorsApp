@@ -2,7 +2,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_marginHorizontal="13dp"
     android:layout_marginTop="20dp"
@@ -95,13 +94,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="17dp"
         android:fontFamily="@font/segoe_ui_light"
-        android:text="صوت 350 من الاشحاص"
         android:textColor="@color/black_transparent"
         android:textSize="18sp"
         android:layout_marginEnd="17dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pollRv" />
-
 
 
     <View

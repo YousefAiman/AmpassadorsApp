@@ -1,20 +1,20 @@
 package hashed.app.ampassadors.Fragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
 
 import android.os.Handler;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -22,10 +22,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -34,37 +32,34 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.type.DateTime;
 
-import java.sql.Time;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import hashed.app.ampassadors.Activities.CreatePollActivity;
 import hashed.app.ampassadors.Activities.Home_Activity;
-import hashed.app.ampassadors.Activities.PostActivity;
+import hashed.app.ampassadors.Activities.NotificationsActivity;
+import hashed.app.ampassadors.Activities.PostNewActivity;
 import hashed.app.ampassadors.Adapters.HomeNewsHeaderViewPagerAdapter;
 import hashed.app.ampassadors.Adapters.PostAdapter;
+import hashed.app.ampassadors.BroadcastReceivers.NotificationIndicatorReceiver;
+import hashed.app.ampassadors.BuildConfig;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.TimeFormatter;
 
 public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickListener,
-        SwipeRefreshLayout.OnRefreshListener , View.OnClickListener ,
-        PostAdapter.CommentsInterface,PostAdapter.ImageInterface{
+        SwipeRefreshLayout.OnRefreshListener , View.OnClickListener{
 
   private static final int POSTS_LIMIT = 10;
   private Query query;
-  private List<PostData> postData;
+  private List<PostData> posts;
   private PostAdapter adapter;
   private RecyclerView post_list;
   private DocumentSnapshot lastDocSnap;
@@ -73,6 +68,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
   private PostsBottomScrollListener scrollListener;
   private ViewPager headerViewPager;
   private LinearLayout dotsLinear;
+  private Toolbar toolbar;
 
   //header Pager
   private Handler handler;
@@ -80,6 +76,8 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
   private HomeNewsHeaderViewPagerAdapter pagerAdapter;
   private ArrayList<String> titles;
 
+
+  private NotificationIndicatorReceiver notificationIndicatorReceiver;
   public PostsFragment() {
     // Required empty public constructor
   }
@@ -96,8 +94,10 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
     query = FirebaseFirestore.getInstance().collection("Posts")
             .orderBy("publishTime", Query.Direction.DESCENDING).limit(POSTS_LIMIT);
-    postData = new ArrayList<>();
-    adapter = new PostAdapter(postData, getContext(),this,this);
+    posts = new ArrayList<>();
+
+
+    adapter = new PostAdapter(posts, getContext());
 
   }
 
@@ -112,7 +112,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     dotsLinear = view.findViewById(R.id.dotsLinear);
     swipeRefresh.setOnRefreshListener(this);
 
-    Toolbar toolbar = view.findViewById(R.id.home_activity_toolbar);
+    toolbar = view.findViewById(R.id.home_activity_toolbar);
     toolbar.setNavigationOnClickListener(v -> ((Home_Activity)requireActivity()).showDrawer());
     toolbar.setOnMenuItemClickListener(this);
 
@@ -127,6 +127,14 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
+    toolbar.getMenu().findItem(R.id.action_notifications)
+            .setIcon(GlobalVariables.getNotificationsCount() > 0?
+                    R.drawable.notification_indicator_icon:
+                    R.drawable.notification_icon);
+
+
+    setupNotificationReceiver();
+
     headerViewPager.setAdapter(pagerAdapter);
     createHeaderPager();
 
@@ -138,6 +146,12 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
   @Override
   public boolean onMenuItemClick(MenuItem item) {
+
+    if(item.getItemId() == R.id.action_notifications){
+      startActivity(new Intent(getContext(), NotificationsActivity.class)
+      .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+    }
+
     return false;
   }
 
@@ -148,11 +162,13 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     titles.clear();
     pagerAdapter.notifyDataSetChanged();
     createHeaderPager();
-    handler.removeCallbacks(pagerRunnable);
+    if(handler!=null && pagerRunnable!=null){
+      handler.removeCallbacks(pagerRunnable);
+    }
     dotsLinear.removeAllViews();
 
     //post recycler
-    postData.clear();
+    posts.clear();
     adapter.notifyDataSetChanged();
     lastDocSnap = null;
     ReadPost(true);
@@ -167,18 +183,18 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     }
   }
 
-  @Override
-  public void showComments(String postId, int commentsCount) {
-
-    CommentsFragment commentsFragment = new CommentsFragment(postId,commentsCount);
-    commentsFragment.show(getChildFragmentManager(),"CommentsFragment");
-
-  }
-
-  @Override
-  public void showImage(String imageUrl) {
-    new ImageFullScreenFragment(imageUrl).show(getChildFragmentManager(),"FullScreen");
-  }
+//  @Override
+//  public void showComments(String postId, int commentsCount) {
+//
+//    CommentsFragment commentsFragment = new CommentsFragment(postId,commentsCount);
+//    commentsFragment.show(getChildFragmentManager(),"CommentsFragment");
+//
+//  }
+//
+//  @Override
+//  public void showImage(String imageUrl) {
+//    new ImageFullScreenFragment(imageUrl).show(getChildFragmentManager(),"FullScreen");
+//  }
 
   private class PostsBottomScrollListener extends RecyclerView.OnScrollListener {
     @Override
@@ -207,8 +223,11 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     Query updatedQuery = query;
 
     if(lastDocSnap!=null){
+
       updatedQuery = query.startAfter(lastDocSnap);
+
     }
+
     updatedQuery.get().addOnSuccessListener(queryDocumentSnapshots -> {
       if (!queryDocumentSnapshots.isEmpty()) {
 
@@ -224,7 +243,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
               if(snapshot.getLong("totalVotes") > 0){
                 addedCount.getAndIncrement();
-                postData.add(snapshot.toObject(PostData.class));
+                posts.add(snapshot.toObject(PostData.class));
               }
 
             }else{
@@ -239,13 +258,13 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
                   final PostData post = snapshot.toObject(PostData.class);
                   post.setPollEnded(true);
-                  postData.add(post);
+                  posts.add(post);
                   addedCount.getAndIncrement();
                 }
 
               }else{
 
-                postData.add(snapshot.toObject(PostData.class));
+                posts.add(snapshot.toObject(PostData.class));
                 addedCount.getAndIncrement();
               }
 
@@ -253,7 +272,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
           }else{
             addedCount.getAndIncrement();
-            postData.add(snapshot.toObject(PostData.class));
+            posts.add(snapshot.toObject(PostData.class));
           }
 
 
@@ -268,13 +287,13 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
       if(isInitial){
         adapter.notifyDataSetChanged();
 
-        if(postData.size() == POSTS_LIMIT){
+        if(posts.size() == POSTS_LIMIT){
           post_list.addOnScrollListener(scrollListener = new PostsBottomScrollListener());
         }
 
       }else{
 
-        adapter.notifyItemRangeInserted((postData.size() - addedCount.get()),
+        adapter.notifyItemRangeInserted((posts.size() - addedCount.get()),
                 addedCount.get());
 
         if(addedCount.get() < POSTS_LIMIT && scrollListener != null){
@@ -298,7 +317,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     parentView.findViewById(R.id.new_post).setOnClickListener(view -> {
 
       bsd.dismiss();
-      Intent intent = new Intent(getContext(), PostActivity.class);
+      Intent intent = new Intent(getContext(), PostNewActivity.class);
       intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       startActivity(intent);
 
@@ -316,10 +335,13 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
   }
 
+
+
   private void createHeaderPager(){
 
       FirebaseFirestore.getInstance().collection("Meetings")
       .whereEqualTo("hasEnded",false)
+       .whereGreaterThan("startTime",System.currentTimeMillis())
       .whereLessThan("startTime",remainingTime())
       .orderBy("startTime", Query.Direction.ASCENDING)
       .limit(5).get().addOnSuccessListener(snapshots -> {
@@ -455,4 +477,41 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
   }
 
 
+  private void setupNotificationReceiver(){
+
+    notificationIndicatorReceiver =
+            new NotificationIndicatorReceiver(){
+              @Override
+              public void onReceive(Context context, Intent intent) {
+                if(intent.hasExtra("showIndicator")){
+                  final MenuItem item = toolbar.getMenu().findItem(R.id.action_notifications);
+                  if(intent.getBooleanExtra("showIndicator", false)){
+                    item.setIcon(R.drawable.notification_indicator_icon);
+                  }else{
+                    item.setIcon(R.drawable.notification_icon);
+                  }
+                }
+              }
+            };
+
+    getContext().registerReceiver(notificationIndicatorReceiver,
+            new IntentFilter(BuildConfig.APPLICATION_ID+".notificationIndicator"));
+
+  }
+
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+
+    if(notificationIndicatorReceiver!=null){
+      requireContext().unregisterReceiver(notificationIndicatorReceiver);
+    }
+
+  }
+
+  public void addPostData(PostData post){
+    posts.add(0,post);
+    adapter.notifyItemInserted(0);
+  }
 }

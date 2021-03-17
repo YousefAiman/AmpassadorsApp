@@ -63,11 +63,9 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
     FloatingActionButton floatingButton;
     Toolbar toolbar;
 
-
     public PostsProfileFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

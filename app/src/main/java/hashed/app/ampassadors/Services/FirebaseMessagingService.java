@@ -21,35 +21,27 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import hashed.app.ampassadors.NotificationUtil.BadgeUtil;
 import hashed.app.ampassadors.NotificationUtil.NotificationClickReceiver;
-import hashed.app.ampassadors.NotificationUtil.NotificationData;
 import hashed.app.ampassadors.NotificationUtil.NotificationDeleteListener;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 
-public class FirebaseMessaging extends FirebaseMessagingService {
+public class FirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService {
 
   static int notificationNum = 0;
   private final RequestOptions requestOptions =
           new RequestOptions().override(100, 100);
   private NotificationManager notificationManager;
   private SharedPreferences sharedPreferences;
-  private static NotificationClickReceiver notificationClickReceiver;
 
   @Override
   public void onNewToken(@NonNull String s) {
@@ -69,20 +61,26 @@ public class FirebaseMessaging extends FirebaseMessagingService {
     Log.d("ttt", "mesageing servie create dman");
   }
 
+
+
   @Override
   public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
     super.onMessageReceived(remoteMessage);
 
-
     Log.d("ttt", "message received");
 
-    Log.d("ttt", "from: " + remoteMessage.getData().get("user"));
+    if(remoteMessage.getData().isEmpty()){
+      return;
+    }
 
-    if(remoteMessage.getData().get("senderUid").equals(
-            FirebaseAuth.getInstance().getCurrentUser().getUid())){
+
+    if (remoteMessage.getData().containsKey("senderUid")
+    && remoteMessage.getData().get("senderUid").
+            equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
       Log.d("ttt", "this notification is from me wtf");
       return;
     }
+
 
     if (notificationManager == null) {
       notificationManager = (NotificationManager)
@@ -101,7 +99,6 @@ public class FirebaseMessaging extends FirebaseMessagingService {
 
           if (Objects.equals(data.get("senderUid"),
                   sharedPreferences.getString("currentlyMessagingUid", ""))){
-
             if(sharedPreferences.contains("isPaused") &&
                     sharedPreferences.getBoolean("isPaused",false)){
               sendNotification(remoteMessage);
@@ -119,51 +116,56 @@ public class FirebaseMessaging extends FirebaseMessagingService {
     } catch (ExecutionException | InterruptedException e) {
       e.printStackTrace();
     }
-//        }
-  }
+        }
 
-  public void sendNotification(RemoteMessage remoteMessage) throws ExecutionException, InterruptedException {
+  public void sendNotification(RemoteMessage remoteMessage) throws ExecutionException,
+          InterruptedException {
 
     Log.d("ttt", "sending notification");
-
     final Map<String, String> data = remoteMessage.getData();
-//    final String title = data.get("title");
     final String type = data.get("type");
 
     Log.d("ttt", "type: " + type);
     createChannel(type);
 
-    NotificationCompat.Builder builder = new NotificationCompat.Builder(this, type)
-            .setSmallIcon(R.drawable.app_icon)
-            .setContentTitle(data.get("title"))
-            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-            .setContentText(data.get("body"))
-            .setAutoCancel(true);
+    NotificationCompat.Builder builder;
 
-    builder.setPriority(NotificationCompat.PRIORITY_HIGH);
+    if (type != null) {
 
-    if (data.containsKey("imageUrl")) {
-      builder.setLargeIcon(
-              Glide.with(this)
-                      .asBitmap()
-                      .apply(requestOptions)
-                      .centerCrop()
-                      .load(data.get("senderImageUrl"))
-                      .submit()
-                      .get());
-    } else {
-      Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.app_icon);
-      builder.setLargeIcon(bitmap);
-    }
+      Log.d("ttt","before builder createiong");
+      builder = new NotificationCompat.Builder(this, type)
+              .setSmallIcon(R.drawable.app_icon)
+              .setContentTitle(data.get("title"))
+              .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+              .setContentText(data.get("body"))
+              .setAutoCancel(true);
 
+      builder.setPriority(NotificationCompat.PRIORITY_HIGH);
 
-    builder.setGroup(type);
+      final String imageUrl = data.get("senderImageUrl");
+      Log.d("ttt","before imageUrl");
 
+      if (imageUrl != null && !imageUrl.isEmpty()) {
+        builder.setLargeIcon(
+                Glide.with(this)
+                        .asBitmap()
+                        .apply(requestOptions)
+                        .centerCrop()
+                        .load(imageUrl)
+                        .submit()
+                        .get());
+      } else {
+        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.app_icon));
+      }
 
+      Log.d("ttt","after imageUrl");
+      builder.setGroup(type);
+
+      Log.d("ttt","after builder createiong");
 //    if (GlobalVariables.getMessagesNotificationMap() == null)
 //      GlobalVariables.setMessagesNotificationMap(new HashMap<>());
 
-    final String identifierTitle = data.get("senderUid") + type;
+    final String identifierTitle = data.get("sourceId") + type;
 
     builder.setDeleteIntent(
             PendingIntent.getBroadcast(this, notificationNum,
@@ -171,23 +173,30 @@ public class FirebaseMessaging extends FirebaseMessagingService {
                             .putExtra("notificationIdentifierTitle", identifierTitle)
                     , PendingIntent.FLAG_UPDATE_CURRENT));
 
-    if (type.equals("message")) {
 
       final Intent newIntent = new Intent(this, NotificationClickReceiver.class);
       newIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-      newIntent.putExtra("messagingUid",data.get("senderUid"));
+      final Bundle messagingBundle = new Bundle();
+      messagingBundle.putString("sourceId",data.get("sourceId"));
+      messagingBundle.putString("sourceType",data.get("sourceType"));
+      newIntent.putExtra("destinationBundle",messagingBundle);
 
 
-      final PendingIntent pendingIntent = PendingIntent
-              .getBroadcast(this, notificationNum, newIntent,
-                      PendingIntent.FLAG_UPDATE_CURRENT);
+    if (type.equals("message")) {
+
+      Log.d("ttt","type is message");
+
+
+      final PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
+              notificationNum, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
       builder.setContentIntent(pendingIntent);
-
 
       NotificationManagerCompat manager = NotificationManagerCompat.from(this);
 
       if (!GlobalVariables.getMessagesNotificationMap().containsKey(identifierTitle)) {
+
+        Log.d("ttt","global variables contains: "+identifierTitle);
 
         notificationNum++;
         GlobalVariables.getMessagesNotificationMap().put(identifierTitle, notificationNum);
@@ -199,6 +208,9 @@ public class FirebaseMessaging extends FirebaseMessagingService {
         }
 
       } else {
+
+        Log.d("ttt","global variables doesn't contain: "+identifierTitle);
+
         Log.d("ttt", "this notification already exists just updating");
         manager.notify(GlobalVariables.getMessagesNotificationMap().get(identifierTitle)
                 , builder.build());
@@ -215,8 +227,9 @@ public class FirebaseMessaging extends FirebaseMessagingService {
       GlobalVariables.getMessagesNotificationMap().put(identifierTitle, notificationNum);
 
       notificationManager.notify(notificationNum, builder.build());
-    }
 
+    }
+    }
   }
 
   private void createChannel(String channelId) {
@@ -238,10 +251,10 @@ public class FirebaseMessaging extends FirebaseMessagingService {
 
   public static void startMessagingService(Context context) {
 
-    context.startService(new Intent(context, FirebaseMessaging.class));
+    context.startService(new Intent(context, FirebaseMessagingService.class));
 
     context.getApplicationContext().getPackageManager().setComponentEnabledSetting(
-            new ComponentName(context.getApplicationContext(), FirebaseMessaging.class),
+            new ComponentName(context.getApplicationContext(), FirebaseMessagingService.class),
             PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
             PackageManager.DONT_KILL_APP);
 

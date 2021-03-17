@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -281,12 +282,12 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
       case MSG_TYPE_RIGHT_ZOOM:
 
         return new PrivateMessagingZoomVh(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.private_chat_item_sent_image_message, parent,
+                .inflate(R.layout.group_chat_item_sent_zoom_message, parent,
                         false));
 
       case MSG_TYPE_LEFT_ZOOM_GROUP:
         return new PrivateMessagingZoomVh(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.group_chat_item_received_image_message, parent,
+                .inflate(R.layout.group_chat_item_received_zoom_message, parent,
                         false));
 
     }
@@ -449,28 +450,16 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
           getUserName(message.getSender(),senderTv);
         }
 
-        itemView.setOnClickListener(this);
 
-        itemView.setOnLongClickListener(this);
-
+        if(message.getSender().equals(currentUid)){
+          itemView.setOnLongClickListener(this);
+        }
     }
 
      @Override
      public boolean onLongClick(View view) {
 
-       final PrivateMessage message = privateMessages.get(getAdapterPosition());
-
-       if (message.getSender().equals(currentUid)) {
-
-         final AlertDialog.Builder alert = new AlertDialog.Builder(itemView.getContext());
-         alert.setTitle(R.string.message_delete);
-         alert.setPositiveButton(R.string.delete, (dialog, which) -> {
-           deleteMessageListener.deleteMessage(message,dialog);
-         });
-         alert.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());
-         alert.create().show();
-
-       }
+       showMessageDeletionDialog(privateMessages.get(getAdapterPosition()),itemView.getContext());
 
        return false;
      }
@@ -541,17 +530,17 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         messageTv.setText(message.getContent());
 
-      itemView.setOnClickListener(this);
       imageIv.setOnClickListener(this);
-//      if(!message.getDeleted()){
-//        itemView.setOnLongClickListener(this);
-//      }
+
+      if(message.getSender().equals(currentUid)){
+        itemView.setOnLongClickListener(this);
+      }
 
     }
 
     @Override
     public boolean onLongClick(View view) {
-
+      showMessageDeletionDialog(privateMessages.get(getAdapterPosition()),itemView.getContext());
       return false;
     }
 
@@ -559,8 +548,10 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
     public void onClick(View view) {
 
       if(view.getId() == R.id.imageIv){
-        imageMessageListener.showImage(privateMessages.get(getAdapterPosition())
-        .getAttachmentUrl());
+        if(privateMessages.get(getAdapterPosition()).getAttachmentUrl()!=null){
+          imageMessageListener.showImage(privateMessages.get(
+                  getAdapterPosition()).getAttachmentUrl());
+        }
       }
 
     }
@@ -632,14 +623,16 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
         getUserName(message.getSender(),senderTv);
       }
 
-      itemView.setOnClickListener(this);
+      if(message.getSender().equals(currentUid)){
+        itemView.setOnLongClickListener(this);
+      }
 
 
     }
 
     @Override
     public boolean onLongClick(View view) {
-
+      showMessageDeletionDialog(privateMessages.get(getAdapterPosition()),itemView.getContext());
       return false;
     }
 
@@ -794,11 +787,16 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
         itemView.setOnClickListener(null);
       }
 
+      if(message.getSender().equals(currentUid)){
+        itemView.setOnLongClickListener(this);
+      }
+
+
     }
 
     @Override
     public boolean onLongClick(View view) {
-
+      showMessageDeletionDialog(privateMessages.get(getAdapterPosition()),itemView.getContext());
       return false;
     }
 
@@ -877,11 +875,15 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
       }
 
+      if(message.getSender().equals(currentUid)){
+        itemView.setOnLongClickListener(this);
+      }
+
     }
 
     @Override
     public boolean onLongClick(View view) {
-
+      showMessageDeletionDialog(privateMessages.get(getAdapterPosition()),itemView.getContext());
       return false;
     }
 
@@ -916,16 +918,15 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
   static class PrivateMessagingZoomVh extends RecyclerView.ViewHolder
           implements View.OnLongClickListener, View.OnClickListener{
 
-    private final TextView messageTv;
-    private final ImageView imageIv;
-    private final Picasso picasso = Picasso.get();
-    private final TextView senderTv;
+    private final TextView titleTv,senderTv,timeTv,startTimeTv,durationTv;
 
     public PrivateMessagingZoomVh(@NonNull View itemView) {
       super(itemView);
-      messageTv = itemView.findViewById(R.id.messageTv);
-      imageIv = itemView.findViewById(R.id.imageIv);
+      titleTv = itemView.findViewById(R.id.titleTv);
       senderTv = itemView.findViewById(R.id.senderTv);
+      timeTv = itemView.findViewById(R.id.timeTv);
+      startTimeTv = itemView.findViewById(R.id.startTimeTv);
+      durationTv = itemView.findViewById(R.id.durationTv);
     }
 
     private void bindMessage(PrivateMessage message) {
@@ -933,26 +934,32 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
       if(message == null)
         return;
 
-      picasso.load(R.drawable.zoom_icon).fit().into(imageIv);
-//      imageIv.setImageResource(R.drawable.zoom_icon);
-
       if(!message.getSender().equals(currentUid)){
         getUserName(message.getSender(),senderTv);
       }
 
-      messageTv.setText(message.getContent());
+      timeTv.setText(TimeFormatter.formatTime(message.getTime()));
+
+      final ZoomMeeting meeting = message.getZoomMeeting();
+      titleTv.setText(meeting.getTopic());
+      durationTv.setText(String.valueOf(meeting.getDuration()));
+
+      if(meeting.getType() == 1){
+        startTimeTv.setText(TimeFormatter.formatTime(message.getTime()));
+      }else{
+        startTimeTv.setText(TimeFormatter.formatTime(meeting.getStartTime()));
+      }
 
       itemView.setOnClickListener(this);
-
-//      if(!message.getDeleted()){
-//        itemView.setOnLongClickListener(this);
-//      }
+      if(message.getSender().equals(currentUid)){
+        itemView.setOnLongClickListener(this);
+      }
 
     }
 
     @Override
     public boolean onLongClick(View view) {
-
+      showMessageDeletionDialog(privateMessages.get(getAdapterPosition()),itemView.getContext());
       return false;
     }
 
@@ -965,8 +972,22 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
                 "Meeting will start on: "+ TimeFormatter.formatTime(meeting.getStartTime())
                 , Toast.LENGTH_SHORT).show();
         return;
+      }else if(meeting.getType() == 1){
+
+        if(privateMessages.get(getAdapterPosition()).getTime() +
+                (privateMessages.get(getAdapterPosition()).getZoomMeeting().getDuration() *
+                        DateUtils.MINUTE_IN_MILLIS) >= System.currentTimeMillis()){
+
+          //meeting has ended
+          Toast.makeText(itemView.getContext(),
+                  "Meeting has ended! you can't join it"
+                  , Toast.LENGTH_SHORT).show();
+          return;
+        }
+
       }
-      PackageManager pm = itemView.getContext().getPackageManager();
+
+      final PackageManager pm = itemView.getContext().getPackageManager();
 //      Intent intent = pm.getLaunchIntentForPackage("us.zoom.videomeetings");
 //
 //      if (intent != null) {
@@ -1055,5 +1076,14 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
   }
 
+  private static void showMessageDeletionDialog(PrivateMessage message,Context context){
+      final AlertDialog.Builder alert = new AlertDialog.Builder(context);
+      alert.setTitle(R.string.message_delete);
+      alert.setPositiveButton(R.string.delete, (dialog, which) -> {
+        deleteMessageListener.deleteMessage(message,dialog);
+      });
+      alert.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());
+      alert.create().show();
+  }
 
 }

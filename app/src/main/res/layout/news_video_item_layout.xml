@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:strokeWidth="6dp"
+    android:layout_marginHorizontal="13dp"
+    android:layout_marginTop="10dp"
+    android:background="@drawable/news_item_card_back"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1.9:1"
+        app:strokeColor="@color/medium_grey"
+        android:layout_margin="6dp"
+        app:cardCornerRadius="10dp"
+        app:strokeWidth="1dp"
+        app:cardBackgroundColor="@color/white">
+
+        <ImageView
+            android:id="@+id/newsPlayIv"
+            android:src="@drawable/video_icon_circle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+        <ImageView
+            android:id="@+id/newsIv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_marginStart="6dp"
+            android:layout_marginBottom="2dp"
+            android:textSize="18sp"
+            android:fontFamily="@font/segoe_ui"
+            android:textColor="@color/black_transparent"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            />
+    </com.google.android.material.card.MaterialCardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

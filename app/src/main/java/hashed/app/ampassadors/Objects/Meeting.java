@@ -28,6 +28,8 @@ public class Meeting implements Serializable {
   private boolean hasEnded;
   @PropertyName("hasStarted")
   private boolean hasStarted;
+  @PropertyName("imageUrl")
+  private String imageUrl;
 
   public Meeting(){
   }
@@ -42,6 +44,31 @@ public class Meeting implements Serializable {
     this.members = members;
     this.meetingId = meetingId;
     this.hasEnded = hasEnded;
+  }
+
+
+  public Meeting(String creatorId, String title, long startTime,
+                 long createdTime, List<String> members, String meetingId,boolean hasEnded) {
+    this.creatorId = creatorId;
+    this.title = title;
+    this.startTime = startTime;
+    this.createdTime = createdTime;
+    this.members = members;
+    this.meetingId = meetingId;
+    this.hasEnded = hasEnded;
+  }
+
+  public Meeting(String creatorId, String title, long startTime,
+                 long createdTime, List<String> members, String meetingId,boolean hasEnded,
+                 String imageUrl) {
+    this.creatorId = creatorId;
+    this.title = title;
+    this.startTime = startTime;
+    this.createdTime = createdTime;
+    this.members = members;
+    this.meetingId = meetingId;
+    this.hasEnded = hasEnded;
+    this.imageUrl = imageUrl;
   }
 
   public String getCreatorId() {
@@ -106,5 +133,13 @@ public class Meeting implements Serializable {
 
   public void setHasEnded(boolean hasEnded) {
     this.hasEnded = hasEnded;
+  }
+
+  public String getImageUrl() {
+    return imageUrl;
+  }
+
+  public void setImageUrl(String imageUrl) {
+    this.imageUrl = imageUrl;
   }
 }

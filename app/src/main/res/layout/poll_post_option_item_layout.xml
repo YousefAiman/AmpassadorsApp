@@ -24,6 +24,21 @@
         android:visibility="visible"
         android:singleLine="true" />
 
+    <ProgressBar
+        android:id="@+id/optionProgress"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:elevation="5dp"
+        android:layout_height="0dp"
+        android:layout_alignStart="@id/optionTv"
+        android:layout_alignTop="@id/optionTv"
+        android:layout_alignEnd="@id/optionTv"
+        android:layout_alignBottom="@id/optionTv"
+        android:max="100"
+        android:progressDrawable="@drawable/poll_progress_bar" />
+
+
+
     <ImageView
         android:id="@+id/checkIv"
         android:contentDescription="@string/vote_check"
@@ -37,18 +52,5 @@
         android:layout_alignStart="@id/optionTv"
         android:layout_marginStart="6dp"
         />
-
-    <ProgressBar
-        android:id="@+id/optionProgress"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="0dp"
-        android:elevation="5dp"
-        android:layout_height="0dp"
-        android:layout_alignStart="@id/optionTv"
-        android:layout_alignTop="@id/optionTv"
-        android:layout_alignEnd="@id/optionTv"
-        android:layout_alignBottom="@id/optionTv"
-        android:max="100"
-        android:progressDrawable="@drawable/poll_progress_bar" />
 
 </RelativeLayout>

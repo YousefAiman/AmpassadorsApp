@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:layout_height="match_parent"
+    tools:context=".Activities.NotificationsActivity">
+
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/dark_green"
+        app:navigationIcon="@drawable/back_arrow_icon"
+        app:title="@string/Notifications"
+        app:layout_constraintTop_toTopOf="parent"
+        app:titleTextColor="@color/white"
+        app:titleTextAppearance="@style/ToolbarTitleAppearance"/>
+
+
+<!--    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:id="@+id/swipeRefreshLayout"-->
+<!--        android:layout_height="match_parent">-->
+
+
+        <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/newestNotificationsRv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="vertical" />
+
+<!--    <androidx.core.widget.NestedScrollView-->
+<!--        android:id="@+id/nestedScrollView"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent">-->
+
+
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="vertical">-->
+
+
+<!--&lt;!&ndash;    <TextView&ndash;&gt;-->
+<!--&lt;!&ndash;        android:id="@+id/newestNotificationsTv"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_width="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_height="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:text="@string/newer"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_gravity="start"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:visibility="gone"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:textColor="@color/red_notifications"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:fontFamily="@font/segoe_ui"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:textSize="18sp"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_marginStart="20dp"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_marginTop="10dp" />&ndash;&gt;-->
+
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/newestNotificationsRv"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
+<!--        android:orientation="vertical" />-->
+
+
+<!--&lt;!&ndash;    <TextView&ndash;&gt;-->
+<!--&lt;!&ndash;        android:id="@+id/oldestNotificationsTv"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_width="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_height="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:text="@string/older"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_gravity="start"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:visibility="gone"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:textColor="@color/red_notifications"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:fontFamily="@font/segoe_ui"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:textSize="18sp"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_marginStart="20dp"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_marginTop="10dp" />&ndash;&gt;-->
+
+<!--&lt;!&ndash;    <androidx.recyclerview.widget.RecyclerView&ndash;&gt;-->
+<!--&lt;!&ndash;        android:id="@+id/oldestNotificationsRv"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_width="match_parent"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_height="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:visibility="gone"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:overScrollMode="never"&ndash;&gt;-->
+<!--&lt;!&ndash;        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:orientation="vertical"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_marginTop="5dp" />&ndash;&gt;-->
+
+<!--    </LinearLayout>-->
+
+<!--    </androidx.core.widget.NestedScrollView>-->
+
+<!--    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>-->
+
+    </LinearLayout>

@@ -4,12 +4,13 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
-        <item android:id="@+id/posts"
-            android:title="Awareness Posts"/>
-        <item android:id="@+id/courses"
-            android:title="Courses"/>
+<!--        <item android:id="@+id/posts"-->
+<!--            android:title="Awareness Posts"/>-->
+<!--        <item android:id="@+id/courses"-->
+<!--            android:title="Courses"/>-->
         <item android:id="@+id/polls"
             android:title="Polls"/>
+
         <item android:id="@+id/policy"
             android:title="Policy Privacy"/>
 

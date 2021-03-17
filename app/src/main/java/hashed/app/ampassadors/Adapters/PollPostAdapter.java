@@ -131,12 +131,16 @@ public class PollPostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 //                        null
 //                );
 
+            }else{
+                checkIv.setVisibility(View.GONE);
             }
 
             optionTv.setText(pollOption.getOption());
 
             if(!showProgress){
                 optionTv.setOnClickListener(this);
+            }else{
+                optionTv.setOnClickListener(null);
             }
 
 
@@ -172,15 +176,28 @@ public class PollPostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         private void bindItem(PollOption pollOption){
 
+            Log.d("ttt","total votes: "+totalVotes);
+
             optionTv.setText(pollOption.getOption());
 
             if(totalVotes > 0){
-                optionProgress.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        optionProgress.setProgress((int)(pollOption.getVotes() / totalVotes) * 100);
-                    }
-                });
+
+                Log.d("ttt",pollOption.getOption()+" votes: "+
+                        pollOption.getVotes());
+
+                float percentage = ((float)pollOption.getVotes() / totalVotes) * 100f;
+
+                optionProgress.setProgress((int) percentage);
+
+                Log.d("ttt","percentage for: "+pollOption.getOption()
+                        +" - "+ percentage);
+//                optionProgress.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//
+//
+//                    }
+//                });
             }
 
             if(pollOption.isChosen()){
@@ -190,6 +207,8 @@ public class PollPostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 //                                itemView.getResources(),
 //                                R.drawable.check_icon_round,null)
 //                        ,null,null,null);
+            }else{
+                checkIv.setVisibility(View.GONE);
             }
 
 

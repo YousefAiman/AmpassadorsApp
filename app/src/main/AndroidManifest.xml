@@ -20,10 +20,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AmpassadorsApp">
+
+        <activity android:name=".Activities.PostNewActivity"></activity>
+
         <activity
             android:name=".SideDrawer"
             android:label="@string/title_activity_side_drawer"
             android:theme="@style/Theme.AmpassadorsApp.NoActionBar"></activity>
+
+        <activity android:name=".Activities.PostPollActivity" />
+        <activity android:name=".Activities.PostNewsActivity" />
+        <activity android:name=".Activities.NotificationsActivity" />
+        <activity android:name=".Activities.UserSearchActivity" />
+
         <activity android:name=".Activities.ConnectionActivity" />
         <activity android:name=".Activities.GroupMessagingActivity" />
         <activity
@@ -36,11 +45,13 @@
         <activity android:name=".Activities.CreateMeetingActivity" />
         <activity android:name=".Activities.CreatePollActivity" />
         <activity android:name=".Activities.UsersPickerActivity" />
+        <activity android:name=".Activities.sign_in" />
         <activity android:name=".Activities.ComplaintsActivity" />
+        <activity android:name=".Activities.SuggestionsActivity" />
+
 
 
         <activity android:name=".Activities.ZoomActivity"></activity>
-        <activity android:name=".Activities.sign_in" />
         <activity android:name=".Activities.PrivateMessagingActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -61,13 +72,20 @@
         </provider>
 
         <service
-            android:name=".Services.FirebaseMessaging"
+            android:name=".Services.FirebaseMessagingService"
             android:enabled="false"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/app_icon" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/dark_green" />
 
         <receiver
             android:name=".BroadcastReceivers.WifiReceiver"
@@ -85,6 +103,13 @@
 
         <receiver android:name=".NotificationUtil.NotificationClickReceiver" />
         <receiver android:name=".NotificationUtil.NotificationDeleteListener" />
+        <receiver
+            android:name=".BroadcastReceivers.NotificationIndicatorReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="${applicationId}.notificationIndicator" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

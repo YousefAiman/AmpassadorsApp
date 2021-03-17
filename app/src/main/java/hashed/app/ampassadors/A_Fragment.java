@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
@@ -60,6 +61,8 @@ import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.TimeFormatter;
 
+import static hashed.app.ampassadors.Objects.PostData.TYPE_POLL;
+
 public class A_Fragment extends Fragment implements Toolbar.OnMenuItemClickListener,
         SwipeRefreshLayout.OnRefreshListener , View.OnClickListener ,
         PostAdapter.CommentsInterface,PostAdapter.ImageInterface{
@@ -71,16 +74,12 @@ public class A_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
     private RecyclerView post_list;
     private DocumentSnapshot lastDocSnap;
     private boolean isLoadingMessages;
-    private SwipeRefreshLayout swipeRefresh;
     private PostsBottomScrollListener scrollListener;
-    private ViewPager headerViewPager;
-    private LinearLayout dotsLinear;
 
 
     //header Pager
     private Handler handler;
     private Runnable pagerRunnable;
-    private HomeNewsHeaderViewPagerAdapter pagerAdapter;
     private ArrayList<String> titles;
 
     public A_Fragment() {
@@ -93,12 +92,8 @@ public class A_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
 
 
         titles = new ArrayList<>(5);
-        pagerAdapter = new HomeNewsHeaderViewPagerAdapter(titles);
-
-
-
         query = FirebaseFirestore.getInstance().collection("Posts")
-                .orderBy("publishTime", Query.Direction.DESCENDING).limit(POSTS_LIMIT);
+                .orderBy("publishTime", Query.Direction.DESCENDING).whereEqualTo("type", TYPE_POLL).limit(POSTS_LIMIT);
         postData = new ArrayList<>();
         adapter = new PostAdapter(postData, getContext(),this,this);
 
@@ -108,20 +103,12 @@ public class A_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_posts, container, false);
-        post_list = view.findViewById(R.id.home_list);
-        swipeRefresh = view.findViewById(R.id.swipeRefresh);
-        headerViewPager = view.findViewById(R.id.headerViewPager);
-        dotsLinear = view.findViewById(R.id.dotsLinear);
-        swipeRefresh.setOnRefreshListener(this);
+        View view =  inflater.inflate(R.layout.fragment_a_, container, false);
+        post_list = view.findViewById(R.id.home_listt);
+        post_list.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
 
-        Toolbar toolbar = view.findViewById(R.id.home_activity_toolbar);
-        toolbar.setNavigationOnClickListener(v -> ((Home_Activity)requireActivity()).showDrawer());
+        Toolbar toolbar = view.findViewById(R.id.toolbaraa);
         toolbar.setOnMenuItemClickListener(this);
-
-        FloatingActionButton floatingButton = view.findViewById(R.id.floatingButton);
-        floatingButton.setOnClickListener(this);
-
         return view;
     }
 
@@ -129,10 +116,6 @@ public class A_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        headerViewPager.setAdapter(pagerAdapter);
-
-
         post_list.setAdapter(adapter);
         ReadPost(true);
 
@@ -148,9 +131,7 @@ public class A_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
 
         //header pager
         titles.clear();
-        pagerAdapter.notifyDataSetChanged();
         handler.removeCallbacks(pagerRunnable);
-        dotsLinear.removeAllViews();
 
         //post recycler
         postData.clear();
@@ -162,10 +143,6 @@ public class A_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.floatingButton){
-
-            showPostOptionsBottomSheet();
-        }
     }
 
     @Override
@@ -202,7 +179,6 @@ public class A_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
 
         final AtomicInteger addedCount = new AtomicInteger();
 
-        swipeRefresh.setRefreshing(true);
         isLoadingMessages = false;
 
         Query updatedQuery = query;
@@ -219,7 +195,9 @@ public class A_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
 
                 for(QueryDocumentSnapshot snapshot:queryDocumentSnapshots){
 
-                    if(snapshot.getLong("type") == PostData.TYPE_POLL){
+                    if(snapshot.getLong("type") == TYPE_POLL){
+                        Log.d("ggggg",snapshot.getLong("type") + "هههههههههههههههه");
+
 
                         if(snapshot.getBoolean("pollEnded")){
 
@@ -256,10 +234,8 @@ public class A_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
                         addedCount.getAndIncrement();
                         postData.add(snapshot.toObject(PostData.class));
                     }
-
-
                 }
-//          postData.addAll(queryDocumentSnapshots.toObjects(PostData.class));
+             //   postData.addAll(queryDocumentSnapshots.toObjects(PostData.class));
 
             }
 
@@ -284,40 +260,9 @@ public class A_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
             }
 
 
-            swipeRefresh.setRefreshing(false);
 
         });
     }
-
-
-    private void showPostOptionsBottomSheet(){
-
-        final BottomSheetDialog bsd = new BottomSheetDialog(getContext(), R.style.SheetDialog);
-        final View parentView = getLayoutInflater().inflate(R.layout.post_options_bsd, null);
-        parentView.setBackgroundColor(Color.TRANSPARENT);
-
-        parentView.findViewById(R.id.new_post).setOnClickListener(view -> {
-
-            bsd.dismiss();
-            Intent intent = new Intent(getContext(), PostActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-
-        });
-
-        parentView.findViewById(R.id.new_poll).setOnClickListener(view -> {
-            bsd.dismiss();
-            Intent intent = new Intent(getContext(), CreatePollActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        });
-
-        bsd.setContentView(parentView);
-        bsd.show();
-
-    }
-
-
     @Override
     public void onPause() {
         super.onPause();
@@ -335,20 +280,5 @@ public class A_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
         if(handler!=null && pagerRunnable!=null){
             handler.postDelayed(pagerRunnable,3000);
         }
-
     }
-
-    static long remainingTime() {
-
-        Calendar calendar = new GregorianCalendar(Locale.getDefault());
-        calendar.setTime(new Date());
-
-        int totalMin = 1440 - 60 * calendar.get(Calendar.HOUR) - calendar.get(Calendar.MINUTE);
-
-        long timeLeftInMillis = totalMin * 60 * 1000;
-
-        return System.currentTimeMillis() + timeLeftInMillis;
-    }
-
-
 }

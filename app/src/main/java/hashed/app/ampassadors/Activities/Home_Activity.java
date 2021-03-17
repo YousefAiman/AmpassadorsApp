@@ -3,38 +3,27 @@ package hashed.app.ampassadors.Activities;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.ComponentName;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -42,22 +31,23 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import hashed.app.ampassadors.A_Fragment;
-import hashed.app.ampassadors.Adapters.PostAdapter;
+import hashed.app.ampassadors.B_Fragment;
+import hashed.app.ampassadors.BroadcastReceivers.NotificationIndicatorReceiver;
+import hashed.app.ampassadors.BuildConfig;
 import hashed.app.ampassadors.Fragments.ChattingFragment;
 import hashed.app.ampassadors.Fragments.GroupsFragment;
 import hashed.app.ampassadors.Fragments.PostsFragment;
 import hashed.app.ampassadors.Fragments.ProfileFragment;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
-import hashed.app.ampassadors.Services.FirebaseMessaging;
+import hashed.app.ampassadors.Services.FirebaseMessagingService;
 import hashed.app.ampassadors.Utils.GlobalVariables;
-import hashed.app.ampassadors.Utils.WifiUtil;
 
-public class Home_Activity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener {
+public class Home_Activity extends AppCompatActivity  implements
+        NavigationView.OnNavigationItemSelectedListener {
 
     private BottomNavigationView nav_btom;
     private FrameLayout homeFrameLayout;
@@ -70,18 +60,23 @@ public class Home_Activity extends AppCompatActivity  implements NavigationView.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
 
+        GlobalVariables.setAppIsRunning(true);
+
         SetUpCompetent();
 
         replaceFragment(new PostsFragment());
+
         OnClickButtons();
 
         createUserLikesListener();
 
+        createNotificationListener();
     }
 
     private void createUserLikesListener(){
 
         listenerRegistrations = new ArrayList<>();
+
         listenerRegistrations.add(
         FirebaseFirestore.getInstance().collection("Users")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -110,6 +105,7 @@ public class Home_Activity extends AppCompatActivity  implements NavigationView.
                     }
                 })
         );
+
     }
     public void SetUpCompetent() {
 
@@ -193,18 +189,22 @@ public class Home_Activity extends AppCompatActivity  implements NavigationView.
 
         if(resultCode == 3){
 
-            if(!getSupportFragmentManager().getFragments().isEmpty()){
-                if(getSupportFragmentManager().getFragments().get(0) instanceof PostsFragment){
-                    ((PostsFragment)getSupportFragmentManager().getFragments().get(0))
-                            .onRefresh();
-                }
-            }
+                if(nav_btom.getSelectedItemId()==R.id.home &&
+                        getSupportFragmentManager().getFragments().get(0) instanceof PostsFragment){
 
+                    final PostData postData = (PostData) data.getSerializableExtra("postData");
+                    ((PostsFragment)getSupportFragmentManager().getFragments().get(0))
+                            .addPostData(postData);
+
+                }
         }
     }
+
+
     public void showDrawer() {
         drawer_layout.openDrawer(GravityCompat.START);
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -214,6 +214,7 @@ public class Home_Activity extends AppCompatActivity  implements NavigationView.
             }
         }
     }
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
@@ -224,19 +225,24 @@ public class Home_Activity extends AppCompatActivity  implements NavigationView.
 //                if(WifiUtil.checkWifiConnection(this)){
 
                     Log.d("ttt","internet exists");
+
                     NotificationManagerCompat.from(this).cancelAll();
+
                     FirebaseAuth.getInstance().signOut();
+
                     getPackageManager().setComponentEnabledSetting(
-                            new ComponentName(Home_Activity.this, FirebaseMessaging.class),
+                            new ComponentName(Home_Activity.this, FirebaseMessagingService.class),
                             PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                             PackageManager.DONT_KILL_APP);
+
                     Toast.makeText(Home_Activity.this, "Logged out successfully",
                             Toast.LENGTH_SHORT).show();
+
                     startActivity(new Intent(Home_Activity.this, sign_in.class));
                     finish();
 //                }
             }else if (item.getItemId() == R.id.news){
-
+                replaceFragment(new B_Fragment());
 
             }
             else if (item.getItemId() == R.id.awreaness_post){
@@ -246,7 +252,9 @@ public class Home_Activity extends AppCompatActivity  implements NavigationView.
 
             }
             else if (item.getItemId() == R.id.polls){
-                    getSupportFragmentManager().beginTransaction().replace(R.id.relative, new A_Fragment()).commit();
+                replaceFragment(new A_Fragment());
+
+                //getSupportFragmentManager().beginTransaction().replace( new A_Fragment()).commit();
             }
             else if (item.getItemId() == R.id.policy){
 
@@ -256,13 +264,74 @@ public class Home_Activity extends AppCompatActivity  implements NavigationView.
                 startActivity(mapIntent);
 
             }else if (item.getItemId() == R.id.proposals){
-                Intent mapIntent = new Intent(Home_Activity.this, SuggestionsActivity.class);
-                startActivity(mapIntent);
+                Intent pIntent = new Intent(Home_Activity.this, SuggestionsActivity.class);
+                startActivity(pIntent);
 
             }
             else if (item.getItemId() == R.id.about){
             }
 
         return true;
+    }
+
+
+    private void createNotificationListener(){
+
+    final String indicatorAction = BuildConfig.APPLICATION_ID + ".notificationIndicator";
+    final IntentFilter intentFilter = new IntentFilter();
+    intentFilter.addAction(indicatorAction);
+    registerReceiver(new NotificationIndicatorReceiver(), intentFilter);
+
+        final AtomicInteger notificationCount = new AtomicInteger();
+
+        listenerRegistrations.add(
+                FirebaseFirestore.getInstance().collection("Notifications")
+                .whereEqualTo("receiverId", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value,
+                                        @Nullable FirebaseFirestoreException error) {
+
+                        if(value==null)
+                            return;
+                        for(DocumentChange dc:value.getDocumentChanges()){
+
+                            switch (dc.getType()){
+                                case ADDED:
+
+                                    Log.d("ttt","added notificationn");
+
+                                    Log.d("ttt","notificationCount: "+
+                                            notificationCount.get());
+                                    if(notificationCount.getAndIncrement() == 0){
+                                        Intent intent = new Intent(indicatorAction);
+                                        intent.putExtra("showIndicator",true);
+                                        sendBroadcast(intent);
+                                    }
+
+
+                                    Log.d("ttt","notificationCount: "+
+                                            notificationCount.get());
+
+                                    break;
+                                case REMOVED:
+
+                                   if(notificationCount.decrementAndGet() == 0){
+
+                                       Intent intent = new Intent(indicatorAction);
+                                       intent.putExtra("showIndicator",false);
+                                       sendBroadcast(intent);
+
+                                   }
+                                   break;
+                            }
+
+                            GlobalVariables.setNotificationsCount(notificationCount.get());
+
+                        }
+                    }
+                })
+        );
+
     }
 }

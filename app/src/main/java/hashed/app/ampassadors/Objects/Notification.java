@@ -1,9 +1,12 @@
 package hashed.app.ampassadors.Objects;
 
+import com.google.firebase.firestore.Exclude;
+import com.google.firebase.firestore.IgnoreExtraProperties;
 import com.google.firebase.firestore.PropertyName;
 
 import java.io.Serializable;
 
+@IgnoreExtraProperties
 public class Notification implements Serializable {
 
   @PropertyName("senderId")
@@ -16,6 +19,12 @@ public class Notification implements Serializable {
   public long timeCreated;
   @PropertyName("content")
   public String content;
+  @PropertyName("senderName")
+  private String senderName;
+  @PropertyName("destinationId")
+  private String destinationId;
+  @Exclude
+  private String imageUrl;
 
   public String getSenderId() {
     return senderId;
@@ -56,5 +65,29 @@ public class Notification implements Serializable {
 
   public void setContent(String content) {
     this.content = content;
+  }
+
+  public String getImageUrl() {
+    return imageUrl;
+  }
+
+  public void setImageUrl(String imageUrl) {
+    this.imageUrl = imageUrl;
+  }
+
+  public String getSenderName() {
+    return senderName;
+  }
+
+  public void setSenderName(String senderName) {
+    this.senderName = senderName;
+  }
+
+  public String getDestinationId() {
+    return destinationId;
+  }
+
+  public void setDestinationId(String destinationId) {
+    this.destinationId = destinationId;
   }
 }

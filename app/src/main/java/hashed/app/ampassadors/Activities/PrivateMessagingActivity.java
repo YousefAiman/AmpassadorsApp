@@ -82,7 +82,7 @@ import hashed.app.ampassadors.Fragments.VideoFullScreenFragment;
 import hashed.app.ampassadors.Fragments.VideoPickerPreviewFragment;
 import hashed.app.ampassadors.NotificationUtil.BadgeUtil;
 import hashed.app.ampassadors.NotificationUtil.CloudMessagingNotificationsSender;
-import hashed.app.ampassadors.NotificationUtil.NotificationData;
+import hashed.app.ampassadors.NotificationUtil.Data;
 import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.Objects.PrivateMessage;
 import hashed.app.ampassadors.R;
@@ -156,7 +156,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
   //notifications
   private SharedPreferences sharedPreferences;
-  private NotificationData notificationData;
+  private Data data;
   private String currentUserName;
   private String currentImageUrl;
 
@@ -177,6 +177,9 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
     //handling notification is it exists
     handleNotification();
+
+    //getting current user data
+    getMyData();
 
     //getting messaging userInfo
     getUserData();
@@ -246,17 +249,16 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
   //firestore user data
   private void getUserData(){
-
     usersRef.document(messagingUid).get().addOnSuccessListener(documentSnapshot -> {
-
       if(documentSnapshot.exists()){
 
-        Picasso.get().load(documentSnapshot.getString("imageUrl")).fit()
-                .into(messagingTbProfileIv);
+        if(documentSnapshot.contains("imageUrl")){
+          Picasso.get().load(documentSnapshot.getString("imageUrl")).fit().into(messagingTbProfileIv);
+        }
+
         messagingTbNameTv.setText(documentSnapshot.getString("username"));
 
       }
-
     });
   }
 
@@ -264,7 +266,10 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
     usersRef.document(currentUid).get().addOnSuccessListener(documentSnapshot -> {
       if(documentSnapshot.exists()){
-
+        if(documentSnapshot.contains("imageUrl")){
+          currentImageUrl = documentSnapshot.getString("imageUrl");
+        }
+        currentUserName = documentSnapshot.getString("username");
       }
     });
   }
@@ -296,7 +301,29 @@ public class PrivateMessagingActivity extends AppCompatActivity
   }
 
   //notifcations methods
-  private void checkUserActivityAndSendNotifications(String message){
+  private void checkUserActivityAndSendNotifications(String message, int messageType){
+
+    String body;
+    switch (messageType){
+
+      case Files.IMAGE:
+        body = currentUserName+" send an image";
+        break;
+
+      case Files.DOCUMENT:
+      case Files.AUDIO:
+        body = currentUserName+" send an attachment";
+        break;
+
+      case Files.VIDEO:
+        body = currentUserName+" send an video";
+        break;
+
+
+      default:
+        body = currentUserName+": "+message;
+    }
+
 
     usersRef.document(messagingUid)
             .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -320,29 +347,33 @@ public class PrivateMessagingActivity extends AppCompatActivity
   }
 
   private void sendBothNotifs(String message){
-    FirestoreNotificationSender.sendFirestoreNotification(messagingUid, "message");
+
+    FirestoreNotificationSender.sendFirestoreNotification(messagingUid, "privateMessage",
+            message, currentUserName,messagingUid);
+
     sendCloudNotification(message);
   }
 
   private void sendCloudNotification(String message) {
     Log.d("ttt","sending cloud notificaiton");
 
-    if (notificationData == null && messagingUid != null) {
+    if (data == null) {
 
-      notificationData = new NotificationData(
+      data = new Data(
               currentUid,
               message,
-              getResources().getString(R.string.new_message) + currentUserName,
+              getResources().getString(R.string.new_message) +" "+ currentUserName,
               currentImageUrl,
-              currentUserName,
-              "message"
+              "message",
+              "privateMessaging",
+              currentUid
       );
 
-    } else if (notificationData != null) {
-      notificationData.setBody(message);
+    } else {
+      data.setBody(message);
     }
 
-    CloudMessagingNotificationsSender.sendNotification(messagingUid, notificationData);
+    CloudMessagingNotificationsSender.sendNotification(messagingUid, data);
 
   }
 
@@ -603,7 +634,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
     @Override
     public void onClick(View view) {
 
-      final String content = messagingEd.getText().toString();
+      final String content = messagingEd.getText().toString().trim();
       if (!content.isEmpty()) {
 
 //        if (WifiUtil.checkWifiConnection(view.getContext())) {
@@ -629,9 +660,9 @@ public class PrivateMessagingActivity extends AppCompatActivity
     @Override
     public void onClick(View view) {
 
-      final String content = messagingEd.getText().toString();
+      final String content = messagingEd.getText().toString().trim();
 
-      if (!content.equals("")) {
+      if (!content.isEmpty()) {
 
 //        if (WifiUtil.checkWifiConnection(view.getContext())) {
 
@@ -727,7 +758,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
     childRef.setValue(privateMessage).addOnSuccessListener(v -> {
 
-      checkUserActivityAndSendNotifications(privateMessage.getContent());
+      checkUserActivityAndSendNotifications(privateMessage.getContent(),privateMessage.getType());
 
 //            checkUserActivityAndSendNotifications(messageMap.getContent());
       messageSendIv.setClickable(true);
@@ -1143,7 +1174,11 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
           }
 
-          uploadTask.addOnSuccessListener(taskSnapshot -> uploadTask.getSnapshot().getStorage().delete().addOnSuccessListener(aVoid -> Log.d("ttt", "ref delete sucess")).addOnFailureListener(e -> Log.d("ttt", "ref delete failed: " + e.getMessage())));
+          uploadTask.addOnSuccessListener(taskSnapshot ->
+                  uploadTask.getSnapshot().getStorage().delete()
+                          .addOnSuccessListener(v -> Log.d("ttt", "ref delete sucess")).
+                          addOnFailureListener(e -> Log.d("ttt", "ref delete failed: " +
+                                  e.getMessage())));
 
         }
       }
@@ -1257,8 +1292,8 @@ public class PrivateMessagingActivity extends AppCompatActivity
             String.valueOf(Integer.parseInt(firstKeyRef) + privateMessages.indexOf(message));
 
     currentMessagingRef.child("messages").child(id).child("deleted").setValue(true).
-            addOnSuccessListener(aVoid -> currentMessagingRef.child("lastDeleted").setValue(id)
-                    .addOnSuccessListener(aVoid1 -> {
+            addOnSuccessListener(v -> currentMessagingRef.child("lastDeleted").setValue(id)
+                    .addOnSuccessListener(Void -> {
 
                       if (privateMessages.indexOf(message) == privateMessages.size() - 1) {
                         firebaseMessageDocRef.update("lastMessageDeleted",

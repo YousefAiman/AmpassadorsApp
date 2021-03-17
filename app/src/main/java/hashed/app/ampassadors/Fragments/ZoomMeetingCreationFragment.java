@@ -57,7 +57,7 @@ public class ZoomMeetingCreationFragment extends Fragment implements View.OnClic
   private ZoomMeeting zoomMeeting;
   private int duration;
   private int meetingType;
-  private Integer[] meetingStartTime = new Integer[5];
+  private final Integer[] meetingStartTime = new Integer[5];
   private long scheduleTime;
   private boolean timeWasSelected,dateWasSelected;
 
@@ -137,9 +137,15 @@ public class ZoomMeetingCreationFragment extends Fragment implements View.OnClic
 
       if(!messagingPickerEd.getText().toString().isEmpty() &&
               !topic.isEmpty() && !description.isEmpty() && duration > 0
-              && meetingType!=0 || meetingType == 1 || (meetingType == 2 && timeWasSelected &&
-              dateWasSelected)){
-          requestMeetingCreation(topic,description);
+              && meetingType!=0){
+
+        if(meetingType == 2 && (!timeWasSelected || !dateWasSelected)){
+          Toast.makeText(requireContext(),"Please fill in the fields!",
+                  Toast.LENGTH_SHORT).show();
+          return;
+        }
+
+//          requestMeetingCreation(topic,description);
       }else{
 
         Toast.makeText(requireContext(),"Please fill in the fields!",
@@ -417,7 +423,7 @@ public class ZoomMeetingCreationFragment extends Fragment implements View.OnClic
         timeWasSelected = true;
         meetingStartTime[3] = selectedHour;
         meetingStartTime[4] = selectedMinute;
-        dateSetterTv.setText(selectedHour+":"+selectedMinute);
+        timeSetterTv.setText(selectedHour+":"+selectedMinute);
 
         if(dateWasSelected){
           calculateTime();

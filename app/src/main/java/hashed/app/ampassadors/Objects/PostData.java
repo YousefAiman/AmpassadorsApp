@@ -1,5 +1,9 @@
 package hashed.app.ampassadors.Objects;
 
+import android.content.Context;
+
+import androidx.core.content.res.ResourcesCompat;
+
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.Exclude;
@@ -13,11 +17,17 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.core.DocumentViewChangeSet;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
+import hashed.app.ampassadors.R;
 
 @IgnoreExtraProperties
-public class PostData {
+public class PostData implements Serializable {
 
     public static final int TYPE_NEWS = 1,TYPE_POLL = 2;
 
@@ -27,8 +37,16 @@ public class PostData {
     private String title;
     @PropertyName("publisherId")
     private String publisherId;
-    @PropertyName("imageUrl")
-    private String imageUrl;
+    @PropertyName("attachmentUrl")
+    private String attachmentUrl;
+    @PropertyName("videoThumbnailUrl")
+    private String videoThumbnailUrl;
+    @PropertyName("attachmentType")
+    private int attachmentType;
+    @PropertyName("documentName")
+    private String documentName;
+    @PropertyName("documentSize")
+    private long documentSize;
     @PropertyName("publishTime")
     private long publishTime;
     @PropertyName("likes")
@@ -58,17 +76,45 @@ public class PostData {
     public PostData(){
     }
 
-    public PostData(String title, String publisherId, String imageUrl,
+    public PostData(Map<String,Object> postMap){
+
+        this.postId = (String) postMap.get("postId");
+        this.title = (String) postMap.get("title");
+        this.description = (String) postMap.get("description");
+        this.publisherId = (String) postMap.get("publisherId");
+        this.attachmentType = (int) postMap.get("attachmentType");
+
+        if(videoThumbnailUrl!=null){
+            this.videoThumbnailUrl = (String) postMap.get("videoThumbnailUrl");
+        }
+
+        if(documentName!=null){
+            this.documentName = (String) postMap.get("documentName");
+        }
+
+        if(documentSize != 0){
+            this.documentSize = (long) postMap.get("documentSize");
+        }
+
+        this.publishTime = (long) postMap.get("publishTime");
+        this.likes = (long) postMap.get("likes");
+        this.comments = (int) postMap.get("comments");
+        this.type = (int) postMap.get("type");
+
+    }
+
+    public PostData(String title, String publisherId,
                     long publishTime, int likes, int comments, String description, int type) {
         this.title = title;
         this.publisherId = publisherId;
-        this.imageUrl = imageUrl;
         this.publishTime = publishTime;
         this.likes = likes;
         this.comments = comments;
         this.description = description;
         this.type = type;
     }
+
+
 
     public String getTitle() {
         return title;
@@ -111,13 +157,6 @@ public class PostData {
         this.publisherId = publisherId;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
 
     public long getPublishTime() {
         return publishTime;
@@ -153,15 +192,12 @@ public class PostData {
     }
 
 
-    public static void likePost(String postId,int type){
-
-
+    public static void likePost(String postId, int type, String creatorId, Context context){
 
         if(type == 1){
 
             HashMap<String, Object> likedMap = new HashMap<>();
             likedMap.put("userId", FirebaseAuth.getInstance().getCurrentUser().getUid());
-
 
             FirebaseFirestore.getInstance().collection("Posts")
                     .document(postId)
@@ -170,28 +206,47 @@ public class PostData {
                     .set(likedMap)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
-                        public void onSuccess(Void aVoid) {
-
+                        public void onSuccess(Void v) {
 
                             FirebaseFirestore.getInstance().collection("Posts")
                                     .document(postId).update("likes",FieldValue.increment(1));
 
+                            final DocumentReference userRef =
+                                    FirebaseFirestore.getInstance().collection("Users")
+                                            .document(FirebaseAuth.getInstance()
+                                                    .getCurrentUser().getUid());
+                            userRef .update("Likes",FieldValue.arrayUnion(postId));
 
-                            FirebaseFirestore.getInstance().collection("Users")
-                                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .update("Likes",FieldValue.arrayUnion(postId));
+                            userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot snapshot) {
+                                    if(snapshot.exists()){
+                                        final String username = snapshot.getString("username");
+
+                                        FirestoreNotificationSender.sendFirestoreNotification(
+                                                creatorId,"postLike",
+                                                username +
+                                                        context.getResources()
+                                                                .getString(R.string.liked_post),
+                                                    username,
+                                                    postId
+                                                );
+                                    }
+                                }
+                            });
 
                         }
                     });
 
-
         }else {
 
+
+            final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
             FirebaseFirestore.getInstance().collection("Posts")
                     .document(postId)
                     .collection("Likes")
-                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .document()
                     .delete()
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
@@ -201,9 +256,13 @@ public class PostData {
                                     .document(postId).update("likes",FieldValue.increment(-1));
 
                             FirebaseFirestore.getInstance().collection("Users")
-                                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .document(currentUid)
                                     .update("Likes",FieldValue.arrayRemove(postId));
 
+                            FirestoreNotificationSender.deleteFirestoreNotification(
+                                    postId,
+                                    "postLike"
+                            );
                         }
                     });
 
@@ -257,5 +316,45 @@ public class PostData {
 
     public void setPollEnded(boolean pollEnded) {
         this.pollEnded = pollEnded;
+    }
+
+    public int getAttachmentType() {
+        return attachmentType;
+    }
+
+    public void setAttachmentType(int attachmentType) {
+        this.attachmentType = attachmentType;
+    }
+
+    public String getAttachmentUrl() {
+        return attachmentUrl;
+    }
+
+    public void setAttachmentUrl(String attachmentUrl) {
+        this.attachmentUrl = attachmentUrl;
+    }
+
+    public String getVideoThumbnailUrl() {
+        return videoThumbnailUrl;
+    }
+
+    public void setVideoThumbnailUrl(String videoThumbnailUrl) {
+        this.videoThumbnailUrl = videoThumbnailUrl;
+    }
+
+    public String getDocumentName() {
+        return documentName;
+    }
+
+    public void setDocumentName(String documentName) {
+        this.documentName = documentName;
+    }
+
+    public long getDocumentSize() {
+        return documentSize;
+    }
+
+    public void setDocumentSize(long documentSize) {
+        this.documentSize = documentSize;
     }
 }
