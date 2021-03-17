@@ -79,7 +79,7 @@
     <string name="com_title">عنوان الشكوى</string>
     <string name="defendant">المشتكى عليه</string>
     <string name="subject" >الموضوع</string>
-    <string name="send_btn">send</string>
+    <string name="send_btn">Send</string>
     <string name="Suggestion">Suggestion</string>
     <string name="suggest_title">عنوان الاقتراح</string>
     

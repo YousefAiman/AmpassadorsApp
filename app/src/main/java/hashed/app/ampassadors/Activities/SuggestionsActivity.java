@@ -2,10 +2,12 @@ package hashed.app.ampassadors.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,7 +30,7 @@ import hashed.app.ampassadors.Objects.Suggestions;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.TimeFormatter;
 
-public class SuggestionsActivity extends AppCompatActivity {
+public class SuggestionsActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener {
 
     EditText titleSubject;
     EditText subject;
@@ -43,6 +45,7 @@ public class SuggestionsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_suggestions);
         setupCompontet();
         OnClick();
+        setUpToolBarAndActions();
     }
 
     public void setupCompontet() {
@@ -95,5 +98,16 @@ public class SuggestionsActivity extends AppCompatActivity {
         });
     }
 
+    private void setUpToolBarAndActions(){
 
+        final Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(v-> onBackPressed());
+        toolbar.setOnMenuItemClickListener(this);
+
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        return false;
+    }
 }
