@@ -488,8 +488,8 @@ public class PostAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private void bind(PostData postData){
 
-      if(postData.getAttachmentUrl()!=null){
-        Picasso.get().load(postData.getAttachmentUrl()).fit().into(newsIv);
+      if(postData.getVideoThumbnailUrl()!=null){
+        Picasso.get().load(postData.getVideoThumbnailUrl()).fit().into(newsIv);
       }
 
       newsTitleTv.setText(postData.getTitle());

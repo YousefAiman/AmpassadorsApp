@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">AmpassadorsApp</string>
+
+    <string name="app_name">Pal vision</string>
     <string name="more">More</string>
     <string name="notification_indicator">notification indicator</string>
     <string name="notifications">notifications</string>
     <string name="profile_image">profile image</string>
-
 
     <!--Messaging-->
     <string name="record_audio_message">record audio message</string>
@@ -76,6 +76,7 @@
     <string name="title_string">عنوان الخبر </string>
     <string name="Details">التفاصيل</string>
     <string name="create_topic">Create Topic</string>
+    <string name="Notifications">Notifications</string>
     <string name="post_publish_error">
         An error occurred while trying to publish post! Please try again!</string>
 
@@ -143,7 +144,8 @@
 
     <string name="search_for_users">Search for users</string>
     <string name="search_user">Search user</string>
-    <string name="select_name_and_group_image_image_is_optional">Select name and group image - image is optional</string>
+    <string name="select_name_and_group_image_image_is_optional">Select name and group
+        image - image is optional</string>
     <string name="enter_group_name_here">Enter group name here…</string>
     <string name="contributors">Contributors</string>
     <string name="newer">Newer</string>

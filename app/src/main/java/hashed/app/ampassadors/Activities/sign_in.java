@@ -102,12 +102,15 @@ public class sign_in extends AppCompatActivity {
                     user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            Toast.makeText(sign_in.this, "Verification Email Has been Sent. ", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(sign_in.this,
+                                    "Verification Email Has been Sent.",
+                                    Toast.LENGTH_SHORT).show();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(sign_in.this, "Email not Sent", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(sign_in.this,
+                                    "Email not Sent", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }

@@ -151,12 +151,10 @@ public class sign_up extends AppCompatActivity {
         task.addOnSuccessListener(new OnSuccessListener<AuthResult>() {
             @Override
             public void onSuccess(AuthResult authResult) {
-
+                auth.signOut();
                 userInfo = new UserInfo();
                // Picasso.get().load(userInfo.getImageUrl()).fit().into(circleImageView);
-
                 FirebaseUser firebaseUser = auth.getCurrentUser();
-
                 userInfo.setUsername(username);
                 userInfo.setPassword(passwrod);
                 userInfo.setEmail(firebaseUser.getEmail());
@@ -168,8 +166,6 @@ public class sign_up extends AppCompatActivity {
                 userInfo.setStatus(true);
               //  userInfo.setUserRole(spin);
 //                userInfo.setApprovement(false);
-
-
 
 
                 reference.document(firebaseUser.getUid()).set(userInfo).addOnCompleteListener(new OnCompleteListener<Void>() {

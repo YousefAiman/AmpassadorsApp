@@ -21,12 +21,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AmpassadorsApp">
 
-        <activity android:name=".Activities.PostNewActivity"></activity>
+        <activity android:name=".Activities.PostNewActivity"/>
 
         <activity
             android:name=".SideDrawer"
             android:label="@string/title_activity_side_drawer"
-            android:theme="@style/Theme.AmpassadorsApp.NoActionBar"></activity>
+            android:theme="@style/Theme.AmpassadorsApp.NoActionBar"/>
 
         <activity android:name=".Activities.PostPollActivity" />
         <activity android:name=".Activities.PostNewsActivity" />
@@ -40,7 +40,6 @@
             android:screenOrientation="portrait" />
         <activity android:name=".Activities.Admin" />
         <activity android:name=".Activities.profile_edit" />
-        <activity android:name=".Activities.PostActivity" />
         <activity android:name=".Activities.sign_up" />
         <activity android:name=".Activities.CreateMeetingActivity" />
         <activity android:name=".Activities.CreatePollActivity" />
@@ -49,9 +48,6 @@
         <activity android:name=".Activities.ComplaintsActivity" />
         <activity android:name=".Activities.SuggestionsActivity" />
 
-
-
-        <activity android:name=".Activities.ZoomActivity"></activity>
         <activity android:name=".Activities.PrivateMessagingActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>

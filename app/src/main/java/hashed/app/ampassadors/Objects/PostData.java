@@ -97,7 +97,7 @@ public class PostData implements Serializable {
         }
 
         this.publishTime = (long) postMap.get("publishTime");
-        this.likes = (long) postMap.get("likes");
+        this.likes = (int) postMap.get("likes");
         this.comments = (int) postMap.get("comments");
         this.type = (int) postMap.get("type");
 

@@ -141,9 +141,9 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/attachmentIv"
-                app:layout_constraintEnd_toEndOf="@+id/attachmentIv"
-                app:layout_constraintStart_toStartOf="@+id/attachmentIv"
+                app:layout_constraintDimensionRatio="1:0.7"
+                app:layout_constraintEnd_toEndOf="@+id/descriptionEd"
+                app:layout_constraintStart_toStartOf="@+id/descriptionEd"
                 app:layout_constraintTop_toBottomOf="@+id/descriptionEd" />
 
 

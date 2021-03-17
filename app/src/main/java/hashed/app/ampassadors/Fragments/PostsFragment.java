@@ -277,8 +277,10 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             }
 
           }else{
+
             addedCount.getAndIncrement();
             posts.add(snapshot.toObject(PostData.class));
+
           }
 
 

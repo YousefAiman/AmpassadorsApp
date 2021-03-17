@@ -33,6 +33,8 @@ import com.google.android.exoplayer2.util.Util;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -84,9 +86,6 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     getUserInfo();
 
     setClickListeners();
-
-
-
 
   }
 
@@ -245,8 +244,22 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     dataMap.put("comments", 0);
     dataMap.put("type", 1);
 
-    FirebaseFirestore.getInstance().collection("Posts").document(postId).set(dataMap)
-            .addOnSuccessListener(new OnSuccessListener<Void>() {
+    final DocumentReference documentReference;
+
+    if(getIntent().hasExtra("justForUser") &&
+            getIntent().getBooleanExtra("justForUser",false)){
+
+      documentReference = FirebaseFirestore.getInstance().collection("Users")
+      .document(currentUid).collection("UserPosts").document(postId);
+
+    }else{
+
+      documentReference = FirebaseFirestore.getInstance().collection("Posts")
+              .document(postId);
+
+    }
+
+    documentReference.set(dataMap).addOnSuccessListener(new OnSuccessListener<Void>() {
               @Override
               public void onSuccess(Void aVoid) {
                 progressDialog.dismiss();
@@ -380,7 +393,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
 
                 StorageTask<UploadTask.TaskSnapshot> onSuccessListener2 =
                         uploadTask.addOnSuccessListener(taskSnapshot2 -> {
-                          uploadTaskMap.remove(uploadTask);
+                          uploadTaskMap.remove(thumbnailUploadTask);
                           reference.getDownloadUrl().addOnSuccessListener(uri -> {
 
                             final String videoThumbnailUrl = uri.toString();
@@ -393,7 +406,8 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
                           @Override
                           public void onFailure(@NonNull Exception e) {
                             Toast.makeText(PostNewActivity.this,
-                                    R.string.post_publish_error, Toast.LENGTH_LONG).show();
+                                    R.string.post_publish_error,
+                                    Toast.LENGTH_LONG).show();
                             progressDialog.dismiss();
                           }
                         });

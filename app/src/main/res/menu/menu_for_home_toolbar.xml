@@ -12,7 +12,7 @@
             android:id="@+id/action_notifications"
             app:showAsAction="always"
             android:icon="@drawable/notification_icon"
-            android:title="@string/Notifications">
+            android:title="@string/notifications">
 
         </item>
 

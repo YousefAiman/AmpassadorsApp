@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:background="@color/dark_green"
         app:navigationIcon="@drawable/back_arrow_icon"
-        app:title="@string/Notifications"
+        app:title="@string/notifications"
         app:layout_constraintTop_toTopOf="parent"
         app:titleTextColor="@color/white"
         app:titleTextAppearance="@style/ToolbarTitleAppearance"/>

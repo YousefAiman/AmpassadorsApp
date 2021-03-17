@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import hashed.app.ampassadors.Activities.Home_Activity;
-import hashed.app.ampassadors.Activities.UsersPost;
+import hashed.app.ampassadors.Activities.PostNewActivity;
 import hashed.app.ampassadors.Adapters.UserPostAdapter;
 import hashed.app.ampassadors.Objects.UserPostData;
 import hashed.app.ampassadors.R;
@@ -75,7 +75,9 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         floatingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), UsersPost.class);
+
+                Intent intent = new Intent(getActivity(), PostNewActivity.class);
+                intent.putExtra("justForUser",true);
                 startActivity(intent);
 
             }
@@ -93,11 +95,8 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         adapter = new UserPostAdapter(postData, getActivity());
         post_list = view.findViewById(R.id.userpost_recycler);
 
-        post_list.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
-
-
-
-
+        post_list.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL,
+                false));
 
         return view;
     }
