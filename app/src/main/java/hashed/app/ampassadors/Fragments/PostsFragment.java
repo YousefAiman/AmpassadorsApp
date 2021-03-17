@@ -69,7 +69,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
   private ViewPager headerViewPager;
   private LinearLayout dotsLinear;
   private Toolbar toolbar;
-
+  private FloatingActionButton floatingButton;
   //header Pager
   private Handler handler;
   private Runnable pagerRunnable;
@@ -116,7 +116,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     toolbar.setNavigationOnClickListener(v -> ((Home_Activity)requireActivity()).showDrawer());
     toolbar.setOnMenuItemClickListener(this);
 
-    FloatingActionButton floatingButton = view.findViewById(R.id.floatingButton);
+    floatingButton = view.findViewById(R.id.floatingButton);
     floatingButton.setOnClickListener(this);
 
     return view;
@@ -132,9 +132,9 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                     R.drawable.notification_indicator_icon:
                     R.drawable.notification_icon);
 
-    if (GlobalVariables.getRole() == ""){
+    if (GlobalVariables.getRole().equals("Admin") || GlobalVariables.getRole().equals("Publisher")){
 
-
+      floatingButton.setVisibility(View.VISIBLE);
     }
 
 
