@@ -163,6 +163,7 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
          );
          statusTv.setText(R.string.offline);
        }
+
         itemView.setOnClickListener(this);
 //         itemView.setOnClickListener(v->
 //                 userClickListener.clickUser(user.getUserId(),getAdapterPosition()));

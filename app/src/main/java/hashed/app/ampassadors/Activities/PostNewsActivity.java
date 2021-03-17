@@ -5,7 +5,15 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
 import android.app.AlertDialog;
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +34,7 @@ import hashed.app.ampassadors.Fragments.CommentsFragment;
 import hashed.app.ampassadors.Fragments.ImageFullScreenFragment;
 import hashed.app.ampassadors.Fragments.VideoFullScreenFragment;
 import hashed.app.ampassadors.Objects.PostData;
+import hashed.app.ampassadors.Objects.PrivateMessage;
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
@@ -45,6 +54,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
   //data
   private PostData postData;
+  private BroadcastReceiver downloadCompleteReceiver;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -264,7 +274,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
     alertDialogBuilder.setMessage("Do you want to download file?");
 
     alertDialogBuilder.setPositiveButton("Download",(dialogInterface, i) -> {
-//        downloadFile(position,url,fileName);
+        downloadFile(postData.getAttachmentUrl(),postData.getDocumentName());
     });
 
     alertDialogBuilder.setNegativeButton("Cancel",(dialogInterface, i) -> {
@@ -290,5 +300,94 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
       super.onBackPressed();
     }
 
+  }
+
+  private void downloadFile(String url,String fileName){
+
+    DownloadManager.Request request;
+
+    request = new DownloadManager.Request(Uri.parse(url))
+            .setTitle(fileName)
+            .setDescription("Downloading")
+            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            .setAllowedOverMetered(true)
+            .setAllowedOverRoaming(true);
+
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+      request.setRequiresCharging(false);
+    }
+
+    DownloadManager downloadManager = (DownloadManager)
+            this.getSystemService(Context.DOWNLOAD_SERVICE);
+
+
+    request.setDestinationInExternalFilesDir(this, Environment.DIRECTORY_DOWNLOADS,
+            fileName);
+
+    long downloadId = downloadManager.enqueue(request);
+    attachmentImage.setImageResource(R.drawable.cancel_icon);
+    attachmentImage.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+
+        final DownloadManager downloadManager = (DownloadManager)
+                getSystemService(Context.DOWNLOAD_SERVICE);
+
+        downloadManager.remove(downloadId);
+        attachmentImage.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+            showDownloadAlert();
+          }
+        });
+
+      }
+    });
+
+      if(downloadCompleteReceiver == null){
+        setUpDownloadReceiver();
+      }
+
+
+  }
+
+  private void setUpDownloadReceiver(){
+
+    downloadCompleteReceiver = new BroadcastReceiver() {
+      @Override
+      public void onReceive(Context context, Intent intent) {
+
+        long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+
+        if(id!=-1){
+
+//          openDownloadedFile(id);
+
+          attachmentImage.setImageResource(R.drawable.download_icon);
+          attachmentImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+              showDownloadAlert();
+            }
+          });
+
+        }
+
+      }
+    };
+
+    registerReceiver(downloadCompleteReceiver,
+            new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+
+  }
+
+
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    if(downloadCompleteReceiver!=null){
+      unregisterReceiver(downloadCompleteReceiver);
+    }
   }
 }
