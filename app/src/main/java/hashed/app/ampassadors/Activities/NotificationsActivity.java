@@ -11,6 +11,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.NotificationManager;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -36,9 +37,11 @@ import java.util.Collections;
 import java.util.List;
 
 import hashed.app.ampassadors.Adapters.NotificationsAdapter;
+import hashed.app.ampassadors.NotificationUtil.BadgeUtil;
 import hashed.app.ampassadors.Objects.Notification;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.GlobalVariables;
+import hashed.app.ampassadors.Utils.WifiUtil;
 
 public class NotificationsActivity extends AppCompatActivity implements
         SwipeRefreshLayout.OnRefreshListener{
@@ -49,11 +52,7 @@ public class NotificationsActivity extends AppCompatActivity implements
 //  private NotificationsAdapter olderAdapter;
 
 
-  //views
-//  private TextView newestNotificationsTv,oldestNotificationsTv;
-//  private RecyclerView newestNotificationsRv,oldestNotificationsRv;
-  private RecyclerView newestNotificationsRv;
-//  private SwipeRefreshLayout swipeRefreshLayout;
+  //  private SwipeRefreshLayout swipeRefreshLayout;
 
 
   private ListenerRegistration listener;
@@ -76,7 +75,10 @@ public class NotificationsActivity extends AppCompatActivity implements
     getViews();
 
 
-    newestNotificationsRv = findViewById(R.id.newestNotificationsRv);
+    //views
+    //  private TextView newestNotificationsTv,oldestNotificationsTv;
+    //  private RecyclerView newestNotificationsRv,oldestNotificationsRv;
+    RecyclerView newestNotificationsRv = findViewById(R.id.newestNotificationsRv);
 
 
     newerNotifications = new ArrayList<>();
@@ -88,9 +90,8 @@ public class NotificationsActivity extends AppCompatActivity implements
 //    olderAdapter = new NotificationsAdapter(olderNotifications,
 //            NotificationsAdapter.TYPE_OLD);
 
-
     final ItemTouchHelper itemTouchHelper = new
-            ItemTouchHelper(new NotificationsAdapter.SwipeToDeleteNotificationCallback(newerAdapter));
+            ItemTouchHelper(new SwipeToDeleteNotificationCallback());
     itemTouchHelper.attachToRecyclerView(newestNotificationsRv);
 
 //    final ItemTouchHelper itemTouchHelper2 = new
@@ -452,4 +453,56 @@ public class NotificationsActivity extends AppCompatActivity implements
       listener.remove();
     }
   }
+
+  private class SwipeToDeleteNotificationCallback extends ItemTouchHelper.SimpleCallback {
+    public SwipeToDeleteNotificationCallback() {
+      super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
+    }
+
+    @Override
+    public boolean onMove(@NonNull RecyclerView recyclerView,
+                          @NonNull RecyclerView.ViewHolder viewHolder,
+                          @NonNull RecyclerView.ViewHolder target) {
+      return false;
+    }
+
+    @Override
+    public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+
+      if(WifiUtil.checkWifiConnection(viewHolder.itemView.getContext())) {
+
+        deleteNotification(newerNotifications.get(viewHolder.getAdapterPosition()),
+                viewHolder.itemView.getContext());
+
+      }
+    }
+
+  }
+
+
+  private void deleteNotification(Notification n, Context context) {
+    Log.d("ttt", "deleting notif");
+
+    final String notificationPath = FirebaseAuth.getInstance().getCurrentUser().getUid()
+            + "_" + n.getDestinationId() + "_" + n.getType();
+
+    FirebaseFirestore.getInstance().collection("Notifications")
+            .document(notificationPath).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+      @Override
+      public void onSuccess(Void aVoid) {
+
+        int index = newerNotifications.indexOf(n);
+        newerNotifications.remove(index);
+        newerAdapter.notifyItemRemoved(index);
+
+        if (Build.VERSION.SDK_INT < 26) {
+          BadgeUtil.decrementBadgeNum(context);
+        }
+
+      }
+    });
+
+  }
+
+
 }

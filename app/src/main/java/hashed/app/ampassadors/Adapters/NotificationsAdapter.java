@@ -43,11 +43,11 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
   public static final int TYPE_NEW = 1,TYPE_OLD = 2;
   private final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-  private final ArrayList<Notification> notifications;
+  private static ArrayList<Notification> notifications;
   private final int type;
 
   public NotificationsAdapter(ArrayList<Notification> notifications, int type){
-    this.notifications = notifications;
+    NotificationsAdapter.notifications = notifications;
     this.type = type;
   }
 
@@ -232,54 +232,6 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
   }
 
 
-  public static class SwipeToDeleteNotificationCallback extends ItemTouchHelper.SimpleCallback {
-    private final NotificationsAdapter mAdapter;
-
-    public SwipeToDeleteNotificationCallback(NotificationsAdapter adapter) {
-      super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
-      mAdapter = adapter;
-    }
-
-    @Override
-    public boolean onMove(@NonNull RecyclerView recyclerView,
-                          @NonNull RecyclerView.ViewHolder viewHolder,
-                          @NonNull RecyclerView.ViewHolder target) {
-      return false;
-    }
-
-    @Override
-    public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-
-      if(WifiUtil.checkWifiConnection(viewHolder.itemView.getContext())) {
-
-        deleteNotification(mAdapter.notifications.get(viewHolder.getAdapterPosition()),
-                viewHolder.itemView.getContext());
-
-      }
-    }
-
-  }
-
-
-  private static void deleteNotification(Notification n, Context context) {
-    Log.d("ttt", "deleting notif");
-
-    final String notificationPath = FirebaseAuth.getInstance().getCurrentUser().getUid()
-            + "_" + n.getDestinationId() + "_" + n.getType();
-
-    FirebaseFirestore.getInstance().collection("Notifications")
-            .document(notificationPath).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-      @Override
-      public void onSuccess(Void aVoid) {
-
-        if (Build.VERSION.SDK_INT < 26) {
-          BadgeUtil.decrementBadgeNum(context);
-        }
-
-      }
-    });
-
-  }
 
 
 }

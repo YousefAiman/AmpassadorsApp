@@ -20,7 +20,8 @@ public class TimeFormatter {
           HOUR_MINUTE= "h:mm a",
           WEEK_DAY = "EEE",
           MONTH_DAY = "MMM dd",
-          MONTH_DAY_YEAR = "MMM dd yyyy";
+          MONTH_DAY_YEAR = "MMM dd yyyy",
+          MONTH_DAY_YEAR_HOUR_MINUTE = "dd/mm/yyyy h:mm a";
 
   public static String formatTime(long time){
 

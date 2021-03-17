@@ -64,14 +64,15 @@
                     android:id="@+id/usernameTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
                     android:layout_marginBottom="10dp"
                     android:fontFamily="@font/segoe_ui_bold"
                     android:textColor="#060606"
                     android:textSize="15sp"
                     app:layout_constraintBottom_toBottomOf="@+id/userIv"
-                    app:layout_constraintStart_toEndOf="@+id/userIv"
+                    app:layout_constraintEnd_toEndOf="@+id/dateTv"
+                    app:layout_constraintStart_toStartOf="@+id/dateTv"
                     app:layout_constraintTop_toTopOf="@+id/userIv" />
+
 
                 <TextView
                     android:id="@+id/dateTv"
@@ -80,9 +81,9 @@
                     android:layout_marginTop="3dp"
                     android:fontFamily="@font/segoe_ui"
                     android:textColor="#060606"
+                    android:layout_marginStart="16dp"
                     android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="@+id/usernameTv"
-                    app:layout_constraintStart_toStartOf="@+id/usernameTv"
+                    app:layout_constraintStart_toEndOf="@+id/userIv"
                     app:layout_constraintTop_toBottomOf="@+id/usernameTv" />
 
                 <TextView
@@ -118,7 +119,7 @@
         </androidx.core.widget.NestedScrollView>
 
         <TextView
-            android:id="@+id/votesTv"
+            android:id="@+id/voteTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/segoe_ui_light"
@@ -130,8 +131,22 @@
             android:layout_marginStart="12dp"
             app:layout_constraintBottom_toTopOf="@id/linearLayout"/>
 
+
         <TextView
-            android:id="@+id/likesTv"
+            android:id="@+id/votesTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/segoe_ui_light"
+            android:text="0"
+            android:textColor="@color/black"
+            android:layout_marginBottom="3dp"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@id/voteTv"
+            android:layout_marginStart="5dp"
+            app:layout_constraintBottom_toTopOf="@id/linearLayout"/>
+
+        <TextView
+            android:id="@+id/textView8"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/segoe_ui_light"
@@ -140,11 +155,24 @@
             android:layout_marginBottom="3dp"
             android:textSize="12sp"
             app:layout_constraintStart_toEndOf="@id/votesTv"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="12dp"
             app:layout_constraintBottom_toTopOf="@id/linearLayout"/>
 
         <TextView
-            android:id="@+id/commentsTv"
+            android:id="@+id/likesTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:fontFamily="@font/segoe_ui_light"
+            android:text="0"
+            android:textColor="@color/black"
+            android:layout_marginStart="5dp"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@id/textView8"
+            app:layout_constraintTop_toTopOf="@+id/textView8" />
+
+        <TextView
+            android:id="@+id/das"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/segoe_ui_light"
@@ -155,6 +183,19 @@
             android:layout_marginEnd="23dp"
             app:layout_constraintStart_toEndOf="@id/likesTv"
             app:layout_constraintTop_toTopOf="@+id/likesTv" />
+
+        <TextView
+            android:id="@+id/commentsTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:fontFamily="@font/segoe_ui_light"
+            android:layout_marginStart="5dp"
+            android:text="0"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/das"
+            app:layout_constraintTop_toTopOf="@+id/das" />
 
 
         <LinearLayout

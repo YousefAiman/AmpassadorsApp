@@ -110,7 +110,8 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
     descriptionTv.setText(postData.getDescription());
     likesTv.setText(String.valueOf(postData.getLikes()));
     commentsTv.setText(String.valueOf(postData.getComments()));
-    dateTv.setText(TimeFormatter.formatTime(postData.getPublishTime()));
+    dateTv.setText(TimeFormatter.formatWithPattern(postData.getPublishTime(),
+            TimeFormatter.MONTH_DAY_YEAR_HOUR_MINUTE));
 
     likeTv.setTextColor(getResources().getColor(
               GlobalVariables.getLikesList().contains(postData.getPostId())?R.color.red:

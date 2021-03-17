@@ -3,7 +3,9 @@ package hashed.app.ampassadors.Objects;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 
-public class PollOption {
+import java.io.Serializable;
+
+public class PollOption implements Serializable {
 
   @PropertyName("option")
   private String option;

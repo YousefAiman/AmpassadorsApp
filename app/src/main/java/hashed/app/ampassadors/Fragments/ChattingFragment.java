@@ -27,6 +27,7 @@ import hashed.app.ampassadors.Adapters.TabAdapterTitle;
 import hashed.app.ampassadors.BroadcastReceivers.NotificationIndicatorReceiver;
 import hashed.app.ampassadors.BuildConfig;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.GlobalVariables;
 
 public class ChattingFragment extends Fragment implements MenuItem.OnMenuItemClickListener ,
         View.OnClickListener {
@@ -72,7 +73,14 @@ public class ChattingFragment extends Fragment implements MenuItem.OnMenuItemCli
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
+    toolbar.getMenu().findItem(R.id.action_notifications)
+            .setIcon(GlobalVariables.getNotificationsCount() > 0?
+                    R.drawable.notification_indicator_icon:
+                    R.drawable.notification_icon);
+
+
     setupNotificationReceiver();
+
 
     chattingViewPager.setAdapter(tabAdapterTitle);
     chattingTabLayout.setupWithViewPager(chattingViewPager);
@@ -136,4 +144,6 @@ public class ChattingFragment extends Fragment implements MenuItem.OnMenuItemCli
 
     }
   }
+
+
 }

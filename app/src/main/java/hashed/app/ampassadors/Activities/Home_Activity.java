@@ -39,6 +39,7 @@ import hashed.app.ampassadors.Fragments.ChattingFragment;
 import hashed.app.ampassadors.Fragments.GroupsFragment;
 import hashed.app.ampassadors.Fragments.PostsFragment;
 import hashed.app.ampassadors.Fragments.ProfileFragment;
+import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Services.FirebaseMessagingService;
 import hashed.app.ampassadors.Utils.GlobalVariables;
@@ -186,13 +187,14 @@ public class Home_Activity extends AppCompatActivity  implements
 
         if(resultCode == 3){
 
-            if(!getSupportFragmentManager().getFragments().isEmpty()){
-                if(getSupportFragmentManager().getFragments().get(0) instanceof PostsFragment){
-                    ((PostsFragment)getSupportFragmentManager().getFragments().get(0))
-                            .onRefresh();
-                }
-            }
+                if(nav_btom.getSelectedItemId()==R.id.home &&
+                        getSupportFragmentManager().getFragments().get(0) instanceof PostsFragment){
 
+                    final PostData postData = (PostData) data.getSerializableExtra("postData");
+                    ((PostsFragment)getSupportFragmentManager().getFragments().get(0))
+                            .addPostData(postData);
+
+                }
         }
     }
 
@@ -278,6 +280,7 @@ public class Home_Activity extends AppCompatActivity  implements
                                         sendBroadcast(intent);
                                     }
 
+
                                     Log.d("ttt","notificationCount: "+
                                             notificationCount.get());
 
@@ -293,6 +296,8 @@ public class Home_Activity extends AppCompatActivity  implements
                                    }
                                    break;
                             }
+
+                            GlobalVariables.setNotificationsCount(notificationCount.get());
 
                         }
                     }

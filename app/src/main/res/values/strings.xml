@@ -76,13 +76,16 @@
     <string name="title_interface">post</string>
     <string name="title_string">عنوان الخبر </string>
     <string name="Details">التفاصيل</string>
+    <string name="create_topic">Create Topic</string>
+    <string name="post_publish_error">
+        An error occurred while trying to publish post! Please try again!</string>
 
     <!--Suggestions And Complaints-->
     <string name="Complaints">Complaints</string>
     <string name="title">we would like to hear from you</string>
     <string name="com_title">عنوان الشكوى</string>
     <string name="defendant">المشتكى عليه</string>
-    <string name="subject" >الموضوع</string>
+    <string name="subject">الموضوع</string>
     <string name="send_btn">send</string>
     <string name="Suggestion">Suggestion</string>
     <string name="suggest_title">عنوان الاقتراح</string>
@@ -139,5 +142,9 @@
     <string name="invited_meeting">Invitation to meeting</string>
     <string name="like">Like</string>
     <string name="comment">Comment</string>
+    <string name="publish">Publish</string>
+    <string name="Title">Title</string>
+    <string name="new_post">NEW POST</string>
+    <string name="new_poll">NEW POLL</string>
 
 </resources>

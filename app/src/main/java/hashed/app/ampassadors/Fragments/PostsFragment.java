@@ -44,22 +44,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 import hashed.app.ampassadors.Activities.CreatePollActivity;
 import hashed.app.ampassadors.Activities.Home_Activity;
 import hashed.app.ampassadors.Activities.NotificationsActivity;
-import hashed.app.ampassadors.Activities.PostActivity;
+import hashed.app.ampassadors.Activities.PostNewActivity;
 import hashed.app.ampassadors.Adapters.HomeNewsHeaderViewPagerAdapter;
 import hashed.app.ampassadors.Adapters.PostAdapter;
 import hashed.app.ampassadors.BroadcastReceivers.NotificationIndicatorReceiver;
 import hashed.app.ampassadors.BuildConfig;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.TimeFormatter;
 
 public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickListener,
-        SwipeRefreshLayout.OnRefreshListener , View.OnClickListener ,
-        PostAdapter.CommentsInterface,PostAdapter.ImageInterface{
+        SwipeRefreshLayout.OnRefreshListener , View.OnClickListener{
 
   private static final int POSTS_LIMIT = 10;
   private Query query;
-  private List<PostData> postData;
+  private List<PostData> posts;
   private PostAdapter adapter;
   private RecyclerView post_list;
   private DocumentSnapshot lastDocSnap;
@@ -94,10 +94,10 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
     query = FirebaseFirestore.getInstance().collection("Posts")
             .orderBy("publishTime", Query.Direction.DESCENDING).limit(POSTS_LIMIT);
-    postData = new ArrayList<>();
+    posts = new ArrayList<>();
 
 
-    adapter = new PostAdapter(postData, getContext(),this,this);
+    adapter = new PostAdapter(posts, getContext());
 
   }
 
@@ -126,6 +126,11 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+
+    toolbar.getMenu().findItem(R.id.action_notifications)
+            .setIcon(GlobalVariables.getNotificationsCount() > 0?
+                    R.drawable.notification_indicator_icon:
+                    R.drawable.notification_icon);
 
 
     setupNotificationReceiver();
@@ -163,7 +168,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     dotsLinear.removeAllViews();
 
     //post recycler
-    postData.clear();
+    posts.clear();
     adapter.notifyDataSetChanged();
     lastDocSnap = null;
     ReadPost(true);
@@ -178,18 +183,18 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     }
   }
 
-  @Override
-  public void showComments(String postId, int commentsCount) {
-
-    CommentsFragment commentsFragment = new CommentsFragment(postId,commentsCount);
-    commentsFragment.show(getChildFragmentManager(),"CommentsFragment");
-
-  }
-
-  @Override
-  public void showImage(String imageUrl) {
-    new ImageFullScreenFragment(imageUrl).show(getChildFragmentManager(),"FullScreen");
-  }
+//  @Override
+//  public void showComments(String postId, int commentsCount) {
+//
+//    CommentsFragment commentsFragment = new CommentsFragment(postId,commentsCount);
+//    commentsFragment.show(getChildFragmentManager(),"CommentsFragment");
+//
+//  }
+//
+//  @Override
+//  public void showImage(String imageUrl) {
+//    new ImageFullScreenFragment(imageUrl).show(getChildFragmentManager(),"FullScreen");
+//  }
 
   private class PostsBottomScrollListener extends RecyclerView.OnScrollListener {
     @Override
@@ -238,7 +243,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
               if(snapshot.getLong("totalVotes") > 0){
                 addedCount.getAndIncrement();
-                postData.add(snapshot.toObject(PostData.class));
+                posts.add(snapshot.toObject(PostData.class));
               }
 
             }else{
@@ -253,13 +258,13 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
                   final PostData post = snapshot.toObject(PostData.class);
                   post.setPollEnded(true);
-                  postData.add(post);
+                  posts.add(post);
                   addedCount.getAndIncrement();
                 }
 
               }else{
 
-                postData.add(snapshot.toObject(PostData.class));
+                posts.add(snapshot.toObject(PostData.class));
                 addedCount.getAndIncrement();
               }
 
@@ -267,7 +272,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
           }else{
             addedCount.getAndIncrement();
-            postData.add(snapshot.toObject(PostData.class));
+            posts.add(snapshot.toObject(PostData.class));
           }
 
 
@@ -282,13 +287,13 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
       if(isInitial){
         adapter.notifyDataSetChanged();
 
-        if(postData.size() == POSTS_LIMIT){
+        if(posts.size() == POSTS_LIMIT){
           post_list.addOnScrollListener(scrollListener = new PostsBottomScrollListener());
         }
 
       }else{
 
-        adapter.notifyItemRangeInserted((postData.size() - addedCount.get()),
+        adapter.notifyItemRangeInserted((posts.size() - addedCount.get()),
                 addedCount.get());
 
         if(addedCount.get() < POSTS_LIMIT && scrollListener != null){
@@ -312,7 +317,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     parentView.findViewById(R.id.new_post).setOnClickListener(view -> {
 
       bsd.dismiss();
-      Intent intent = new Intent(getContext(), PostActivity.class);
+      Intent intent = new Intent(getContext(), PostNewActivity.class);
       intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       startActivity(intent);
 
@@ -503,5 +508,10 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
       requireContext().unregisterReceiver(notificationIndicatorReceiver);
     }
 
+  }
+
+  public void addPostData(PostData post){
+    posts.add(0,post);
+    adapter.notifyItemInserted(0);
   }
 }

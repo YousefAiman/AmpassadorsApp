@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.R;
@@ -35,8 +37,16 @@ public class PostData implements Serializable {
     private String title;
     @PropertyName("publisherId")
     private String publisherId;
-    @PropertyName("imageUrl")
-    private String imageUrl;
+    @PropertyName("attachmentUrl")
+    private String attachmentUrl;
+    @PropertyName("videoThumbnailUrl")
+    private String videoThumbnailUrl;
+    @PropertyName("attachmentType")
+    private int attachmentType;
+    @PropertyName("documentName")
+    private String documentName;
+    @PropertyName("documentSize")
+    private long documentSize;
     @PropertyName("publishTime")
     private long publishTime;
     @PropertyName("likes")
@@ -53,10 +63,6 @@ public class PostData implements Serializable {
     private long totalVotes;
     @PropertyName("pollEnded")
     private boolean pollEnded;
-    @PropertyName("attachmentType")
-    private int attachmentType;
-    @PropertyName("attachmentUrl")
-    private String attachmentUrl;
     @Exclude
     private String publisherName;
     @Exclude
@@ -70,17 +76,45 @@ public class PostData implements Serializable {
     public PostData(){
     }
 
-    public PostData(String title, String publisherId, String imageUrl,
+    public PostData(Map<String,Object> postMap){
+
+        this.postId = (String) postMap.get("postId");
+        this.title = (String) postMap.get("title");
+        this.description = (String) postMap.get("description");
+        this.publisherId = (String) postMap.get("publisherId");
+        this.attachmentType = (int) postMap.get("attachmentType");
+
+        if(videoThumbnailUrl!=null){
+            this.videoThumbnailUrl = (String) postMap.get("videoThumbnailUrl");
+        }
+
+        if(documentName!=null){
+            this.documentName = (String) postMap.get("documentName");
+        }
+
+        if(documentSize != 0){
+            this.documentSize = (long) postMap.get("documentSize");
+        }
+
+        this.publishTime = (long) postMap.get("publishTime");
+        this.likes = (long) postMap.get("likes");
+        this.comments = (int) postMap.get("comments");
+        this.type = (int) postMap.get("type");
+
+    }
+
+    public PostData(String title, String publisherId,
                     long publishTime, int likes, int comments, String description, int type) {
         this.title = title;
         this.publisherId = publisherId;
-        this.imageUrl = imageUrl;
         this.publishTime = publishTime;
         this.likes = likes;
         this.comments = comments;
         this.description = description;
         this.type = type;
     }
+
+
 
     public String getTitle() {
         return title;
@@ -123,13 +157,6 @@ public class PostData implements Serializable {
         this.publisherId = publisherId;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
 
     public long getPublishTime() {
         return publishTime;
@@ -305,5 +332,29 @@ public class PostData implements Serializable {
 
     public void setAttachmentUrl(String attachmentUrl) {
         this.attachmentUrl = attachmentUrl;
+    }
+
+    public String getVideoThumbnailUrl() {
+        return videoThumbnailUrl;
+    }
+
+    public void setVideoThumbnailUrl(String videoThumbnailUrl) {
+        this.videoThumbnailUrl = videoThumbnailUrl;
+    }
+
+    public String getDocumentName() {
+        return documentName;
+    }
+
+    public void setDocumentName(String documentName) {
+        this.documentName = documentName;
+    }
+
+    public long getDocumentSize() {
+        return documentSize;
+    }
+
+    public void setDocumentSize(long documentSize) {
+        this.documentSize = documentSize;
     }
 }

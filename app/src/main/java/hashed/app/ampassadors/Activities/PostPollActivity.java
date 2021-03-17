@@ -106,13 +106,12 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
     postData = (PostData) getIntent().getSerializableExtra("postData");
     titleTv.setText(postData.getTitle());
 
-    votesTv.setText(getResources().getString(R.string.vote) +" "+ postData.getTotalVotes());
-    likesTv.setText(getResources().getString(R.string.likes) +" "+ postData.getLikes());
-    commentsTv.setText(getResources().getString(R.string.comments) +" "+ postData.getComments());
-
-
+    votesTv.setText(String.valueOf(postData.getTotalVotes()));
+    likesTv.setText(String.valueOf(postData.getLikes()));
     commentsTv.setText(String.valueOf(postData.getComments()));
-    dateTv.setText(TimeFormatter.formatTime(postData.getPublishTime()));
+    commentsTv.setText(String.valueOf(postData.getComments()));
+    dateTv.setText(TimeFormatter.formatWithPattern(postData.getPublishTime(),
+            TimeFormatter.MONTH_DAY_YEAR_HOUR_MINUTE));
 
     likeTv.setTextColor(getResources().getColor(
             GlobalVariables.getLikesList().contains(postData.getPostId())?R.color.red:
@@ -204,7 +203,7 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
     final ArrayList<PollOption> pollOptions = new ArrayList<>();
 
     final PollPostAdapter adapter = new PollPostAdapter(pollOptions
-            ,postData.getPostId(), hasEnded,postData.getTotalVotes());
+            ,postData.getPostId(), hasEnded, postData.getTotalVotes());
 
     pollRv.setNestedScrollingEnabled(false);
     pollRv.setHasFixedSize(true);
@@ -227,7 +226,7 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
                   @Override
                   public void onSuccess(QuerySnapshot snapshots) {
                     if(!snapshots.isEmpty()){
-                      postData.getPollOptions().addAll(snapshots.toObjects(PollOption.class));
+                      pollOptions.addAll(snapshots.toObjects(PollOption.class));
                     }
                   }
                 }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -236,10 +235,9 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
             if(task.isSuccessful() && !postData.getPollOptions().isEmpty()){
 
               if(chosenOption != -1){
-                postData.getPollOptions().get(chosenOption).setChosen(true);
+                pollOptions.get(chosenOption).setChosen(true);
                 adapter.showProgress = true;
               }
-
               adapter.notifyDataSetChanged();
             }
           }

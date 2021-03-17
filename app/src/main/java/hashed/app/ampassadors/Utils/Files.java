@@ -59,7 +59,11 @@ public class Files {
   public final static String MESSAGE_IMAGE_REF = "Messaging-images/",
           MESSAGE_RECORD_REF = "Messaging-recordings/",
           MESSAGE_VIDEO_REF = "Messaging-videos/",
-          MESSAGE_DOCUMENT_REF = "Messaging-documents/";
+          MESSAGE_DOCUMENT_REF = "Messaging-documents/",
+          POST_IMAGE_REF = "Post-images/",
+          POST_VIDEO_REF = "Post-videos/",
+          POST_THUMBNAIL_REF = "Post-thumbnails/",
+          POST_DOCUMENT_REF = "Post-documents/";
 
 
   public final static int MAX_VIDEO_LENGTH = 30;

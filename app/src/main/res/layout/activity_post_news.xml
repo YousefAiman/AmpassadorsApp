@@ -85,13 +85,13 @@
                     android:id="@+id/usernameTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
                     android:layout_marginBottom="10dp"
                     android:fontFamily="@font/segoe_ui_bold"
                     android:textColor="#060606"
                     android:textSize="15sp"
                     app:layout_constraintBottom_toBottomOf="@+id/userIv"
-                    app:layout_constraintStart_toEndOf="@+id/userIv"
+                    app:layout_constraintEnd_toEndOf="@+id/dateTv"
+                    app:layout_constraintStart_toStartOf="@+id/dateTv"
                     app:layout_constraintTop_toTopOf="@+id/userIv" />
 
 
@@ -102,9 +102,9 @@
                     android:layout_marginTop="3dp"
                     android:fontFamily="@font/segoe_ui"
                     android:textColor="#060606"
+                    android:layout_marginStart="16dp"
                     android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="@+id/usernameTv"
-                    app:layout_constraintStart_toStartOf="@+id/usernameTv"
+                    app:layout_constraintStart_toEndOf="@+id/userIv"
                     app:layout_constraintTop_toBottomOf="@+id/usernameTv" />
 
                 <TextView

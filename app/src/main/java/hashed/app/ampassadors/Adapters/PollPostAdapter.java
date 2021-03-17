@@ -131,12 +131,16 @@ public class PollPostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 //                        null
 //                );
 
+            }else{
+                checkIv.setVisibility(View.GONE);
             }
 
             optionTv.setText(pollOption.getOption());
 
             if(!showProgress){
                 optionTv.setOnClickListener(this);
+            }else{
+                optionTv.setOnClickListener(null);
             }
 
 
@@ -203,6 +207,8 @@ public class PollPostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 //                                itemView.getResources(),
 //                                R.drawable.check_icon_round,null)
 //                        ,null,null,null);
+            }else{
+                checkIv.setVisibility(View.GONE);
             }
 
 
