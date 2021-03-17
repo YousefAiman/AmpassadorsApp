@@ -96,9 +96,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="200dp"
                 />
-
-
-
         </LinearLayout>
 
 

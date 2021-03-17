@@ -113,12 +113,11 @@
     <string-array name="persons_array">
         <item>Ambassador</item>
         <item>Publisher</item>
-        <item>Addicted</item>
+        <item>Admin</item>
         <item>Coordinator</item>
         <item>Guest</item>
-        <item>Saturn</item>
-        <item>Uranus</item>
-        <item>Neptune</item>
+
+
     </string-array>
     <string name="title_activity_side_drawer">SideDrawer</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
