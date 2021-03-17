@@ -133,6 +133,8 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                     R.drawable.notification_icon);
 
 
+
+
     setupNotificationReceiver();
 
     headerViewPager.setAdapter(pagerAdapter);

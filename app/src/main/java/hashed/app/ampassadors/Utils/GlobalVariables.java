@@ -23,6 +23,7 @@ public class GlobalVariables extends Application {
   private static boolean wifiIsOn;
   private static NetworkCallback registeredNetworkCallback;
   private static int notificationsCount;
+  private static String role ;
 
 
   public static GlobalVariables getInstance() {
@@ -114,6 +115,14 @@ public class GlobalVariables extends Application {
 
   public static void setNotificationsCount(int notificationsCount) {
     GlobalVariables.notificationsCount = notificationsCount;
+  }
+
+  public static String getRole() {
+    return role;
+  }
+
+  public static void setRole(String role) {
+    GlobalVariables.role = role;
   }
 
 

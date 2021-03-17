@@ -120,7 +120,7 @@
         android:layout_marginBottom="1317dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintGuide_percent="0.93" />
+        app:layout_constraintGuide_percent="0.9296482" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline4"

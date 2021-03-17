@@ -18,10 +18,14 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -54,22 +58,40 @@ public class Home_Activity extends AppCompatActivity  implements
     private DrawerLayout drawer_layout;
     private NavigationView navigationview;
     private List<ListenerRegistration> listenerRegistrations;
+            String userid;
+            FirebaseAuth auth;
+            DocumentReference reference;
+            FirebaseFirestore firebaseFirestore;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
 
+
+        auth = FirebaseAuth.getInstance();
+        userid = auth.getCurrentUser().getUid();
+        firebaseFirestore = FirebaseFirestore.getInstance();
+
+        firebaseFirestore.collection("Users").document(userid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+             @Override
+             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                 if (task.isSuccessful()){
+                     if (task.getResult().exists()) {
+
+                       String role = task.getResult().getString("Role");
+                       GlobalVariables.setRole(role);
+                        }
+                     }
+             }
+         });
+
         GlobalVariables.setAppIsRunning(true);
-
         SetUpCompetent();
-
         replaceFragment(new PostsFragment());
-
         OnClickButtons();
-
         createUserLikesListener();
-
         createNotificationListener();
     }
 
