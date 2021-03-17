@@ -66,8 +66,7 @@ import static hashed.app.ampassadors.Objects.PostData.TYPE_NEWS;
 import static hashed.app.ampassadors.Objects.PostData.TYPE_POLL;
 
 public class B_Fragment extends Fragment implements Toolbar.OnMenuItemClickListener,
-        SwipeRefreshLayout.OnRefreshListener , View.OnClickListener ,
-        PostAdapter.CommentsInterface,PostAdapter.ImageInterface{
+        SwipeRefreshLayout.OnRefreshListener , View.OnClickListener{
 
     private static final int POSTS_LIMIT = 10;
     private Query query;
@@ -95,9 +94,10 @@ public class B_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
 
         titles = new ArrayList<>(5);
         query = FirebaseFirestore.getInstance().collection("Posts")
-                .orderBy("publishTime", Query.Direction.DESCENDING).whereEqualTo("type", TYPE_NEWS).limit(POSTS_LIMIT);
+                .orderBy("publishTime", Query.Direction.DESCENDING).whereEqualTo(
+                        "type", TYPE_NEWS).limit(POSTS_LIMIT);
         postData = new ArrayList<>();
-        adapter = new PostAdapter(postData, getContext(),this,this);
+        adapter = new PostAdapter(postData, getContext());
 
     }
 
@@ -147,18 +147,18 @@ public class B_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
     public void onClick(View view) {
     }
 
-    @Override
-    public void showComments(String postId, int commentsCount) {
-
-        CommentsFragment commentsFragment = new CommentsFragment(postId,commentsCount);
-        commentsFragment.show(getChildFragmentManager(),"CommentsFragment");
-
-    }
-
-    @Override
-    public void showImage(String imageUrl) {
-        new ImageFullScreenFragment(imageUrl).show(getChildFragmentManager(),"FullScreen");
-    }
+//    @Override
+//    public void showComments(String postId, int commentsCount) {
+//
+//        CommentsFragment commentsFragment = new CommentsFragment(postId,commentsCount);
+//        commentsFragment.show(getChildFragmentManager(),"CommentsFragment");
+//
+//    }
+//
+//    @Override
+//    public void showImage(String imageUrl) {
+//        new ImageFullScreenFragment(imageUrl).show(getChildFragmentManager(),"FullScreen");
+//    }
 
     private class PostsBottomScrollListener extends RecyclerView.OnScrollListener {
         @Override

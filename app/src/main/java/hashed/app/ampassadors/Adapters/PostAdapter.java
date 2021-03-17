@@ -102,8 +102,8 @@ public class PostAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
 
         case PostData.TYPE_POLL:
-          return new PollPreviewVh(LayoutInflater.from(context).inflate(R.layout.poll_preview_item_layout
-                  , parent, false));
+          return new PollPreviewVh(LayoutInflater.from(context).inflate(
+                  R.layout.poll_preview_item_layout, parent, false));
 
       }
 

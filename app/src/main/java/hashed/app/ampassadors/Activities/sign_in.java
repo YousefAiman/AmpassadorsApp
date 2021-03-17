@@ -23,24 +23,22 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
-import hashed.app.ampassadors.Fragments.ProfileFragment;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Services.FirebaseMessagingService;
 
 public class sign_in extends AppCompatActivity {
+
     EditText email, password ;
     Button btn_login , create_account_btn;
     FirebaseAuth auth;
     TextView verifyEmail, forgetPass;
     ProgressDialog progressDialog;
-    Button gmail;
     FirebaseFirestore fStore;
     String userid;
     FirebaseAuth fAuth;
-    Button facebook ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,74 +123,54 @@ public class sign_in extends AppCompatActivity {
         btn_login = findViewById(R.id.sign_in_btn);
         verifyEmail = findViewById(R.id.verify_email);
         forgetPass = findViewById(R.id.forget_pass);
-        fAuth = FirebaseAuth.getInstance();
-        userid = fAuth.getCurrentUser().getUid();
-        gmail =findViewById(R.id.gmailbtn);
-        fStore = FirebaseFirestore.getInstance();
-        facebook = findViewById(R.id.facebookbtn);
 
+
+        fAuth = FirebaseAuth.getInstance();
+       // userid = fAuth.getCurrentUser().getUid();
+
+        fStore = FirebaseFirestore.getInstance();
 
     }
 
-    private void LogIn(){
+    private void LogIn() {
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                progressDialog = new ProgressDialog(sign_in.this);
-                progressDialog.setMessage("Wait for approval from the administrator");
-                progressDialog.show();
+                String txt_email = email.getText().toString();
+                String txt_password = password.getText().toString();
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressDialog.setCanceledOnTouchOutside(true);
-                        progressDialog.dismiss();
-                    }
-                },5000);
-
-
-               fStore.collection("Users").document(userid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                   @Override
-                   public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                       if (task.isSuccessful()) {
-                           if (task.getResult().exists()) {
-                               String approvment = task.getResult().getString("approvment");
-                               if (approvment.equals("true")){
-                                   String txt_email = email.getText().toString();
-                                   String txt_password = password.getText().toString();
-                                   if (TextUtils.isEmpty(txt_email) || TextUtils.isEmpty(txt_password)){
-                                       Toast.makeText(sign_in.this, "All field are required", Toast.LENGTH_SHORT).show();
-                                   }else {
-                                       auth.signInWithEmailAndPassword(txt_email, txt_password)
-                                               .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                                   @Override
-                                                   public void onComplete(@NonNull Task<AuthResult> task) {
-                                                       if (task.isSuccessful()){
-                                                           Intent intent = new Intent(sign_in.this, Home_Activity.class);
-                                                           intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                           startActivity(intent);
-                                                           finish();
-                                                       }else{
-                                                           Toast.makeText(sign_in.this, "Error Authentication!", Toast.LENGTH_SHORT).show();
-                                                       }
-                                                   }
-                                               });
-                                   }
-
-
-
-                               }else{
-                                   Toast.makeText(sign_in.this, "Admin Not Approved" , Toast.LENGTH_SHORT).show();
-                               }
-
-                           }
-                       }
-                   }
-               });
+                if (TextUtils.isEmpty(txt_email) || TextUtils.isEmpty(txt_password)) {
+                    Toast.makeText(sign_in.this, "All field are required", Toast.LENGTH_SHORT).show();
+                } else {
+                    auth.signInWithEmailAndPassword(txt_email, txt_password)
+                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        Intent intent = new Intent(sign_in.this,
+                                                Home_Activity.class);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                                                Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        startActivity(intent);
+                                        finish();
+                                    } else {
+                                        Toast.makeText(sign_in.this,
+                                                "Error Authentication!", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(sign_in.this, "Error: " +
+                                    e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
         });
     }
-    private void CreateAccount(){
+
+    private void CreateAccount() {
         create_account_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -201,4 +179,6 @@ public class sign_in extends AppCompatActivity {
             }
         });
     }
-}
+
+
+    }

@@ -64,8 +64,7 @@ import hashed.app.ampassadors.Utils.TimeFormatter;
 import static hashed.app.ampassadors.Objects.PostData.TYPE_POLL;
 
 public class A_Fragment extends Fragment implements Toolbar.OnMenuItemClickListener,
-        SwipeRefreshLayout.OnRefreshListener , View.OnClickListener ,
-        PostAdapter.CommentsInterface,PostAdapter.ImageInterface{
+        SwipeRefreshLayout.OnRefreshListener , View.OnClickListener{
 
     private static final int POSTS_LIMIT = 10;
     private Query query;
@@ -95,7 +94,7 @@ public class A_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
         query = FirebaseFirestore.getInstance().collection("Posts")
                 .orderBy("publishTime", Query.Direction.DESCENDING).whereEqualTo("type", TYPE_POLL).limit(POSTS_LIMIT);
         postData = new ArrayList<>();
-        adapter = new PostAdapter(postData, getContext(),this,this);
+        adapter = new PostAdapter(postData, getContext());
 
     }
 
@@ -145,18 +144,18 @@ public class A_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
     public void onClick(View view) {
     }
 
-    @Override
-    public void showComments(String postId, int commentsCount) {
-
-        CommentsFragment commentsFragment = new CommentsFragment(postId,commentsCount);
-        commentsFragment.show(getChildFragmentManager(),"CommentsFragment");
-
-    }
-
-    @Override
-    public void showImage(String imageUrl) {
-        new ImageFullScreenFragment(imageUrl).show(getChildFragmentManager(),"FullScreen");
-    }
+//    @Override
+//    public void showComments(String postId, int commentsCount) {
+//
+//        CommentsFragment commentsFragment = new CommentsFragment(postId,commentsCount);
+//        commentsFragment.show(getChildFragmentManager(),"CommentsFragment");
+//
+//    }
+//
+//    @Override
+//    public void showImage(String imageUrl) {
+//        new ImageFullScreenFragment(imageUrl).show(getChildFragmentManager(),"FullScreen");
+//    }
 
     private class PostsBottomScrollListener extends RecyclerView.OnScrollListener {
         @Override
