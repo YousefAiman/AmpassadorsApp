@@ -105,7 +105,7 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     public void setUpComponte() {
         post_text = findViewById(R.id.posting_filed);
         posting = findViewById(R.id.create_post_btn);
-        poll = findViewById(R.id.poll_btn_post);
+
         image_btn = findViewById(R.id.image_btn_post);
         video_btn = findViewById(R.id.vedio_btn_post);
         pdf = findViewById(R.id.pdf_btn_post);

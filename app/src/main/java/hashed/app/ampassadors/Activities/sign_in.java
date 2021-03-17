@@ -36,10 +36,11 @@ public class sign_in extends AppCompatActivity {
     FirebaseAuth auth;
     TextView verifyEmail, forgetPass;
     ProgressDialog progressDialog;
-
+    Button gmail;
     FirebaseFirestore fStore;
     String userid;
     FirebaseAuth fAuth;
+    Button facebook ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,13 +125,11 @@ public class sign_in extends AppCompatActivity {
         btn_login = findViewById(R.id.sign_in_btn);
         verifyEmail = findViewById(R.id.verify_email);
         forgetPass = findViewById(R.id.forget_pass);
-
-
         fAuth = FirebaseAuth.getInstance();
         userid = fAuth.getCurrentUser().getUid();
-
+        gmail =findViewById(R.id.gmailbtn);
         fStore = FirebaseFirestore.getInstance();
-
+        facebook = findViewById(R.id.facebookbtn);
 
 
     }

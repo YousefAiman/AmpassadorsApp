@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,121 +8,205 @@
     android:orientation="vertical"
     tools:context=".Activities.PostActivity">
 
+    <!--    <TextView-->
+    <!--        android:layout_width="114dp"-->
+    <!--        android:layout_height="57dp"-->
+    <!--        android:text="        "-->
+    <!--        android:id="@+id/documentNameTv"-->
+    <!--        app:layout_constraintBottom_toBottomOf="@+id/postIv"-->
+    <!--        app:layout_constraintEnd_toEndOf="@+id/postIv"-->
+    <!--        app:layout_constraintStart_toStartOf="@+id/postIv"-->
+    <!--        app:layout_constraintTop_toBottomOf="@+id/posting_filed" />-->
+
     <include
         android:id="@+id/home_activity_toolbar"
-        layout="@layout/post_toolbar" />
+        layout="@layout/post_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="117dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="20dp">
-
-        <android.widget.Button
-            android:id="@+id/create_post_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="30sp"
-            android:background="#ff22"
-            android:text="post" />
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/exoPlayer"
+        android:layout_width="380dp"
+        android:layout_height="204dp"
+        app:controller_layout_id="@layout/custom_video_controller_no_next"
+        app:layout_constraintBottom_toTopOf="@+id/image_btn_post"
+        app:layout_constraintEnd_toEndOf="@+id/posting_filed"
+        app:layout_constraintHorizontal_bias="0.083"
+        app:layout_constraintStart_toStartOf="@+id/posting_filed"
+        app:layout_constraintTop_toBottomOf="@+id/posting_filed"
+        app:layout_constraintVertical_bias="0.0">
 
 
-        <TextView
-            android:id="@+id/username_post_in_create_psot"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="70dp"
-            android:layout_marginTop="40dp"
-            android:text="Name"
-            android:textColor="#000"
-            android:textSize="24sp" />
+        <ImageView
+            android:id="@+id/videoThumbnailTv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#f2f2f2"
+            app:layout_constraintEnd_toEndOf="@+id/posting_filed"
+            app:layout_constraintStart_toStartOf="@+id/posting_filed"
+            app:layout_constraintTop_toBottomOf="@+id/posting_filed" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/image_user_posting_in_create_post"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            android:src="@drawable/ic_blackuser" />
-    </LinearLayout>
+
+    </com.google.android.exoplayer2.ui.PlayerView>
+
+
+    <ImageView
+        android:id="@+id/postIv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#f2f2f2"
+        app:layout_constraintBottom_toTopOf="@+id/guideline10"
+        app:layout_constraintEnd_toStartOf="@+id/guideline8"
+        app:layout_constraintStart_toStartOf="@+id/guideline7"
+        app:layout_constraintTop_toBottomOf="@+id/posting_filed" />
+
+    <android.widget.Button
+        android:id="@+id/create_post_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/publish_btn_back"
+        android:text="@string/Post"
+        app:layout_constraintStart_toStartOf="@+id/guideline7"
+        app:layout_constraintTop_toBottomOf="@+id/home_activity_toolbar" />
+
+    <TextView
+        android:id="@+id/username_post_in_create_psot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/username"
+        android:textColor="#000"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toStartOf="@+id/image_user_posting_in_create_post"
+        app:layout_constraintTop_toTopOf="@+id/image_user_posting_in_create_post" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/image_user_posting_in_create_post"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="28dp"
+        android:src="@drawable/ic_blackuser"
+        app:layout_constraintEnd_toStartOf="@+id/guideline8"
+        app:layout_constraintTop_toBottomOf="@+id/home_activity_toolbar" />
+
+    <EditText
+        android:id="@+id/post_title"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:background="#f2f2f2"
+        android:ems="10"
+        android:hint="@string/Post"
+        android:inputType="textPersonName"
+        android:padding="10dp"
+        android:textColor="#000"
+        app:layout_constraintEnd_toStartOf="@+id/guideline8"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/guideline7"
+        app:layout_constraintTop_toTopOf="@+id/guideline9" />
 
     <EditText
         android:id="@+id/posting_filed"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="67dp"
-        android:layout_marginLeft="20sp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginTop="8dp"
         android:background="#f2f2f2"
-        android:hint="posting"
+
+        android:hint="@string/Details"
         android:inputType="textMultiLine"
-        android:textAlignment="textEnd"
-
-        android:textColor="#000" />
-
-    <ImageView
-        android:id="@+id/user_image"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:src="@drawable/ic_picture"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:background="#f2f2f2"
-        />
+        android:padding="10dp"
+        android:textAlignment="textStart"
+        android:textColor="#000"
+        app:layout_constraintEnd_toStartOf="@+id/guideline8"
+        app:layout_constraintStart_toStartOf="@+id/guideline7"
+        app:layout_constraintTop_toBottomOf="@+id/post_title" />
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <android.widget.Button
+        android:id="@+id/image_btn_post"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
-        android:layout_marginBottom="20dp">
+        android:layout_marginEnd="52dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/btn_design_post"
+        android:drawableStart="@drawable/ic_imagegallery"
+        android:paddingLeft="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/vedio_btn_post" />
 
-        <android.widget.Button
-            android:id="@+id/poll_btn_post"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="0dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/btn_design_post"
-            android:drawableStart="@drawable/pdf_icon"
-            android:paddingLeft="30dp" />
+    <android.widget.Button
+        android:id="@+id/vedio_btn_post"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/btn_design_post"
+        android:drawableStart="@drawable/video_watch_icon"
+        android:paddingLeft="30dp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline8"
+        app:layout_constraintTop_toTopOf="@+id/image_btn_post" />
 
-        <android.widget.Button
-            android:id="@+id/pdf_btn_post"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="0dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/btn_design_post"
-            android:drawableStart="@drawable/pdf_icon"
-            android:paddingLeft="30dp" />
+    <android.widget.Button
+        android:id="@+id/pdf_btn_post"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_design_post"
+        android:drawableStart="@drawable/pdf_icon"
+        android:paddingLeft="30dp"
+        app:layout_constraintBottom_toBottomOf="@+id/image_btn_post"
+        app:layout_constraintEnd_toStartOf="@+id/image_btn_post"
+        app:layout_constraintHorizontal_bias="0.342"
+        app:layout_constraintStart_toStartOf="@+id/guideline7"
+        app:layout_constraintTop_toTopOf="@+id/image_btn_post"
+        app:layout_constraintVertical_bias="0.0" />
 
-        <android.widget.Button
-            android:id="@+id/vedio_btn_post"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="0dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/btn_design_post"
-            android:drawableStart="@drawable/pdf_icon"
-            android:paddingLeft="30dp" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.03892944"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <android.widget.Button
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="411dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintGuide_percent="0.9781022"
+        app:layout_constraintStart_toStartOf="parent" />
 
-            android:id="@+id/image_btn_post"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="0dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/btn_design_post"
-            android:drawableStart="@drawable/pdf_icon"
-            android:paddingLeft="30dp" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.2336874"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintGuide_percent="0.82549316" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintGuide_percent="0.97420335" />
 
 
-    </LinearLayout>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
