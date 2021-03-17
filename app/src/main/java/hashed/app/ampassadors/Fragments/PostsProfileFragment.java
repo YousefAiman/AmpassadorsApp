@@ -70,7 +70,8 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.fragment_posts_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_posts_profile, container,
+                false);
         floatingButton = view.findViewById(R.id.floatingbtn);
         floatingButton.setOnClickListener(new View.OnClickListener() {
             @Override

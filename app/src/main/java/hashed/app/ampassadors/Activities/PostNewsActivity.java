@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
+import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -37,9 +38,10 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
   //views
   private CardView cardView;
   private TextView usernameTv,dateTv,titleTv,descriptionTv,likesTv,commentsTv,likeTv
-          ,commentTv;
+          ,commentTv,newsTitleTv;
   private ImageView newsIv, userIv,attachmentImage;
   private FrameLayout frameLayout;
+  private PlayerView playerView;
 
   //data
   private PostData postData;
@@ -86,6 +88,8 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
     likeTv = findViewById(R.id.likeTv);
     commentTv = findViewById(R.id.commentTv);
     frameLayout = findViewById(R.id.frameLayout);
+    playerView = findViewById(R.id.playerView);
+    newsTitleTv = findViewById(R.id.newsTitleTv);
 
   }
 
@@ -108,6 +112,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
     titleTv.setText(postData.getTitle());
     descriptionTv.setText(postData.getDescription());
+    newsTitleTv.setText(postData.getDocumentName());
     likesTv.setText(String.valueOf(postData.getLikes()));
     commentsTv.setText(String.valueOf(postData.getComments()));
     dateTv.setText(TimeFormatter.formatWithPattern(postData.getPublishTime(),
@@ -127,13 +132,15 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
       case Files.VIDEO:
 
+        playerView.setVisibility(View.VISIBLE);
+
         final ImageView playImage = new ImageView(this);
         playImage.setImageResource(R.drawable.video_icon_circle);
 
         final LayoutParams lp = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.gravity= Gravity.CENTER;
-        playImage.setLayoutParams(lp);
+        lp.gravity = Gravity.CENTER;
+        cardView.setLayoutParams(lp);
 
         playImage.setOnClickListener(this);
 
@@ -151,6 +158,10 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
         lp2.gravity= Gravity.TOP;
         final float density = getResources().getDisplayMetrics().density;
         lp2.setMargins((int) (4*density),(int) (4*density),0,0);
+
+
+        newsIv.setScaleType(ImageView.ScaleType.CENTER);
+        newsIv.setImageResource(R.drawable.pdf_icon);
 
         attachmentImage.setLayoutParams(lp2);
 
@@ -207,9 +218,12 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
           new ImageFullScreenFragment(postData.getAttachmentUrl())
                   .show(getSupportFragmentManager(),"FullScreen");
         }else if(postData.getAttachmentType() == Files.VIDEO){
+
           frameLayout.setVisibility(View.VISIBLE);
+
           getSupportFragmentManager().beginTransaction().replace(frameLayout.getId(),
                   new VideoFullScreenFragment(postData.getAttachmentUrl())).commit();
+
         }
       }
     }
@@ -217,6 +231,8 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
 
   private void likeOrDislike(){
+
+
 
     if(likeTv.getCurrentTextColor() == getResources().getColor(R.color.red)){
 

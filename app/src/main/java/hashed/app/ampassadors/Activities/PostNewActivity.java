@@ -72,7 +72,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
   private Map<UploadTask, StorageTask<UploadTask.TaskSnapshot>> uploadTaskMap;
   private int attachmentType;
   private String documentName;
-  private long documentSize;
+  private double documentSize;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -371,7 +371,6 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
 
     final UploadTask uploadTask = reference.putFile(attachmentUri);
 
-
     final StorageTask<UploadTask.TaskSnapshot> onSuccessListener =
             uploadTask.addOnSuccessListener(taskSnapshot -> {
               uploadTaskMap.remove(uploadTask);
@@ -381,27 +380,36 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
 
                 final StorageReference thumbnailReference =
                         FirebaseStorage.getInstance().getReference()
-                                .child(Files.POST_THUMBNAIL_REF).child(UUID.randomUUID().toString() +"-"+
-                                System.currentTimeMillis());
+                                .child(Files.POST_THUMBNAIL_REF).child(UUID.randomUUID().toString()
+                                +"-"+ System.currentTimeMillis());
 
                 final ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 videoThumbnailBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-
 
                 final UploadTask thumbnailUploadTask =
                         thumbnailReference.putBytes(baos.toByteArray());
 
                 StorageTask<UploadTask.TaskSnapshot> onSuccessListener2 =
-                        uploadTask.addOnSuccessListener(taskSnapshot2 -> {
+                        thumbnailUploadTask.addOnSuccessListener(taskSnapshot2 -> {
                           uploadTaskMap.remove(thumbnailUploadTask);
-                          reference.getDownloadUrl().addOnSuccessListener(uri -> {
+                          thumbnailReference.getDownloadUrl().addOnSuccessListener(uri -> {
 
                             final String videoThumbnailUrl = uri.toString();
+
+                            Log.d("ttt","videoThumbnailUrl: "+videoThumbnailUrl);
 
                             publishPost(title,description,attachmentUrl,
                                     videoThumbnailUrl,progressDialog);
 
-                          });
+                          }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                              Toast.makeText(PostNewActivity.this,
+                                      R.string.post_publish_error,
+                                      Toast.LENGTH_LONG).show();
+                              progressDialog.dismiss();
+                            }
+                          });;
                         }).addOnFailureListener(new OnFailureListener() {
                           @Override
                           public void onFailure(@NonNull Exception e) {
@@ -416,11 +424,13 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
 
               });
             }).addOnCompleteListener(task ->
-                    new File(attachmentUri.getPath()).delete()).addOnFailureListener(new OnFailureListener() {
+                    new File(attachmentUri.getPath()).delete()).addOnFailureListener(
+                            new OnFailureListener() {
               @Override
               public void onFailure(@NonNull Exception e) {
                 Toast.makeText(PostNewActivity.this,
-                        R.string.post_publish_error, Toast.LENGTH_LONG).show();
+                        R.string.post_publish_error,
+                        Toast.LENGTH_LONG).show();
                 progressDialog.dismiss();
               }
             });
@@ -469,11 +479,12 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
           attachmentType = Files.DOCUMENT;
           attachmentTv.setVisibility(View.VISIBLE);
           attachmentIv.setImageResource(R.drawable.document_icon);
+          attachmentIv.setScaleType(ImageView.ScaleType.CENTER);
 
           final Map<String,Object> fileMap = Files.getFileInfo(this,attachmentUri);
 
           documentName = (String) fileMap.get("fileName");
-          documentSize = (long) fileMap.get("fileSize");
+          documentSize = (double) fileMap.get("fileSize");
           attachmentTv.setText(documentName + " - "+documentSize+" MB");
 
           break;
