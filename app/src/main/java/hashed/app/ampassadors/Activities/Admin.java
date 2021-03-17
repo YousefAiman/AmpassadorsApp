@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -63,6 +64,23 @@ public class Admin extends AppCompatActivity {
         approve.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                List<String> persons = new ArrayList<>();
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, persons);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinner.setAdapter(adapter);
+                ref.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                String name = document.getString("Role");
+                                persons.add(name);
+                            }
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                });
                 DocumentReference reference = firebaseFirestore.collection("Users").document(userid);
 
                     if (approvment){
@@ -81,22 +99,6 @@ public class Admin extends AppCompatActivity {
             public void onClick(View view) {
                 DocumentReference reference = firebaseFirestore.collection("Users").document(userid);
 
-                List<String> persons = new ArrayList<>();
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, persons);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                spinner.setAdapter(adapter);
-                ref.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                String name = document.getString("Role");
-                                persons.add(name);
-                            }
-                            adapter.notifyDataSetChanged();
-                        }
-                    }
-                });
                 if (approvment){
                     reference.update("approvement", false).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override

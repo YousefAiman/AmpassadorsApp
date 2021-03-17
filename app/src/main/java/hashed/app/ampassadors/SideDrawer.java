@@ -67,7 +67,6 @@ public class SideDrawer extends AppCompatActivity implements NavigationView.OnNa
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 

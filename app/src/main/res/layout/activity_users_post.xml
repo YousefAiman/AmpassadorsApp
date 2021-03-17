@@ -7,11 +7,9 @@
     android:padding="16dp"
     android:orientation="vertical"
     tools:context=".Activities.PostActivity">
-
     <include
         android:id="@+id/home_activity_toolbar"
         layout="@layout/post_toolbar" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="117dp"
@@ -27,8 +25,6 @@
             android:layout_marginTop="30sp"
             android:background="#ff22"
             android:text="post" />
-
-
         <TextView
             android:id="@+id/username_post_in_create_psot"
             android:layout_width="wrap_content"
@@ -48,7 +44,6 @@
             android:layout_marginBottom="20dp"
             android:src="@drawable/ic_blackuser" />
     </LinearLayout>
-
     <EditText
         android:id="@+id/posting_filed"
         android:layout_width="match_parent"
@@ -60,7 +55,6 @@
         android:hint="posting"
         android:inputType="textMultiLine"
         android:textAlignment="textEnd"
-
         android:textColor="#000" />
 
     <ImageView
@@ -80,7 +74,6 @@
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
         android:layout_marginBottom="20dp">
-
         <android.widget.Button
             android:id="@+id/poll_btn_post"
             android:layout_width="wrap_content"
@@ -90,7 +83,6 @@
             android:background="@drawable/btn_design_post"
             android:drawableStart="@drawable/pdf_icon"
             android:paddingLeft="30dp" />
-
         <android.widget.Button
             android:id="@+id/pdf_btn_post"
             android:layout_width="wrap_content"
@@ -100,7 +92,6 @@
             android:background="@drawable/btn_design_post"
             android:drawableStart="@drawable/pdf_icon"
             android:paddingLeft="30dp" />
-
         <android.widget.Button
             android:id="@+id/vedio_btn_post"
             android:layout_width="wrap_content"
@@ -110,7 +101,6 @@
             android:background="@drawable/btn_design_post"
             android:drawableStart="@drawable/pdf_icon"
             android:paddingLeft="30dp" />
-
         <android.widget.Button
 
             android:id="@+id/image_btn_post"

@@ -238,8 +238,35 @@ public class Home_Activity extends AppCompatActivity  implements
 
                     startActivity(new Intent(Home_Activity.this, sign_in.class));
                     finish();
-
 //                }
+            }else if (item.getItemId() == R.id.news){
+                replaceFragment(new B_Fragment());
+
+            }
+            else if (item.getItemId() == R.id.awreaness_post){
+
+            }
+            else if (item.getItemId() == R.id.courses){
+
+            }
+            else if (item.getItemId() == R.id.polls){
+                replaceFragment(new A_Fragment());
+
+                //getSupportFragmentManager().beginTransaction().replace( new A_Fragment()).commit();
+            }
+            else if (item.getItemId() == R.id.policy){
+
+            }
+            else if (item.getItemId() == R.id.complaints) {
+                Intent mapIntent = new Intent(Home_Activity.this, ComplaintsActivity.class);
+                startActivity(mapIntent);
+
+            }else if (item.getItemId() == R.id.proposals){
+                Intent pIntent = new Intent(Home_Activity.this, SuggestionsActivity.class);
+                startActivity(pIntent);
+
+            }
+            else if (item.getItemId() == R.id.about){
             }
 
         return true;
