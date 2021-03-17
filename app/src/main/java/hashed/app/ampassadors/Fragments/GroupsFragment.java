@@ -61,6 +61,9 @@ public class GroupsFragment extends Fragment implements View.OnClickListener{
     tabAdapterTitle = new TabAdapterTitle(getChildFragmentManager(),
             FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,fragments,titles);
 
+
+
+
   }
 
   @Override
@@ -94,6 +97,10 @@ public class GroupsFragment extends Fragment implements View.OnClickListener{
     groupsTabLayout.setupWithViewPager(groupsViewPager);
 
     floatingButton.setOnClickListener(this);
+
+    if (GlobalVariables.getRole().equals("Admin") || GlobalVariables.getRole().equals("Coordinator")){
+      floatingButton.setVisibility(View.VISIBLE);
+    }
 
   }
 

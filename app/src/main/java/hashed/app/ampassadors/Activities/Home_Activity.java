@@ -19,6 +19,7 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
@@ -44,6 +45,7 @@ import hashed.app.ampassadors.BuildConfig;
 import hashed.app.ampassadors.Fragments.ChattingFragment;
 import hashed.app.ampassadors.Fragments.GroupsFragment;
 import hashed.app.ampassadors.Fragments.PostsFragment;
+import hashed.app.ampassadors.Fragments.PostsProfileFragment;
 import hashed.app.ampassadors.Fragments.ProfileFragment;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
@@ -74,22 +76,33 @@ public class Home_Activity extends AppCompatActivity  implements
         userid = auth.getCurrentUser().getUid();
         firebaseFirestore = FirebaseFirestore.getInstance();
 
-        firebaseFirestore.collection("Users").document(userid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-             @Override
-             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                 if (task.isSuccessful()){
-                     if (task.getResult().exists()) {
-
-                       String role = task.getResult().getString("Role");
-                       GlobalVariables.setRole(role);
-                        }
-                     }
-             }
-         });
-
         GlobalVariables.setAppIsRunning(true);
         SetUpCompetent();
-        replaceFragment(new PostsFragment());
+
+        if(FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
+
+            replaceFragment(new PostsFragment());
+        }else{
+            firebaseFirestore.collection("Users").document(userid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                    GlobalVariables.setRole(documentSnapshot.getString("Role"));
+
+
+                }
+            }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if(task.isSuccessful()){
+                        replaceFragment(new PostsFragment());
+                    }
+                }
+            });
+        }
+
+
+
         OnClickButtons();
         createUserLikesListener();
         createNotificationListener();
@@ -156,7 +169,7 @@ public class Home_Activity extends AppCompatActivity  implements
             }else if(item.getItemId() == R.id.profile){
 
                 if(nav_btom.getSelectedItemId()!=R.id.profile){
-                    replaceFragment(new ProfileFragment());
+                    replaceFragment(new PostsProfileFragment());
                 }
 
             }else if(item.getItemId() == R.id.chat){
