@@ -1,17 +1,14 @@
 package hashed.app.ampassadors.Adapters;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
@@ -26,27 +23,27 @@ import hashed.app.ampassadors.R;
 public class UsersPickerAdapter extends RecyclerView.Adapter<UsersPickerAdapter.UsersVh>
         implements Filterable {
 
-  private ArrayList<UserPreview> users;
-  private ArrayList<UserPreview> filteredUsers;
   public ArrayList<String> selectedUserIds;
+  private final ArrayList<UserPreview> users;
+  private ArrayList<UserPreview> filteredUsers;
 
-  public UsersPickerAdapter(ArrayList<UserPreview> users,ArrayList<String> selectedUserIds){
+  public UsersPickerAdapter(ArrayList<UserPreview> users, ArrayList<String> selectedUserIds) {
     this.users = users;
     this.selectedUserIds = selectedUserIds;
   }
 
-  public UsersPickerAdapter(ArrayList<UserPreview> users,ArrayList<String> selectedUserIds,
-                            boolean isFiltered){
+  public UsersPickerAdapter(ArrayList<UserPreview> users, ArrayList<String> selectedUserIds,
+                            boolean isFiltered) {
     this.users = users;
     filteredUsers = users;
     this.selectedUserIds = selectedUserIds;
   }
 
-    @Override
+  @Override
   public int getItemCount() {
-    if(filteredUsers!=null){
+    if (filteredUsers != null) {
       return filteredUsers.size();
-    }else{
+    } else {
       return users.size();
     }
   }
@@ -56,15 +53,15 @@ public class UsersPickerAdapter extends RecyclerView.Adapter<UsersPickerAdapter.
   public UsersVh onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
     return new UsersVh(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.select_user_item_layout, parent, false));
+            .inflate(R.layout.select_user_item_layout, parent, false));
   }
 
   @Override
   public void onBindViewHolder(@NonNull UsersVh holder, int position) {
 
-    if(filteredUsers!=null){
+    if (filteredUsers != null) {
       holder.bindChat(filteredUsers.get(position));
-    }else{
+    } else {
       holder.bindChat(users.get(position));
     }
   }
@@ -104,60 +101,60 @@ public class UsersPickerAdapter extends RecyclerView.Adapter<UsersPickerAdapter.
     };
   }
 
-  public class UsersVh extends RecyclerView.ViewHolder implements View.OnClickListener{
+  public class UsersVh extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     private final CircleImageView userIv;
     private final TextView usernameTv;
     private final CheckBox selectCheckBox;
 
-     public UsersVh(@NonNull View itemView) {
-       super(itemView);
-       userIv = itemView.findViewById(R.id.userIv);
-       usernameTv = itemView.findViewById(R.id.usernameTv);
-       selectCheckBox = itemView.findViewById(R.id.selectCheckBox);
-     }
+    public UsersVh(@NonNull View itemView) {
+      super(itemView);
+      userIv = itemView.findViewById(R.id.userIv);
+      usernameTv = itemView.findViewById(R.id.usernameTv);
+      selectCheckBox = itemView.findViewById(R.id.selectCheckBox);
+    }
 
-      private void bindChat(UserPreview user){
+    private void bindChat(UserPreview user) {
 
-       if(user.getUserId() == null)
-         return;
+      if (user.getUserId() == null)
+        return;
 
-       selectCheckBox.setChecked(selectedUserIds.contains(user.getUserId()));
+      selectCheckBox.setChecked(selectedUserIds.contains(user.getUserId()));
 
-       if(user.getImageUrl()!=null){
-         Picasso.get().load(user.getImageUrl()).fit().into(userIv);
-       }
+      if (user.getImageUrl() != null) {
+        Picasso.get().load(user.getImageUrl()).fit().into(userIv);
+      }
 
-        usernameTv.setText(user.getUsername());
+      usernameTv.setText(user.getUsername());
 
       itemView.setOnClickListener(this);
 
-     }
+    }
 
-     @Override
-     public void onClick(View view) {
+    @Override
+    public void onClick(View view) {
 
-        if(filteredUsers!=null){
+      if (filteredUsers != null) {
 
-          if (selectedUserIds.contains(filteredUsers.get(getAdapterPosition()).getUserId())) {
-            selectCheckBox.setChecked(false);
-            selectedUserIds.remove(filteredUsers.get(getAdapterPosition()).getUserId());
-          }else{
-            selectCheckBox.setChecked(true);
-            selectedUserIds.add(filteredUsers.get(getAdapterPosition()).getUserId());
-          }
-
-        }else{
-
-          if (selectedUserIds.contains(users.get(getAdapterPosition()).getUserId())) {
-            selectCheckBox.setChecked(false);
-            selectedUserIds.remove(users.get(getAdapterPosition()).getUserId());
-          }else{
-            selectCheckBox.setChecked(true);
-            selectedUserIds.add(users.get(getAdapterPosition()).getUserId());
-          }
-
+        if (selectedUserIds.contains(filteredUsers.get(getAdapterPosition()).getUserId())) {
+          selectCheckBox.setChecked(false);
+          selectedUserIds.remove(filteredUsers.get(getAdapterPosition()).getUserId());
+        } else {
+          selectCheckBox.setChecked(true);
+          selectedUserIds.add(filteredUsers.get(getAdapterPosition()).getUserId());
         }
-     }
-   }
+
+      } else {
+
+        if (selectedUserIds.contains(users.get(getAdapterPosition()).getUserId())) {
+          selectCheckBox.setChecked(false);
+          selectedUserIds.remove(users.get(getAdapterPosition()).getUserId());
+        } else {
+          selectCheckBox.setChecked(true);
+          selectedUserIds.add(users.get(getAdapterPosition()).getUserId());
+        }
+
+      }
+    }
+  }
 }

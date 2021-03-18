@@ -25,24 +25,24 @@ public class ShutdownService extends Service {
   public void onTaskRemoved(Intent rootIntent) {
     super.onTaskRemoved(rootIntent);
 
-    Log.d("exoPlayerPlayback","onTaskRemoved");
+    Log.d("exoPlayerPlayback", "onTaskRemoved");
 
     GlobalVariables.setAppIsRunning(false);
 
-    getSharedPreferences(getResources().getString(R.string.app_name),MODE_PRIVATE).edit()
+    getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE).edit()
             .remove("isPaused")
             .remove("currentlyMessagingUid").apply();
 
 
-    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
-            GlobalVariables.getRegisteredNetworkCallback() != null){
-     ((ConnectivityManager) getApplicationContext()
-             .getSystemService(Context.CONNECTIVITY_SERVICE))
-             .unregisterNetworkCallback(GlobalVariables.getRegisteredNetworkCallback());
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
+            GlobalVariables.getRegisteredNetworkCallback() != null) {
+      ((ConnectivityManager) getApplicationContext()
+              .getSystemService(Context.CONNECTIVITY_SERVICE))
+              .unregisterNetworkCallback(GlobalVariables.getRegisteredNetworkCallback());
 
       GlobalVariables.setRegisteredNetworkCallback(null);
 
-    }else if(GlobalVariables.getCurrentWifiReceiver()!=null){
+    } else if (GlobalVariables.getCurrentWifiReceiver() != null) {
       unregisterReceiver(GlobalVariables.getCurrentWifiReceiver());
       GlobalVariables.setCurrentWifiReceiver(null);
     }

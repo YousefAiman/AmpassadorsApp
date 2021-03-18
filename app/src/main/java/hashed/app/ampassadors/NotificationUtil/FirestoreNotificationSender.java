@@ -15,8 +15,8 @@ public class FirestoreNotificationSender {
 
   private static final String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-  public static void sendFirestoreNotification(String userId, String type,String body,
-                                               String senderName,String destinationId) {
+  public static void sendFirestoreNotification(String userId, String type, String body,
+                                               String senderName, String destinationId) {
 
     final String notificationPath =
             currentUserId + "_" + destinationId + "_" + type;
@@ -40,7 +40,7 @@ public class FirestoreNotificationSender {
 
         if (type.equals("message")) {
           documentSnapshot.getReference().update("timeCreated",
-                  System.currentTimeMillis(),"content",body);
+                  System.currentTimeMillis(), "content", body);
         } else {
 
           Log.d("ttt", "deleting notification firestore");
@@ -52,7 +52,7 @@ public class FirestoreNotificationSender {
     });
   }
 
-  public static void deleteFirestoreNotification(String destinationId,String type) {
+  public static void deleteFirestoreNotification(String destinationId, String type) {
     final String notificationPath = currentUserId + "_" + destinationId + "_" + type;
     notificationRef.document(notificationPath).delete();
   }

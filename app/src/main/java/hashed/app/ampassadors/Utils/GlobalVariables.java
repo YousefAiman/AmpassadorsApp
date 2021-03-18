@@ -23,7 +23,7 @@ public class GlobalVariables extends Application {
   private static boolean wifiIsOn;
   private static NetworkCallback registeredNetworkCallback;
   private static int notificationsCount;
-  private static String role ;
+  private static String role;
 
 
   public static GlobalVariables getInstance() {
@@ -31,7 +31,7 @@ public class GlobalVariables extends Application {
   }
 
   public static List<String> getLikesList() {
-    if(likesList == null)
+    if (likesList == null)
       likesList = new ArrayList<>();
 
     return likesList;
@@ -67,7 +67,7 @@ public class GlobalVariables extends Application {
 
   public static Map<String, Integer> getMessagesNotificationMap() {
 
-    if(messagesNotificationMap == null)
+    if (messagesNotificationMap == null)
       messagesNotificationMap = new HashMap<>();
 
     return messagesNotificationMap;

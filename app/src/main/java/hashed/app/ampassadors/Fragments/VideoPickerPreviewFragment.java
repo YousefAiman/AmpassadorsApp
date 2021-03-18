@@ -4,37 +4,28 @@ import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.exoplayer2.DefaultLoadControl;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+
 import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
-import com.google.android.exoplayer2.upstream.DefaultDataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.FileDataSource;
 import com.google.android.exoplayer2.util.Util;
-import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
 
@@ -50,13 +41,14 @@ public class VideoPickerPreviewFragment extends Fragment {
   //views
   private Toolbar fullScreenToolbar;
   private ImageView messagingPickerSendIv;
-  private ImageView videoThumbnailTv ;
-  private ImageView videoPlayIv ;
+  private ImageView videoThumbnailTv;
+  private ImageView videoPlayIv;
   private EditText messagingPickerEd;
-  private Uri videoUri;
+  private final Uri videoUri;
   private SimpleExoPlayer simpleExoPlayer;
   private PlayerView playerView;
   private Bitmap videoThumbnailBitmap = null;
+
   public VideoPickerPreviewFragment(Uri videoUri) {
     this.videoUri = videoUri;
     // Required empty public constructor
@@ -65,7 +57,7 @@ public class VideoPickerPreviewFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-    View view =  inflater.inflate(R.layout.fragment_video_picker_preview, container, false);
+    View view = inflater.inflate(R.layout.fragment_video_picker_preview, container, false);
 
     fullScreenToolbar = view.findViewById(R.id.fullScreenToolbar);
     messagingPickerSendIv = view.findViewById(R.id.messagingPickerSendIv);
@@ -99,19 +91,19 @@ public class VideoPickerPreviewFragment extends Fragment {
         final long time = Long.parseLong(
                 retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
 
-        if(time > 0){
+        if (time > 0) {
 
-          if(time>=1000){
+          if (time >= 1000) {
             videoThumbnailBitmap = retriever.getFrameAtTime(1000);
-          }else{
+          } else {
             videoThumbnailBitmap = retriever.getFrameAtTime(time);
           }
 
-        }else{
+        } else {
           //video stupid
         }
 
-        if(videoThumbnailBitmap!=null){
+        if (videoThumbnailBitmap != null) {
           videoThumbnailTv.post(new Runnable() {
             @Override
             public void run() {
@@ -134,9 +126,9 @@ public class VideoPickerPreviewFragment extends Fragment {
 
   }
 
-  private void playPauseOrrInitializeVideo(){
+  private void playPauseOrrInitializeVideo() {
 
-    if(simpleExoPlayer==null){
+    if (simpleExoPlayer == null) {
       videoThumbnailTv.setImageBitmap(null);
       videoThumbnailTv.setVisibility(View.GONE);
       videoPlayIv.setVisibility(View.GONE);
@@ -144,7 +136,8 @@ public class VideoPickerPreviewFragment extends Fragment {
     }
 
   }
-  private void checkVideoDuration(){
+
+  private void checkVideoDuration() {
 
     final MediaMetadataRetriever retriever = new MediaMetadataRetriever();
     retriever.setDataSource(getContext(), videoUri);
@@ -157,13 +150,13 @@ public class VideoPickerPreviewFragment extends Fragment {
       Toast.makeText(getContext(), "طول الفيديو يجب ان لا يزيد عن 30 ثانية!",
               Toast.LENGTH_SHORT).show();
 
-    }else{
+    } else {
 
     }
 
   }
 
-  private SimpleExoPlayer SetupPlayer(){
+  private SimpleExoPlayer SetupPlayer() {
 
     simpleExoPlayer = new SimpleExoPlayer.Builder(getContext(), new DefaultRenderersFactory(getContext())).build();
 
@@ -190,44 +183,6 @@ public class VideoPickerPreviewFragment extends Fragment {
     return simpleExoPlayer;
   }
 
-
-  class sendClickListener implements View.OnClickListener {
-
-    @Override
-    public void onClick(View view) {
-
-      final String content = messagingPickerEd.getText().toString();
-      if(!content.isEmpty() && videoUri!=null){
-
-        if(getActivity() instanceof PrivateMessagingActivity){
-
-          ((PrivateMessagingActivity)getActivity()).uploadVideoMessage(
-                  videoUri,
-                  content,
-                  videoThumbnailBitmap
-          );
-
-
-        }else if(getActivity() instanceof GroupMessagingActivity){
-
-          ((GroupMessagingActivity)getActivity()).uploadVideoMessage(
-                  videoUri,
-                  content,
-                  videoThumbnailBitmap
-          );
-
-        }
-
-        requireActivity().onBackPressed();
-
-      }else{
-
-        //problem with image
-
-      }
-    }
-  }
-
   @Override
   public void onPause() {
     super.onPause();
@@ -251,6 +206,43 @@ public class VideoPickerPreviewFragment extends Fragment {
       playerView.setPlayer(null);
       simpleExoPlayer.release();
       simpleExoPlayer = null;
+    }
+  }
+
+  class sendClickListener implements View.OnClickListener {
+
+    @Override
+    public void onClick(View view) {
+
+      final String content = messagingPickerEd.getText().toString();
+      if (!content.isEmpty() && videoUri != null) {
+
+        if (getActivity() instanceof PrivateMessagingActivity) {
+
+          ((PrivateMessagingActivity) getActivity()).uploadVideoMessage(
+                  videoUri,
+                  content,
+                  videoThumbnailBitmap
+          );
+
+
+        } else if (getActivity() instanceof GroupMessagingActivity) {
+
+          ((GroupMessagingActivity) getActivity()).uploadVideoMessage(
+                  videoUri,
+                  content,
+                  videoThumbnailBitmap
+          );
+
+        }
+
+        requireActivity().onBackPressed();
+
+      } else {
+
+        //problem with image
+
+      }
     }
   }
 }

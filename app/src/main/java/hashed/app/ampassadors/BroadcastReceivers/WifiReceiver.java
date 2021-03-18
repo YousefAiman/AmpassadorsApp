@@ -13,9 +13,9 @@ public class WifiReceiver extends BroadcastReceiver {
   @Override
   public void onReceive(Context context, Intent intent) {
 
-     final ConnectivityManager connectivityManager =
-             (ConnectivityManager) context.getApplicationContext()
-              .getSystemService(Context.CONNECTIVITY_SERVICE);
+    final ConnectivityManager connectivityManager =
+            (ConnectivityManager) context.getApplicationContext()
+                    .getSystemService(Context.CONNECTIVITY_SERVICE);
 
     final NetworkInfo netInfo = connectivityManager.getActiveNetworkInfo();
 

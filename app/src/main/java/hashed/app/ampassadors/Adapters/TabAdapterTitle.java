@@ -8,9 +8,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class TabAdapterTitle extends FragmentStatePagerAdapter {
 
   private final Fragment[] fragments;

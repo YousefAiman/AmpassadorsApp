@@ -30,11 +30,11 @@ public class CloudMessagingNotificationsSender {
         @Override
         public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-          if(documentSnapshot.contains("token")){
+          if (documentSnapshot.contains("token")) {
 
             final String token = documentSnapshot.getString("token");
 
-            if (GlobalVariables.getCurrentToken()!=null &&
+            if (GlobalVariables.getCurrentToken() != null &&
                     GlobalVariables.getCurrentToken().equals(token))
               return;
 
@@ -77,8 +77,8 @@ public class CloudMessagingNotificationsSender {
             });
 
 
-          }else{
-            Log.d("ttt","user has no token");
+          } else {
+            Log.d("ttt", "user has no token");
           }
         }
       });

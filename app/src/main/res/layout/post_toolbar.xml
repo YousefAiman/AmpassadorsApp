@@ -12,7 +12,7 @@
     app:titleTextColor="@color/white"
     app:navigationContentDescription="post interface"
     android:background="#FFFFFF"
-    app:navigationIcon="@drawable/back_post_btn"
+    app:navigationIcon="@drawable/back_arrow_green"
     >
     <TextView
         android:id="@+id/posttitle"

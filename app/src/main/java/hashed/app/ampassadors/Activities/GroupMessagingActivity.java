@@ -1,15 +1,5 @@
 package hashed.app.ampassadors.Activities;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
@@ -38,6 +28,16 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -95,16 +95,15 @@ import hashed.app.ampassadors.Utils.Files;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 
 public class GroupMessagingActivity extends AppCompatActivity
-        implements Toolbar.OnMenuItemClickListener,PrivateMessagingAdapter.DeleteMessageListener,
-        PrivateMessagingAdapter.VideoMessageListener,PrivateMessagingAdapter.DocumentMessageListener,
-        View.OnClickListener, RecyclerView.OnLayoutChangeListener ,
-        PrivateMessagingAdapter.ImageMessageListener{
+        implements Toolbar.OnMenuItemClickListener, PrivateMessagingAdapter.DeleteMessageListener,
+        PrivateMessagingAdapter.VideoMessageListener, PrivateMessagingAdapter.DocumentMessageListener,
+        View.OnClickListener, RecyclerView.OnLayoutChangeListener,
+        PrivateMessagingAdapter.ImageMessageListener {
 
+  public static final int RECORD_AUDIO_REQUEST = 30;
   //constants
   private static final String TAG = "GroupMessages";
   private static final int MESSAGES_PAGE_SIZE = 15;
-  public static final int RECORD_AUDIO_REQUEST = 30;
-
   //database
   private static final DatabaseReference databaseReference
           = FirebaseDatabase.getInstance().getReference().child("GroupMessages").getRef();
@@ -112,28 +111,23 @@ public class GroupMessagingActivity extends AppCompatActivity
   private static final CollectionReference meetingsRef
           = FirebaseFirestore.getInstance().collection("Meetings"),
           usersRef = FirebaseFirestore.getInstance().collection("Users");
-
-
+  private final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+  //messages
+  private final ArrayList<PrivateMessage> privateMessages = new ArrayList<>();
+  private final DateFormat secondMinuteFormat =
+          new SimpleDateFormat("mm:ss", Locale.getDefault());
   private DatabaseReference currentMessagingRef;
   private String firstKeyRef;
   private String lastKeyRef;
   private DocumentReference firebaseMessageDocRef;
-
   //event listeners
   private Map<DatabaseReference, ChildEventListener> childEventListeners;
   private Map<DatabaseReference, ValueEventListener> valueEventListeners;
-
-  private final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
   private String groupId;
-
-  //messages
-  private final ArrayList<PrivateMessage> privateMessages = new ArrayList<>();
   private PrivateMessagingAdapter adapter;
   private toTopScrollListener currentScrollListener;
   private Map<UploadTask, StorageTask<UploadTask.TaskSnapshot>> uploadTasks;
   private boolean isLoadingMessages;
-
-
   //views
   private RecyclerView privateMessagingRv;
   private ImageView messageSendIv;
@@ -145,16 +139,12 @@ public class GroupMessagingActivity extends AppCompatActivity
   private FrameLayout pickerFrameLayout;
   private ImageView messagingTbProfileIv;
   private TextView messagingTbNameTv;
-
   //attachments
   private int messageAttachmentUploadedIndex = -1;
   private BroadcastReceiver downloadCompleteReceiver;
-
   //audio messages
   private MediaRecorder mediaRecorder;
   private Handler progressHandle;
-  private final DateFormat secondMinuteFormat =
-          new SimpleDateFormat("mm:ss", Locale.getDefault());
   private Runnable progressRunnable;
 
 
@@ -200,18 +190,18 @@ public class GroupMessagingActivity extends AppCompatActivity
   }
 
 
-  private void setUpToolBarAndActions(){
+  private void setUpToolBarAndActions() {
 
     final Toolbar toolbar = findViewById(R.id.privateMessagingTb);
     toolbar.inflateMenu(R.menu.group_messaging_toolbar_menu);
-    toolbar.setNavigationOnClickListener(v-> onBackPressed());
+    toolbar.setNavigationOnClickListener(v -> onBackPressed());
     toolbar.setOnMenuItemClickListener(this);
 
   }
 
 
   //Activity actions and views
-  private void initializeViews(){
+  private void initializeViews() {
 
     privateMessagingRv = findViewById(R.id.privateMessagingRv);
     messageSendIv = findViewById(R.id.messageSendIv);
@@ -229,50 +219,50 @@ public class GroupMessagingActivity extends AppCompatActivity
     micIv.setOnClickListener(this);
   }
 
-  private void getGroupId(){
+  private void getGroupId() {
 
     final Intent intent = getIntent();
 
-    if(intent.hasExtra("destinationBundle")){
+    if (intent.hasExtra("destinationBundle")) {
 
       final String sourceId = intent.getStringExtra("sourceId");
       final String sourceType = intent.getStringExtra("sourceType");
 
-      if(sourceType.equals("zoomMeeting")){
+      if (sourceType.equals("zoomMeeting")) {
 
         groupId = sourceId.split("-")[0];
         final String joinUrl = sourceId.split("-")[1];
 
-        if(joinUrl!=null && !joinUrl.isEmpty()){
+        if (joinUrl != null && !joinUrl.isEmpty()) {
           startZoomMeetingIntent(joinUrl);
         }
 
-      }else{
+      } else {
         groupId = sourceId;
       }
-    }else{
+    } else {
       groupId = intent.getStringExtra("messagingUid");
     }
 
 
-    if(intent.hasExtra("isFromNotification") && Build.VERSION.SDK_INT < 26){
+    if (intent.hasExtra("isFromNotification") && Build.VERSION.SDK_INT < 26) {
       BadgeUtil.decrementBadgeNum(this);
     }
 
-    usersRef.document(currentUid).update("ActivelyMessaging",groupId);
+    usersRef.document(currentUid).update("ActivelyMessaging", groupId);
 
   }
 
 
   //firestore user data
-  private void getGroupData(){
+  private void getGroupData() {
 
     meetingsRef.document(groupId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
       @Override
       public void onSuccess(DocumentSnapshot ds) {
-        if(ds.exists()){
+        if (ds.exists()) {
 
-          if(ds.contains("imageUrl")){
+          if (ds.contains("imageUrl")) {
             currentGroupImage = ds.getString("imageUrl");
           }
           currentGroupName = ds.getString("title");
@@ -282,7 +272,7 @@ public class GroupMessagingActivity extends AppCompatActivity
     }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
       @Override
       public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-        if(task.isSuccessful()){
+        if (task.isSuccessful()) {
           Picasso.get().load(currentGroupImage).fit().into(messagingTbProfileIv);
           messagingTbNameTv.setText(currentGroupName);
         }
@@ -292,17 +282,17 @@ public class GroupMessagingActivity extends AppCompatActivity
   }
 
   //my data
-  private void getMyData(){
+  private void getMyData() {
 
     usersRef.document(currentUid).get().addOnSuccessListener(documentSnapshot -> {
-      if(documentSnapshot.exists()){
+      if (documentSnapshot.exists()) {
 //        currentImageUrl = documentSnapshot.getString("imageUrl");
         currentUserName = documentSnapshot.getString("username");
       }
     }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
       @Override
       public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-        if(task.isSuccessful()){
+        if (task.isSuccessful()) {
 //          Picasso.get().load(currentImageUrl).fit().into(messagingTbProfileIv);
           messagingTbNameTv.setText(currentUserName);
         }
@@ -311,11 +301,11 @@ public class GroupMessagingActivity extends AppCompatActivity
   }
 
   //Group messages
-  private void fetchGroupPreviousMessages(){
+  private void fetchGroupPreviousMessages() {
 
     adapter = new PrivateMessagingAdapter(privateMessages,
-            this,this,this,
-            this,this,true);
+            this, this, this,
+            this, this, true);
     privateMessagingRv.setAdapter(adapter);
 
     currentMessagingRef = databaseReference.child(groupId);
@@ -327,8 +317,8 @@ public class GroupMessagingActivity extends AppCompatActivity
       @Override
       public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
 
-        if(value!=null){
-          if(value.getBoolean("hasEnded")){
+        if (value != null) {
+          if (value.getBoolean("hasEnded")) {
             Toast.makeText(GroupMessagingActivity.this,
                     "Sorry this meeting has ended and all participants will be kicked out",
                     Toast.LENGTH_SHORT).show();
@@ -337,44 +327,44 @@ public class GroupMessagingActivity extends AppCompatActivity
         }
       }
     });
-    Log.d("ttt","looking to group");
+    Log.d("ttt", "looking to group");
     currentMessagingRef.addListenerForSingleValueEvent(new ValueEventListener() {
-              @Override
-              public void onDataChange(@NonNull DataSnapshot snapshot) {
+      @Override
+      public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                if(snapshot.exists()){
-                  Log.d("ttt","found group");
-                  if(snapshot.hasChild("Messages")){
+        if (snapshot.exists()) {
+          Log.d("ttt", "found group");
+          if (snapshot.hasChild("Messages")) {
 
-                    createMessagesListener();
+            createMessagesListener();
 
-                  }else{
-                    Log.d("ttt","didn't find group");
-                    messageSendIv.setOnClickListener(new FirstMessageClickListener());
-                  }
-                }
+          } else {
+            Log.d("ttt", "didn't find group");
+            messageSendIv.setOnClickListener(new FirstMessageClickListener());
+          }
+        }
 
-              }
+      }
 
-              @Override
-              public void onCancelled(@NonNull DatabaseError error) {
+      @Override
+      public void onCancelled(@NonNull DatabaseError error) {
 
-              }
-            });
+      }
+    });
   }
 
-  private void createMessagesListener(){
+  private void createMessagesListener() {
 
     currentMessagingRef.child("Messages").orderByKey().limitToLast(MESSAGES_PAGE_SIZE)
             .addListenerForSingleValueEvent(new ValueEventListener() {
               @Override
               public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                for(DataSnapshot child:snapshot.getChildren()){
+                for (DataSnapshot child : snapshot.getChildren()) {
                   privateMessages.add(child.getValue(PrivateMessage.class));
                 }
 
-                firstKeyRef = Iterables.get(snapshot.getChildren(),0).getKey();
+                firstKeyRef = Iterables.get(snapshot.getChildren(), 0).getKey();
                 lastKeyRef = Iterables.getLast(snapshot.getChildren()).getKey();
 
                 adapter.notifyDataSetChanged();
@@ -384,12 +374,13 @@ public class GroupMessagingActivity extends AppCompatActivity
                 messageSendIv.setOnClickListener(new TextMessageSenderClickListener());
                 addListenerForNewMessages();
 
-                if(Integer.parseInt(lastKeyRef) + 1 > MESSAGES_PAGE_SIZE){
+                if (Integer.parseInt(lastKeyRef) + 1 > MESSAGES_PAGE_SIZE) {
                   privateMessagingRv.addOnScrollListener(
                           currentScrollListener = new toTopScrollListener());
                 }
                 addDeleteFieldListener();
               }
+
               @Override
               public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(GroupMessagingActivity.this,
@@ -400,10 +391,10 @@ public class GroupMessagingActivity extends AppCompatActivity
 
   }
 
-  private void createGroupDocument(PrivateMessage privateMessage){
+  private void createGroupDocument(PrivateMessage privateMessage) {
 
-    final Map<String,PrivateMessage> messages = new HashMap<>();
-    messages.put("0",privateMessage);
+    final Map<String, PrivateMessage> messages = new HashMap<>();
+    messages.put("0", privateMessage);
 
     currentMessagingRef.child("Messages").setValue(messages)
             .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -433,12 +424,12 @@ public class GroupMessagingActivity extends AppCompatActivity
 
 
   //database messages listeners
-  private void addListenerForNewMessages(){
+  private void addListenerForNewMessages() {
 
     ChildEventListener childEventListener;
 
     final Query query = currentMessagingRef.child("Messages").orderByKey()
-            .startAt(String.valueOf(Integer.parseInt(lastKeyRef)+1));
+            .startAt(String.valueOf(Integer.parseInt(lastKeyRef) + 1));
 
     query.addChildEventListener(childEventListener = new ChildEventListener() {
       @Override
@@ -453,12 +444,12 @@ public class GroupMessagingActivity extends AppCompatActivity
 //          addFileMessageUploadListener(snapshot.child("attachmentUrl").getRef()
 //                  ,privateMessages.size());
 //        }
-        if(messageAttachmentUploadedIndex!=-1){
+        if (messageAttachmentUploadedIndex != -1) {
 
-          privateMessages.set(messageAttachmentUploadedIndex,message);
+          privateMessages.set(messageAttachmentUploadedIndex, message);
           adapter.notifyItemChanged(messageAttachmentUploadedIndex);
           messageAttachmentUploadedIndex = -1;
-        }else{
+        } else {
 
           privateMessages.add(message);
           adapter.notifyItemInserted(privateMessages.size());
@@ -470,20 +461,24 @@ public class GroupMessagingActivity extends AppCompatActivity
 //        }
 
       }
+
       @Override
       public void onChildChanged(@NonNull DataSnapshot snapshot,
                                  @Nullable String previousChildName) {
 
       }
+
       @Override
       public void onChildRemoved(@NonNull DataSnapshot snapshot) {
 
       }
+
       @Override
       public void onChildMoved(@NonNull DataSnapshot snapshot,
                                @Nullable String previousChildName) {
 
       }
+
       @Override
       public void onCancelled(@NonNull DatabaseError error) {
 
@@ -495,7 +490,7 @@ public class GroupMessagingActivity extends AppCompatActivity
     childEventListeners.put(query.getRef(), childEventListener);
   }
 
-  private void addDeleteFieldListener(){
+  private void addDeleteFieldListener() {
 
     valueEventListeners = new HashMap<>();
 
@@ -506,17 +501,17 @@ public class GroupMessagingActivity extends AppCompatActivity
               @Override
               public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                if(snapshot.exists()){
+                if (snapshot.exists()) {
 
                   final String id = snapshot.getValue(String.class);
 
-                  if(id!=null){
+                  if (id != null) {
 
                     final int deletedIndex =
                             Math.abs(Integer.parseInt(firstKeyRef) - Integer.parseInt(id));
 
-                    if(deletedIndex < privateMessages.size() &&
-                            !privateMessages.get(deletedIndex).getDeleted()){
+                    if (deletedIndex < privateMessages.size() &&
+                            !privateMessages.get(deletedIndex).getDeleted()) {
                       privateMessages.get(deletedIndex).setDeleted(true);
                       adapter.notifyItemChanged(deletedIndex);
                     }
@@ -545,89 +540,30 @@ public class GroupMessagingActivity extends AppCompatActivity
               }
             });
 
-    valueEventListeners.put(currentMessagingRef.child("lastDeleted").getRef(),valueEventListener);
+    valueEventListeners.put(currentMessagingRef.child("lastDeleted").getRef(), valueEventListener);
 
   }
 
-
-
-  //click listeners
-  private class FirstMessageClickListener implements View.OnClickListener{
-
-    @Override
-    public void onClick(View view) {
-
-      Log.d("ttt","clicked send button");
-      final String content = messagingEd.getText().toString();
-      if (!content.isEmpty()) {
-
-//        if (WifiUtil.checkWifiConnection(view.getContext())) {
-        messagingEd.setText("");
-        messagingEd.setClickable(false);
-
-        final PrivateMessage privateMessage = new PrivateMessage(
-                content,
-                System.currentTimeMillis(),
-                currentUid,
-                Files.TEXT);
-
-        createGroupDocument(privateMessage);
-
-      } else {
-        Toast.makeText(view.getContext(),
-                R.string.message_send_empty, Toast.LENGTH_SHORT).show();
-      }
-    }
-  }
-
-  private class TextMessageSenderClickListener implements View.OnClickListener{
-    @Override
-    public void onClick(View view) {
-
-      final String content = messagingEd.getText().toString();
-
-      if (!content.equals("")) {
-
-//        if (WifiUtil.checkWifiConnection(view.getContext())) {
-
-        PrivateMessage privateMessage = new PrivateMessage(
-                content,
-                System.currentTimeMillis(),
-                currentUid,
-                Files.TEXT);
-
-        sendMessage(privateMessage);
-
-//        }
-      } else {
-        Toast.makeText(view.getContext(),
-                R.string.message_send_empty, Toast.LENGTH_SHORT).show();
-      }
-
-
-    }
-  }
-
-  private void sendMessage(PrivateMessage privateMessage){
+  private void sendMessage(PrivateMessage privateMessage) {
 
     messagingEd.setText("");
     messagingEd.setClickable(false);
 
-    if(lastKeyRef == null){
+    if (lastKeyRef == null) {
       createGroupDocument(privateMessage);
       return;
     }
 
-    final DatabaseReference childRef =  currentMessagingRef.child("Messages")
+    final DatabaseReference childRef = currentMessagingRef.child("Messages")
             .child(String.valueOf(Integer.parseInt(lastKeyRef) + 1));
 
     childRef.setValue(privateMessage).addOnSuccessListener(v -> {
 
-      if(privateMessage.getType() == Files.ZOOM){
+      if (privateMessage.getType() == Files.ZOOM) {
         sendZoomMeetingNotification(privateMessage.getZoomMeeting().getTopic(),
                 privateMessage.getZoomMeeting().getJoinUrl());
-      }else{
-        checkUserActivityAndSendNotifications(privateMessage.getContent(),privateMessage.getType());
+      } else {
+        checkUserActivityAndSendNotifications(privateMessage.getContent(), privateMessage.getType());
       }
 
       messageSendIv.setClickable(true);
@@ -642,11 +578,11 @@ public class GroupMessagingActivity extends AppCompatActivity
 
   }
 
-  private void showMessageOptionsBottomSheet(){
+  private void showMessageOptionsBottomSheet() {
 
     messageAttachIv.setClickable(false);
 
-    final BottomSheetDialog bsd = new BottomSheetDialog(this,R.style.SheetDialog);
+    final BottomSheetDialog bsd = new BottomSheetDialog(this, R.style.SheetDialog);
     final View parentView = getLayoutInflater().inflate(R.layout.group_message_options_bsd,
             null);
     parentView.setBackgroundColor(Color.TRANSPARENT);
@@ -717,7 +653,7 @@ public class GroupMessagingActivity extends AppCompatActivity
 
   }
 
-  private void startAudioRecording(){
+  private void startAudioRecording() {
 
     if (ActivityCompat.checkSelfPermission(this,
             Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
@@ -755,13 +691,13 @@ public class GroupMessagingActivity extends AppCompatActivity
 
   }
 
-  private void startAudioRecorder(){
+  private void startAudioRecorder() {
 
     mediaRecorder = new MediaRecorder();
     mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
     mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
 
-    final String fileName = getExternalCacheDir().getAbsolutePath()+"/NewRecording.3gp";
+    final String fileName = getExternalCacheDir().getAbsolutePath() + "/NewRecording.3gp";
 
     mediaRecorder.setOutputFile(fileName);
 
@@ -772,7 +708,7 @@ public class GroupMessagingActivity extends AppCompatActivity
 
       mediaRecorder.prepare();
     } catch (IOException e) {
-      stopAudioRecorder(null,0,true);
+      stopAudioRecorder(null, 0, true);
       e.printStackTrace();
     }
 
@@ -803,7 +739,7 @@ public class GroupMessagingActivity extends AppCompatActivity
       @Override
       public void onClick(View view) {
         progressHandle.removeCallbacks(progressRunnable);
-        stopAudioRecorder(fileName,startTime,false);
+        stopAudioRecorder(fileName, startTime, false);
         progressHandle = null;
         progressRunnable = null;
       }
@@ -813,7 +749,7 @@ public class GroupMessagingActivity extends AppCompatActivity
       @Override
       public void onClick(View view) {
         progressHandle.removeCallbacks(progressRunnable);
-        stopAudioRecorder(null,0,true);
+        stopAudioRecorder(null, 0, true);
         progressHandle = null;
         progressRunnable = null;
       }
@@ -822,17 +758,17 @@ public class GroupMessagingActivity extends AppCompatActivity
 
   }
 
-  private void stopAudioRecorder(String fileName,long startTime,boolean cancel){
+  private void stopAudioRecorder(String fileName, long startTime, boolean cancel) {
 
     mediaRecorder.stop();
     mediaRecorder.release();
     mediaRecorder = null;
 
-    if(!cancel){
+    if (!cancel) {
 
       final long length = System.currentTimeMillis() - startTime;
 
-      sendFileMessage(Uri.fromFile(new File(fileName)),Files.AUDIO,null,length,null);
+      sendFileMessage(Uri.fromFile(new File(fileName)), Files.AUDIO, null, length, null);
 
 //      deleteFile(fileName);
 
@@ -868,9 +804,9 @@ public class GroupMessagingActivity extends AppCompatActivity
   }
 
   public void sendFileMessage(Uri uri, int fileType, String message, long audioLength,
-                              String fileName){
+                              String fileName) {
 
-    if(fileType!=Files.TEXT && uploadTasks==null){
+    if (fileType != Files.TEXT && uploadTasks == null) {
       uploadTasks = new HashMap<>();
     }
 
@@ -883,7 +819,7 @@ public class GroupMessagingActivity extends AppCompatActivity
     adapter.notifyItemInserted(privateMessages.size());
     scrollToBottom();
 
-    switch (fileType){
+    switch (fileType) {
       case Files.IMAGE:
         storageRef = Files.MESSAGE_IMAGE_REF;
         break;
@@ -897,7 +833,7 @@ public class GroupMessagingActivity extends AppCompatActivity
     }
 
     final StorageReference reference = FirebaseStorage.getInstance().getReference()
-            .child(storageRef).child(UUID.randomUUID().toString() +"-"+
+            .child(storageRef).child(UUID.randomUUID().toString() + "-" +
                     System.currentTimeMillis());
 
 
@@ -916,7 +852,7 @@ public class GroupMessagingActivity extends AppCompatActivity
 
                     PrivateMessage privateMessage = null;
 
-                    if(fileType == Files.AUDIO){
+                    if (fileType == Files.AUDIO) {
 
                       privateMessage = new PrivateMessage(
                               audioLength,
@@ -927,7 +863,7 @@ public class GroupMessagingActivity extends AppCompatActivity
 
                       micIv.setClickable(true);
 
-                    }else if(fileType == Files.IMAGE){
+                    } else if (fileType == Files.IMAGE) {
 
                       privateMessage = new PrivateMessage(
                               message,
@@ -936,7 +872,7 @@ public class GroupMessagingActivity extends AppCompatActivity
                               fileType,
                               uri.toString());
 
-                    }else if(fileType == Files.DOCUMENT){
+                    } else if (fileType == Files.DOCUMENT) {
 
                       privateMessage = new PrivateMessage(
                               System.currentTimeMillis(),
@@ -964,11 +900,11 @@ public class GroupMessagingActivity extends AppCompatActivity
             });
 
 
-    uploadTasks.put(uploadTask,onSuccessListener);
+    uploadTasks.put(uploadTask, onSuccessListener);
 
   }
 
-  public void uploadVideoMessage(Uri videoUri, String message, Bitmap videoThumbnail){
+  public void uploadVideoMessage(Uri videoUri, String message, Bitmap videoThumbnail) {
 
     messageAttachmentUploadedIndex = privateMessages.size();
 
@@ -981,15 +917,15 @@ public class GroupMessagingActivity extends AppCompatActivity
     final ByteArrayOutputStream baos = new ByteArrayOutputStream();
     videoThumbnail.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 
-    if(uploadTasks==null){
+    if (uploadTasks == null) {
       uploadTasks = new HashMap<>();
     }
 
-    final StorageReference videoThumbnailRef= FirebaseStorage.getInstance().getReference()
-            .child(Files.MESSAGE_IMAGE_REF).child(UUID.randomUUID().toString() +"-"+
+    final StorageReference videoThumbnailRef = FirebaseStorage.getInstance().getReference()
+            .child(Files.MESSAGE_IMAGE_REF).child(UUID.randomUUID().toString() + "-" +
                     System.currentTimeMillis());
 
-    final UploadTask thumbnailUploadTask =  videoThumbnailRef.putBytes(baos.toByteArray());
+    final UploadTask thumbnailUploadTask = videoThumbnailRef.putBytes(baos.toByteArray());
 
     StorageTask<UploadTask.TaskSnapshot> thumbnailOnSuccessListener =
             thumbnailUploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -1003,7 +939,7 @@ public class GroupMessagingActivity extends AppCompatActivity
                     uploadTasks.remove(thumbnailUploadTask);
 
                     final StorageReference videoRef = FirebaseStorage.getInstance().getReference()
-                            .child(Files.MESSAGE_VIDEO_REF).child(UUID.randomUUID().toString() +"-"+
+                            .child(Files.MESSAGE_VIDEO_REF).child(UUID.randomUUID().toString() + "-" +
                                     System.currentTimeMillis());
 
                     final UploadTask videoUploadTask = videoRef.putFile(videoUri);
@@ -1033,19 +969,19 @@ public class GroupMessagingActivity extends AppCompatActivity
                               }
                             });
 
-                    uploadTasks.put(videoUploadTask,videoOnSuccessListener);
+                    uploadTasks.put(videoUploadTask, videoOnSuccessListener);
                   }
                 });
 
               }
             });
 
-    uploadTasks.put(thumbnailUploadTask,thumbnailOnSuccessListener);
+    uploadTasks.put(thumbnailUploadTask, thumbnailOnSuccessListener);
 
 
   }
 
-  public void sendZoomMessage(String content, ZoomMeeting zoomMeeting){
+  public void sendZoomMessage(String content, ZoomMeeting zoomMeeting) {
 
     PrivateMessage privateMessage = new PrivateMessage(
             content,
@@ -1058,35 +994,34 @@ public class GroupMessagingActivity extends AppCompatActivity
     sendMessage(privateMessage);
 
 
-    if(zoomMeeting.getStartUrl()!=null && !zoomMeeting.getStartUrl().isEmpty()){
+    if (zoomMeeting.getStartUrl() != null && !zoomMeeting.getStartUrl().isEmpty()) {
       startZoomMeetingIntent(zoomMeeting.getStartUrl());
     }
   }
 
-  private void startZoomMeetingIntent(String url){
+  private void startZoomMeetingIntent(String url) {
 
-      final Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-      try{
+    final Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+    try {
 
-        if (urlIntent.resolveActivity(getPackageManager()) != null) {
-          startActivity(urlIntent);
-        }
-
-      } catch (NullPointerException ignored){
-
+      if (urlIntent.resolveActivity(getPackageManager()) != null) {
+        startActivity(urlIntent);
       }
-  }
 
+    } catch (NullPointerException ignored) {
+
+    }
+  }
 
   //clickers
   @Override
   public void onClick(View view) {
 
-    if(view.getId() == R.id.messageAttachIv){
+    if (view.getId() == R.id.messageAttachIv) {
 
       showMessageOptionsBottomSheet();
 
-    }else if(view.getId() == R.id.micIv){
+    } else if (view.getId() == R.id.micIv) {
 
       startAudioRecording();
 
@@ -1094,26 +1029,24 @@ public class GroupMessagingActivity extends AppCompatActivity
 
   }
 
-
   @Override
   public boolean onMenuItemClick(MenuItem item) {
 
-    if(item.getItemId() == R.id.action_end_meeting){
+    if (item.getItemId() == R.id.action_end_meeting) {
 
-      if(firebaseMessageDocRef!=null){
-        firebaseMessageDocRef.update("hasEnded",true).addOnSuccessListener(v -> finish());
+      if (firebaseMessageDocRef != null) {
+        firebaseMessageDocRef.update("hasEnded", true).addOnSuccessListener(v -> finish());
       }
     }
     return false;
   }
 
+  private void cancelUploadTasks() {
 
-  private void cancelUploadTasks(){
+    if (uploadTasks != null && !uploadTasks.isEmpty()) {
+      for (UploadTask uploadTask : uploadTasks.keySet()) {
 
-    if(uploadTasks!=null && !uploadTasks.isEmpty()){
-      for(UploadTask uploadTask:uploadTasks.keySet()){
-
-        if(uploadTask.isComplete()){
+        if (uploadTask.isComplete()) {
 
 //complete so doing nothing
 
@@ -1130,12 +1063,12 @@ public class GroupMessagingActivity extends AppCompatActivity
 //            }
 //          });
 
-        }else{
+        } else {
 
-          Log.d("ttt","task not complete so adding new listener, " +
-                  "and trying to cancel: "+uploadTask.cancel());
+          Log.d("ttt", "task not complete so adding new listener, " +
+                  "and trying to cancel: " + uploadTask.cancel());
 
-          if(uploadTasks.containsKey(uploadTask)){
+          if (uploadTasks.containsKey(uploadTask)) {
 
             uploadTask.removeOnSuccessListener(
                     (OnSuccessListener<? super UploadTask.TaskSnapshot>) uploadTasks.get(uploadTask));
@@ -1149,12 +1082,12 @@ public class GroupMessagingActivity extends AppCompatActivity
               uploadTask.getSnapshot().getStorage().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
-                  Log.d("ttt","ref delete sucess");
+                  Log.d("ttt", "ref delete sucess");
                 }
               }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                  Log.d("ttt","ref delete failed: "+e.getMessage());
+                  Log.d("ttt", "ref delete failed: " + e.getMessage());
                 }
               });
 
@@ -1168,56 +1101,32 @@ public class GroupMessagingActivity extends AppCompatActivity
 
   }
 
-
-  //scroll methods
-  private class toTopScrollListener extends RecyclerView.OnScrollListener {
-    @Override
-    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-      super.onScrollStateChanged(recyclerView, newState);
-
-      int firstVisible = ((LinearLayoutManager)recyclerView.getLayoutManager())
-              .findFirstCompletelyVisibleItemPosition();
-
-      if (!isLoadingMessages &&  (firstVisible == 0 || firstVisible == -1) &&
-              !recyclerView.canScrollVertically(-1) &&
-              newState == RecyclerView.SCROLL_STATE_IDLE) {
-
-        Log.d(TAG,"is at top man");
-
-        isLoadingMessages = true;
-        messagesProgressBar.setVisibility(View.GONE);
-        getMoreTopMessages();
-
-      }
-    }
-  }
-
-  private void scrollToBottom(){
+  private void scrollToBottom() {
     privateMessagingRv.post(() ->
-            privateMessagingRv.scrollToPosition(privateMessages.size()-1));
+            privateMessagingRv.scrollToPosition(privateMessages.size() - 1));
 
   }
 
-  private void getMoreTopMessages(){
+  private void getMoreTopMessages() {
 
     currentMessagingRef
             .child("Messages")
             .orderByKey()
             .limitToLast(MESSAGES_PAGE_SIZE)
-            .endAt(String.valueOf(Integer.parseInt(firstKeyRef)-1))
+            .endAt(String.valueOf(Integer.parseInt(firstKeyRef) - 1))
             .addListenerForSingleValueEvent(new ValueEventListener() {
               @Override
               public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 final List<PrivateMessage> newMessages = new ArrayList<>();
 
-                for(DataSnapshot child:snapshot.getChildren()){
+                for (DataSnapshot child : snapshot.getChildren()) {
                   newMessages.add(child.getValue(PrivateMessage.class));
 
                 }
 
-                privateMessages.addAll(0,newMessages);
-                adapter.notifyItemRangeInserted(0,newMessages.size());
+                privateMessages.addAll(0, newMessages);
+                adapter.notifyItemRangeInserted(0, newMessages.size());
 
 
                 firstKeyRef = String.valueOf(Integer.parseInt(lastKeyRef)
@@ -1225,7 +1134,7 @@ public class GroupMessagingActivity extends AppCompatActivity
 
                 messagesProgressBar.setVisibility(View.GONE);
 
-                if(newMessages.size() < MESSAGES_PAGE_SIZE){
+                if (newMessages.size() < MESSAGES_PAGE_SIZE) {
                   privateMessagingRv.removeOnScrollListener(currentScrollListener);
                 }
 
@@ -1258,7 +1167,7 @@ public class GroupMessagingActivity extends AppCompatActivity
 //            privateMessagingRv.computeVerticalScrollRange());
 
     if (oldBottom != 0) {
-      privateMessagingRv.scrollBy(0,oldBottom - bottom);
+      privateMessagingRv.scrollBy(0, oldBottom - bottom);
     }
 
   }
@@ -1278,7 +1187,7 @@ public class GroupMessagingActivity extends AppCompatActivity
 
       Toast.makeText(this, "لقد فشل حذف الرسالة", Toast.LENGTH_SHORT).show();
 
-      Log.d("ttt","failed: "+e.getMessage());
+      Log.d("ttt", "failed: " + e.getMessage());
     });
 
   }
@@ -1299,9 +1208,9 @@ public class GroupMessagingActivity extends AppCompatActivity
                                          @NonNull int[] grantResults) {
     super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-    if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-      switch (requestCode){
+      switch (requestCode) {
 
         case Files.PICK_FILE:
           Files.startDocumentFetchIntent(this);
@@ -1317,7 +1226,7 @@ public class GroupMessagingActivity extends AppCompatActivity
 
       }
 
-    }else{
+    } else {
 
       //permission denied
     }
@@ -1325,26 +1234,25 @@ public class GroupMessagingActivity extends AppCompatActivity
 
   }
 
-
   @Override
   protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
 
-    if(requestCode == Files.PICK_IMAGE){
+    if (requestCode == Files.PICK_IMAGE) {
 
-      if(resultCode == RESULT_OK  && data != null){
+      if (resultCode == RESULT_OK && data != null) {
 
-        showFullScreenFragment(new FilePickerPreviewFragment(data.getData(),Files.IMAGE));
+        showFullScreenFragment(new FilePickerPreviewFragment(data.getData(), Files.IMAGE));
 
-      }else{
+      } else {
         //problem with image retrieving
 
 
       }
 
-    }else if(requestCode == Files.PICK_VIDEO){
+    } else if (requestCode == Files.PICK_VIDEO) {
 
-      if(resultCode == RESULT_OK  && data != null){
+      if (resultCode == RESULT_OK && data != null) {
 
         if (Files.isFromGooglePhotos(data.getData())) {
           Toast.makeText(this, "لا يمكن رفع فيديو مباشرة من صور جوجل!" +
@@ -1354,23 +1262,23 @@ public class GroupMessagingActivity extends AppCompatActivity
 
         showFullScreenFragment(new VideoPickerPreviewFragment(data.getData()));
 
-      }else{
+      } else {
         //problem with image retrieving
 
 
       }
 
-    }else if(requestCode == Files.PICK_FILE){
-      if(resultCode == RESULT_OK  && data != null){
+    } else if (requestCode == Files.PICK_FILE) {
+      if (resultCode == RESULT_OK && data != null) {
 
-        if(Files.getFileSizeInMB(this,data.getData()) > Files.MAX_FILE_SIZE){
+        if (Files.getFileSizeInMB(this, data.getData()) > Files.MAX_FILE_SIZE) {
           Toast.makeText(this, "You can't send files bigger than "
-                  +Files.MAX_FILE_SIZE+" MB!", Toast.LENGTH_SHORT).show();
-        }else{
-          showFullScreenFragment(new FilePickerPreviewFragment(data.getData(),Files.DOCUMENT));
+                  + Files.MAX_FILE_SIZE + " MB!", Toast.LENGTH_SHORT).show();
+        } else {
+          showFullScreenFragment(new FilePickerPreviewFragment(data.getData(), Files.DOCUMENT));
         }
 
-      }else{
+      } else {
         //problem with image retrieving
 
 
@@ -1384,18 +1292,18 @@ public class GroupMessagingActivity extends AppCompatActivity
     super.onDestroy();
     privateMessagingRv.removeOnLayoutChangeListener(this);
 
-    if(childEventListeners!=null && !childEventListeners.isEmpty()){
-      for(DatabaseReference reference: childEventListeners.keySet()){
+    if (childEventListeners != null && !childEventListeners.isEmpty()) {
+      for (DatabaseReference reference : childEventListeners.keySet()) {
         reference.removeEventListener(Objects.requireNonNull(childEventListeners.get(reference)));
       }
     }
-    if(valueEventListeners!=null && !valueEventListeners.isEmpty()){
-      for(DatabaseReference reference: valueEventListeners.keySet()){
+    if (valueEventListeners != null && !valueEventListeners.isEmpty()) {
+      for (DatabaseReference reference : valueEventListeners.keySet()) {
         reference.removeEventListener(Objects.requireNonNull(valueEventListeners.get(reference)));
       }
     }
 
-    if(downloadCompleteReceiver!=null){
+    if (downloadCompleteReceiver != null) {
       unregisterReceiver(downloadCompleteReceiver);
     }
   }
@@ -1412,9 +1320,9 @@ public class GroupMessagingActivity extends AppCompatActivity
   @Override
   protected void onPause() {
     super.onPause();
-    if(progressHandle!=null && progressRunnable!=null){
+    if (progressHandle != null && progressRunnable != null) {
 
-      stopAudioRecorder(null,0,true);
+      stopAudioRecorder(null, 0, true);
       progressHandle.removeCallbacks(progressRunnable);
     }
 
@@ -1423,44 +1331,46 @@ public class GroupMessagingActivity extends AppCompatActivity
   @Override
   public void onBackPressed() {
 
-    if(pickerFrameLayout.getVisibility() == View.VISIBLE){
+    if (pickerFrameLayout.getVisibility() == View.VISIBLE) {
       dismissFullScreenFragment();
-    }else if(uploadTasks!=null && !uploadTasks.isEmpty()){
+    } else if (uploadTasks != null && !uploadTasks.isEmpty()) {
 
       AlertDialog.Builder alert = new AlertDialog.Builder(this);
       alert.setTitle("Do you want to leave message is sending?");
       alert.setMessage("leaving while message is sending while cancel the message!");
 
-      alert.setPositiveButton("Yes",(dialogInterface, i) -> {
+      alert.setPositiveButton("Yes", (dialogInterface, i) -> {
         cancelUploadTasks();
         dialogInterface.dismiss();
         finish();
       });
 
-      alert.setNegativeButton("No", (dialog, which) -> {dialog.cancel();});
+      alert.setNegativeButton("No", (dialog, which) -> {
+        dialog.cancel();
+      });
       alert.create().show();
 
-    }else{
+    } else {
       super.onBackPressed();
     }
 
   }
 
-  private void showFullScreenFragment(Fragment fragment){
+  private void showFullScreenFragment(Fragment fragment) {
 
     pickerFrameLayout.setVisibility(View.VISIBLE);
 
     getSupportFragmentManager().beginTransaction().replace(pickerFrameLayout.getId(),
-            fragment,"fullScreen").commit();
+            fragment, "fullScreen").commit();
 
   }
 
-  private void dismissFullScreenFragment(){
+  private void dismissFullScreenFragment() {
 
-    if(pickerFrameLayout.getVisibility() == View.VISIBLE){
+    if (pickerFrameLayout.getVisibility() == View.VISIBLE) {
       pickerFrameLayout.setVisibility(View.GONE);
 
-      if(!getSupportFragmentManager().getFragments().isEmpty()){
+      if (!getSupportFragmentManager().getFragments().isEmpty()) {
 
         getSupportFragmentManager().beginTransaction().remove(
                 getSupportFragmentManager().getFragments().get(0)
@@ -1475,13 +1385,13 @@ public class GroupMessagingActivity extends AppCompatActivity
   public void startDownload(int position, String url, String fileName) {
 
     final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-    alertDialogBuilder.setMessage("Do you want to download "+fileName);
+    alertDialogBuilder.setMessage("Do you want to download " + fileName);
 
-    alertDialogBuilder.setPositiveButton("Download",(dialogInterface, i) -> {
-      downloadFile(position,url,fileName);
+    alertDialogBuilder.setPositiveButton("Download", (dialogInterface, i) -> {
+      downloadFile(position, url, fileName);
     });
 
-    alertDialogBuilder.setNegativeButton("Cancel",(dialogInterface, i) -> {
+    alertDialogBuilder.setNegativeButton("Cancel", (dialogInterface, i) -> {
       dialogInterface.dismiss();
     });
 
@@ -1497,10 +1407,8 @@ public class GroupMessagingActivity extends AppCompatActivity
 
   }
 
-
-
   @Override
-  public boolean cancelDownload(int position,long downloadID) {
+  public boolean cancelDownload(int position, long downloadID) {
 
     final DownloadManager downloadManager = (DownloadManager)
             this.getSystemService(Context.DOWNLOAD_SERVICE);
@@ -1512,7 +1420,7 @@ public class GroupMessagingActivity extends AppCompatActivity
     return true;
   }
 
-  private void downloadFile(int position,String url,String fileName){
+  private void downloadFile(int position, String url, String fileName) {
 
     DownloadManager.Request request;
 
@@ -1523,7 +1431,7 @@ public class GroupMessagingActivity extends AppCompatActivity
             .setAllowedOverMetered(true)
             .setAllowedOverRoaming(true);
 
-    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
       request.setRequiresCharging(false);
     }
 
@@ -1536,14 +1444,14 @@ public class GroupMessagingActivity extends AppCompatActivity
 
     long downloadId = downloadManager.enqueue(request);
 
-    if(position < privateMessages.size()){
+    if (position < privateMessages.size()) {
 
       privateMessages.get(position).setUploadTask(
               new PrivateMessage.UploadTask(downloadId, true));
 
       adapter.notifyItemChanged(position);
 
-      if(downloadCompleteReceiver == null){
+      if (downloadCompleteReceiver == null) {
         setUpDownloadReceiver();
       }
 
@@ -1551,7 +1459,7 @@ public class GroupMessagingActivity extends AppCompatActivity
 
   }
 
-  private void setUpDownloadReceiver(){
+  private void setUpDownloadReceiver() {
 
     downloadCompleteReceiver = new BroadcastReceiver() {
       @Override
@@ -1559,13 +1467,13 @@ public class GroupMessagingActivity extends AppCompatActivity
 
         long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
 
-        if(id!=-1){
+        if (id != -1) {
 
 //          openDownloadedFile(id);
 
-          for(int i=0;i<privateMessages.size();i++){
-            if(privateMessages.get(i).getUploadTask()!=null){
-              if(privateMessages.get(i).getUploadTask().getDownloadId() == id){
+          for (int i = 0; i < privateMessages.size(); i++) {
+            if (privateMessages.get(i).getUploadTask() != null) {
+              if (privateMessages.get(i).getUploadTask().getDownloadId() == id) {
                 privateMessages.get(i).getUploadTask().setCompleted(true);
                 adapter.notifyItemChanged(i);
 //              privateMessages.get(i)
@@ -1584,7 +1492,7 @@ public class GroupMessagingActivity extends AppCompatActivity
   }
 
   // remove messaging notifcation if one exists
-  private void handleNotification(){
+  private void handleNotification() {
 
     sharedPreferences = getSharedPreferences(getResources().getString(R.string.app_name),
             Context.MODE_PRIVATE);
@@ -1610,9 +1518,9 @@ public class GroupMessagingActivity extends AppCompatActivity
 
   }
 
-  private void sendZoomMeetingNotification(String topic,String joinUrl){
+  private void sendZoomMeetingNotification(String topic, String joinUrl) {
 
-   String body = "Zoom meeting started! "+topic;
+    String body = "Zoom meeting started! " + topic;
 
     if (data == null) {
 
@@ -1623,7 +1531,7 @@ public class GroupMessagingActivity extends AppCompatActivity
               currentGroupImage,
               "message",
               "zoomMeeting",
-              groupId +"-" +joinUrl
+              groupId + "-" + joinUrl
       );
 
     } else {
@@ -1635,28 +1543,28 @@ public class GroupMessagingActivity extends AppCompatActivity
   }
 
   //notifications methods
-  private void checkUserActivityAndSendNotifications(String message,int messageType){
+  private void checkUserActivityAndSendNotifications(String message, int messageType) {
 
 
     String body;
-    switch (messageType){
+    switch (messageType) {
 
       case Files.IMAGE:
-        body = currentUserName+" send an image";
+        body = currentUserName + " send an image";
         break;
 
       case Files.DOCUMENT:
       case Files.AUDIO:
-        body = currentUserName+" send an attachment";
+        body = currentUserName + " send an attachment";
         break;
 
       case Files.VIDEO:
-        body = currentUserName+" send an video";
+        body = currentUserName + " send an video";
         break;
 
 
       default:
-        body = currentUserName+": "+message;
+        body = currentUserName + ": " + message;
     }
 
     if (data == null) {
@@ -1679,33 +1587,117 @@ public class GroupMessagingActivity extends AppCompatActivity
 
   }
 
-
-  private void sendNotificationsToMembers(String body){
-    for(String userId:groupMembers){
+  private void sendNotificationsToMembers(String body) {
+    for (String userId : groupMembers) {
 
       usersRef.document(userId).get().addOnSuccessListener(documentSnapshot -> {
-        if(documentSnapshot.exists()){
-          if(documentSnapshot.contains("ActivelyMessaging")){
+        if (documentSnapshot.exists()) {
+          if (documentSnapshot.contains("ActivelyMessaging")) {
             final String messaging = documentSnapshot.getString("ActivelyMessaging");
-            if(messaging == null || !messaging.equals(groupId)){
-              Log.d("ttt","sendBothNotifs");
-              sendBothNotifs(body,userId);
+            if (messaging == null || !messaging.equals(groupId)) {
+              Log.d("ttt", "sendBothNotifs");
+              sendBothNotifs(body, userId);
             }
-          }else{
-            Log.d("ttt","sendBothNotifs");
-            sendBothNotifs(body,userId);
+          } else {
+            Log.d("ttt", "sendBothNotifs");
+            sendBothNotifs(body, userId);
           }
         }
       });
     }
 
   }
-  private void sendBothNotifs(String body,String userId){
+
+  private void sendBothNotifs(String body, String userId) {
 
     FirestoreNotificationSender.sendFirestoreNotification(userId, data.getSourceType(), body,
-            currentGroupName,groupId);
+            currentGroupName, groupId);
 
     CloudMessagingNotificationsSender.sendNotification(userId, data);
 
+  }
+
+  //click listeners
+  private class FirstMessageClickListener implements View.OnClickListener {
+
+    @Override
+    public void onClick(View view) {
+
+      Log.d("ttt", "clicked send button");
+      final String content = messagingEd.getText().toString();
+      if (!content.isEmpty()) {
+
+//        if (WifiUtil.checkWifiConnection(view.getContext())) {
+        messagingEd.setText("");
+        messagingEd.setClickable(false);
+
+        final PrivateMessage privateMessage = new PrivateMessage(
+                content,
+                System.currentTimeMillis(),
+                currentUid,
+                Files.TEXT);
+
+//        final Map<String, Object> privateMessageMap = new HashMap<>();
+//        privateMessageMap.put("content",content);
+//        privateMessageMap.put("content",content);
+
+        createGroupDocument(privateMessage);
+
+      } else {
+        Toast.makeText(view.getContext(),
+                R.string.message_send_empty, Toast.LENGTH_SHORT).show();
+      }
+    }
+  }
+
+  private class TextMessageSenderClickListener implements View.OnClickListener {
+    @Override
+    public void onClick(View view) {
+
+      final String content = messagingEd.getText().toString();
+
+      if (!content.equals("")) {
+
+//        if (WifiUtil.checkWifiConnection(view.getContext())) {
+
+        PrivateMessage privateMessage = new PrivateMessage(
+                content,
+                System.currentTimeMillis(),
+                currentUid,
+                Files.TEXT);
+
+        sendMessage(privateMessage);
+
+//        }
+      } else {
+        Toast.makeText(view.getContext(),
+                R.string.message_send_empty, Toast.LENGTH_SHORT).show();
+      }
+
+
+    }
+  }
+
+  //scroll methods
+  private class toTopScrollListener extends RecyclerView.OnScrollListener {
+    @Override
+    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+      super.onScrollStateChanged(recyclerView, newState);
+
+      int firstVisible = ((LinearLayoutManager) recyclerView.getLayoutManager())
+              .findFirstCompletelyVisibleItemPosition();
+
+      if (!isLoadingMessages && (firstVisible == 0 || firstVisible == -1) &&
+              !recyclerView.canScrollVertically(-1) &&
+              newState == RecyclerView.SCROLL_STATE_IDLE) {
+
+        Log.d(TAG, "is at top man");
+
+        isLoadingMessages = true;
+        messagesProgressBar.setVisibility(View.GONE);
+        getMoreTopMessages();
+
+      }
+    }
   }
 }

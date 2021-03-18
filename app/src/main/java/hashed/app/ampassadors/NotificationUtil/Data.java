@@ -11,7 +11,7 @@ public class Data {
   private String sourceId;
 
   public Data(String senderUid, String body, String title, String senderImageUrl,
-              String type, String sourceType,String sourceId) {
+              String type, String sourceType, String sourceId) {
     this.setSenderUid(senderUid);
     this.setBody(body);
     this.setTitle(title);

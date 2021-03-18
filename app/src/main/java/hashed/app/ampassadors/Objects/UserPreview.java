@@ -18,11 +18,11 @@ public class UserPreview implements Serializable {
   @PropertyName("online")
   private boolean online;
 
-  public UserPreview(){
+  public UserPreview() {
   }
 
 
-  public UserPreview(String userId, String imageUrl, String username,boolean online) {
+  public UserPreview(String userId, String imageUrl, String username, boolean online) {
     this.userId = userId;
     this.imageUrl = imageUrl;
     this.username = username;
