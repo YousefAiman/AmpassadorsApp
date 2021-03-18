@@ -96,8 +96,8 @@ public class CreatePollActivity extends AppCompatActivity implements View.OnClic
   private void createPollItemsList() {
 
     pollItems = new ArrayList<>();
-    pollItems.add("الخيار 1");
-    pollItems.add("الخيار 2");
+    pollItems.add(getString(R.string.Choose_1));
+    pollItems.add(getString(R.string.Choose_2));
 
     PollItemsRecyclerAdapter adapter = new PollItemsRecyclerAdapter(pollItems);
     pollRv.setAdapter(adapter);
@@ -147,7 +147,7 @@ public class CreatePollActivity extends AppCompatActivity implements View.OnClic
       publishBtn.setClickable(false);
       final ProgressDialog progressDialog = new ProgressDialog(this);
       progressDialog.setCancelable(false);
-      progressDialog.setTitle("Publishing poll!");
+      progressDialog.setTitle(getString(R.string.Publish_Poll));
       progressDialog.show();
 
       final Map<String, Object> map = new HashMap<>();

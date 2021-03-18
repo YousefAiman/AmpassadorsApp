@@ -72,13 +72,13 @@ public class ComplaintsActivity extends AppCompatActivity {
         String subjectText = subject.getText().toString();
         String compID = UUID.randomUUID().toString();
         if (defendantname.trim().isEmpty()) {
-          Toast.makeText(ComplaintsActivity.this, "Enter your name pleas", Toast.LENGTH_SHORT).show();
+          Toast.makeText(ComplaintsActivity.this, R.string.Error_message_defname, Toast.LENGTH_SHORT).show();
 
         } else if (title.trim().isEmpty()) {
-          Toast.makeText(ComplaintsActivity.this, "Enter your title pleas", Toast.LENGTH_SHORT).show();
+          Toast.makeText(ComplaintsActivity.this, R.string.Error_meassage_titleCom, Toast.LENGTH_SHORT).show();
 
         } else if (subjectText.trim().isEmpty()) {
-          Toast.makeText(ComplaintsActivity.this, "Write your subject pleas", Toast.LENGTH_SHORT).show();
+          Toast.makeText(ComplaintsActivity.this, R.string.write_your_subject, Toast.LENGTH_SHORT).show();
 
         } else {
           HashMap<String, Object> hashMap = new HashMap<>();
@@ -89,12 +89,12 @@ public class ComplaintsActivity extends AppCompatActivity {
           hashMap.put("time", System.currentTimeMillis());
           hashMap.put("reviewed", false);
           hashMap.put("userid", FirebaseAuth.getInstance().getCurrentUser().getUid());
-          progressDialog.setMessage("Downloading....");
+          progressDialog.setMessage(getString(R.string.Download));
           progressDialog.show();
           reference.document(compID).set(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-              Toast.makeText(ComplaintsActivity.this, "Add Successfully", Toast.LENGTH_SHORT).show();
+              Toast.makeText(ComplaintsActivity.this, R.string.SuccessfullMessage, Toast.LENGTH_SHORT).show();
               progressDialog.dismiss();
               defendant.setText("");
               titleSubject.setText("");
@@ -105,7 +105,7 @@ public class ComplaintsActivity extends AppCompatActivity {
           }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-              Toast.makeText(ComplaintsActivity.this, "Error" + e.getMessage(), Toast.LENGTH_SHORT).show();
+              Toast.makeText(ComplaintsActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
               progressDialog.dismiss();
 
             }

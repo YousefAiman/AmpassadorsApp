@@ -73,7 +73,7 @@ public class List_Sug_Activity extends AppCompatActivity {
     }).addOnFailureListener(new OnFailureListener() {
       @Override
       public void onFailure(@NonNull Exception e) {
-        Toast.makeText(List_Sug_Activity.this, "Error" + e.getMessage(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(List_Sug_Activity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
       }
     });
   }

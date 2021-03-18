@@ -95,10 +95,12 @@
     <string name="polls">Polls</string>
     <string name="policyPrivacy">
        Privacy policy </string>
+    <string name="policyPrivacy">Policy Privacy</string>
     <string name="aboutus">About us</string>
     <string name="logout">Logout</string>
 
 
+    <string name="Error_message_defname">Enter your name pleas</string>
     <!--Notifications-->
     <string name="new_message">New message from </string>
     <string name="fullscreen_image">Fullscreen image</string>
@@ -164,29 +166,9 @@
     <string name="invited_meeting">Invitation to meeting</string>
     <string name="like">Like</string>
     <string name="About_us">
-An association to support the rights of the Palestinian people, known as the International Organization for the Support of the Palestinian People, is a non-profit non-profit non-governmental organization founded in 2015 and registered under no. 8523 based on the Palestinian Associations and Ngos Act No. 01 of 2000. The international body works to protect the human rights and rights of the Palestinian people.
-The Commission embodies its vision in the struggle for a free and democratic Palestinian society in which the rule of law and human rights are respected.
-
-The Authority seeks to protect human rights in Palestine, raise awareness and culture of national and human rights among Palestinians, and enlist support and international solidarity with the rights of the Palestinian people, using strategies, tactics, monitoring tools, documentation and national and international protection of human rights.
-
-        The associations strategic objectives are:
-
-Contribute to building, activating and expanding the base of human rights participation in cooperation with human rights institutions, civil society organizations and international human rights institutions.
-And contribute to the launch and organization of lobbying and advocacy campaigns in support of human rights and the Palestinian people
-And contribute to supporting development, social, economic and cultural initiatives promoting the protection of human rights
-To contribute to the dissemination of a culture of human rights and to activate the use of all mechanisms aimed at protecting human rights.
-Then work on the establishment of a professional academy to build the capacity of young staff in the professional, technical, administrative and leadership fields and in the field of human rights and sustainable development
-
-The Commission relies on the work of the occupied Palestinian territories and various places of Palestinian presence on the principles, values and standards of the rule of law and human rights and works to promote the protection of human rights and justice for the Palestinians, on the way to ending the Israeli occupation, building an independent Palestinian state with Jerusalem as its capital, ensuring the rights of Palestinian refugees, strengthening the rule of law and respecting human rights in accordance with national and international human rights standards.
-
-        As for the program of the Authority, they are:
-Capacity-building programme.
-Legal and human rights support program.
-3. Research and Policy Program
-4. International Media and Advocacy Program
-5- Bank of Development Opportunities and Initiatives
-
+about us
     </string>
+    <string name="About_us">About us</string>
     <string name="comment">Comment</string>
     <string name="publish">Publish</string>
     <string name="Title">Title</string>
@@ -222,5 +204,40 @@ Legal and human rights support program.
     <string name="Meetings">Meetings</string>
     <string name="user_requests">User Requests</string>
     <string name="already_have_an_account_sign_in">Already have an account? Sign in</string>
+    <string name="Error_meassage_titleCom">Enter your title pleas</string>
+    <string name="write_your_subject">Write your subject pleas</string>
+    <string name="dowonloading_">Downloading...</string>
+    <string name="SuccessfullMessage">Add Successfully</string>
+    <string name="Delete_success">Item Delete Successfully</string>
+    <string name="Download">Downloading...</string>
+    <string name="AuthMessage">Pleas Check your Intetnet Connection</string>
+    <string name="Meetings_Message_cant_Slected_item">Meeting time can\'t be at selected time!</string>
+    <string name="meeting_title">Select Meeting Time</string>
+    <string name="Auth_from_sending_message">Do you want to leave message is sending?</string>
+    <string name="Leaving_Message">leaving while message is sending while cancel the message!</string>
+    <string name="YES">Yes</string>
+    <string name="No">No</string>
+    <string name="Error_meassage_MeetingFiald">Failed to create meeting please try again!</string>
+    <string name="Publish_Meeting">Publishing Meeting!</string>
+    <string name="Choose_1">"The Choose 1 "</string>
+    <string name="Choose_2">The  Choose 2</string>
+    <string name="Publish_Poll">Publishing poll!</string>
+    <string name="EndMeeting_Message">Sorry this meeting has ended and all participants will be kicked out</string>
+    <string name="Error_Delete_Message">Failed To Delete the Message</string>
+    <string name="Error_Messsage_to_upload_video">You can not Upload the video form google directly</string>
+    <string name="Google_video_Message">You have to download video then try again!</string>
+    <string name="Message_Error_Uplaod_BigFile">You can\'t send files bigger than</string>
+    <string name="DataScale">MB!</string>
+    <string name="DownLoad_Asking">Do you want to download ?</string>
+    <string name="Download_btn">Download</string>
+    <string name="Cansle">Cansle</string>
+    <string name="Start_zoom_Meeting">"Zoom meeting started! "</string>
+    <string name="send_An_Message">send an image</string>
+    <string name="sen_Attachment">send an attachment</string>
+    <string name="send_video">" send an video"</string>
+    <string name="Succes_Login">Logged out successfully</string>
+    <string name="Message_Fill_title">Please fill in the title!</string>
+    <string name="Message_Fill_descr">Please fill in the description!</string>
+    <string name="Message_Attchent_post">Please choose an attachment!</string>
 
 </resources>

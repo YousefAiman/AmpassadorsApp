@@ -61,7 +61,8 @@ import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Services.FirebaseMessagingService;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 
-public class Home_Activity extends AppCompatActivity implements
+public class
+Home_Activity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
 
   String userid;
@@ -283,7 +284,7 @@ public class Home_Activity extends AppCompatActivity implements
                             PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                             PackageManager.DONT_KILL_APP);
 
-                    Toast.makeText(Home_Activity.this, "Logged out successfully",
+                    Toast.makeText(Home_Activity.this, R.string.Succes_Login,
                             Toast.LENGTH_SHORT).show();
 
                     Intent intent = new Intent(Home_Activity.this, sign_in.class);

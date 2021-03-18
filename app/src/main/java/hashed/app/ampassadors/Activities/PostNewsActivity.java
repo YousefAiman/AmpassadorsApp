@@ -255,13 +255,13 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
   private void showDownloadAlert() {
     final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-    alertDialogBuilder.setMessage("Do you want to download file?");
+    alertDialogBuilder.setMessage(getString(R.string.DownLoad_Asking));
 
-    alertDialogBuilder.setPositiveButton("Download", (dialogInterface, i) -> {
+    alertDialogBuilder.setPositiveButton(R.string.YES, (dialogInterface, i) -> {
       downloadFile(postData.getAttachmentUrl(), postData.getDocumentName());
     });
 
-    alertDialogBuilder.setNegativeButton("Cancel", (dialogInterface, i) -> {
+    alertDialogBuilder.setNegativeButton(R.string.No, (dialogInterface, i) -> {
       dialogInterface.dismiss();
     });
 
@@ -292,7 +292,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
     request = new DownloadManager.Request(Uri.parse(url))
             .setTitle(fileName)
-            .setDescription("Downloading")
+            .setDescription(getString(R.string.Download))
             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
             .setAllowedOverMetered(true)
             .setAllowedOverRoaming(true);

@@ -35,7 +35,8 @@
         app:layout_constraintBottom_toTopOf="@+id/guideline40"
         app:layout_constraintEnd_toStartOf="@+id/guideline32"
         app:layout_constraintStart_toStartOf="@+id/guideline33"
-        app:layout_constraintTop_toTopOf="@+id/guideline39" />
+        app:layout_constraintTop_toTopOf="@+id/guideline39"
+        app:layout_constraintVertical_bias="1.0" />
 
     <EditText
         android:id="@+id/imput_password"
@@ -109,7 +110,7 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/guideline44"
         app:layout_constraintTop_toTopOf="@+id/guideline42"
-        app:layout_constraintVertical_bias="0.936"
+        app:layout_constraintVertical_bias="0.893"
         tools:ignore="MissingConstraints" />
 
     <TextView
@@ -127,12 +128,13 @@
         android:id="@+id/view2"
         android:layout_width="0dp"
         android:layout_height="2dp"
-        android:layout_marginTop="400dp"
         android:background="#c0c0c0"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline43"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline33"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline42"
+        app:layout_constraintVertical_bias="0.234"
         tools:ignore="MissingConstraints" />
 
     <Button
@@ -215,7 +217,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="205dp"
+        app:layout_constraintGuide_percent="0.49878347"
         app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.constraintlayout.widget.Guideline
@@ -225,20 +227,20 @@
         android:layout_marginEnd="822dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintGuide_begin="239dp" />
+        app:layout_constraintGuide_percent="0.5815085" />
 
     <android.widget.Button
         android:id="@+id/gmailbtn"
         android:layout_width="0dp"
         android:layout_height="45dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/gamil_disgn"
         android:drawableStart="@drawable/ic_gamil"
         android:padding="60dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline45"
         app:layout_constraintEnd_toStartOf="@+id/guideline43"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/guideline33"
-        app:layout_constraintTop_toBottomOf="@+id/view2" />
+        app:layout_constraintStart_toStartOf="@+id/guideline33" />
 
     <android.widget.Button
         android:id="@+id/facebookbtn"
@@ -249,10 +251,10 @@
         android:paddingStart="60dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline45"
         app:layout_constraintEnd_toStartOf="@+id/guideline32"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline44"
         app:layout_constraintTop_toTopOf="@+id/view3"
-        app:layout_constraintVertical_bias="0.833" />
+        app:layout_constraintVertical_bias="0.619" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline45"
