@@ -24,6 +24,7 @@ import com.squareup.picasso.Picasso;
 import hashed.app.ampassadors.Activities.profile_edit;
 import hashed.app.ampassadors.Objects.UserInfo;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.SigninUtil;
 
 public class ProfileFragment extends Fragment {
 
@@ -37,6 +38,11 @@ public class ProfileFragment extends Fragment {
 
     View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
+    if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
+
+      SigninUtil.getInstance(getContext(),
+              getActivity()).show();
+    }
     edit_profile = view.findViewById(R.id.edit_data);
     username = view.findViewById(R.id.in_username);
     password = view.findViewById(R.id.in_password);

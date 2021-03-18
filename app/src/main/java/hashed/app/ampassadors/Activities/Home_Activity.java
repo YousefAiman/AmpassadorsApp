@@ -90,7 +90,7 @@ public class Home_Activity extends AppCompatActivity implements
     if(FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
       replaceFragment(new PostsFragment());
 
-      navigationview.inflateMenu(R.menu.navigation_menu);
+      navigationview.inflateMenu(R.menu.menu_nav);
 
     }else{
       firebaseFirestore.collection("Users").document(userid).get().
@@ -110,7 +110,7 @@ public class Home_Activity extends AppCompatActivity implements
             if (GlobalVariables.getRole()!=null && GlobalVariables.getRole().equals("Admin")) {
               navigationview.inflateMenu(R.menu.menu_admin);
             } else {
-              navigationview.inflateMenu(R.menu.navigation_menu);
+              navigationview.inflateMenu(R.menu.menu_nav);
             }
           }
         }
@@ -177,29 +177,6 @@ public class Home_Activity extends AppCompatActivity implements
 
     navigationview.setNavigationItemSelectedListener(this);
 
-//    nav_btom.setSelectedItemId(R.id.home);
-
-    nav_btom.setOnNavigationItemSelectedListener(item -> {
-      if (item.getItemId() == R.id.home) {
-        if (nav_btom.getSelectedItemId() != R.id.home) {
-          replaceFragment(new PostsFragment());
-        }
-      } else if (item.getItemId() == R.id.profile) {
-        if (nav_btom.getSelectedItemId() != R.id.profile) {
-          replaceFragment(new PostsProfileFragment());
-        }
-      } else if (item.getItemId() == R.id.chat) {
-        if (nav_btom.getSelectedItemId() != R.id.chat) {
-          replaceFragment(new ChattingFragment());
-        }
-      } else if (item.getItemId() == R.id.charity) {
-        if (nav_btom.getSelectedItemId() != R.id.charity) {
-          replaceFragment(new MeetingsFragment());
-        }
-      }
-
-      return true;
-    });
 
   }
 
