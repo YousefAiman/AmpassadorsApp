@@ -1,11 +1,15 @@
 package hashed.app.ampassadors.Activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
-
 import android.app.AlertDialog;
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,18 +19,18 @@ import android.widget.ImageView;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
-import hashed.app.ampassadors.Adapters.PostAdapter;
 import hashed.app.ampassadors.Fragments.CommentsFragment;
 import hashed.app.ampassadors.Fragments.ImageFullScreenFragment;
 import hashed.app.ampassadors.Fragments.VideoFullScreenFragment;
 import hashed.app.ampassadors.Objects.PostData;
-import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
 import hashed.app.ampassadors.Utils.GlobalVariables;
@@ -37,14 +41,14 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
   //views
   private CardView cardView;
-  private TextView usernameTv,dateTv,titleTv,descriptionTv,likesTv,commentsTv,likeTv
-          ,commentTv,newsTitleTv;
-  private ImageView newsIv, userIv,attachmentImage;
+  private TextView usernameTv, dateTv, titleTv, descriptionTv, likesTv, commentsTv, likeTv, commentTv, newsTitleTv;
+  private ImageView newsIv, userIv, attachmentImage;
   private FrameLayout frameLayout;
   private PlayerView playerView;
 
   //data
   private PostData postData;
+  private BroadcastReceiver downloadCompleteReceiver;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -65,16 +69,16 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
   }
 
 
-  private void setupToolbar(){
+  private void setupToolbar() {
 
     final Toolbar toolbar = findViewById(R.id.toolbar);
-    toolbar.setNavigationOnClickListener(v-> finish());
+    toolbar.setNavigationOnClickListener(v -> finish());
     toolbar.setOnMenuItemClickListener(this);
 
   }
 
 
-  private void getViews(){
+  private void getViews() {
 
     cardView = findViewById(R.id.cardView);
     newsIv = findViewById(R.id.newsIv);
@@ -94,7 +98,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
   }
 
 
-  private void setClickListeners(){
+  private void setClickListeners() {
 
     newsIv.setOnClickListener(this);
     userIv.setOnClickListener(this);
@@ -102,11 +106,12 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
     commentTv.setOnClickListener(this);
 
   }
-  private void getPostData(){
+
+  private void getPostData() {
 
     postData = (PostData) getIntent().getSerializableExtra("postData");
 
-    if(postData.getAttachmentType() == Files.IMAGE){
+    if (postData.getAttachmentType() == Files.IMAGE) {
       Picasso.get().load(postData.getAttachmentUrl()).fit().into(newsIv);
     }
 
@@ -119,16 +124,16 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
             TimeFormatter.MONTH_DAY_YEAR_HOUR_MINUTE));
 
     likeTv.setTextColor(getResources().getColor(
-              GlobalVariables.getLikesList().contains(postData.getPostId())?R.color.red:
-                      R.color.black));
+            GlobalVariables.getLikesList().contains(postData.getPostId()) ? R.color.red :
+                    R.color.black));
 
     getNewsType();
 
   }
 
-  private void getNewsType(){
+  private void getNewsType() {
 
-    switch (postData.getAttachmentType()){
+    switch (postData.getAttachmentType()) {
 
       case Files.VIDEO:
 
@@ -155,9 +160,9 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
         final LayoutParams lp2 = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp2.gravity= Gravity.TOP;
+        lp2.gravity = Gravity.TOP;
         final float density = getResources().getDisplayMetrics().density;
-        lp2.setMargins((int) (4*density),(int) (4*density),0,0);
+        lp2.setMargins((int) (4 * density), (int) (4 * density), 0, 0);
 
 
         newsIv.setScaleType(ImageView.ScaleType.CENTER);
@@ -179,22 +184,22 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
     }
   }
 
-  private void getUserInfo(){
+  private void getUserInfo() {
 
 
     FirebaseFirestore.getInstance().collection("Users")
             .document(postData.getPublisherId()).get().addOnSuccessListener(snapshot -> {
-              if(snapshot.exists()){
+      if (snapshot.exists()) {
 
-                final String imageUrl = snapshot.getString("imageUrl");
+        final String imageUrl = snapshot.getString("imageUrl");
 
-                if(imageUrl!=null && !imageUrl.isEmpty()){
-                  Picasso.get().load(imageUrl).fit().into(userIv);
-                }
-                usernameTv.setText(snapshot.getString("username"));
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+          Picasso.get().load(imageUrl).fit().into(userIv);
+        }
+        usernameTv.setText(snapshot.getString("username"));
 
-              }
-            });
+      }
+    });
 
 
   }
@@ -204,20 +209,20 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
     final int id = view.getId();
 
-    if(id == likeTv.getId()){
+    if (id == likeTv.getId()) {
       likeOrDislike();
-    }else if(id == commentTv.getId()){
+    } else if (id == commentTv.getId()) {
 
       CommentsFragment commentsFragment = new CommentsFragment(postData.getPostId(),
               postData.getComments());
-      commentsFragment.show(getSupportFragmentManager(),"CommentsFragment");
-    }else if(id == newsIv.getId()){
+      commentsFragment.show(getSupportFragmentManager(), "CommentsFragment");
+    } else if (id == newsIv.getId()) {
 
-      if(postData.getAttachmentUrl()!=null){
-        if(postData.getAttachmentType() == Files.IMAGE){
+      if (postData.getAttachmentUrl() != null) {
+        if (postData.getAttachmentType() == Files.IMAGE) {
           new ImageFullScreenFragment(postData.getAttachmentUrl())
-                  .show(getSupportFragmentManager(),"FullScreen");
-        }else if(postData.getAttachmentType() == Files.VIDEO){
+                  .show(getSupportFragmentManager(), "FullScreen");
+        } else if (postData.getAttachmentType() == Files.VIDEO) {
 
           frameLayout.setVisibility(View.VISIBLE);
 
@@ -230,44 +235,44 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
   }
 
 
-  private void likeOrDislike(){
+  private void likeOrDislike() {
 
 
-
-    if(likeTv.getCurrentTextColor() == getResources().getColor(R.color.red)){
+    if (likeTv.getCurrentTextColor() == getResources().getColor(R.color.red)) {
 
       likeTv.setTextColor(getResources().getColor(R.color.black));
 
       likesTv.setText(String.valueOf(
-              (Integer.parseInt(likesTv.getText().toString())-1)));
+              (Integer.parseInt(likesTv.getText().toString()) - 1)));
 
-      PostData.likePost(postData.getPostId(),2,postData.getPublisherId(),this);
+      PostData.likePost(postData.getPostId(), 2, postData.getPublisherId(), this);
 
-    }else{
+    } else {
 
       likeTv.setTextColor(getResources().getColor(R.color.red));
 
       likesTv.setText(String.valueOf(
-              (Integer.parseInt(likesTv.getText().toString())+1)));
+              (Integer.parseInt(likesTv.getText().toString()) + 1)));
 
-      PostData.likePost(postData.getPostId(),1,postData.getPublisherId(),this);
+      PostData.likePost(postData.getPostId(), 1, postData.getPublisherId(), this);
 
     }
   }
+
   @Override
   public boolean onMenuItemClick(MenuItem item) {
     return false;
   }
 
-  private void showDownloadAlert(){
+  private void showDownloadAlert() {
     final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
     alertDialogBuilder.setMessage("Do you want to download file?");
 
-    alertDialogBuilder.setPositiveButton("Download",(dialogInterface, i) -> {
-//        downloadFile(position,url,fileName);
+    alertDialogBuilder.setPositiveButton("Download", (dialogInterface, i) -> {
+      downloadFile(postData.getAttachmentUrl(), postData.getDocumentName());
     });
 
-    alertDialogBuilder.setNegativeButton("Cancel",(dialogInterface, i) -> {
+    alertDialogBuilder.setNegativeButton("Cancel", (dialogInterface, i) -> {
       dialogInterface.dismiss();
     });
 
@@ -279,16 +284,104 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
   public void onBackPressed() {
     super.onBackPressed();
 
-    if(frameLayout.getVisibility() == View.VISIBLE){
+    if (frameLayout.getVisibility() == View.VISIBLE) {
 
       getSupportFragmentManager().beginTransaction().remove(
               getSupportFragmentManager().getFragments().get(0)).commit();
 
       frameLayout.setVisibility(View.GONE);
 
-    }else{
+    } else {
       super.onBackPressed();
     }
 
+  }
+
+  private void downloadFile(String url, String fileName) {
+
+    DownloadManager.Request request;
+
+    request = new DownloadManager.Request(Uri.parse(url))
+            .setTitle(fileName)
+            .setDescription("Downloading")
+            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            .setAllowedOverMetered(true)
+            .setAllowedOverRoaming(true);
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      request.setRequiresCharging(false);
+    }
+
+    DownloadManager downloadManager = (DownloadManager)
+            this.getSystemService(Context.DOWNLOAD_SERVICE);
+
+
+    request.setDestinationInExternalFilesDir(this, Environment.DIRECTORY_DOWNLOADS,
+            fileName);
+
+    long downloadId = downloadManager.enqueue(request);
+    attachmentImage.setImageResource(R.drawable.cancel_icon);
+    attachmentImage.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+
+        final DownloadManager downloadManager = (DownloadManager)
+                getSystemService(Context.DOWNLOAD_SERVICE);
+
+        downloadManager.remove(downloadId);
+        attachmentImage.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+            showDownloadAlert();
+          }
+        });
+
+      }
+    });
+
+    if (downloadCompleteReceiver == null) {
+      setUpDownloadReceiver();
+    }
+
+
+  }
+
+  private void setUpDownloadReceiver() {
+
+    downloadCompleteReceiver = new BroadcastReceiver() {
+      @Override
+      public void onReceive(Context context, Intent intent) {
+
+        long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+
+        if (id != -1) {
+
+//          openDownloadedFile(id);
+
+          attachmentImage.setImageResource(R.drawable.download_icon);
+          attachmentImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+              showDownloadAlert();
+            }
+          });
+
+        }
+
+      }
+    };
+
+    registerReceiver(downloadCompleteReceiver,
+            new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+
+  }
+
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    if (downloadCompleteReceiver != null) {
+      unregisterReceiver(downloadCompleteReceiver);
+    }
   }
 }

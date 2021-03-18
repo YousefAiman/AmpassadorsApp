@@ -5,7 +5,6 @@ import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
 
 import java.io.Serializable;
-import java.util.Map;
 
 @IgnoreExtraProperties
 public class PrivateMessage implements Serializable {
@@ -38,7 +37,56 @@ public class PrivateMessage implements Serializable {
 
   public PrivateMessage() {
   }
-//
+
+  //text message
+  public PrivateMessage(String content, long time, String sender, int type) {
+    this.content = content;
+    this.time = time;
+    this.sender = sender;
+    this.type = type;
+  }
+
+  //image message
+  public PrivateMessage(String content, long time, String sender, int type, String attachmentUrl) {
+    this.content = content;
+    this.time = time;
+    this.sender = sender;
+    this.type = type;
+    this.attachmentUrl = attachmentUrl;
+  }
+
+  //video message
+  public PrivateMessage(String content, long time, String sender, int type, String attachmentUrl,
+                        String videoThumbnail) {
+    this.content = content;
+    this.time = time;
+    this.sender = sender;
+    this.type = type;
+    this.attachmentUrl = attachmentUrl;
+    this.videoThumbnail = videoThumbnail;
+  }
+
+  //audio message
+  public PrivateMessage(long length, long time, String sender, int type, String attachmentUrl) {
+    this.length = length;
+    this.time = time;
+    this.sender = sender;
+    this.type = type;
+    this.attachmentUrl = attachmentUrl;
+  }
+
+  //document message
+  public PrivateMessage(long time, String content, String sender, int type, String attachmentUrl,
+                        String fileName) {
+    this.time = time;
+    this.content = content;
+    this.sender = sender;
+    this.type = type;
+    this.attachmentUrl = attachmentUrl;
+    this.fileName = fileName;
+  }
+
+  //
   public UploadTask getUploadTask() {
     return uploadTask;
   }
@@ -53,91 +101,6 @@ public class PrivateMessage implements Serializable {
 
   public void setZoomMeeting(ZoomMeeting zoomMeeting) {
     this.zoomMeeting = zoomMeeting;
-  }
-
-  public static class UploadTask{
-
-    private long downloadId;
-    private boolean isDownloading;
-    private boolean isCompleted;
-
-    public UploadTask(long downloadId,boolean isDownloading){
-      this.downloadId = downloadId;
-      this.isDownloading = isDownloading;
-    }
-
-    public long getDownloadId() {
-      return downloadId;
-    }
-
-    public void setDownloadId(long downloadId) {
-      this.downloadId = downloadId;
-    }
-
-    public boolean isDownloading() {
-      return isDownloading;
-    }
-
-    public void setDownloading(boolean downloading) {
-      isDownloading = downloading;
-    }
-
-    public boolean isCompleted() {
-      return isCompleted;
-    }
-
-    public void setCompleted(boolean completed) {
-      isCompleted = completed;
-    }
-  }
-
-
-  //text message
-  public PrivateMessage(String content, long time, String sender,int type) {
-    this.content = content;
-    this.time = time;
-    this.sender = sender;
-    this.type = type;
-  }
-
-  //image message
-  public PrivateMessage(String content, long time, String sender,int type,String attachmentUrl) {
-    this.content = content;
-    this.time = time;
-    this.sender = sender;
-    this.type = type;
-    this.attachmentUrl = attachmentUrl;
-  }
-
-  //video message
-  public PrivateMessage(String content, long time, String sender,int type,String attachmentUrl,
-                        String videoThumbnail) {
-    this.content = content;
-    this.time = time;
-    this.sender = sender;
-    this.type = type;
-    this.attachmentUrl = attachmentUrl;
-    this.videoThumbnail = videoThumbnail;
-  }
-
-  //audio message
-  public PrivateMessage(long length, long time, String sender,int type,String attachmentUrl) {
-    this.length = length;
-    this.time = time;
-    this.sender = sender;
-    this.type = type;
-    this.attachmentUrl = attachmentUrl;
-  }
-
-  //document message
-  public PrivateMessage(long time,String content, String sender,int type,String attachmentUrl,
-                        String fileName) {
-    this.time = time;
-    this.content = content;
-    this.sender = sender;
-    this.type = type;
-    this.attachmentUrl = attachmentUrl;
-    this.fileName = fileName;
   }
 
   public String getContent() {
@@ -218,6 +181,42 @@ public class PrivateMessage implements Serializable {
 
   public void setFileName(String fileName) {
     this.fileName = fileName;
+  }
+
+  public static class UploadTask {
+
+    private long downloadId;
+    private boolean isDownloading;
+    private boolean isCompleted;
+
+    public UploadTask(long downloadId, boolean isDownloading) {
+      this.downloadId = downloadId;
+      this.isDownloading = isDownloading;
+    }
+
+    public long getDownloadId() {
+      return downloadId;
+    }
+
+    public void setDownloadId(long downloadId) {
+      this.downloadId = downloadId;
+    }
+
+    public boolean isDownloading() {
+      return isDownloading;
+    }
+
+    public void setDownloading(boolean downloading) {
+      isDownloading = downloading;
+    }
+
+    public boolean isCompleted() {
+      return isCompleted;
+    }
+
+    public void setCompleted(boolean completed) {
+      isCompleted = completed;
+    }
   }
 
 

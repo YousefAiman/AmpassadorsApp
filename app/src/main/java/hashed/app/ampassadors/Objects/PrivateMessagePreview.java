@@ -1,6 +1,5 @@
 package hashed.app.ampassadors.Objects;
 
-import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
 

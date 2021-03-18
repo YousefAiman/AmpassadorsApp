@@ -1,18 +1,17 @@
 package hashed.app.ampassadors.Fragments;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -34,7 +33,6 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,27 +43,23 @@ import hashed.app.ampassadors.Objects.ChatItem;
 import hashed.app.ampassadors.Objects.PrivateMessagePreview;
 import hashed.app.ampassadors.R;
 
-public class MessagesFragment extends Fragment{
+public class MessagesFragment extends Fragment {
 
+  //database
+  private static final DatabaseReference messagesRef =
+          FirebaseDatabase.getInstance().getReference("PrivateMessages");
+  private static final CollectionReference messagesCollectionRef =
+          FirebaseFirestore.getInstance().collection("PrivateMessages");
   //views
   private RecyclerView chatsRv;
-  private TextView noMessagesTv;
-
-  //chats
-  private ArrayList<ChatItem> chatItems;
 //  private boolean isLoadingMessages = false;
 //  private static final int MESSAGE_PAGE = 10;
 //  private DocumentSnapshot lastDocumentSnapshot;
 //  private DocumentSnapshot firstDocumentSnapshot;
 //  private ChatsScrollListener scrollListener;
-
-  //database
-  private static final DatabaseReference messagesRef =
-          FirebaseDatabase.getInstance().getReference("PrivateMessages");
-
-  private static final CollectionReference messagesCollectionRef =
-          FirebaseFirestore.getInstance().collection("PrivateMessages");
-
+  private TextView noMessagesTv;
+  //chats
+  private ArrayList<ChatItem> chatItems;
   private List<ListenerRegistration> listenerRegistrations;
   private Map<DatabaseReference, ValueEventListener> valueEventListeners;
 
@@ -74,26 +68,25 @@ public class MessagesFragment extends Fragment{
   private ChatsAdapter adapter;
 
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-
-    currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-    chatItems = new ArrayList<>();
-    adapter = new ChatsAdapter(chatItems,currentUid,getContext());
-
-  }
-
   public MessagesFragment() {
     // Required empty public constructor
   }
 
+  @Override
+  public void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+
+    currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    chatItems = new ArrayList<>();
+    adapter = new ChatsAdapter(chatItems, currentUid, getContext());
+
+  }
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
     // Inflate the layout for this fragment
-    View view  =  inflater.inflate(R.layout.fragment_recycler_child, container, false);
+    View view = inflater.inflate(R.layout.fragment_recycler_child, container, false);
     chatsRv = view.findViewById(R.id.childRv);
     noMessagesTv = view.findViewById(R.id.emptyTv);
     noMessagesTv.setText(R.string.no_current_messages);
@@ -109,7 +102,7 @@ public class MessagesFragment extends Fragment{
       @Override
       public void onItemsRemoved(@NonNull RecyclerView recyclerView,
                                  int positionStart, int itemCount) {
-        if (itemCount == 0){
+        if (itemCount == 0) {
           noMessagesTv.setVisibility(View.VISIBLE);
           chatsRv.setVisibility(View.INVISIBLE);
         }
@@ -120,7 +113,7 @@ public class MessagesFragment extends Fragment{
                                int positionStart, int itemCount) {
         super.onItemsAdded(recyclerView, positionStart, itemCount);
 
-        if(chatsRv.getVisibility() == View.INVISIBLE){
+        if (chatsRv.getVisibility() == View.INVISIBLE) {
 
           noMessagesTv.setVisibility(View.GONE);
           chatsRv.setVisibility(View.VISIBLE);
@@ -144,10 +137,10 @@ public class MessagesFragment extends Fragment{
   }
 
 
-  private void getAllChats(){
+  private void getAllChats() {
 
 //    isLoadingMessages = true;
-    Query query = messagesCollectionRef.whereArrayContains("users",currentUid)
+    Query query = messagesCollectionRef.whereArrayContains("users", currentUid)
             .orderBy("latestMessageTime", Query.Direction.DESCENDING);
 
 //    if(lastDocumentSnapshot!=null){
@@ -166,7 +159,7 @@ public class MessagesFragment extends Fragment{
 
         final List<DocumentSnapshot> docs = snapshots.getDocuments();
 
-        if(docs.isEmpty()){
+        if (docs.isEmpty()) {
           return;
         }
 
@@ -174,15 +167,15 @@ public class MessagesFragment extends Fragment{
 //        lastDocumentSnapshot = docs.get(0);
 //        firstDocumentSnapshot = docs.get(docs.size()-1);
 
-        for(int i=0;i<docs.size();i++){
+        for (int i = 0; i < docs.size(); i++) {
 
-          if(!docs.get(i).contains("databaseRefId")){
+          if (!docs.get(i).contains("databaseRefId")) {
             return;
           }
 
-          getMessageFromSnapshot(docs.get(i),false);
+          getMessageFromSnapshot(docs.get(i), false);
 
-          Log.d("ttt","snapshot: "+docs.get(i).getId());
+          Log.d("ttt", "snapshot: " + docs.get(i).getId());
 
 
         }
@@ -191,7 +184,7 @@ public class MessagesFragment extends Fragment{
       @Override
       public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-        if(task.isSuccessful() && task.getResult()!=null){
+        if (task.isSuccessful() && task.getResult() != null) {
 
           addNewMessagesListener();
 
@@ -237,18 +230,17 @@ public class MessagesFragment extends Fragment{
   }
 
 
-
-  private void getMessageFromSnapshot(DocumentSnapshot snapshot,boolean addToFirst){
+  private void getMessageFromSnapshot(DocumentSnapshot snapshot, boolean addToFirst) {
 
     final ChatItem chatItem = new ChatItem();
     chatItem.setMessagingDocId(snapshot.getString("databaseRefId"));
     final String[] ids = chatItem.getMessagingDocId().split("-");
-    chatItem.setMessagingUid(ids[0].equals(currentUid)?ids[1]:ids[0]);
-    getLastMessage(chatItem,addToFirst);
+    chatItem.setMessagingUid(ids[0].equals(currentUid) ? ids[1] : ids[0]);
+    getLastMessage(chatItem, addToFirst);
 
   }
 
-  private void getLastMessage(ChatItem chatItem,boolean addToFirst){
+  private void getLastMessage(ChatItem chatItem, boolean addToFirst) {
 
     final com.google.firebase.database.Query reference =
             messagesRef.child(chatItem.getMessagingDocId()).child("messages")
@@ -259,29 +251,29 @@ public class MessagesFragment extends Fragment{
               @Override
               public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                if(snapshot.exists() && snapshot.getChildrenCount() > 0){
+                if (snapshot.exists() && snapshot.getChildrenCount() > 0) {
 
-                  Log.d("ttt","last message value changed: "+snapshot.getKey()
-                          +" child count: "+snapshot.getChildrenCount());
+                  Log.d("ttt", "last message value changed: " + snapshot.getKey()
+                          + " child count: " + snapshot.getChildrenCount());
 
                   final DataSnapshot ref = snapshot.getChildren().iterator().next();
 
-                  Log.d("ttt","ref.key: "+ref.getKey());
+                  Log.d("ttt", "ref.key: " + ref.getKey());
 
-                  if(chatItem.getMessage() == null){
+                  if (chatItem.getMessage() == null) {
 
-                    Log.d("ttt","no message so adding it");
+                    Log.d("ttt", "no message so adding it");
 
                     chatItem.setMessageKey(Long.parseLong(ref.getKey()));
 
-                    checkMessageSeenAndAddSeenListener(ref,chatItem,addToFirst);
+                    checkMessageSeenAndAddSeenListener(ref, chatItem, addToFirst);
 
-                  }else{
+                  } else {
 
-                    Log.d("ttt","looking for chat item");
-                    int index= 0;
-                    for(int i=0;i<chatItems.size();i++){
-                      if(chatItems.get(i).getMessagingDocId().equals(chatItem.getMessagingDocId())){
+                    Log.d("ttt", "looking for chat item");
+                    int index = 0;
+                    for (int i = 0; i < chatItems.size(); i++) {
+                      if (chatItems.get(i).getMessagingDocId().equals(chatItem.getMessagingDocId())) {
                         index = i;
                         break;
                       }
@@ -290,23 +282,23 @@ public class MessagesFragment extends Fragment{
 
                     final ChatItem chatItem1 = chatItems.get(index);
 
-                    Log.d("ttt","found at: "+index+" " +
-                            "with messaging id: "+chatItem1.getMessagingDocId());
+                    Log.d("ttt", "found at: " + index + " " +
+                            "with messaging id: " + chatItem1.getMessagingDocId());
 
                     chatItem1.setMessage(ref.getValue(PrivateMessagePreview.class));
 
-                    if(index == 0){
+                    if (index == 0) {
 
                       adapter.notifyItemChanged(index);
 
-                    }else{
+                    } else {
 
 //                      Collections.swap(chatItems,index,0);
 //                      adapter.notifyItemMoved(index,0);
 
                       chatItems.remove(index);
                       adapter.notifyItemRemoved(index);
-                      chatItems.add(0,chatItem1);
+                      chatItems.add(0, chatItem1);
                       adapter.notifyItemInserted(0);
 
                     }
@@ -417,132 +409,134 @@ public class MessagesFragment extends Fragment{
 
   private void checkMessageSeenAndAddSeenListener(DataSnapshot messageSnapshot,
                                                   ChatItem chatItem,
-                                                  boolean addToFirst){
+                                                  boolean addToFirst) {
 
-      DatabaseReference lastSeenRef =
-              messagesRef.child(chatItem.getMessagingDocId()).child("LastSeenMessage:"+currentUid);
+    DatabaseReference lastSeenRef =
+            messagesRef.child(chatItem.getMessagingDocId()).child("LastSeenMessage:" + currentUid);
 
     ValueEventListener listener;
 
     lastSeenRef.addValueEventListener(listener = new ValueEventListener() {
-                  @Override
-                  public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if(snapshot.exists()){
+      @Override
+      public void onDataChange(@NonNull DataSnapshot snapshot) {
+        if (snapshot.exists()) {
 
-                      Log.d("ttt","last seen changed");
-                      if(!chatItems.contains(chatItem)){
+          Log.d("ttt", "last seen changed");
+          if (!chatItems.contains(chatItem)) {
 
-                        Log.d("ttt","!chatItems.contains(chatItem)");
-                        chatItem.setSeen(Long.parseLong(snapshot.getValue(String.class)) >=
-                                chatItem.getMessageKey());
+            Log.d("ttt", "!chatItems.contains(chatItem)");
+            chatItem.setSeen(Long.parseLong(snapshot.getValue(String.class)) >=
+                    chatItem.getMessageKey());
 
-                        Log.d("ttt","chatItem.getseen: "+
-                                chatItem.isSeen());
+            Log.d("ttt", "chatItem.getseen: " +
+                    chatItem.isSeen());
 
-                        chatItem.setMessage(messageSnapshot.
-                                getValue(PrivateMessagePreview.class));
+            chatItem.setMessage(messageSnapshot.
+                    getValue(PrivateMessagePreview.class));
 
-                        if(addToFirst){
+            if (addToFirst) {
 
-                          chatItems.add(0,chatItem);
+              chatItems.add(0, chatItem);
 
-                          adapter.notifyItemInserted(0);
+              adapter.notifyItemInserted(0);
 
-                        }else{
-                          chatItems.add(chatItem);
+            } else {
+              chatItems.add(chatItem);
 
-                          adapter.notifyItemInserted(chatItems.size());
-                        }
+              adapter.notifyItemInserted(chatItems.size());
+            }
 
-                      }else{
+          } else {
 
-                        Log.d("ttt","chatItems.contains(chatItem)");
+            Log.d("ttt", "chatItems.contains(chatItem)");
 
-                        int index= 0;
-                        for(int i=0;i<chatItems.size();i++){
-                          if(chatItems.get(i).getMessagingDocId().equals(chatItem.getMessagingDocId())){
-                            index = i;
-                            break;
-                          }
-                        }
+            int index = 0;
+            for (int i = 0; i < chatItems.size(); i++) {
+              if (chatItems.get(i).getMessagingDocId().equals(chatItem.getMessagingDocId())) {
+                index = i;
+                break;
+              }
+            }
 
-                        ChatItem chatItem1 = chatItems.get(index);
+            ChatItem chatItem1 = chatItems.get(index);
 
-                        boolean wasSeen = chatItem1.isSeen();
+            boolean wasSeen = chatItem1.isSeen();
 
-                        chatItem1.setSeen(Long.parseLong(snapshot.getValue(String.class)) >=
-                                chatItem1.getMessageKey());
+            chatItem1.setSeen(Long.parseLong(snapshot.getValue(String.class)) >=
+                    chatItem1.getMessageKey());
 
-                        Log.d("ttt","chatItems.get(position),getseen: "+
-                                chatItem1.isSeen());
+            Log.d("ttt", "chatItems.get(position),getseen: " +
+                    chatItem1.isSeen());
 
-                        if((chatItem1.isSeen() && !wasSeen)
-                        || (!chatItem1.isSeen() && wasSeen)){
+            if ((chatItem1.isSeen() && !wasSeen)
+                    || (!chatItem1.isSeen() && wasSeen)) {
 
-                          adapter.notifyItemChanged(index);
+              adapter.notifyItemChanged(index);
 
-                        }
+            }
 
-                      }
+          }
 
-                    }
-                  }
-                  @Override public void onCancelled(@NonNull DatabaseError error) {}
-                });
+        }
+      }
 
-        valueEventListeners.put(lastSeenRef,listener);
+      @Override
+      public void onCancelled(@NonNull DatabaseError error) {
+      }
+    });
+
+    valueEventListeners.put(lastSeenRef, listener);
 
   }
 
 
-  private void addMessageChangeListener(Query query){
+  private void addMessageChangeListener(Query query) {
 
-      if(listenerRegistrations == null){
-        listenerRegistrations = new ArrayList<>();
-      }
+    if (listenerRegistrations == null) {
+      listenerRegistrations = new ArrayList<>();
+    }
 
 //    query = query.whereGreaterThan("latestMessageTime",
 //            System.currentTimeMillis());
 
     listenerRegistrations.add(
-    query.addSnapshotListener((value, error) -> {
+            query.addSnapshotListener((value, error) -> {
 
-      Log.d("ttt","something changed");
-      if(value!=null){
-        for(DocumentChange dc:value.getDocumentChanges()){
-          Log.d("ttt","doc id: "+dc.getDocument().getId());
-          if(dc.getType() == DocumentChange.Type.MODIFIED
+              Log.d("ttt", "something changed");
+              if (value != null) {
+                for (DocumentChange dc : value.getDocumentChanges()) {
+                  Log.d("ttt", "doc id: " + dc.getDocument().getId());
+                  if (dc.getType() == DocumentChange.Type.MODIFIED
 //                  ||
 //          dc.getType() == DocumentChange.Type.ADDED
-          ){
-            Log.d("ttt","MODIFIED");
-            final DocumentSnapshot ds = dc.getDocument();
+                  ) {
+                    Log.d("ttt", "MODIFIED");
+                    final DocumentSnapshot ds = dc.getDocument();
 
-            for(int i=0;i<chatItems.size();i++){
+                    for (int i = 0; i < chatItems.size(); i++) {
 
-              Log.d("ttt","chatItems.get(i).getMessagingDocId(): "+
-                      chatItems.get(i).getMessagingDocId());
+                      Log.d("ttt", "chatItems.get(i).getMessagingDocId(): " +
+                              chatItems.get(i).getMessagingDocId());
 
-              Log.d("ttt"," ds.getId(): "+ds.getId());
+                      Log.d("ttt", " ds.getId(): " + ds.getId());
 
-              if(chatItems.get(i).getMessagingDocId().equals(ds.getId())){
+                      if (chatItems.get(i).getMessagingDocId().equals(ds.getId())) {
 
-                Log.d("ttt","found at: "+i);
+                        Log.d("ttt", "found at: " + i);
 
-                if(chatItems.get(i).getMessage().getDeleted()){
-                  getLastMessage(chatItems.get(i),false);
-                }else if(ds.contains("lastMessageDeleted")){
-                  chatItems.get(i).getMessage().setDeleted(true);
-                  adapter.notifyItemChanged(i);
+                        if (chatItems.get(i).getMessage().getDeleted()) {
+                          getLastMessage(chatItems.get(i), false);
+                        } else if (ds.contains("lastMessageDeleted")) {
+                          chatItems.get(i).getMessage().setDeleted(true);
+                          adapter.notifyItemChanged(i);
+                        }
+                        break;
+                      }
+                    }
+                  }
                 }
-                break;
               }
-            }
-          }
-        }
-      }
-    }));
-
+            }));
 
 
 //    messagesCollectionRef.document(documentRef).addSnapshotListener(new EventListener<DocumentSnapshot>() {
@@ -560,52 +554,52 @@ public class MessagesFragment extends Fragment{
 
   }
 
-  private void addNewMessagesListener(){
+  private void addNewMessagesListener() {
 
-      if(listenerRegistrations == null){
-        listenerRegistrations = new ArrayList<>();
-      }
+    if (listenerRegistrations == null) {
+      listenerRegistrations = new ArrayList<>();
+    }
 
     final Query query = messagesCollectionRef
-            .whereArrayContains("users",currentUid)
+            .whereArrayContains("users", currentUid)
             .orderBy("latestMessageTime", Query.Direction.DESCENDING)
-            .whereGreaterThan("latestMessageTime",System.currentTimeMillis());
+            .whereGreaterThan("latestMessageTime", System.currentTimeMillis());
 
     listenerRegistrations.add(
-    query.addSnapshotListener(new EventListener<QuerySnapshot>() {
-      @Override
-      public void onEvent(@Nullable QuerySnapshot value,
-                          @Nullable FirebaseFirestoreException error) {
+            query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+              @Override
+              public void onEvent(@Nullable QuerySnapshot value,
+                                  @Nullable FirebaseFirestoreException error) {
 
-        if(value != null) {
+                if (value != null) {
 
-          for (DocumentChange dc : value.getDocumentChanges()) {
+                  for (DocumentChange dc : value.getDocumentChanges()) {
 
-            if (dc.getType() == DocumentChange.Type.ADDED) {
+                    if (dc.getType() == DocumentChange.Type.ADDED) {
 
 
-              for(int i=0;i<chatItems.size();i++){
+                      for (int i = 0; i < chatItems.size(); i++) {
 
-                if(chatItems.get(i).getMessagingDocId().equals(dc.getDocument().getString("databaseRefId"))){
-                  return;
-                }
+                        if (chatItems.get(i).getMessagingDocId().equals(dc.getDocument().getString("databaseRefId"))) {
+                          return;
+                        }
 
-                if(i == chatItems.size()-1){
+                        if (i == chatItems.size() - 1) {
 
-                  getMessageFromSnapshot(dc.getDocument(),true);
+                          getMessageFromSnapshot(dc.getDocument(), true);
 
-                }
-              }
+                        }
+                      }
 
-              Log.d("ttt", "added a message after time: " + dc.getDocument().getId());
+                      Log.d("ttt", "added a message after time: " + dc.getDocument().getId());
 
 //              getMessageFromSnapshot(dc.getDocument());
 
-            }
-          }
-        }
-      }
-    }));
+                    }
+                  }
+                }
+              }
+            }));
 
   }
 
@@ -630,19 +624,18 @@ public class MessagesFragment extends Fragment{
 //  }
 
 
-
   @Override
   public void onDestroy() {
     super.onDestroy();
 
-    if(listenerRegistrations!=null && !listenerRegistrations.isEmpty()){
-      for(ListenerRegistration listener:listenerRegistrations){
+    if (listenerRegistrations != null && !listenerRegistrations.isEmpty()) {
+      for (ListenerRegistration listener : listenerRegistrations) {
         listener.remove();
       }
     }
 
-    if(valueEventListeners!=null && !valueEventListeners.isEmpty()){
-      for(DatabaseReference reference: valueEventListeners.keySet()){
+    if (valueEventListeners != null && !valueEventListeners.isEmpty()) {
+      for (DatabaseReference reference : valueEventListeners.keySet()) {
         reference.removeEventListener(Objects.requireNonNull(valueEventListeners.get(reference)));
       }
     }

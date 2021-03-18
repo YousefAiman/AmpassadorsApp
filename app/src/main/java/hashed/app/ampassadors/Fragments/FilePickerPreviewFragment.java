@@ -1,33 +1,22 @@
 package hashed.app.ampassadors.Fragments;
 
-import android.annotation.SuppressLint;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
-import android.content.ContentResolver;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
-import android.provider.OpenableColumns;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 import com.squareup.picasso.Picasso;
 
-import java.io.File;
-import java.net.URL;
 import java.util.Map;
-import java.util.Objects;
 
 import hashed.app.ampassadors.Activities.GroupMessagingActivity;
 import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
@@ -40,7 +29,7 @@ public class FilePickerPreviewFragment extends Fragment {
   private final Uri uri;
   private final int type;
 
-  public FilePickerPreviewFragment(Uri uri, int type){
+  public FilePickerPreviewFragment(Uri uri, int type) {
     this.uri = uri;
     this.type = type;
   }
@@ -53,7 +42,7 @@ public class FilePickerPreviewFragment extends Fragment {
                            @Nullable Bundle savedInstanceState) {
 
     int layout;
-    switch (type){
+    switch (type) {
       case Files.IMAGE:
         layout = R.layout.fragment_image_picker_preview;
         break;
@@ -92,25 +81,25 @@ public class FilePickerPreviewFragment extends Fragment {
       }
     });
 
-    if(type == Files.IMAGE){
+    if (type == Files.IMAGE) {
       Picasso.get().load(uri).fit().into(fullScreenIv);
 
       messagingPickerSendIv.setOnClickListener(new sendClickListener(messagingPickerEd));
 
-    }else if(type == Files.DOCUMENT){
+    } else if (type == Files.DOCUMENT) {
 
       TextView documentNameTv = view.findViewById(R.id.documentNameTv);
 
-        Map<String,Object> fileInfoMap = Files.getFileInfo(getContext(),uri);
+      Map<String, Object> fileInfoMap = Files.getFileInfo(getContext(), uri);
 
-        final String fileName = (String) fileInfoMap.get("fileName");
+      final String fileName = (String) fileInfoMap.get("fileName");
 
 //        final String fileType = (String) fileInfoMap.get("fileType");
 //        Log.d("ttt","fileName: "+fileName);
 //        Log.d("ttt","fileType: "+fileType);
-        documentNameTv.setText(fileName);
+      documentNameTv.setText(fileName);
 
-        messagingPickerSendIv.setOnClickListener(new sendClickListener(messagingPickerEd,fileName));
+      messagingPickerSendIv.setOnClickListener(new sendClickListener(messagingPickerEd, fileName));
 
     }
 
@@ -121,11 +110,11 @@ public class FilePickerPreviewFragment extends Fragment {
     EditText messagingPickerEd;
     String fileName;
 
-    sendClickListener(EditText messagingPickerEd){
+    sendClickListener(EditText messagingPickerEd) {
       this.messagingPickerEd = messagingPickerEd;
     }
 
-    sendClickListener(EditText messagingPickerEd,String fileName){
+    sendClickListener(EditText messagingPickerEd, String fileName) {
       this.messagingPickerEd = messagingPickerEd;
       this.fileName = fileName;
     }
@@ -134,20 +123,20 @@ public class FilePickerPreviewFragment extends Fragment {
     public void onClick(View view) {
 
       final String content = messagingPickerEd.getText().toString();
-      if(!content.isEmpty() && uri!=null){
+      if (!content.isEmpty() && uri != null) {
 
-        if(getActivity() instanceof PrivateMessagingActivity){
+        if (getActivity() instanceof PrivateMessagingActivity) {
 
-          ((PrivateMessagingActivity)getActivity()).sendFileMessage(
+          ((PrivateMessagingActivity) getActivity()).sendFileMessage(
                   uri,
                   type,
                   content,
                   0,
                   fileName);
 
-        }else if(getActivity() instanceof GroupMessagingActivity){
+        } else if (getActivity() instanceof GroupMessagingActivity) {
 
-          ((GroupMessagingActivity)getActivity()).sendFileMessage(
+          ((GroupMessagingActivity) getActivity()).sendFileMessage(
                   uri,
                   type,
                   content,
@@ -159,7 +148,7 @@ public class FilePickerPreviewFragment extends Fragment {
 
         getActivity().onBackPressed();
 
-      }else{
+      } else {
 
         //problem with image
 

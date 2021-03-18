@@ -31,11 +31,11 @@ public class Meeting implements Serializable {
   @PropertyName("imageUrl")
   private String imageUrl;
 
-  public Meeting(){
+  public Meeting() {
   }
 
   public Meeting(String creatorId, String title, String description, long startTime,
-                 long createdTime, List<String> members, String meetingId,boolean hasEnded) {
+                 long createdTime, List<String> members, String meetingId, boolean hasEnded) {
     this.creatorId = creatorId;
     this.title = title;
     this.description = description;
@@ -48,7 +48,7 @@ public class Meeting implements Serializable {
 
 
   public Meeting(String creatorId, String title, long startTime,
-                 long createdTime, List<String> members, String meetingId,boolean hasEnded) {
+                 long createdTime, List<String> members, String meetingId, boolean hasEnded) {
     this.creatorId = creatorId;
     this.title = title;
     this.startTime = startTime;
@@ -59,7 +59,7 @@ public class Meeting implements Serializable {
   }
 
   public Meeting(String creatorId, String title, long startTime,
-                 long createdTime, List<String> members, String meetingId,boolean hasEnded,
+                 long createdTime, List<String> members, String meetingId, boolean hasEnded,
                  String imageUrl) {
     this.creatorId = creatorId;
     this.title = title;

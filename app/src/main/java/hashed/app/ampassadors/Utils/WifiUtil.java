@@ -32,7 +32,7 @@ public class WifiUtil {
   }
 
   @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-  static void registerNetworkCallback(ConnectivityManager cm){
+  static void registerNetworkCallback(ConnectivityManager cm) {
 
     final NetworkRequest.Builder builder = new NetworkRequest.Builder();
 
@@ -54,23 +54,23 @@ public class WifiUtil {
               @Override
               public void onUnavailable() {
                 super.onUnavailable();
-                Log.d("ttt","no internet avilalblble man");
+                Log.d("ttt", "no internet avilalblble man");
               }
 
               @Override
               public void onAvailable(@NonNull Network network) {
                 super.onAvailable(network);
 
-                Log.d("ttt","network onAvailable");
+                Log.d("ttt", "network onAvailable");
 
-                if(!activeNetworks.contains(network)){
-                  Log.d("ttt","adding netowrk to list: "+network.toString());
+                if (!activeNetworks.contains(network)) {
+                  Log.d("ttt", "adding netowrk to list: " + network.toString());
                   activeNetworks.add(network);
                 }
 
-                if(activeNetworks.size() > 0){
+                if (activeNetworks.size() > 0) {
 
-                  if(!GlobalVariables.isWifiIsOn()){
+                  if (!GlobalVariables.isWifiIsOn()) {
 //                    FirebaseFirestore.getInstance().enableNetwork()
 //                            .addOnSuccessListener(new OnSuccessListener<Void>() {
 //                              @Override
@@ -82,28 +82,29 @@ public class WifiUtil {
                     GlobalVariables.setWifiIsOn(true);
                   }
 
-                  Log.d("ttt","network is on man");
+                  Log.d("ttt", "network is on man");
 
 
                 }
 
               }
+
               @Override
               public void onLost(@NonNull Network network) {
                 super.onLost(network);
 
-                if(activeNetworks.contains(network)){
-                  Log.d("ttt","removing netowrk from list: "+network.toString());
+                if (activeNetworks.contains(network)) {
+                  Log.d("ttt", "removing netowrk from list: " + network.toString());
                   activeNetworks.remove(network);
                 }
 
-                if(activeNetworks.size() == 0){
+                if (activeNetworks.size() == 0) {
 
-                  if(GlobalVariables.isWifiIsOn()){
+                  if (GlobalVariables.isWifiIsOn()) {
                     GlobalVariables.setWifiIsOn(false);
                   }
 
-                  Log.d("ttt", "wifi offline: "+network.toString());
+                  Log.d("ttt", "wifi offline: " + network.toString());
 
                 }
 
@@ -117,7 +118,7 @@ public class WifiUtil {
 
   }
 
-  static void registerReceiver(Context context){
+  static void registerReceiver(Context context) {
 
     final IntentFilter intentFilter = new IntentFilter();
     intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -136,15 +137,15 @@ public class WifiUtil {
 
       final NetworkCapabilities capabilities = cm.getNetworkCapabilities(cm.getActiveNetwork());
 
-      if(capabilities != null &&
+      if (capabilities != null &&
               (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
                       || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-                      || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))){
+                      || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))) {
 
         registerNetworkCallback(cm);
 
         return true;
-      }else{
+      } else {
 
         return false;
       }
@@ -153,16 +154,16 @@ public class WifiUtil {
 
       final NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
-      if(activeNetwork != null && activeNetwork.isConnected()){
+      if (activeNetwork != null && activeNetwork.isConnected()) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
           registerNetworkCallback(cm);
-        }else{
+        } else {
           registerReceiver(context);
         }
 
         return true;
-      }else{
+      } else {
 
         return false;
 

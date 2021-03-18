@@ -6,31 +6,31 @@ import com.google.firebase.database.PropertyName;
 @IgnoreExtraProperties
 public class ZoomMeeting {
 
-    @PropertyName("id")
-    private String id;
-    @PropertyName("hostId")
-    private String hostId;
-    @PropertyName("hostEmail")
-    private String hostEmail;
-    @PropertyName("topic")
-    private String topic;
-    @PropertyName("type")
-    private int type;
-    @PropertyName("duration")
-    private int duration;
-    @PropertyName("status")
-    private String status;
-    @PropertyName("startUrl")
-    private String startUrl;
-    @PropertyName("joinUrl")
-    private String joinUrl;
-    @PropertyName("startTime")
-    private long startTime;
+  @PropertyName("id")
+  private String id;
+  @PropertyName("hostId")
+  private String hostId;
+  @PropertyName("hostEmail")
+  private String hostEmail;
+  @PropertyName("topic")
+  private String topic;
+  @PropertyName("type")
+  private int type;
+  @PropertyName("duration")
+  private int duration;
+  @PropertyName("status")
+  private String status;
+  @PropertyName("startUrl")
+  private String startUrl;
+  @PropertyName("joinUrl")
+  private String joinUrl;
+  @PropertyName("startTime")
+  private long startTime;
 
-  public ZoomMeeting(){
+  public ZoomMeeting() {
   }
 
-  public ZoomMeeting(String id, String hostId, String hostEmail, String topic,int type, int duration,
+  public ZoomMeeting(String id, String hostId, String hostEmail, String topic, int type, int duration,
                      String status, String startUrl, String joinUrl) {
     this.setId(id);
     this.setHostId(hostId);
@@ -43,7 +43,7 @@ public class ZoomMeeting {
     this.setType(type);
   }
 
-  public ZoomMeeting(String id, String hostId, String hostEmail, String topic,int type, long startTime,
+  public ZoomMeeting(String id, String hostId, String hostEmail, String topic, int type, long startTime,
                      int duration, String status, String startUrl, String joinUrl) {
     this.setId(id);
     this.setHostId(hostId);

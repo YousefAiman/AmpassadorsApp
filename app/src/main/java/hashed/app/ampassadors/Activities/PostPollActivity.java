@@ -1,29 +1,21 @@
 package hashed.app.ampassadors.Activities;
 
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.app.AlertDialog;
-import android.os.Bundle;
-import android.view.Gravity;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout.LayoutParams;
-import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
@@ -31,15 +23,10 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import hashed.app.ampassadors.Adapters.PollPostAdapter;
-import hashed.app.ampassadors.Adapters.PostAdapter;
 import hashed.app.ampassadors.Fragments.CommentsFragment;
-import hashed.app.ampassadors.Fragments.ImageFullScreenFragment;
-import hashed.app.ampassadors.Fragments.VideoFullScreenFragment;
 import hashed.app.ampassadors.Objects.PollOption;
 import hashed.app.ampassadors.Objects.PostData;
-import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
-import hashed.app.ampassadors.Utils.Files;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.TimeFormatter;
 
@@ -47,7 +34,7 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
         Toolbar.OnMenuItemClickListener {
 
   //views
-  private TextView usernameTv,dateTv,titleTv,likesTv,commentsTv,likeTv,commentTv,votesTv;
+  private TextView usernameTv, dateTv, titleTv, likesTv, commentsTv, likeTv, commentTv, votesTv;
   private RecyclerView pollRv;
   private ImageView userIv;
 
@@ -72,16 +59,16 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
   }
 
 
-  private void setupToolbar(){
+  private void setupToolbar() {
 
     final Toolbar toolbar = findViewById(R.id.toolbar);
-    toolbar.setNavigationOnClickListener(v-> finish());
+    toolbar.setNavigationOnClickListener(v -> finish());
     toolbar.setOnMenuItemClickListener(this);
 
   }
 
 
-  private void getViews(){
+  private void getViews() {
     userIv = findViewById(R.id.userIv);
     usernameTv = findViewById(R.id.usernameTv);
     dateTv = findViewById(R.id.dateTv);
@@ -95,13 +82,13 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
   }
 
 
-  private void setClickListeners(){
+  private void setClickListeners() {
     userIv.setOnClickListener(this);
     likeTv.setOnClickListener(this);
     commentTv.setOnClickListener(this);
   }
 
-  private void getPostData(){
+  private void getPostData() {
 
     postData = (PostData) getIntent().getSerializableExtra("postData");
     titleTv.setText(postData.getTitle());
@@ -114,7 +101,7 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
             TimeFormatter.MONTH_DAY_YEAR_HOUR_MINUTE));
 
     likeTv.setTextColor(getResources().getColor(
-            GlobalVariables.getLikesList().contains(postData.getPostId())?R.color.red:
+            GlobalVariables.getLikesList().contains(postData.getPostId()) ? R.color.red :
                     R.color.black));
 
     getPollRecycler();
@@ -122,16 +109,16 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
   }
 
 
-  private void getUserInfo(){
+  private void getUserInfo() {
 
 
     FirebaseFirestore.getInstance().collection("Users")
             .document(postData.getPublisherId()).get().addOnSuccessListener(snapshot -> {
-      if(snapshot.exists()){
+      if (snapshot.exists()) {
 
         final String imageUrl = snapshot.getString("imageUrl");
 
-        if(imageUrl!=null && !imageUrl.isEmpty()){
+        if (imageUrl != null && !imageUrl.isEmpty()) {
           Picasso.get().load(imageUrl).fit().into(userIv);
         }
         usernameTv.setText(snapshot.getString("username"));
@@ -147,63 +134,64 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
 
     final int id = view.getId();
 
-    if(id == likeTv.getId()){
+    if (id == likeTv.getId()) {
       likeOrDislike();
-    }else if(id == commentTv.getId()){
+    } else if (id == commentTv.getId()) {
       CommentsFragment commentsFragment = new CommentsFragment(postData.getPostId(),
               postData.getComments());
-      commentsFragment.show(getSupportFragmentManager(),"CommentsFragment");
+      commentsFragment.show(getSupportFragmentManager(), "CommentsFragment");
     }
   }
 
 
-  private void likeOrDislike(){
+  private void likeOrDislike() {
 
-    if(likeTv.getCurrentTextColor() == getResources().getColor(R.color.red)){
+    if (likeTv.getCurrentTextColor() == getResources().getColor(R.color.red)) {
 
       likeTv.setTextColor(getResources().getColor(R.color.black));
 
       likesTv.setText(String.valueOf(
-              (Integer.parseInt(likesTv.getText().toString())-1)));
+              (Integer.parseInt(likesTv.getText().toString()) - 1)));
 
-      PostData.likePost(postData.getPostId(),2,postData.getPublisherId(),this);
+      PostData.likePost(postData.getPostId(), 2, postData.getPublisherId(), this);
 
-    }else{
+    } else {
 
       likeTv.setTextColor(getResources().getColor(R.color.red));
 
       likesTv.setText(String.valueOf(
-              (Integer.parseInt(likesTv.getText().toString())+1)));
+              (Integer.parseInt(likesTv.getText().toString()) + 1)));
 
-      PostData.likePost(postData.getPostId(),1,postData.getPublisherId(),this);
+      PostData.likePost(postData.getPostId(), 1, postData.getPublisherId(), this);
 
     }
   }
+
   @Override
   public boolean onMenuItemClick(MenuItem item) {
     return false;
   }
 
 
-  private void getPollRecycler(){
+  private void getPollRecycler() {
 
     final DocumentReference postRef =
             FirebaseFirestore.getInstance().collection("Posts")
                     .document(postData.getPostId());
 
     boolean hasEnded;
-    if(System.currentTimeMillis() >
-            postData.getPublishTime() + postData.getPollDuration()){
-      postRef.update("pollEnded",true);
+    if (System.currentTimeMillis() >
+            postData.getPublishTime() + postData.getPollDuration()) {
+      postRef.update("pollEnded", true);
       hasEnded = true;
-    }else{
+    } else {
       hasEnded = false;
     }
 
     final ArrayList<PollOption> pollOptions = new ArrayList<>();
 
     final PollPostAdapter adapter = new PollPostAdapter(pollOptions
-            ,postData.getPostId(), hasEnded, postData.getTotalVotes());
+            , postData.getPostId(), hasEnded, postData.getTotalVotes());
 
     pollRv.setNestedScrollingEnabled(false);
     pollRv.setHasFixedSize(true);
@@ -214,27 +202,28 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
             .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
             .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
       int chosenOption = -1;
+
       @Override
       public void onSuccess(QuerySnapshot snapshots) {
 
-        if(!snapshots.isEmpty()){
-          chosenOption =  snapshots.getDocuments().get(0).get("voteOption",Integer.class);
+        if (!snapshots.isEmpty()) {
+          chosenOption = snapshots.getDocuments().get(0).get("voteOption", Integer.class);
         }
 
         postRef.collection("Options").get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                   @Override
                   public void onSuccess(QuerySnapshot snapshots) {
-                    if(!snapshots.isEmpty()){
+                    if (!snapshots.isEmpty()) {
                       pollOptions.addAll(snapshots.toObjects(PollOption.class));
                     }
                   }
                 }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
           @Override
           public void onComplete(@NonNull Task<QuerySnapshot> task) {
-            if(task.isSuccessful() && !postData.getPollOptions().isEmpty()){
+            if (task.isSuccessful() && !postData.getPollOptions().isEmpty()) {
 
-              if(chosenOption != -1){
+              if (chosenOption != -1) {
                 pollOptions.get(chosenOption).setChosen(true);
                 adapter.showProgress = true;
               }
@@ -246,7 +235,6 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
     });
 
   }
-
 
 
 }

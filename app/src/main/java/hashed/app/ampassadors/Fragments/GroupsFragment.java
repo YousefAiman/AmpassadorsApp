@@ -4,6 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,15 +16,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
-import hashed.app.ampassadors.Activities.CreateMeetingActivity;
 import hashed.app.ampassadors.Activities.Home_Activity;
 import hashed.app.ampassadors.Activities.UsersPickerActivity;
 import hashed.app.ampassadors.Adapters.TabAdapterTitle;
@@ -29,9 +27,9 @@ import hashed.app.ampassadors.BuildConfig;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 
-public class GroupsFragment extends Fragment implements View.OnClickListener{
+public class GroupsFragment extends Fragment implements View.OnClickListener {
 
-  private static final int WORKSHOPS_PAGE = 0,MEETINGS_PAGE = 1;
+  private static final int WORKSHOPS_PAGE = 0, MEETINGS_PAGE = 1;
 
   //Views
   private TabLayout groupsTabLayout;
@@ -49,17 +47,16 @@ public class GroupsFragment extends Fragment implements View.OnClickListener{
   }
 
 
-
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
 
-    final Fragment[] fragments = {new WorkshopsFragment(),new MeetingsFragment()};
-    final String[] titles = {"Workshops","Meetings"};
+    final Fragment[] fragments = {new WorkshopsFragment(), new MeetingsFragment()};
+    final String[] titles = {"Workshops", "Meetings"};
 
     tabAdapterTitle = new TabAdapterTitle(getChildFragmentManager(),
-            FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,fragments,titles);
+            FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, fragments, titles);
 
 
 
@@ -74,7 +71,7 @@ public class GroupsFragment extends Fragment implements View.OnClickListener{
     groupsViewPager = view.findViewById(R.id.groupsViewPager);
     floatingButton = view.findViewById(R.id.floatingButton);
     toolbar = view.findViewById(R.id.groupToolbar);
-    toolbar.setNavigationOnClickListener(v-> ((Home_Activity)getActivity()).showDrawer());
+    toolbar.setNavigationOnClickListener(v -> ((Home_Activity) getActivity()).showDrawer());
 
     return view;
   }
@@ -85,8 +82,8 @@ public class GroupsFragment extends Fragment implements View.OnClickListener{
 
 
     toolbar.getMenu().findItem(R.id.action_notifications)
-            .setIcon(GlobalVariables.getNotificationsCount() > 0?
-                    R.drawable.notification_indicator_icon:
+            .setIcon(GlobalVariables.getNotificationsCount() > 0 ?
+                    R.drawable.notification_indicator_icon :
                     R.drawable.notification_icon);
 
 
@@ -106,13 +103,13 @@ public class GroupsFragment extends Fragment implements View.OnClickListener{
 
   @Override
   public void onClick(View view) {
-    if(view.getId() == R.id.floatingButton){
+    if (view.getId() == R.id.floatingButton) {
 
-      if(groupsViewPager.getCurrentItem() == MEETINGS_PAGE){
+      if (groupsViewPager.getCurrentItem() == MEETINGS_PAGE) {
 
-        startActivity(new Intent(getContext(),UsersPickerActivity.class));
+        startActivity(new Intent(getContext(), UsersPickerActivity.class));
 
-      }else{
+      } else {
 
 
       }
@@ -128,17 +125,17 @@ public class GroupsFragment extends Fragment implements View.OnClickListener{
   }
 
 
-  private void setupNotificationReceiver(){
+  private void setupNotificationReceiver() {
 
     notificationIndicatorReceiver =
-            new NotificationIndicatorReceiver(){
+            new NotificationIndicatorReceiver() {
               @Override
               public void onReceive(Context context, Intent intent) {
-                if(intent.hasExtra("showIndicator")){
+                if (intent.hasExtra("showIndicator")) {
                   final MenuItem item = toolbar.getMenu().findItem(R.id.action_notifications);
-                  if(intent.getBooleanExtra("showIndicator", false)){
+                  if (intent.getBooleanExtra("showIndicator", false)) {
                     item.setIcon(R.drawable.notification_indicator_icon);
-                  }else{
+                  } else {
                     item.setIcon(R.drawable.notification_icon);
                   }
                 }
@@ -146,7 +143,7 @@ public class GroupsFragment extends Fragment implements View.OnClickListener{
             };
 
     getContext().registerReceiver(notificationIndicatorReceiver,
-            new IntentFilter(BuildConfig.APPLICATION_ID+".notificationIndicator"));
+            new IntentFilter(BuildConfig.APPLICATION_ID + ".notificationIndicator"));
 
   }
 
@@ -155,7 +152,7 @@ public class GroupsFragment extends Fragment implements View.OnClickListener{
   public void onDestroy() {
     super.onDestroy();
 
-    if(notificationIndicatorReceiver!=null){
+    if (notificationIndicatorReceiver != null) {
       requireContext().unregisterReceiver(notificationIndicatorReceiver);
     }
 

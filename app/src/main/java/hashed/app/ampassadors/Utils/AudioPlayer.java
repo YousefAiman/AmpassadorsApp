@@ -22,17 +22,18 @@ public class AudioPlayer implements Slider.OnSliderTouchListener
 {
 
   private MediaPlayer mediaPlayer;
-  private Context context;
-  private String url;
-  private long length;
-  private Slider slider;
-  private ImageView playerIv;
-  private Drawable playDrawable,pauseDrawable;
+  private final Context context;
+  private final String url;
+  private final long length;
+  private final Slider slider;
+  private final ImageView playerIv;
+  private final Drawable playDrawable;
+  private final Drawable pauseDrawable;
   private Handler progressHandle;
   private Runnable playBackProgressRunnable;
   private Boolean paused;
 
-  public AudioPlayer(Context context, String url, long length, Slider slider, ImageView playerIv){
+  public AudioPlayer(Context context, String url, long length, Slider slider, ImageView playerIv) {
 
     this.context = context;
     this.url = url;
@@ -43,14 +44,14 @@ public class AudioPlayer implements Slider.OnSliderTouchListener
 //    mediaPlayer.setOnCompletionListener(this);
     slider.addOnSliderTouchListener(this);
 
-    playDrawable=
-            ResourcesCompat.getDrawable(context.getResources(), R.drawable.play_icon_new,null);
+    playDrawable =
+            ResourcesCompat.getDrawable(context.getResources(), R.drawable.play_icon_new, null);
     pauseDrawable =
-            ResourcesCompat.getDrawable(context.getResources(),R.drawable.pause_icon,null);
+            ResourcesCompat.getDrawable(context.getResources(), R.drawable.pause_icon, null);
 
   }
 
-  public MediaPlayer startPlaying(int position){
+  public MediaPlayer startPlaying(int position) {
 
     mediaPlayer = new MediaPlayer();
     mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -67,13 +68,13 @@ public class AudioPlayer implements Slider.OnSliderTouchListener
 
         playerIv.setImageDrawable(pauseDrawable);
 
-        if(position > 0){
+        if (position > 0) {
           mediaPlayer.seekTo(position);
         }
 
         mediaPlayer.start();
 
-        slider.setValueTo((float)length);
+        slider.setValueTo((float) length);
 
         long delay = length / 100;
 
@@ -94,7 +95,7 @@ public class AudioPlayer implements Slider.OnSliderTouchListener
 //                }
 //              });
 
-                slider.setValue((float)mediaPlayer.getCurrentPosition());
+              slider.setValue((float) mediaPlayer.getCurrentPosition());
 
               progressHandle.postDelayed(this, 10);
 
@@ -113,7 +114,7 @@ public class AudioPlayer implements Slider.OnSliderTouchListener
   }
 
 
-  public void pausePlayer(){
+  public void pausePlayer() {
 
     mediaPlayer.pause();
     playerIv.setImageDrawable(playDrawable);
@@ -122,15 +123,15 @@ public class AudioPlayer implements Slider.OnSliderTouchListener
   }
 
 
-  public void resumePlayer(){
+  public void resumePlayer() {
 
     float sliderPos = slider.getValue();
 
-    if(sliderPos > 0){
-      Log.d("audioMessage","resuming from: "+sliderPos);
+    if (sliderPos > 0) {
+      Log.d("audioMessage", "resuming from: " + sliderPos);
       mediaPlayer.seekTo((int) sliderPos);
-    }else{
-      Log.d("audioMessage","resuming from start");
+    } else {
+      Log.d("audioMessage", "resuming from start");
     }
     mediaPlayer.start();
 
@@ -140,8 +141,7 @@ public class AudioPlayer implements Slider.OnSliderTouchListener
   }
 
 
-
-  public void releasePlayer(){
+  public void releasePlayer() {
 
     progressHandle.removeCallbacks(playBackProgressRunnable);
     slider.removeOnSliderTouchListener(this);
@@ -159,11 +159,11 @@ public class AudioPlayer implements Slider.OnSliderTouchListener
   @Override
   public void onStartTrackingTouch(@NonNull Slider slider) {
 
-    if(mediaPlayer.isPlaying()){
+    if (mediaPlayer.isPlaying()) {
       paused = false;
       mediaPlayer.pause();
       progressHandle.removeCallbacks(playBackProgressRunnable);
-    }else{
+    } else {
       paused = true;
     }
 
@@ -172,7 +172,7 @@ public class AudioPlayer implements Slider.OnSliderTouchListener
   @Override
   public void onStopTrackingTouch(@NonNull Slider slider) {
     mediaPlayer.seekTo((int) slider.getValue());
-    if(!paused){
+    if (!paused) {
       mediaPlayer.start();
       progressHandle.postDelayed(playBackProgressRunnable, 0);
     }

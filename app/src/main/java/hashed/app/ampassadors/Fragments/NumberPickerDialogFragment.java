@@ -2,12 +2,6 @@ package hashed.app.ampassadors.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,10 +11,11 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.fragment.app.DialogFragment;
+
 import org.jetbrains.annotations.NotNull;
 
 import hashed.app.ampassadors.R;
-import hashed.app.ampassadors.Utils.TimeFormatter;
 
 public class NumberPickerDialogFragment extends DialogFragment implements View.OnClickListener {
 
@@ -37,10 +32,6 @@ public class NumberPickerDialogFragment extends DialogFragment implements View.O
     this.durations = durations;
   }
 
-  public interface OnTimePass {
-    void passTime(long time,Integer[] durations);
-  }
-
   @Override
   public void onAttach(@NotNull Context context) {
     super.onAttach(context);
@@ -50,7 +41,7 @@ public class NumberPickerDialogFragment extends DialogFragment implements View.O
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-    View view =  inflater.inflate(R.layout.fragment_number_picker_dialog, container,
+    View view = inflater.inflate(R.layout.fragment_number_picker_dialog, container,
             false);
 
     dayPicker = view.findViewById(R.id.dayPicker);
@@ -71,17 +62,17 @@ public class NumberPickerDialogFragment extends DialogFragment implements View.O
     minutePicker.setMinValue(0);
 
 
-    if(durations!=null && durations.length > 0){
+    if (durations != null && durations.length > 0) {
 
-      if(durations[0] > 0){
+      if (durations[0] > 0) {
         dayPicker.setValue(durations[0]);
       }
 
-      if(durations[1] > 0){
+      if (durations[1] > 0) {
         dayPicker.setValue(durations[1]);
       }
 
-      if(durations[2] > 0){
+      if (durations[2] > 0) {
         dayPicker.setValue(durations[2]);
       }
 
@@ -92,39 +83,43 @@ public class NumberPickerDialogFragment extends DialogFragment implements View.O
     return view;
   }
 
-
   @Override
   public void onClick(View view) {
 
-    if(view.getId() == R.id.cancelTv){
+    if (view.getId() == R.id.cancelTv) {
 
       dismiss();
 
-    }else if(view.getId() == R.id.setTv){
+    } else if (view.getId() == R.id.setTv) {
 
       final int daysValue = dayPicker.getValue();
       final int hoursValue = hourPicker.getValue();
       final int minutesValue = minutePicker.getValue();
 
-      if(daysValue > 0 || hoursValue > 0 || minutesValue > 0){
+      if (daysValue > 0 || hoursValue > 0 || minutesValue > 0) {
 
         long duration = (daysValue * DateUtils.DAY_IN_MILLIS) +
                 (hoursValue * DateUtils.HOUR_IN_MILLIS) +
                 (minutesValue * DateUtils.MINUTE_IN_MILLIS);
 
-        Log.d("ttt","duration: "+duration);
+        Log.d("ttt", "duration: " + duration);
 
-        final Integer[] durations = {daysValue,hoursValue,minutesValue};
+        final Integer[] durations = {daysValue, hoursValue, minutesValue};
 
-        onTimePass.passTime(duration,durations);
+        onTimePass.passTime(duration, durations);
 
         dismiss();
 
-      }else{
+      } else {
         Toast.makeText(getContext(),
                 "Please set a duration longer than 0", Toast.LENGTH_SHORT).show();
       }
 
     }
+  }
+
+
+  public interface OnTimePass {
+    void passTime(long time, Integer[] durations);
   }
 }

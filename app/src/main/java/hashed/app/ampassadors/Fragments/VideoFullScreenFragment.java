@@ -1,26 +1,21 @@
 package hashed.app.ampassadors.Fragments;
 
 import android.annotation.SuppressLint;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
-import com.google.android.exoplayer2.Player;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
@@ -68,16 +63,14 @@ public class VideoFullScreenFragment extends Fragment {
 //      return false;
 //    }
 //  };
-
+  private final String videoUrl;
   //video
   private PlayerView playerView;
   private SimpleExoPlayer exoPlayer;
-  private final String videoUrl;
-
   private boolean mVisible;
   private final Runnable mHideRunnable = this::hide;
 
-  public VideoFullScreenFragment(String videoUrl){
+  public VideoFullScreenFragment(String videoUrl) {
     this.videoUrl = videoUrl;
   }
 
@@ -86,10 +79,10 @@ public class VideoFullScreenFragment extends Fragment {
   public View onCreateView(@NonNull LayoutInflater inflater,
                            @Nullable ViewGroup container,
                            @Nullable Bundle savedInstanceState) {
-    View view =  inflater.inflate(R.layout.fragment_video_full_screen, container, false);
+    View view = inflater.inflate(R.layout.fragment_video_full_screen, container, false);
 
     final Toolbar fullScreenToolbar = view.findViewById(R.id.fullScreenToolbar);
-    fullScreenToolbar.setNavigationOnClickListener(v-> requireActivity().onBackPressed());
+    fullScreenToolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
 
     playerView = view.findViewById(R.id.playerView);
 
@@ -101,18 +94,18 @@ public class VideoFullScreenFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
     mVisible = true;
 
-    playerView.setOnClickListener(v-> toggle());
+    playerView.setOnClickListener(v -> toggle());
 
     Objects.requireNonNull(playerView.getVideoSurfaceView()).setOnClickListener(v -> {
 
-      if(playerView.isControllerVisible()){
+      if (playerView.isControllerVisible()) {
         playerView.hideController();
-      }else{
+      } else {
         playerView.showController();
       }
 
       toggle();
-      Log.d("ttt","mVisible: "+mVisible);
+      Log.d("ttt", "mVisible: " + mVisible);
 
     });
 
@@ -121,7 +114,7 @@ public class VideoFullScreenFragment extends Fragment {
   }
 
 
-  private void playVideo(){
+  private void playVideo() {
 
     final DefaultTrackSelector trackSelector = new DefaultTrackSelector(getContext());
 
@@ -144,12 +137,12 @@ public class VideoFullScreenFragment extends Fragment {
   }
 
   private void toggle() {
-    if(mVisible){
+    if (mVisible) {
       hide();
-    }else{
+    } else {
 
       mVisible = true;
-      if(getActivity()!=null && getActivity().getWindow()!=null){
+      if (getActivity() != null && getActivity().getWindow() != null) {
 
         getActivity().getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -234,11 +227,11 @@ public class VideoFullScreenFragment extends Fragment {
       exoPlayer.release();
       exoPlayer = null;
 
-      if(!VideoCache.isNull()){
-        Log.d("exoPlayerPlayback","video cache is not null");
+      if (!VideoCache.isNull()) {
+        Log.d("exoPlayerPlayback", "video cache is not null");
         VideoDataSourceFactory.clearVideoCache(getContext());
-      }else{
-        Log.d("exoPlayerPlayback","video cache is null");
+      } else {
+        Log.d("exoPlayerPlayback", "video cache is null");
       }
 
     }

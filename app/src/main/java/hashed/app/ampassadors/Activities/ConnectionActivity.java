@@ -1,9 +1,9 @@
 package hashed.app.ampassadors.Activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.WifiUtil;
@@ -19,10 +19,10 @@ public class ConnectionActivity extends AppCompatActivity {
 
     findViewById(R.id.retryBtn).setOnClickListener(v -> {
 
-      if(WifiUtil.isConnectedToInternet(this)){
+      if (WifiUtil.isConnectedToInternet(this)) {
         setResult(CONNECTION_RESULT);
         finish();
-      }else{
+      } else {
         Toast.makeText(ConnectionActivity.this,
                 "الرجاء التحقق من الاتصال بالانترنت!", Toast.LENGTH_SHORT).show();
       }
