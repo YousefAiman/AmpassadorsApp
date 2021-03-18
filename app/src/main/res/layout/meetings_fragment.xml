@@ -50,6 +50,7 @@
         android:layout_alignParentBottom="true"
         app:fabSize="normal"
         app:tint="@color/white"
+        android:visibility="gone"
         app:maxImageSize="40dp"
         android:layout_marginStart="20dp"
         android:layout_marginBottom="14dp"

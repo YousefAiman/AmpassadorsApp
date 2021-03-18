@@ -98,20 +98,11 @@ public class GroupsFragment extends Fragment implements View.OnClickListener {
 
     if(!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
       if (GlobalVariables.getRole().equals("Admin") ||
-              GlobalVariables.getRole().equals("Publisher")){
-
-        floatingButton.setVisibility(View.VISIBLE);
-      }
-    }
-
-    if(!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
-      if (GlobalVariables.getRole().equals("Admin") ||
               GlobalVariables.getRole().equals("Coordinator")){
 
         floatingButton.setVisibility(View.VISIBLE);
       }
     }
-
 
   }
 

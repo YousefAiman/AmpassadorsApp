@@ -238,10 +238,7 @@ public class Home_Activity extends AppCompatActivity implements
     super.onActivityResult(requestCode, resultCode, data);
 
     if (resultCode == 3) {
-
-                if(nav_btom.getSelectedItemId()==R.id.home &&
-                        getSupportFragmentManager().getFragments().get(0) instanceof PostsFragment){
-
+                if(nav_btom.getSelectedItemId() == R.id.home){
                     final PostData postData = (PostData) data.getSerializableExtra("postData");
                     ((PostsFragment)getSupportFragmentManager().getFragments().get(0))
                             .addPostData(postData);
