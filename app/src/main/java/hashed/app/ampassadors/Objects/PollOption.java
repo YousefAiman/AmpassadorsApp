@@ -8,11 +8,11 @@ import java.io.Serializable;
 public class PollOption implements Serializable {
 
   @PropertyName("option")
-  private String option;
+  public String option;
   @PropertyName("votes")
-  private long votes;
+  public long votes;
   @Exclude
-  private boolean isChosen;
+  public boolean isChosen;
 
   public PollOption() {
   }
