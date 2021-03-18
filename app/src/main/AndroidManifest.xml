@@ -20,19 +20,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AmpassadorsApp">
+        <activity android:name=".Activities.PrivacyPolicy"></activity>
+        <activity android:name=".Activities.About_us" />
+        <activity android:name=".Activities.Profile" />
+        <activity android:name=".Activities.PostNewActivity" />
 
-        <activity android:name=".Activities.PostNewActivity"/>
 
         <activity
             android:name=".SideDrawer"
             android:label="@string/title_activity_side_drawer"
-            android:theme="@style/Theme.AmpassadorsApp.NoActionBar"/>
-
+            android:theme="@style/Theme.AmpassadorsApp.NoActionBar" />
         <activity android:name=".Activities.PostPollActivity" />
         <activity android:name=".Activities.PostNewsActivity" />
         <activity android:name=".Activities.NotificationsActivity" />
         <activity android:name=".Activities.UserSearchActivity" />
-
         <activity android:name=".Activities.ConnectionActivity" />
         <activity android:name=".Activities.GroupMessagingActivity" />
         <activity
@@ -47,7 +48,6 @@
         <activity android:name=".Activities.sign_in" />
         <activity android:name=".Activities.ComplaintsActivity" />
         <activity android:name=".Activities.SuggestionsActivity" />
-
         <activity android:name=".Activities.PrivateMessagingActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>

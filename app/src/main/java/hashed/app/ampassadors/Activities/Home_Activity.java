@@ -1,5 +1,13 @@
 package hashed.app.ampassadors.Activities;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -23,6 +31,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -93,6 +102,37 @@ public class Home_Activity extends AppCompatActivity implements
     createUserLikesListener();
     createNotificationListener();
   }
+        GlobalVariables.setAppIsRunning(true);
+        SetUpCompetent();
+
+        if(FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
+
+            replaceFragment(new PostsFragment());
+        }else{
+            firebaseFirestore.collection("Users").document(userid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                    GlobalVariables.setRole(documentSnapshot.getString("Role"));
+
+
+                }
+            }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if(task.isSuccessful()){
+                        replaceFragment(new PostsFragment());
+                    }
+                }
+            });
+        }
+
+
+
+        OnClickButtons();
+        createUserLikesListener();
+        createNotificationListener();
+    }
 
   private void createUserLikesListener() {
 
@@ -164,9 +204,9 @@ public class Home_Activity extends AppCompatActivity implements
 
       } else if (item.getItemId() == R.id.profile) {
 
-        if (nav_btom.getSelectedItemId() != R.id.profile) {
-          replaceFragment(new ProfileFragment());
-        }
+                if(nav_btom.getSelectedItemId()!=R.id.profile){
+                    replaceFragment(new PostsProfileFragment());
+                }
 
       } else if (item.getItemId() == R.id.chat) {
 
@@ -220,62 +260,68 @@ public class Home_Activity extends AppCompatActivity implements
 
     if (resultCode == 3) {
 
-      if (nav_btom.getSelectedItemId() == R.id.home &&
-              getSupportFragmentManager().getFragments().get(0) instanceof PostsFragment) {
+                if(nav_btom.getSelectedItemId()==R.id.home &&
+                        getSupportFragmentManager().getFragments().get(0) instanceof PostsFragment){
 
-        final PostData postData = (PostData) data.getSerializableExtra("postData");
-        ((PostsFragment) getSupportFragmentManager().getFragments().get(0))
-                .addPostData(postData);
+                    final PostData postData = (PostData) data.getSerializableExtra("postData");
+                    ((PostsFragment)getSupportFragmentManager().getFragments().get(0))
+                            .addPostData(postData);
 
-      }
+                }
+        }
     }
-  }
 
 
-  public void showDrawer() {
-    drawer_layout.openDrawer(GravityCompat.START);
-  }
-
-  @Override
-  protected void onDestroy() {
-    super.onDestroy();
-    if (listenerRegistrations != null && !listenerRegistrations.isEmpty()) {
-      for (ListenerRegistration listenerRegistration : listenerRegistrations) {
-        listenerRegistration.remove();
-      }
+    public void showDrawer() {
+        drawer_layout.openDrawer(GravityCompat.START);
     }
-  }
 
-  @Override
-  public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(listenerRegistrations!=null && !listenerRegistrations.isEmpty()){
+            for(ListenerRegistration listenerRegistration:listenerRegistrations){
+                listenerRegistration.remove();
+            }
+        }
+    }
 
-    Log.d("ttt", "navigation clicked");
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-    if (item.getItemId() == R.id.log_out) {
-      Log.d("ttt", "log_out clicked");
+        Log.d("ttt","navigation clicked");
+
+            if(item.getItemId() == R.id.log_out){
+                Log.d("ttt","log_out clicked");
 //                if(WifiUtil.checkWifiConnection(this)){
 
-      Log.d("ttt", "internet exists");
+                    Log.d("ttt","internet exists");
 
-      NotificationManagerCompat.from(this).cancelAll();
+                    NotificationManagerCompat.from(this).cancelAll();
 
-      FirebaseAuth.getInstance().signOut();
+                    FirebaseAuth.getInstance().signOut();
 
-      getPackageManager().setComponentEnabledSetting(
-              new ComponentName(Home_Activity.this, FirebaseMessagingService.class),
-              PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-              PackageManager.DONT_KILL_APP);
+                    getPackageManager().setComponentEnabledSetting(
+                            new ComponentName(Home_Activity.this, FirebaseMessagingService.class),
+                            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                            PackageManager.DONT_KILL_APP);
 
-      Toast.makeText(Home_Activity.this, "Logged out successfully",
-              Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Home_Activity.this, "Logged out successfully",
+                            Toast.LENGTH_SHORT).show();
 
-      startActivity(new Intent(Home_Activity.this, sign_in.class));
-      finish();
+                    startActivity(new Intent(Home_Activity.this, sign_in.class));
+                    finish();
 //                }
-    } else if (item.getItemId() == R.id.news) {
-      replaceFragment(new B_Fragment());
+            }else if (item.getItemId() == R.id.news){
+                replaceFragment(new B_Fragment());
 
     } else if (item.getItemId() == R.id.awreaness_post) {
+            }
+//            else if (item.getItemId() == R.id.awreaness_post){
+//
+//            }
+//            else if (item.getItemId() == R.id.courses){
+//            }
 
     } else if (item.getItemId() == R.id.courses) {
 
@@ -288,16 +334,33 @@ public class Home_Activity extends AppCompatActivity implements
     } else if (item.getItemId() == R.id.complaints) {
       Intent mapIntent = new Intent(Home_Activity.this, ComplaintsActivity.class);
       startActivity(mapIntent);
+            else if (item.getItemId() == R.id.polls){
+                replaceFragment(new A_Fragment());
+            }
+            else if (item.getItemId() == R.id.policy){
+                Intent inte = new Intent(Home_Activity.this, PrivacyPolicy.class);
+                startActivity(inte);
+            }
+            else if (item.getItemId() == R.id.complaints) {
+                Intent mapIntent = new Intent(Home_Activity.this, ComplaintsActivity.class);
+                startActivity(mapIntent);
 
-    } else if (item.getItemId() == R.id.proposals) {
-      Intent pIntent = new Intent(Home_Activity.this, SuggestionsActivity.class);
-      startActivity(pIntent);
+            }else if (item.getItemId() == R.id.proposals){
+                Intent pIntent = new Intent(Home_Activity.this, SuggestionsActivity.class);
+                startActivity(pIntent);
 
     } else if (item.getItemId() == R.id.about) {
     }
 
     return true;
   }
+            }
+            else if (item.getItemId() == R.id.about){
+                Intent intent = new Intent(Home_Activity.this, About_us.class);
+                startActivity(intent);
+            }
+        return true;
+    }
 
 
   private void createNotificationListener() {
@@ -316,23 +379,31 @@ public class Home_Activity extends AppCompatActivity implements
                       @Override
                       public void onEvent(@Nullable QuerySnapshot value,
                                           @Nullable FirebaseFirestoreException error) {
+        final AtomicInteger notificationCount = new AtomicInteger();
+        listenerRegistrations.add(
+                FirebaseFirestore.getInstance().collection("Notifications")
+                .whereEqualTo("receiverId", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value,
+                                        @Nullable FirebaseFirestoreException error) {
 
-                        if (value == null)
-                          return;
-                        for (DocumentChange dc : value.getDocumentChanges()) {
+                        if(value==null)
+                            return;
+                        for(DocumentChange dc:value.getDocumentChanges()){
 
-                          switch (dc.getType()) {
-                            case ADDED:
+                            switch (dc.getType()){
+                                case ADDED:
 
-                              Log.d("ttt", "added notificationn");
+                                    Log.d("ttt","added notificationn");
 
-                              Log.d("ttt", "notificationCount: " +
-                                      notificationCount.get());
-                              if (notificationCount.getAndIncrement() == 0) {
-                                Intent intent = new Intent(indicatorAction);
-                                intent.putExtra("showIndicator", true);
-                                sendBroadcast(intent);
-                              }
+                                    Log.d("ttt","notificationCount: "+
+                                            notificationCount.get());
+                                    if(notificationCount.getAndIncrement() == 0){
+                                        Intent intent = new Intent(indicatorAction);
+                                        intent.putExtra("showIndicator",true);
+                                        sendBroadcast(intent);
+                                    }
 
 
                               Log.d("ttt", "notificationCount: " +
@@ -340,23 +411,27 @@ public class Home_Activity extends AppCompatActivity implements
 
                               break;
                             case REMOVED:
+                                    Log.d("ttt","notificationCount: "+
+                                            notificationCount.get());
+                                    break;
+                                case REMOVED:
 
-                              if (notificationCount.decrementAndGet() == 0) {
+                                   if(notificationCount.decrementAndGet() == 0){
 
-                                Intent intent = new Intent(indicatorAction);
-                                intent.putExtra("showIndicator", false);
-                                sendBroadcast(intent);
+                                       Intent intent = new Intent(indicatorAction);
+                                       intent.putExtra("showIndicator",false);
+                                       sendBroadcast(intent);
 
-                              }
-                              break;
-                          }
+                                   }
+                                   break;
+                            }
 
-                          GlobalVariables.setNotificationsCount(notificationCount.get());
+                            GlobalVariables.setNotificationsCount(notificationCount.get());
 
                         }
-                      }
-                    })
-    );
+                    }
+                })
+        );
 
-  }
+    }
 }
