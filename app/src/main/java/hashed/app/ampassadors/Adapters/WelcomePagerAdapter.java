@@ -35,14 +35,19 @@ public class WelcomePagerAdapter extends PagerAdapter {
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
-        TextView textView = container.findViewById(R.id.welcomePageTv);
-        textView.setText(strings[position]);
-        container.addView(textView, 0);
-        return textView;
+
+        View view = ((LayoutInflater) container.getContext()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.welcome_page, null);
+
+        ((TextView) view.findViewById(R.id.welcomePageTv)).setText(strings[position]);
+        container.addView(view);
+
+        return view;
     }
 
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-        container.removeView((ImageView) object);
+        container.removeView((View) object);
     }
 }

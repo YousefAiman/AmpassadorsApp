@@ -57,15 +57,7 @@ public class WelcomeActivity extends AppCompatActivity {
     signintoAccountBtn.setVisibility(View.INVISIBLE);
 
     signintoAccountBtn.setOnClickListener(v -> {
-//            if (networkInfo != null && networkInfo.isConnected()) {
-
-      startActivity(new Intent(getApplicationContext(), WelcomeActivity.class));
-//            } else {
-//                Intent disconnectIntent = new Intent(getApplicationContext(), ConnectionActivity.class);
-//                disconnectIntent.putExtra("activity", "slider");
-//                startActivity(disconnectIntent);
-//
-//            }
+      startActivity(new Intent(getApplicationContext(), sign_up.class));
     });
 
 
@@ -78,7 +70,8 @@ public class WelcomeActivity extends AppCompatActivity {
     int FullDot = R.drawable.indicator_active_icon;
 
     for (int i = 0; i < dotsCount; i++) {
-      LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+      LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+              LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
       dots[i] = new ImageView(getApplicationContext());
       dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), nonActive));
       params.setMargins(10, 0, 10, 0);

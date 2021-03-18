@@ -195,5 +195,7 @@
     <string name="Meetings">Meetings</string>
     <string name="user_requests">User Requests</string>
     <string name="next">Next</string>
+    <string name="already_have_an_account_sign_in">Already have an account? Sign in!</string>
+    <string name="create_an_account">Create an account!</string>
 
 </resources>

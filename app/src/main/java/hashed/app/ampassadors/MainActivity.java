@@ -34,23 +34,23 @@ public class MainActivity extends AppCompatActivity {
     if (WifiUtil.isConnectedToInternet(this)) {
 
       final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+      SharedPreferences sharedPreferences =
+              getSharedPreferences(getResources().getString(R.string.app_name),
+                      Context.MODE_PRIVATE);
 
-      if (user != null) {
 
-        if (!user.isAnonymous()) {
+      if(!sharedPreferences.contains("firstTime")){
 
-          SharedPreferences sharedPreferences =
-                  getSharedPreferences(getResources().getString(R.string.app_name),
-                  Context.MODE_PRIVATE);
+        startActivity(new Intent(this, WelcomeActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 
-          if(!sharedPreferences.contains("firstTime")){
+        sharedPreferences.edit().putBoolean("firstTime",false).apply();
 
-            startActivity(new Intent(this, WelcomeActivity.class)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+      }else{
 
-            sharedPreferences.edit().putBoolean("firstTime",false).apply();
+        if (user != null) {
 
-          }else{
+          if (!user.isAnonymous()) {
 
             FirebaseMessagingService.startMessagingService(this);
 
@@ -96,35 +96,38 @@ public class MainActivity extends AppCompatActivity {
                 }
               }, 1000);
             }
+
+
+          } else {
+            new Handler().postDelayed(new Runnable() {
+              @Override
+              public void run() {
+                startHomeActivity();
+              }
+            }, 1000);
           }
 
 
         } else {
-          new Handler().postDelayed(new Runnable() {
+
+          FirebaseAuth.getInstance().signInAnonymously()
+                  .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
             @Override
-            public void run() {
+            public void onSuccess(AuthResult authResult) {
+
               startHomeActivity();
+
             }
-          }, 1000);
+          }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+              finish();
+            }
+          });
         }
 
-
-      } else {
-
-        FirebaseAuth.getInstance().signInAnonymously().addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-          @Override
-          public void onSuccess(AuthResult authResult) {
-
-            startHomeActivity();
-
-          }
-        }).addOnFailureListener(new OnFailureListener() {
-          @Override
-          public void onFailure(@NonNull Exception e) {
-            finish();
-          }
-        });
       }
+
 
 
     } else {
