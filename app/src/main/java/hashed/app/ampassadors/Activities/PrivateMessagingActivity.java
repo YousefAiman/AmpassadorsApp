@@ -295,16 +295,16 @@ public class PrivateMessagingActivity extends AppCompatActivity
     switch (messageType) {
 
       case Files.IMAGE:
-        body = currentUserName + " send an image";
+        body = currentUserName + R.string.send_An_Message;
         break;
 
       case Files.DOCUMENT:
       case Files.AUDIO:
-        body = currentUserName + " send an attachment";
+        body = currentUserName + R.string.send_An_Message;
         break;
 
       case Files.VIDEO:
-        body = currentUserName + " send an video";
+        body = currentUserName +R.string.send_video ;
         break;
 
 
