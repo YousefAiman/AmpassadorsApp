@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -78,14 +79,15 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         floatingButton = view.findViewById(R.id.floatingbtn);
         username = view.findViewById(R.id.textView6);
         imageView = view.findViewById(R.id.profile_picture);
+        swipeRefresh = view.findViewById(R.id.swipeRefreshLayout);
 
         floatingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(getActivity(), PostNewActivity.class);
-                intent.putExtra("justForUser",true);
-                startActivity(intent);
+                Intent dsfs = new Intent(requireContext(), PostNewActivity.class);
+                dsfs.putExtra("justForUser",true);
+                startActivity(dsfs);
 
             }
         });
@@ -103,12 +105,19 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         adapter = new UserPostAdapter(postData, getActivity());
         post_list = view.findViewById(R.id.userpost_recycler);
 
-        post_list.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL,
+        post_list.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL,
                 false));
+
+        post_list.setAdapter(adapter);
 
         return view;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ReadPost(true);
+    }
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
@@ -173,9 +182,9 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         swipeRefresh.setRefreshing(true);
         isLoadingMessages = true;
         Query updatedQuery = query;
-        if(lastDocSnap!=null){
-            updatedQuery = query.startAfter(lastDocSnap);
-        }
+//        if(lastDocSnap!=null){
+//            updatedQuery = query.startAfter(lastDocSnap);
+//        }
         updatedQuery.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -191,7 +200,6 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(isInitial){
                     adapter.notifyDataSetChanged();
-
                 }else{
                     adapter.notifyItemRangeInserted((postData.size()-task.getResult().size())-1,
                             task.getResult().size());

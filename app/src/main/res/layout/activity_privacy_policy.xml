@@ -8,20 +8,21 @@
     <include
         android:id="@+id/about_toolbar"
         layout="@layout/policyprivacytoolbar" />
+
     <ScrollView
-        android:layout_width="408dp"
-        android:layout_height="718dp"
-        android:layout_marginTop="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/about_toolbar">
+
         <TextView
-            android:layout_margin="5dp"
-            android:textSize="16sp"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/policyPrivacy" />
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="@string/PolicyPrivacy"
+            android:textSize="16sp" />
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

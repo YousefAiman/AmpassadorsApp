@@ -9,7 +9,6 @@
     app:navigationContentDescription="navigate back"
     android:layout_height="?actionBarSize"
     android:elevation="4dp"
-    app:title="@string/PolicyPrivacy"
     app:titleTextColor="#fff"
     android:textAlignment="center"
     android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
@@ -20,7 +19,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/PolicyPrivacy"
+        android:text="@string/policyPrivacy"
         android:textColor="#fff"
         android:textAlignment="center"
         android:paddingTop="15dp"

@@ -239,39 +239,60 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     dataMap.put("comments", 0);
     dataMap.put("type", 1);
 
-    final DocumentReference documentReference;
 
-    if (getIntent().hasExtra("justForUser") &&
-            getIntent().getBooleanExtra("justForUser", false)) {
+    if (getIntent().hasExtra("justForUser")) {
 
-      documentReference = FirebaseFirestore.getInstance().collection("Users")
-              .document(currentUid).collection("UserPosts").document(postId);
+     DocumentReference reference = FirebaseFirestore.getInstance().collection("Users")
+              .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+              .collection("UserPosts").document(postId);
+
+      reference.set(dataMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+        @Override
+        public void onSuccess(Void aVoid) {
+          progressDialog.dismiss();
+
+          setResult(3, new Intent().putExtra("postData",
+                  new PostData(dataMap)));
+
+          finish();
+        }
+      }).addOnFailureListener(new OnFailureListener() {
+        @Override
+        public void onFailure(@NonNull Exception e) {
+          Toast.makeText(PostNewActivity.this,
+                  R.string.post_publish_error, Toast.LENGTH_LONG).show();
+          progressDialog.dismiss();
+        }
+      });
+
+
 
     } else {
 
-      documentReference = FirebaseFirestore.getInstance().collection("Posts")
+      DocumentReference reference = FirebaseFirestore.getInstance().collection("Posts")
               .document(postId);
+
+      reference.set(dataMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+        @Override
+        public void onSuccess(Void aVoid) {
+          progressDialog.dismiss();
+
+          setResult(3, new Intent().putExtra("postData",
+                  new PostData(dataMap)));
+
+          finish();
+        }
+      }).addOnFailureListener(new OnFailureListener() {
+        @Override
+        public void onFailure(@NonNull Exception e) {
+          Toast.makeText(PostNewActivity.this,
+                  R.string.post_publish_error, Toast.LENGTH_LONG).show();
+          progressDialog.dismiss();
+        }
+      });
 
     }
 
-    documentReference.set(dataMap).addOnSuccessListener(new OnSuccessListener<Void>() {
-      @Override
-      public void onSuccess(Void aVoid) {
-        progressDialog.dismiss();
-
-        setResult(3, new Intent().putExtra("postData",
-                new PostData(dataMap)));
-
-        finish();
-      }
-    }).addOnFailureListener(new OnFailureListener() {
-      @Override
-      public void onFailure(@NonNull Exception e) {
-        Toast.makeText(PostNewActivity.this,
-                R.string.post_publish_error, Toast.LENGTH_LONG).show();
-        progressDialog.dismiss();
-      }
-    });
 
 
   }

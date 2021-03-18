@@ -178,6 +178,28 @@ public class Home_Activity extends AppCompatActivity implements
     navigationview.setNavigationItemSelectedListener(this);
 
 
+    nav_btom.setOnNavigationItemSelectedListener(item -> {
+      if (item.getItemId() == R.id.home) {
+        if (nav_btom.getSelectedItemId() != R.id.home) {
+          replaceFragment(new PostsFragment());
+        }
+      } else if (item.getItemId() == R.id.profile) {
+        if (nav_btom.getSelectedItemId() != R.id.profile) {
+          replaceFragment(new PostsProfileFragment());
+        }
+      } else if (item.getItemId() == R.id.chat) {
+        if (nav_btom.getSelectedItemId() != R.id.chat) {
+          replaceFragment(new ChattingFragment());
+        }
+      } else if (item.getItemId() == R.id.charity) {
+        if (nav_btom.getSelectedItemId() != R.id.charity) {
+          replaceFragment(new MeetingsFragment());
+        }
+      }
+
+      return true;
+    });
+
   }
 
 
