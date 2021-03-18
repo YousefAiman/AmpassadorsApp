@@ -40,12 +40,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import hashed.app.ampassadors.Activities.SuggestionsActivity;
 import hashed.app.ampassadors.Adapters.CommentsAdapter;
 import hashed.app.ampassadors.Adapters.RepliesAdapter;
 import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.Objects.Comment;
 import hashed.app.ampassadors.Objects.CommentReply;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.SigninUtil;
 
 
 public class CommentsFragment extends BottomSheetDialogFragment implements View.OnClickListener,
@@ -177,6 +179,11 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
 
   private void addComment() {
 
+    if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
+
+      SigninUtil.getInstance(getContext(),
+              getActivity()).show();
+    }
     commentSubmitIv.setClickable(false);
     Log.d("ttt", "clicked");
     final String comment = commentEd.getText().toString();

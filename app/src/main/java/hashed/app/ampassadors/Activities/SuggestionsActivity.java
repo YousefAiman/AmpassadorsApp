@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.SigninUtil;
 
 public class SuggestionsActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener {
 
@@ -37,6 +38,12 @@ public class SuggestionsActivity extends AppCompatActivity implements Toolbar.On
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_suggestions);
+    if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
+
+      SigninUtil.getInstance(SuggestionsActivity.this,
+              SuggestionsActivity.this).show();
+    }
+
     setupCompontet();
     OnClick();
     setUpToolBarAndActions();

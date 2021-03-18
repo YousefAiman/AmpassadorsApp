@@ -116,13 +116,10 @@ public class Home_Activity extends AppCompatActivity implements
     createNotificationListener();
   }
 
-
-
   private void createUserLikesListener() {
       if(FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
-          SigninUtil.getInstance(Home_Activity.this, ).show();
+          SigninUtil.getInstance(Home_Activity.this, Home_Activity.this).show();
       }
-
     listenerRegistrations = new ArrayList<>();
     listenerRegistrations.add(
             FirebaseFirestore.getInstance().collection("Users")
@@ -133,9 +130,7 @@ public class Home_Activity extends AppCompatActivity implements
                                           @Nullable FirebaseFirestoreException error) {
 
                         if (value != null && value.exists()) {
-
                           if (GlobalVariables.getCurrentUsername() == null) {
-
                             GlobalVariables.setCurrentUsername(
                                     value.getString("username"));
 
