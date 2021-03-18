@@ -44,6 +44,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.UUID;
 
 import hashed.app.ampassadors.Objects.UserInfo;
@@ -150,15 +151,28 @@ public class sign_up extends AppCompatActivity {
         userInfo = new UserInfo();
         // Picasso.get().load(userInfo.getImageUrl()).fit().into(circleImageView);
         FirebaseUser firebaseUser = auth.getCurrentUser();
-        userInfo.setUsername(username);
-        userInfo.setPassword(passwrod);
-        userInfo.setEmail(firebaseUser.getEmail());
-        userInfo.setCountry(country);
-        userInfo.setCity(city);
-        userInfo.setPhone(phone);
-        userInfo.setUserid(firebaseUser.getUid());
-        userInfo.setImageUrl(imageUrl);
-        userInfo.setStatus(true);
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("username", username);
+        hashMap.put("password", passwrod);
+        hashMap.put("email", firebaseUser.getEmail());
+        hashMap.put("country", country);
+        hashMap.put("city", city);
+        hashMap.put("phone", phone);
+        hashMap.put("userid", firebaseUser.getUid());
+        hashMap.put("imageUrl", imageUrl);
+        hashMap.put("status", true);
+
+
+//        userInfo.setUsername(username);
+//        userInfo.setPassword(passwrod);
+//        userInfo.setEmail(firebaseUser.getEmail());
+//        userInfo.setCountry(country);
+//        userInfo.setCity(city);
+//        userInfo.setPhone(phone);
+//        userInfo.setUserid(firebaseUser.getUid());
+//        userInfo.setImageUrl(imageUrl);
+//        userInfo.setStatus(true);
         //  userInfo.setUserRole(spin);
 //                userInfo.setApprovement(false);
 
