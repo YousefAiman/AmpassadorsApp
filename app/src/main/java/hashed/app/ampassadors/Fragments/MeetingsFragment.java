@@ -1,20 +1,25 @@
 package hashed.app.ampassadors.Fragments;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -27,32 +32,40 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
 
+import hashed.app.ampassadors.Activities.UsersPickerActivity;
 import hashed.app.ampassadors.Adapters.MeetingsAdapter;
+import hashed.app.ampassadors.BroadcastReceivers.NotificationIndicatorReceiver;
+import hashed.app.ampassadors.BuildConfig;
 import hashed.app.ampassadors.Objects.Meeting;
-import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.GlobalVariables;
 
-public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,
+        View.OnClickListener {
 
+  private static final int MEETING_LIMIT = 8;
   //views
   private RecyclerView meetingsRv;
   private TextView noMessagesTv;
   private ArrayList<Meeting> meetings;
   private MeetingsAdapter adapter;
   private SwipeRefreshLayout swipeRefreshLayout;
-
   private ScrollListener scrollListener;
+  private FloatingActionButton floatingButton;
+  private Toolbar toolbar;
+
+
+  private NotificationIndicatorReceiver notificationIndicatorReceiver;
+
 
   //database
   private String currentUid;
   private Query query;
   private DocumentSnapshot lastDocSnap;
-  private static final int MEETING_LIMIT = 8;
   private boolean isLoading;
   private ListenerRegistration listenerRegistration;
+
   public MeetingsFragment() {
     // Required empty public constructor
   }
@@ -68,7 +81,7 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     query = FirebaseFirestore.getInstance().collection("Meetings")
             .whereArrayContains("members", currentUid)
-            .whereEqualTo("hasEnded",false)
+            .whereEqualTo("hasEnded", false)
             .orderBy("startTime", Query.Direction.ASCENDING).limit(MEETING_LIMIT);
 
   }
@@ -76,10 +89,14 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-    View view =  inflater.inflate(R.layout.online_users_fragment, container, false);
+    View view = inflater.inflate(R.layout.meetings_fragment, container, false);
     swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
     meetingsRv = view.findViewById(R.id.childRv);
     noMessagesTv = view.findViewById(R.id.emptyTv);
+
+    floatingButton = view.findViewById(R.id.floatingButton);
+    toolbar = view.findViewById(R.id.groupToolbar);
+
     noMessagesTv.setText(R.string.no_current_meetings);
 
 
@@ -89,16 +106,17 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
       @Override
       public void onItemsRemoved(@NonNull RecyclerView recyclerView,
                                  int positionStart, int itemCount) {
-        if (itemCount == 0){
+        if (itemCount == 0) {
           noMessagesTv.setVisibility(View.VISIBLE);
           meetingsRv.setVisibility(View.INVISIBLE);
         }
       }
+
       @Override
       public void onItemsAdded(@NonNull RecyclerView recyclerView,
                                int positionStart, int itemCount) {
         super.onItemsAdded(recyclerView, positionStart, itemCount);
-        if(meetingsRv.getVisibility() == View.INVISIBLE){
+        if (meetingsRv.getVisibility() == View.INVISIBLE) {
           noMessagesTv.setVisibility(View.GONE);
           meetingsRv.setVisibility(View.VISIBLE);
         }
@@ -114,62 +132,73 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
+
+    toolbar.getMenu().findItem(R.id.action_notifications)
+            .setIcon(GlobalVariables.getNotificationsCount() > 0 ?
+                    R.drawable.notification_indicator_icon :
+                    R.drawable.notification_icon);
+
+    setupNotificationReceiver();
+
     getMoreMeetings(true);
+
+
+    floatingButton.setOnClickListener(this);
 
   }
 
-  private void getMoreMeetings(boolean isInitial){
+  private void getMoreMeetings(boolean isInitial) {
 
     isLoading = true;
 
-    if(lastDocSnap!=null){
+    if (lastDocSnap != null) {
       query = query.startAfter(lastDocSnap);
     }
 
     query.get().addOnSuccessListener(snapshots -> {
 
-      if(!snapshots.isEmpty()){
+      if (!snapshots.isEmpty()) {
 
-        Log.d("ttt","online users: "+snapshots.size());
-        if(isInitial){
+        Log.d("ttt", "online users: " + snapshots.size());
+        if (isInitial) {
           meetings.addAll(snapshots.toObjects(Meeting.class));
-        }else{
-          meetings.addAll(meetings.size()-1, snapshots.toObjects(Meeting.class));
+        } else {
+          meetings.addAll(meetings.size() - 1, snapshots.toObjects(Meeting.class));
         }
       }
 
     }).addOnCompleteListener(task -> {
 
-      if(task.isSuccessful() && task.getResult()!=null && !task.getResult().isEmpty()) {
+      if (task.isSuccessful() && task.getResult() != null && !task.getResult().isEmpty()) {
 
         lastDocSnap = task.getResult().getDocuments().get(
-                task.getResult().size()-1
+                task.getResult().size() - 1
         );
 
 
         if (isInitial) {
 
-          if(!meetings.isEmpty()){
+          if (!meetings.isEmpty()) {
             meetingsRv.setVisibility(View.VISIBLE);
             adapter.notifyDataSetChanged();
 
-            if(meetings.size() == MEETING_LIMIT){
+            if (meetings.size() == MEETING_LIMIT) {
               meetingsRv.addOnScrollListener(scrollListener = new ScrollListener());
             }
 
-            if(listenerRegistration == null){
+            if (listenerRegistration == null) {
               addMeetingEndedListener();
             }
 
           }
         } else {
 
-          if (!task.getResult().isEmpty() && task.getResult().size() < MEETING_LIMIT){
+          if (!task.getResult().isEmpty() && task.getResult().size() < MEETING_LIMIT) {
             meetingsRv.removeOnScrollListener(scrollListener);
           }
 
           adapter.notifyItemRangeInserted(
-                  (meetings.size() - task.getResult().size())-1,
+                  (meetings.size() - task.getResult().size()) - 1,
                   task.getResult().size());
 
         }
@@ -192,46 +221,31 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
 
   }
 
-  private class ScrollListener extends RecyclerView.OnScrollListener {
-    @Override
-    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-      super.onScrollStateChanged(recyclerView, newState);
-
-      if (!isLoading && !recyclerView.canScrollVertically(1) &&
-              newState == RecyclerView.SCROLL_STATE_IDLE) {
-
-        getMoreMeetings(false);
-
-      }
-    }
-  }
-
-
-  private void addMeetingEndedListener(){
+  private void addMeetingEndedListener() {
     listenerRegistration =
             FirebaseFirestore.getInstance().collection("Meetings")
                     .whereArrayContains("members", currentUid)
-                    .whereEqualTo("hasEnded",true).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    .whereEqualTo("hasEnded", true).addSnapshotListener(new EventListener<QuerySnapshot>() {
               @Override
               public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
 
-                if(value!=null && !value.getDocumentChanges().isEmpty()){
+                if (value != null && !value.getDocumentChanges().isEmpty()) {
 
-                  for(DocumentChange dc:value.getDocumentChanges()){
-                    if(dc.getType() == DocumentChange.Type.ADDED){
+                  for (DocumentChange dc : value.getDocumentChanges()) {
+                    if (dc.getType() == DocumentChange.Type.ADDED) {
 
 
-                      if(meetings == null || meetings.isEmpty())
+                      if (meetings == null || meetings.isEmpty())
                         return;
 
                       final String meetingId = dc.getDocument().getString("meetingId");
 
-                      if(meetingId == null)
+                      if (meetingId == null)
                         return;
 
-                      for(int i=0;i<meetings.size();i++){
-                        if(meetings.get(i).getMeetingId()
-                                .equals(meetingId)){
+                      for (int i = 0; i < meetings.size(); i++) {
+                        if (meetings.get(i).getMeetingId()
+                                .equals(meetingId)) {
                           meetings.get(i).setHasEnded(true);
                           break;
                         }
@@ -248,11 +262,64 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
   public void onDestroy() {
     super.onDestroy();
 
-    if(meetingsRv != null && scrollListener!=null){
+    if (meetingsRv != null && scrollListener != null) {
       meetingsRv.removeOnScrollListener(scrollListener);
     }
-    if(listenerRegistration!=null){
+    if (listenerRegistration != null) {
       listenerRegistration.remove();
+    }
+
+    if (notificationIndicatorReceiver != null) {
+      requireContext().unregisterReceiver(notificationIndicatorReceiver);
+    }
+
+
+  }
+
+  @Override
+  public void onClick(View view) {
+    if (view.getId() == R.id.floatingButton) {
+      startActivity(new Intent(getContext(), UsersPickerActivity.class));
+    }
+  }
+
+  private void setupNotificationReceiver() {
+
+    notificationIndicatorReceiver =
+            new NotificationIndicatorReceiver() {
+              @Override
+              public void onReceive(Context context, Intent intent) {
+                if (intent.hasExtra("showIndicator")) {
+                  final MenuItem item = toolbar.getMenu().findItem(R.id.action_notifications);
+                  if (intent.getBooleanExtra("showIndicator", false)) {
+                    item.setIcon(R.drawable.notification_indicator_icon);
+                  } else {
+                    item.setIcon(R.drawable.notification_icon);
+                  }
+                }
+              }
+            };
+
+    getContext().registerReceiver(notificationIndicatorReceiver,
+            new IntentFilter(BuildConfig.APPLICATION_ID + ".notificationIndicator"));
+
+  }
+
+
+
+
+
+  private class ScrollListener extends RecyclerView.OnScrollListener {
+    @Override
+    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+      super.onScrollStateChanged(recyclerView, newState);
+
+      if (!isLoading && !recyclerView.canScrollVertically(1) &&
+              newState == RecyclerView.SCROLL_STATE_IDLE) {
+
+        getMoreMeetings(false);
+
+      }
     }
   }
 }

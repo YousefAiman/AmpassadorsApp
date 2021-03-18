@@ -51,21 +51,21 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
   //message types
 
   //received message items
-    static final int
-            MSG_TYPE_LEFT_TEXT = 11,
-            MSG_TYPE_LEFT_IMAGE = 12,
-            MSG_TYPE_LEFT_AUDIO = 13,
-            MSG_TYPE_LEFT_VIDEO = 14,
-            MSG_TYPE_LEFT_DOCUMENT = 15;
+  static final int
+          MSG_TYPE_LEFT_TEXT = 11,
+          MSG_TYPE_LEFT_IMAGE = 12,
+          MSG_TYPE_LEFT_AUDIO = 13,
+          MSG_TYPE_LEFT_VIDEO = 14,
+          MSG_TYPE_LEFT_DOCUMENT = 15;
 
   //sent message items
   static final int
-            MSG_TYPE_RIGHT_TEXT = 21,
-            MSG_TYPE_RIGHT_IMAGE = 22,
-            MSG_TYPE_RIGHT_AUDIO = 23,
-            MSG_TYPE_RIGHT_VIDEO = 24,
-            MSG_TYPE_RIGHT_DOCUMENT = 25,
-            MSG_TYPE_RIGHT_ZOOM = 26;
+          MSG_TYPE_RIGHT_TEXT = 21,
+          MSG_TYPE_RIGHT_IMAGE = 22,
+          MSG_TYPE_RIGHT_AUDIO = 23,
+          MSG_TYPE_RIGHT_VIDEO = 24,
+          MSG_TYPE_RIGHT_DOCUMENT = 25,
+          MSG_TYPE_RIGHT_ZOOM = 26;
 
 
   //received group message items
@@ -82,8 +82,21 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
           MSG_TYPE_LEFT_DELETED = 41,
           MSG_TYPE_RIGHT_DELETED = 42,
           MSG_TYPE_LEFT_DELETED_GROUP = 43;
+  private static final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
 
+//  private final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+  private static final Date date = new Date();
+  public static boolean isForGroup;
+  public static CollectionReference usersRef =
+          FirebaseFirestore.getInstance().collection("Users");
+  static ArrayList<PrivateMessage> privateMessages;
+  //Group
+  static Map<String, String> userNamesMap;
+  private static DeleteMessageListener deleteMessageListener;
+  private static VideoMessageListener videoMessageListener;
+  private static ImageMessageListener imageMessageListener;
+  private static DocumentMessageListener documentMessageListener;
   //date formats
   private final DateFormat
           hourMinuteFormat = new SimpleDateFormat("h:mm a", Locale.getDefault()),
@@ -91,54 +104,8 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
           formatter = new SimpleDateFormat("h:mm a yyyy MMM dd", Locale.getDefault()),
           todayYearFormat = new SimpleDateFormat("yyyy", Locale.getDefault()),
           todayYearMonthDayFormat = new SimpleDateFormat("yyyy MMM dd", Locale.getDefault());
-
-
-//  private final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-  private static final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-  private static final Date date = new Date();
-
-   private boolean longCLickEnabled = true;
-
-  static ArrayList<PrivateMessage> privateMessages;
   private final Context context;
-
-  private static DeleteMessageListener deleteMessageListener;
-  private static VideoMessageListener videoMessageListener;
-  private static ImageMessageListener imageMessageListener;
-  private static DocumentMessageListener documentMessageListener;
-
-
-  public interface DeleteMessageListener{
-    void deleteMessage(PrivateMessage message, DialogInterface dialog);
-  }
-
-  public interface VideoMessageListener{
-    void playVideo(String url);
-  }
-
-  public interface ImageMessageListener{
-    void showImage(String url);
-  }
-
-  public interface DocumentMessageListener{
-
-    void startDownload(int adapterPosition, String url, String fileName);
-    boolean cancelDownload(int adapterPosition,long downloadId);
-
-  }
-
-
-  void disableLongClick(){
-    longCLickEnabled = false;
-  }
-
-
-  //Group
-  static Map<String, String> userNamesMap;
-  public static boolean isForGroup;
-  public static CollectionReference usersRef =
-          FirebaseFirestore.getInstance().collection("Users");
+  private boolean longCLickEnabled = true;
 
   public PrivateMessagingAdapter(ArrayList<PrivateMessage> privateMessages,
                                  Context context,
@@ -146,19 +113,58 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
                                  VideoMessageListener videoMessageListener,
                                  DocumentMessageListener documentMessageListener,
                                  ImageMessageListener imageMessageListener
-                                 ,boolean isForGroup
+          , boolean isForGroup
   ) {
 
     PrivateMessagingAdapter.privateMessages = privateMessages;
     this.context = context;
     PrivateMessagingAdapter.isForGroup = isForGroup;
-    if(isForGroup){
+    if (isForGroup) {
       userNamesMap = new HashMap<>();
     }
     PrivateMessagingAdapter.deleteMessageListener = deleteMessageListener;
     PrivateMessagingAdapter.videoMessageListener = videoMessageListener;
     PrivateMessagingAdapter.documentMessageListener = documentMessageListener;
     PrivateMessagingAdapter.imageMessageListener = imageMessageListener;
+  }
+
+  private static void getUserName(String userId, TextView tv) {
+
+    if (userNamesMap.containsKey(userId)) {
+      tv.setText(userNamesMap.get(userId));
+    } else {
+
+      usersRef.document(userId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        @Override
+        public void onSuccess(DocumentSnapshot documentSnapshot) {
+          if (documentSnapshot.exists()) {
+            userNamesMap.put(userId, documentSnapshot.getString("username"));
+          }
+        }
+      }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        @Override
+        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+          if (task.isSuccessful() && userNamesMap.containsKey(userId)) {
+            tv.setText(userNamesMap.get(userId));
+          }
+        }
+      });
+
+    }
+  }
+
+  private static void showMessageDeletionDialog(PrivateMessage message, Context context) {
+    final AlertDialog.Builder alert = new AlertDialog.Builder(context);
+    alert.setTitle(R.string.message_delete);
+    alert.setPositiveButton(R.string.delete, (dialog, which) -> {
+      deleteMessageListener.deleteMessage(message, dialog);
+    });
+    alert.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());
+    alert.create().show();
+  }
+
+  void disableLongClick() {
+    longCLickEnabled = false;
   }
 
   @Override
@@ -175,7 +181,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
   @Override
   public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-    switch (viewType){
+    switch (viewType) {
 
       case MSG_TYPE_LEFT_DELETED:
         return new PrivateMessagingDeletedVh(LayoutInflater.from(parent.getContext())
@@ -299,16 +305,16 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
   public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
 
-    switch (holder.getItemViewType()){
+    switch (holder.getItemViewType()) {
 
       case MSG_TYPE_LEFT_TEXT:
       case MSG_TYPE_RIGHT_TEXT:
-        ((PrivateMessagingTextVh)holder).bindMessage(privateMessages.get(position),
+        ((PrivateMessagingTextVh) holder).bindMessage(privateMessages.get(position),
                 false);
         break;
 
       case MSG_TYPE_LEFT_TEXT_GROUP:
-        ((PrivateMessagingTextVh)holder).bindMessage(privateMessages.get(position),
+        ((PrivateMessagingTextVh) holder).bindMessage(privateMessages.get(position),
                 true);
         break;
 
@@ -316,13 +322,13 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
       case MSG_TYPE_LEFT_IMAGE:
       case MSG_TYPE_RIGHT_IMAGE:
 
-        ((PrivateMessagingImageVh)holder).bindMessage(privateMessages.get(position),
+        ((PrivateMessagingImageVh) holder).bindMessage(privateMessages.get(position),
                 false);
 
         break;
 
       case MSG_TYPE_LEFT_IMAGE_GROUP:
-        ((PrivateMessagingImageVh)holder).bindMessage(privateMessages.get(position),
+        ((PrivateMessagingImageVh) holder).bindMessage(privateMessages.get(position),
                 true);
         break;
 
@@ -330,38 +336,38 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
       case MSG_TYPE_LEFT_AUDIO:
       case MSG_TYPE_RIGHT_AUDIO:
 
-        ((PrivateMessagingAudioVh)holder).bindMessage(privateMessages.get(position),
+        ((PrivateMessagingAudioVh) holder).bindMessage(privateMessages.get(position),
                 false);
 
         break;
 
       case MSG_TYPE_LEFT_AUDIO_GROUP:
-        ((PrivateMessagingAudioVh)holder).bindMessage(privateMessages.get(position),
+        ((PrivateMessagingAudioVh) holder).bindMessage(privateMessages.get(position),
                 true);
         break;
 
       case MSG_TYPE_LEFT_VIDEO:
       case MSG_TYPE_RIGHT_VIDEO:
 
-        ((PrivateMessagingVideoVh)holder).bindMessage(privateMessages.get(position),
+        ((PrivateMessagingVideoVh) holder).bindMessage(privateMessages.get(position),
                 false);
 
         break;
 
       case MSG_TYPE_LEFT_VIDEO_GROUP:
-        ((PrivateMessagingVideoVh)holder).bindMessage(privateMessages.get(position),
+        ((PrivateMessagingVideoVh) holder).bindMessage(privateMessages.get(position),
                 true);
         break;
 
       case MSG_TYPE_LEFT_DOCUMENT:
       case MSG_TYPE_RIGHT_DOCUMENT:
 
-        ((PrivateMessagingDocumentVh)holder).bindMessage(privateMessages.get(position),
+        ((PrivateMessagingDocumentVh) holder).bindMessage(privateMessages.get(position),
                 false);
         break;
 
       case MSG_TYPE_LEFT_DOCUMENT_GROUP:
-        ((PrivateMessagingDocumentVh)holder).bindMessage(privateMessages.get(position),
+        ((PrivateMessagingDocumentVh) holder).bindMessage(privateMessages.get(position),
                 true);
         break;
 
@@ -369,15 +375,15 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
       case MSG_TYPE_RIGHT_ZOOM:
       case MSG_TYPE_LEFT_ZOOM_GROUP:
 
-        ((PrivateMessagingZoomVh)holder).bindMessage(privateMessages.get(position));
+        ((PrivateMessagingZoomVh) holder).bindMessage(privateMessages.get(position));
 
         break;
 
       case MSG_TYPE_LEFT_DELETED_GROUP:
 
-         ((PrivateMessagingDeletedGroupVh)holder).bindUserName();
+        ((PrivateMessagingDeletedGroupVh) holder).bindUserName();
 
-          break;
+        break;
     }
 
   }
@@ -388,35 +394,35 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
     final PrivateMessage message = privateMessages.get(position);
 
 
-    if(message.getDeleted()){
-      return message.getSender().equals(currentUid)?MSG_TYPE_RIGHT_DELETED:
-              isForGroup?MSG_TYPE_LEFT_DELETED_GROUP:MSG_TYPE_LEFT_DELETED;
+    if (message.getDeleted()) {
+      return message.getSender().equals(currentUid) ? MSG_TYPE_RIGHT_DELETED :
+              isForGroup ? MSG_TYPE_LEFT_DELETED_GROUP : MSG_TYPE_LEFT_DELETED;
     }
 
-    switch (message.getType()){
+    switch (message.getType()) {
 
       case Files.TEXT:
-        return message.getSender().equals(currentUid)?MSG_TYPE_RIGHT_TEXT:
-                isForGroup?MSG_TYPE_LEFT_TEXT_GROUP:MSG_TYPE_LEFT_TEXT;
+        return message.getSender().equals(currentUid) ? MSG_TYPE_RIGHT_TEXT :
+                isForGroup ? MSG_TYPE_LEFT_TEXT_GROUP : MSG_TYPE_LEFT_TEXT;
 
       case Files.IMAGE:
-        return  message.getSender().equals(currentUid)?MSG_TYPE_RIGHT_IMAGE:
-                isForGroup?MSG_TYPE_LEFT_IMAGE_GROUP:MSG_TYPE_LEFT_IMAGE;
+        return message.getSender().equals(currentUid) ? MSG_TYPE_RIGHT_IMAGE :
+                isForGroup ? MSG_TYPE_LEFT_IMAGE_GROUP : MSG_TYPE_LEFT_IMAGE;
 
       case Files.AUDIO:
-        return  message.getSender().equals(currentUid)?MSG_TYPE_RIGHT_AUDIO:
-                isForGroup?MSG_TYPE_LEFT_AUDIO_GROUP:MSG_TYPE_LEFT_AUDIO;
+        return message.getSender().equals(currentUid) ? MSG_TYPE_RIGHT_AUDIO :
+                isForGroup ? MSG_TYPE_LEFT_AUDIO_GROUP : MSG_TYPE_LEFT_AUDIO;
 
       case Files.VIDEO:
-        return  message.getSender().equals(currentUid)?MSG_TYPE_RIGHT_VIDEO:
-                isForGroup?MSG_TYPE_LEFT_VIDEO_GROUP:MSG_TYPE_LEFT_VIDEO;
+        return message.getSender().equals(currentUid) ? MSG_TYPE_RIGHT_VIDEO :
+                isForGroup ? MSG_TYPE_LEFT_VIDEO_GROUP : MSG_TYPE_LEFT_VIDEO;
 
       case Files.DOCUMENT:
-        return  message.getSender().equals(currentUid)?MSG_TYPE_RIGHT_DOCUMENT:
-                isForGroup?MSG_TYPE_LEFT_DOCUMENT_GROUP:MSG_TYPE_LEFT_DOCUMENT;
+        return message.getSender().equals(currentUid) ? MSG_TYPE_RIGHT_DOCUMENT :
+                isForGroup ? MSG_TYPE_LEFT_DOCUMENT_GROUP : MSG_TYPE_LEFT_DOCUMENT;
 
       case Files.ZOOM:
-        return  message.getSender().equals(currentUid)?MSG_TYPE_RIGHT_ZOOM:
+        return message.getSender().equals(currentUid) ? MSG_TYPE_RIGHT_ZOOM :
                 MSG_TYPE_LEFT_ZOOM_GROUP;
 
       default:
@@ -424,48 +430,70 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
   }
 
-   static class PrivateMessagingTextVh extends RecyclerView.ViewHolder
-           implements View.OnLongClickListener, View.OnClickListener{
+  public interface DeleteMessageListener {
+    void deleteMessage(PrivateMessage message, DialogInterface dialog);
+  }
+
+  public interface VideoMessageListener {
+    void playVideo(String url);
+  }
+
+  public interface ImageMessageListener {
+    void showImage(String url);
+  }
+
+
+  public interface DocumentMessageListener {
+
+    void startDownload(int adapterPosition, String url, String fileName);
+
+    boolean cancelDownload(int adapterPosition, long downloadId);
+
+  }
+
+  static class PrivateMessagingTextVh extends RecyclerView.ViewHolder
+          implements View.OnLongClickListener, View.OnClickListener {
 
     private final TextView messageTv;
     private TextView senderTv;
-     public PrivateMessagingTextVh(@NonNull View itemView) {
-       super(itemView);
-       messageTv =  itemView.findViewById(R.id.messageTv);
-       if(isForGroup){
-         senderTv = itemView.findViewById(R.id.senderTv);
-       }
+
+    public PrivateMessagingTextVh(@NonNull View itemView) {
+      super(itemView);
+      messageTv = itemView.findViewById(R.id.messageTv);
+      if (isForGroup) {
+        senderTv = itemView.findViewById(R.id.senderTv);
+      }
 //       messageTimeTv =  itemView.findViewById(R.id.messageTimeTv);
-     }
-
-
-      private void bindMessage(PrivateMessage message,boolean bindUsername) {
-
-      if(message == null)
-        return;
-
-        messageTv.setText(message.getContent());
-
-        if(bindUsername && !message.getSender().equals(currentUid)){
-          getUserName(message.getSender(),senderTv);
-        }
-
-
-        if(message.getSender().equals(currentUid)){
-          itemView.setOnLongClickListener(this);
-        }
     }
 
-     @Override
-     public boolean onLongClick(View view) {
 
-       showMessageDeletionDialog(privateMessages.get(getAdapterPosition()),itemView.getContext());
+    private void bindMessage(PrivateMessage message, boolean bindUsername) {
 
-       return false;
-     }
+      if (message == null)
+        return;
 
-     @Override
-     public void onClick(View view) {
+      messageTv.setText(message.getContent());
+
+      if (bindUsername && !message.getSender().equals(currentUid)) {
+        getUserName(message.getSender(), senderTv);
+      }
+
+
+      if (message.getSender().equals(currentUid)) {
+        itemView.setOnLongClickListener(this);
+      }
+    }
+
+    @Override
+    public boolean onLongClick(View view) {
+
+      showMessageDeletionDialog(privateMessages.get(getAdapterPosition()), itemView.getContext());
+
+      return false;
+    }
+
+    @Override
+    public void onClick(View view) {
 
 //
 //       if (messageTimeTv.getVisibility() == View.INVISIBLE) {
@@ -493,46 +521,46 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 //         messageTimeTv.setVisibility(View.INVISIBLE);
 //       }
 
-     }
+    }
 
-   }
-
+  }
 
   static class PrivateMessagingImageVh extends RecyclerView.ViewHolder
-          implements View.OnLongClickListener, View.OnClickListener{
+          implements View.OnLongClickListener, View.OnClickListener {
 
     private final TextView messageTv;
     private final ImageView imageIv;
     private final Picasso picasso = Picasso.get();
     private TextView senderTv;
+
     public PrivateMessagingImageVh(@NonNull View itemView) {
       super(itemView);
       messageTv = itemView.findViewById(R.id.messageTv);
       imageIv = itemView.findViewById(R.id.imageIv);
-      if(isForGroup){
+      if (isForGroup) {
         senderTv = itemView.findViewById(R.id.senderTv);
       }
     }
 
-    private void bindMessage(PrivateMessage message,boolean bindUsername) {
+    private void bindMessage(PrivateMessage message, boolean bindUsername) {
 
-      if(message == null)
+      if (message == null)
         return;
 
-      if(message.getAttachmentUrl()!=null){
+      if (message.getAttachmentUrl() != null) {
         picasso.load(message.getAttachmentUrl()).fit().into(imageIv);
       }
 
-      if(bindUsername && !message.getSender().equals(currentUid)){
-        getUserName(message.getSender(),senderTv);
+      if (bindUsername && !message.getSender().equals(currentUid)) {
+        getUserName(message.getSender(), senderTv);
       }
 
 
-        messageTv.setText(message.getContent());
+      messageTv.setText(message.getContent());
 
       imageIv.setOnClickListener(this);
 
-      if(message.getSender().equals(currentUid)){
+      if (message.getSender().equals(currentUid)) {
         itemView.setOnLongClickListener(this);
       }
 
@@ -540,15 +568,15 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public boolean onLongClick(View view) {
-      showMessageDeletionDialog(privateMessages.get(getAdapterPosition()),itemView.getContext());
+      showMessageDeletionDialog(privateMessages.get(getAdapterPosition()), itemView.getContext());
       return false;
     }
 
     @Override
     public void onClick(View view) {
 
-      if(view.getId() == R.id.imageIv){
-        if(privateMessages.get(getAdapterPosition()).getAttachmentUrl()!=null){
+      if (view.getId() == R.id.imageIv) {
+        if (privateMessages.get(getAdapterPosition()).getAttachmentUrl() != null) {
           imageMessageListener.showImage(privateMessages.get(
                   getAdapterPosition()).getAttachmentUrl());
         }
@@ -558,10 +586,9 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
   }
 
-
   static class PrivateMessagingAudioVh extends RecyclerView.ViewHolder
           implements View.OnLongClickListener, View.OnClickListener,
-          MediaPlayer.OnCompletionListener{
+          MediaPlayer.OnCompletionListener {
 
     private final Slider audioProgressSlider;
     private final ImageView playIv;
@@ -579,8 +606,8 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
       audioProgressSlider = itemView.findViewById(R.id.audioProgressSlider);
 //      imageIv = itemView.findViewById(R.id.imageIv);
       playIv = itemView.findViewById(R.id.playIv);
-      if(isForGroup){
-        senderTv  = itemView.findViewById(R.id.senderTv);
+      if (isForGroup) {
+        senderTv = itemView.findViewById(R.id.senderTv);
       }
 //
 //      if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP  ){
@@ -604,26 +631,26 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     }
 
-    private void bindMessage(PrivateMessage message,boolean bindUsername) {
+    private void bindMessage(PrivateMessage message, boolean bindUsername) {
 
-      if(message == null)
+      if (message == null)
         return;
 
-      if(message.getAttachmentUrl() != null){
+      if (message.getAttachmentUrl() != null) {
 
         playIv.setOnClickListener(this);
 
-      }else{
+      } else {
 
         playIv.setClickable(false);
 
       }
 
-      if(bindUsername && !message.getSender().equals(currentUid)){
-        getUserName(message.getSender(),senderTv);
+      if (bindUsername && !message.getSender().equals(currentUid)) {
+        getUserName(message.getSender(), senderTv);
       }
 
-      if(message.getSender().equals(currentUid)){
+      if (message.getSender().equals(currentUid)) {
         itemView.setOnLongClickListener(this);
       }
 
@@ -632,62 +659,62 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public boolean onLongClick(View view) {
-      showMessageDeletionDialog(privateMessages.get(getAdapterPosition()),itemView.getContext());
+      showMessageDeletionDialog(privateMessages.get(getAdapterPosition()), itemView.getContext());
       return false;
     }
 
     @Override
     public void onClick(View view) {
 
-      if(view.getId() == R.id.playIv){
+      if (view.getId() == R.id.playIv) {
 
-        Log.d("audioMessage","item clicked");
+        Log.d("audioMessage", "item clicked");
         PrivateMessage message = privateMessages.get(getAdapterPosition());
 
 
-        if(lastClicked == -1){
-          Log.d("audioMessage","lastClicked == -1");
+        if (lastClicked == -1) {
+          Log.d("audioMessage", "lastClicked == -1");
 
           audioPlayer = new AudioPlayer(itemView.getContext(),
-                  message.getAttachmentUrl(),message.getLength(),
-                  audioProgressSlider,playIv);
+                  message.getAttachmentUrl(), message.getLength(),
+                  audioProgressSlider, playIv);
 
-          lastMediaPlayer = audioPlayer.startPlaying(audioProgressSlider.getValue()>0?
+          lastMediaPlayer = audioPlayer.startPlaying(audioProgressSlider.getValue() > 0 ?
                   (int) audioProgressSlider.getValue() : 0);
 
           lastMediaPlayer.setOnCompletionListener(this);
 
           lastClicked = getAdapterPosition();
 
-        }else if(lastClicked == getAdapterPosition()){
-          Log.d("audioMessage","lastClicked == getAdapterPosition()");
-          if(audioPlayer == null){
+        } else if (lastClicked == getAdapterPosition()) {
+          Log.d("audioMessage", "lastClicked == getAdapterPosition()");
+          if (audioPlayer == null) {
 
-            Log.d("audioMessage","audioPlayer == null");
+            Log.d("audioMessage", "audioPlayer == null");
 
             audioPlayer = new AudioPlayer(itemView.getContext(),
-                    message.getAttachmentUrl(),message.getLength(),
-                    audioProgressSlider,playIv);
+                    message.getAttachmentUrl(), message.getLength(),
+                    audioProgressSlider, playIv);
 
-            lastMediaPlayer = audioPlayer.startPlaying(audioProgressSlider.getValue()>0?
+            lastMediaPlayer = audioPlayer.startPlaying(audioProgressSlider.getValue() > 0 ?
                     (int) audioProgressSlider.getValue() : 0);
 
             lastMediaPlayer.setOnCompletionListener(this);
 
             lastClicked = getAdapterPosition();
 
-          }else{
+          } else {
 
-            Log.d("audioMessage","audioPlayer != null");
+            Log.d("audioMessage", "audioPlayer != null");
 
-            if(lastMediaPlayer.isPlaying()){
+            if (lastMediaPlayer.isPlaying()) {
 
-              Log.d("audioMessage","lastMediaPlayer.isPlaying()");
+              Log.d("audioMessage", "lastMediaPlayer.isPlaying()");
 
               audioPlayer.pausePlayer();
-            }else{
+            } else {
 
-              Log.d("audioMessage","lastMediaPlayer is paused");
+              Log.d("audioMessage", "lastMediaPlayer is paused");
 
               audioPlayer.resumePlayer();
             }
@@ -695,20 +722,20 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
           }
 
 
-        }else{
+        } else {
 
-          Log.d("audioMessage","last clicked new");
+          Log.d("audioMessage", "last clicked new");
 
-          if(audioPlayer!=null){
-            Log.d("audioMessage","audioPlayer!=null");
+          if (audioPlayer != null) {
+            Log.d("audioMessage", "audioPlayer!=null");
             audioPlayer.releasePlayer();
           }
 
           audioPlayer = new AudioPlayer(itemView.getContext(),
-                  message.getAttachmentUrl(),message.getLength(),
-                  audioProgressSlider,playIv);
+                  message.getAttachmentUrl(), message.getLength(),
+                  audioProgressSlider, playIv);
 
-          lastMediaPlayer = audioPlayer.startPlaying(audioProgressSlider.getValue()>0?
+          lastMediaPlayer = audioPlayer.startPlaying(audioProgressSlider.getValue() > 0 ?
                   (int) audioProgressSlider.getValue() : 0);
 
           lastMediaPlayer.setOnCompletionListener(this);
@@ -731,9 +758,8 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
   }
 
-
   static class PrivateMessagingVideoVh extends RecyclerView.ViewHolder
-          implements View.OnLongClickListener, View.OnClickListener{
+          implements View.OnLongClickListener, View.OnClickListener {
 
     private final TextView messageTv;
     private final ImageView imageIv;
@@ -746,26 +772,26 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
       super(itemView);
       messageTv = itemView.findViewById(R.id.messageTv);
       imageIv = itemView.findViewById(R.id.imageIv);
-      playIv  = itemView.findViewById(R.id.playIv);
+      playIv = itemView.findViewById(R.id.playIv);
       videoProgressBar = itemView.findViewById(R.id.videoProgressBar);
-      if(isForGroup){
-        senderTv  = itemView.findViewById(R.id.senderTv);
+      if (isForGroup) {
+        senderTv = itemView.findViewById(R.id.senderTv);
       }
     }
 
 
-    private void bindMessage(PrivateMessage message,boolean bindUsername) {
+    private void bindMessage(PrivateMessage message, boolean bindUsername) {
 
-      if(message == null)
+      if (message == null)
         return;
 
       messageTv.setText(message.getContent());
 
-      if(bindUsername && !message.getSender().equals(currentUid)){
-        getUserName(message.getSender(),senderTv);
+      if (bindUsername && !message.getSender().equals(currentUid)) {
+        getUserName(message.getSender(), senderTv);
       }
 
-      if(message.getVideoThumbnail()!=null){
+      if (message.getVideoThumbnail() != null) {
 
         picasso.load(message.getVideoThumbnail()).fit().into(imageIv, new Callback() {
           @Override
@@ -773,6 +799,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
             videoProgressBar.setVisibility(View.GONE);
             playIv.setVisibility(View.VISIBLE);
           }
+
           @Override
           public void onError(Exception e) {
             videoProgressBar.setVisibility(View.GONE);
@@ -780,14 +807,14 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
           }
         });
 
-       imageIv.setOnClickListener(this);
+        imageIv.setOnClickListener(this);
 
 
-      }else{
+      } else {
         itemView.setOnClickListener(null);
       }
 
-      if(message.getSender().equals(currentUid)){
+      if (message.getSender().equals(currentUid)) {
         itemView.setOnLongClickListener(this);
       }
 
@@ -796,7 +823,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public boolean onLongClick(View view) {
-      showMessageDeletionDialog(privateMessages.get(getAdapterPosition()),itemView.getContext());
+      showMessageDeletionDialog(privateMessages.get(getAdapterPosition()), itemView.getContext());
       return false;
     }
 
@@ -809,116 +836,10 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
   }
 
-
-  class PrivateMessagingDocumentVh extends RecyclerView.ViewHolder
-          implements View.OnLongClickListener, View.OnClickListener{
-
-    private final TextView messageTv;
-    private final TextView documentNameTv;
-    private final ImageView downloadIv;
-    private final ProgressBar downloadProgressBar;
-    private boolean isDownloading;
-    private TextView senderTv;
-//    private DownloadReceiver downloadReceiver;
-    public PrivateMessagingDocumentVh(@NonNull View itemView) {
-      super(itemView);
-      messageTv = itemView.findViewById(R.id.messageTv);
-      documentNameTv = itemView.findViewById(R.id.documentNameTv);
-      downloadIv = itemView.findViewById(R.id.downloadIv);
-      downloadProgressBar = itemView.findViewById(R.id.downloadProgressBar);
-      if(isForGroup){
-        senderTv  = itemView.findViewById(R.id.senderTv);
-      }
-    }
-
-
-    private void bindMessage(PrivateMessage message,boolean bindUsername) {
-
-      if(message == null)
-        return;
-
-
-      messageTv.setText(message.getContent());
-      documentNameTv.setText(message.getFileName());
-
-      if(bindUsername && !message.getSender().equals(currentUid)){
-        getUserName(message.getSender(),senderTv);
-      }
-      if(message.getAttachmentUrl()!=null){
-
-        downloadIv.setOnClickListener(this);
-
-        if(message.getUploadTask() != null){
-
-          if (message.getUploadTask().isCompleted()) {
-
-            downloadIv.setVisibility(View.GONE);
-            downloadProgressBar.setVisibility(View.GONE);
-
-          }else if(message.getUploadTask().isDownloading()){
-
-            downloadIv.setImageResource(R.drawable.close_icon);
-            downloadProgressBar.setVisibility(View.VISIBLE);
-
-          }
-        }else{
-
-          downloadProgressBar.setVisibility(View.GONE);
-          downloadIv.setImageResource(R.drawable.download_icon);
-          downloadIv.setVisibility(View.VISIBLE);
-
-        }
-      }else{
-
-        downloadProgressBar.setVisibility(View.VISIBLE);
-        downloadIv.setVisibility(View.GONE);
-
-      }
-
-      if(message.getSender().equals(currentUid)){
-        itemView.setOnLongClickListener(this);
-      }
-
-    }
-
-    @Override
-    public boolean onLongClick(View view) {
-      showMessageDeletionDialog(privateMessages.get(getAdapterPosition()),itemView.getContext());
-      return false;
-    }
-
-    @Override
-    public void onClick(View view) {
-
-
-      final PrivateMessage message = privateMessages.get(getAdapterPosition());
-
-      if(message.getUploadTask()!=null &&
-              message.getUploadTask().isDownloading()){
-
-        if(!documentMessageListener.cancelDownload(
-                getAdapterPosition(),message.getUploadTask().getDownloadId())){
-          Toast.makeText(context, "Failed to cancel download!", Toast.LENGTH_SHORT).show();
-        }
-
-      }else{
-        documentMessageListener.startDownload(
-                getAdapterPosition(),
-                message.getAttachmentUrl(),
-                message.getFileName());
-
-      }
-
-
-    }
-
-  }
-
-
   static class PrivateMessagingZoomVh extends RecyclerView.ViewHolder
-          implements View.OnLongClickListener, View.OnClickListener{
+          implements View.OnLongClickListener, View.OnClickListener {
 
-    private final TextView titleTv,senderTv,timeTv,startTimeTv,durationTv;
+    private final TextView titleTv, senderTv, timeTv, startTimeTv, durationTv;
 
     public PrivateMessagingZoomVh(@NonNull View itemView) {
       super(itemView);
@@ -931,11 +852,11 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     private void bindMessage(PrivateMessage message) {
 
-      if(message == null)
+      if (message == null)
         return;
 
-      if(!message.getSender().equals(currentUid)){
-        getUserName(message.getSender(),senderTv);
+      if (!message.getSender().equals(currentUid)) {
+        getUserName(message.getSender(), senderTv);
       }
 
       timeTv.setText(TimeFormatter.formatTime(message.getTime()));
@@ -944,14 +865,14 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
       titleTv.setText(meeting.getTopic());
       durationTv.setText(String.valueOf(meeting.getDuration()));
 
-      if(meeting.getType() == 1){
+      if (meeting.getType() == 1) {
         startTimeTv.setText(TimeFormatter.formatTime(message.getTime()));
-      }else{
+      } else {
         startTimeTv.setText(TimeFormatter.formatTime(meeting.getStartTime()));
       }
 
       itemView.setOnClickListener(this);
-      if(message.getSender().equals(currentUid)){
+      if (message.getSender().equals(currentUid)) {
         itemView.setOnLongClickListener(this);
       }
 
@@ -959,7 +880,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public boolean onLongClick(View view) {
-      showMessageDeletionDialog(privateMessages.get(getAdapterPosition()),itemView.getContext());
+      showMessageDeletionDialog(privateMessages.get(getAdapterPosition()), itemView.getContext());
       return false;
     }
 
@@ -967,16 +888,16 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
     public void onClick(View view) {
 
       final ZoomMeeting meeting = privateMessages.get(getAdapterPosition()).getZoomMeeting();
-      if(meeting.getType() == 2 && meeting.getStartTime() < System.currentTimeMillis()){
+      if (meeting.getType() == 2 && meeting.getStartTime() < System.currentTimeMillis()) {
         Toast.makeText(itemView.getContext(),
-                "Meeting will start on: "+ TimeFormatter.formatTime(meeting.getStartTime())
+                "Meeting will start on: " + TimeFormatter.formatTime(meeting.getStartTime())
                 , Toast.LENGTH_SHORT).show();
         return;
-      }else if(meeting.getType() == 1){
+      } else if (meeting.getType() == 1) {
 
-        if(privateMessages.get(getAdapterPosition()).getTime() +
+        if (privateMessages.get(getAdapterPosition()).getTime() +
                 (privateMessages.get(getAdapterPosition()).getZoomMeeting().getDuration() *
-                        DateUtils.MINUTE_IN_MILLIS) >= System.currentTimeMillis()){
+                        DateUtils.MINUTE_IN_MILLIS) >= System.currentTimeMillis()) {
 
           //meeting has ended
           Toast.makeText(itemView.getContext(),
@@ -996,19 +917,18 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 //
 //      }else{
 
-        final Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(
-                privateMessages.get(getAdapterPosition()).getZoomMeeting().getJoinUrl()));
-        try{
+      final Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(
+              privateMessages.get(getAdapterPosition()).getZoomMeeting().getJoinUrl()));
+      try {
 
-          if (urlIntent.resolveActivity(pm) != null) {
-            itemView.getContext().startActivity(urlIntent);
-          }
-
-        }catch (NullPointerException ignored){
-
+        if (urlIntent.resolveActivity(pm) != null) {
+          itemView.getContext().startActivity(urlIntent);
         }
-//      }
 
+      } catch (NullPointerException ignored) {
+
+      }
+//      }
 
 
 //      if(view.getId() == R.id.imageIv){
@@ -1020,35 +940,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
   }
 
-
-
-  private static void getUserName(String userId,TextView tv){
-
-    if(userNamesMap.containsKey(userId)){
-      tv.setText(userNamesMap.get(userId));
-    }else{
-
-      usersRef.document(userId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-        @Override
-        public void onSuccess(DocumentSnapshot documentSnapshot) {
-          if(documentSnapshot.exists()){
-            userNamesMap.put(userId,documentSnapshot.getString("username"));
-          }
-        }
-      }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-        @Override
-        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-          if(task.isSuccessful() && userNamesMap.containsKey(userId)){
-            tv.setText(userNamesMap.get(userId));
-          }
-        }
-      });
-
-    }
-  }
-
-
-  static class PrivateMessagingDeletedVh extends RecyclerView.ViewHolder{
+  static class PrivateMessagingDeletedVh extends RecyclerView.ViewHolder {
 
     public PrivateMessagingDeletedVh(@NonNull View itemView) {
       super(itemView);
@@ -1058,32 +950,128 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
   }
 
-  static class PrivateMessagingDeletedGroupVh extends RecyclerView.ViewHolder{
+  static class PrivateMessagingDeletedGroupVh extends RecyclerView.ViewHolder {
 
     private final TextView senderTv;
+
     public PrivateMessagingDeletedGroupVh(@NonNull View itemView) {
       super(itemView);
       senderTv = itemView.findViewById(R.id.senderTv);
     }
 
-    private void bindUserName(){
+    private void bindUserName() {
 
-      if(!privateMessages.get(getAdapterPosition()).getSender().equals(currentUid)){
-        getUserName(privateMessages.get(getAdapterPosition()).getSender(),senderTv);
+      if (!privateMessages.get(getAdapterPosition()).getSender().equals(currentUid)) {
+        getUserName(privateMessages.get(getAdapterPosition()).getSender(), senderTv);
       }
 
     }
 
   }
 
-  private static void showMessageDeletionDialog(PrivateMessage message,Context context){
-      final AlertDialog.Builder alert = new AlertDialog.Builder(context);
-      alert.setTitle(R.string.message_delete);
-      alert.setPositiveButton(R.string.delete, (dialog, which) -> {
-        deleteMessageListener.deleteMessage(message,dialog);
-      });
-      alert.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());
-      alert.create().show();
+  class PrivateMessagingDocumentVh extends RecyclerView.ViewHolder
+          implements View.OnLongClickListener, View.OnClickListener {
+
+    private final TextView messageTv;
+    private final TextView documentNameTv;
+    private final ImageView downloadIv;
+    private final ProgressBar downloadProgressBar;
+    private boolean isDownloading;
+    private TextView senderTv;
+
+    //    private DownloadReceiver downloadReceiver;
+    public PrivateMessagingDocumentVh(@NonNull View itemView) {
+      super(itemView);
+      messageTv = itemView.findViewById(R.id.messageTv);
+      documentNameTv = itemView.findViewById(R.id.documentNameTv);
+      downloadIv = itemView.findViewById(R.id.downloadIv);
+      downloadProgressBar = itemView.findViewById(R.id.downloadProgressBar);
+      if (isForGroup) {
+        senderTv = itemView.findViewById(R.id.senderTv);
+      }
+    }
+
+
+    private void bindMessage(PrivateMessage message, boolean bindUsername) {
+
+      if (message == null)
+        return;
+
+
+      messageTv.setText(message.getContent());
+      documentNameTv.setText(message.getFileName());
+
+      if (bindUsername && !message.getSender().equals(currentUid)) {
+        getUserName(message.getSender(), senderTv);
+      }
+      if (message.getAttachmentUrl() != null) {
+
+        downloadIv.setOnClickListener(this);
+
+        if (message.getUploadTask() != null) {
+
+          if (message.getUploadTask().isCompleted()) {
+
+            downloadIv.setVisibility(View.GONE);
+            downloadProgressBar.setVisibility(View.GONE);
+
+          } else if (message.getUploadTask().isDownloading()) {
+
+            downloadIv.setImageResource(R.drawable.close_icon);
+            downloadProgressBar.setVisibility(View.VISIBLE);
+
+          }
+        } else {
+
+          downloadProgressBar.setVisibility(View.GONE);
+          downloadIv.setImageResource(R.drawable.download_icon);
+          downloadIv.setVisibility(View.VISIBLE);
+
+        }
+      } else {
+
+        downloadProgressBar.setVisibility(View.VISIBLE);
+        downloadIv.setVisibility(View.GONE);
+
+      }
+
+      if (message.getSender().equals(currentUid)) {
+        itemView.setOnLongClickListener(this);
+      }
+
+    }
+
+    @Override
+    public boolean onLongClick(View view) {
+      showMessageDeletionDialog(privateMessages.get(getAdapterPosition()), itemView.getContext());
+      return false;
+    }
+
+    @Override
+    public void onClick(View view) {
+
+
+      final PrivateMessage message = privateMessages.get(getAdapterPosition());
+
+      if (message.getUploadTask() != null &&
+              message.getUploadTask().isDownloading()) {
+
+        if (!documentMessageListener.cancelDownload(
+                getAdapterPosition(), message.getUploadTask().getDownloadId())) {
+          Toast.makeText(context, "Failed to cancel download!", Toast.LENGTH_SHORT).show();
+        }
+
+      } else {
+        documentMessageListener.startDownload(
+                getAdapterPosition(),
+                message.getAttachmentUrl(),
+                message.getFileName());
+
+      }
+
+
+    }
+
   }
 
 }

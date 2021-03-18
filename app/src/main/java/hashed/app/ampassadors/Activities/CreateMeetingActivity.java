@@ -1,14 +1,5 @@
 package hashed.app.ampassadors.Activities;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.core.widget.NestedScrollView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
@@ -18,12 +9,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -35,8 +29,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.auth.User;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
@@ -50,7 +42,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
@@ -60,8 +51,6 @@ import hashed.app.ampassadors.Adapters.UsersAdapter;
 import hashed.app.ampassadors.NotificationUtil.CloudMessagingNotificationsSender;
 import hashed.app.ampassadors.NotificationUtil.Data;
 import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
-import hashed.app.ampassadors.Objects.Meeting;
-import hashed.app.ampassadors.Objects.PrivateMessage;
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
@@ -70,11 +59,11 @@ import hashed.app.ampassadors.Utils.TimeFormatter;
 public class CreateMeetingActivity extends AppCompatActivity implements View.OnClickListener {
 
 
+  private final Integer[] meetingStartTime = new Integer[5];
   //time
   private DateFormat todayYearMonthDayFormat;
-  private final Integer[] meetingStartTime = new Integer[5];
   private long scheduleTime;
-  private boolean timeWasSelected,dateWasSelected;
+  private boolean timeWasSelected, dateWasSelected;
 
 
   //database
@@ -92,7 +81,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
   private CircleImageView groupIv;
   private EditText groupNameEd;
   private FloatingActionButton doneFloatingBtn;
-  private TextView contributorsTv,dateSetterTv,timeSetterTv;;
+  private TextView contributorsTv, dateSetterTv, timeSetterTv;
   private RecyclerView usersPickedRv;
 
   private Uri imageUri;
@@ -113,13 +102,13 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
 
     selectedUserIdsList = getIntent().getStringArrayListExtra("selectedUserIdsList");
 
-    if(getIntent().hasExtra("meetingBundle")){
+    if (getIntent().hasExtra("meetingBundle")) {
 
       final Bundle meetingBundle = getIntent().getBundleExtra("meetingBundle");
-      if(meetingBundle.containsKey("groupName")){
+      if (meetingBundle.containsKey("groupName")) {
         groupNameEd.setText(meetingBundle.getString("meetingBundle"));
       }
-      if(meetingBundle.containsKey("imageUri")){
+      if (meetingBundle.containsKey("imageUri")) {
         imageUri = Uri.parse(meetingBundle.getString("imageUri"));
         Picasso.get().load(imageUri).fit().into(groupIv);
       }
@@ -131,7 +120,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
 
   }
 
-  private void initViews(){
+  private void initViews() {
 
 //    meetingTimeTv = findViewById(R.id.meetingTimeTv);
     toolbar = findViewById(R.id.toolbar);
@@ -145,7 +134,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
 
   }
 
-  private void initValues(){
+  private void initValues() {
 
     currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -156,31 +145,31 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
   }
 
 
-  private void setViewClickers(){
+  private void setViewClickers() {
 
     toolbar.setNavigationOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
 
-        Intent intent = new Intent(CreateMeetingActivity.this,UsersPickerActivity.class);
-        intent.putExtra("previousSelectedUserIdsList",selectedUserIdsList);
+        Intent intent = new Intent(CreateMeetingActivity.this, UsersPickerActivity.class);
+        intent.putExtra("previousSelectedUserIdsList", selectedUserIdsList);
 
         final String name = groupNameEd.getText().toString().trim();
 
-        if(imageUri!=null || name.isEmpty()){
+        if (imageUri != null || name.isEmpty()) {
 
           final Bundle bundle = new Bundle();
-          if(imageUri!=null){
-            bundle.putString("imageUri",imageUri.toString());
+          if (imageUri != null) {
+            bundle.putString("imageUri", imageUri.toString());
           }
-          if(!name.isEmpty()){
-            bundle.putString("groupName",name);
+          if (!name.isEmpty()) {
+            bundle.putString("groupName", name);
           }
 
-          intent.putExtra("meetingBundle",bundle);
+          intent.putExtra("meetingBundle", bundle);
         }
 
-        startActivityForResult(intent,3);
+        startActivityForResult(intent, 3);
 
       }
     });
@@ -195,17 +184,17 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
   protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
 
-    if(requestCode == 3 && data!=null && data.hasExtra("selectedUserIdsList")){
+    if (requestCode == 3 && data != null && data.hasExtra("selectedUserIdsList")) {
 
-        selectedUserIdsList = data.getStringArrayListExtra("selectedUserIdsList");
-        updateContributorsCount();
-        selectedUsers.clear();
-        selectedUsersAdapter.notifyDataSetChanged();
+      selectedUserIdsList = data.getStringArrayListExtra("selectedUserIdsList");
+      updateContributorsCount();
+      selectedUsers.clear();
+      selectedUsersAdapter.notifyDataSetChanged();
 
-        getUsers();
-        Log.d("ttt","selectedUserIdsList: "+ selectedUserIdsList.size());
+      getUsers();
+      Log.d("ttt", "selectedUserIdsList: " + selectedUserIdsList.size());
 
-    }else if(resultCode == RESULT_OK && requestCode == Files.PICK_IMAGE && data!=null){
+    } else if (resultCode == RESULT_OK && requestCode == Files.PICK_IMAGE && data != null) {
 
       imageUri = data.getData();
       Picasso.get().load(imageUri).fit().into(groupIv);
@@ -260,13 +249,13 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
 //  }
 //
 
-  private void createSelectedUserAdapter(){
+  private void createSelectedUserAdapter() {
 
     usersRef = FirebaseFirestore.getInstance().collection("Users");
 
     selectedUsers = new ArrayList<>();
 
-    selectedUsersAdapter = new UsersAdapter(selectedUsers,R.layout.user_picked_preview_item_layout);
+    selectedUsersAdapter = new UsersAdapter(selectedUsers, R.layout.user_picked_preview_item_layout);
     usersPickedRv.setAdapter(selectedUsersAdapter);
 
     getUsers();
@@ -277,9 +266,9 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
 
   }
 
-  private void getUsers(){
+  private void getUsers() {
 
-    for(String id:selectedUserIdsList){
+    for (String id : selectedUserIdsList) {
 
       usersRef.document(id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
         @Override
@@ -289,8 +278,8 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
       }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
         @Override
         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-          if(task.isSuccessful()){
-            selectedUsersAdapter.notifyItemInserted(selectedUsers.size()-1);
+          if (task.isSuccessful()) {
+            selectedUsersAdapter.notifyItemInserted(selectedUsers.size() - 1);
           }
         }
       });
@@ -299,18 +288,18 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
     }
   }
 
-  private void updateContributorsCount(){
-    contributorsTv.setText(getResources().getString(R.string.contributors) + ": "+
+  private void updateContributorsCount() {
+    contributorsTv.setText(getResources().getString(R.string.contributors) + ": " +
             selectedUserIdsList.size());
   }
 
 
-  private void publishMeeting(){
+  private void publishMeeting() {
 
     final String name = groupNameEd.getText().toString().trim();
 
-    if(!name.isEmpty() && scheduleTime!=0 && selectedUserIdsList != null &&
-            !selectedUserIdsList.isEmpty() && selectedUserIdsList.size() > 1){
+    if (!name.isEmpty() && scheduleTime != 0 && selectedUserIdsList != null &&
+            !selectedUserIdsList.isEmpty() && selectedUserIdsList.size() > 1) {
 
       ProgressDialog progressDialog = new ProgressDialog(CreateMeetingActivity.this);
       progressDialog.setTitle("Publishing Meeting!");
@@ -320,20 +309,30 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
       String meetingId = UUID.randomUUID().toString();
       selectedUserIdsList.add(currentUid);
 
-      Meeting meeting = new Meeting(
-              currentUid,
-              name,
-              scheduleTime,
-              System.currentTimeMillis(),
-              selectedUserIdsList,
-              meetingId,
-              false
-      );
+      final Map<String, Object> meetingMap = new HashMap<>();
+      meetingMap.put("creatorId", currentUid);
+      meetingMap.put("title", name);
+      meetingMap.put("startTime", scheduleTime);
+      meetingMap.put("createdTime", System.currentTimeMillis());
+      meetingMap.put("members", selectedUserIdsList);
+      meetingMap.put("meetingId", meetingId);
+      meetingMap.put("hasEnded", false);
 
-      if(imageUri!=null){
+
+//      Meeting meeting = new Meeting(
+//              currentUid,
+//              name,
+//              scheduleTime,
+//              System.currentTimeMillis(),
+//              selectedUserIdsList,
+//              meetingId,
+//              false
+//      );
+
+      if (imageUri != null) {
 
         final StorageReference reference = FirebaseStorage.getInstance().getReference()
-                .child("Meetings-Images/").child(UUID.randomUUID().toString() +"-"+
+                .child("Meetings-Images/").child(UUID.randomUUID().toString() + "-" +
                         System.currentTimeMillis());
 
         final UploadTask uploadTask = reference.putFile(imageUri);
@@ -345,19 +344,18 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
                   uploadTaskMap.remove(uploadTask);
                   reference.getDownloadUrl().addOnSuccessListener(uri1 -> {
                     meetingImageUrl = uri1.toString();
-                    meeting.setImageUrl(meetingImageUrl);
+                    meetingMap.put("imageUrl", meetingImageUrl);
+//                    meeting.setImageUrl(meetingImageUrl);
 
-                    createMeeting(meeting,meetingId,name,progressDialog);
+                    createMeeting(meetingMap, meetingId, name, progressDialog);
                   });
                 }).addOnCompleteListener(task -> new File(imageUri.getPath()).delete());
 
-        uploadTaskMap.put(uploadTask,onSuccessListener);
+        uploadTaskMap.put(uploadTask, onSuccessListener);
 
-      }else{
-        createMeeting(meeting,meetingId,name,progressDialog);
+      } else {
+        createMeeting(meetingMap, meetingId, name, progressDialog);
       }
-
-
 
 
     }
@@ -365,16 +363,16 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
   }
 
 
-  private void createMeeting(Meeting meeting,String meetingId,String name,ProgressDialog progressDialog){
+  private void createMeeting(Map<String, Object> meeting, String meetingId, String name, ProgressDialog progressDialog) {
     meetingsRef.document(meetingId).set(meeting)
             .addOnCompleteListener(new OnCompleteListener<Void>() {
               @Override
               public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
 
                   final Map<String, Object> meetingMap = new HashMap<>();
-                  meetingMap.put("Moderator",currentUid);
-                  meetingMap.put("groupId",meetingId);
+                  meetingMap.put("Moderator", currentUid);
+                  meetingMap.put("groupId", meetingId);
 
 //                   meetingMap.put("Messages",new ArrayList<>());
 
@@ -389,9 +387,9 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
 
                               final Data data = new Data(
                                       currentUid,
-                                      "Meeting starts at: "+
+                                      "Meeting starts at: " +
                                               TimeFormatter.formatTime(scheduleTime),
-                                      "Meeting about: "+name,
+                                      "Meeting about: " + name,
                                       meetingImageUrl,
                                       "meeting",
                                       "meetingCreated",
@@ -400,10 +398,10 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
 
                               selectedUserIdsList.remove(currentUid);
 
-                              for(String userId:selectedUserIdsList){
+                              for (String userId : selectedUserIdsList) {
                                 CloudMessagingNotificationsSender.sendNotification(userId, data);
                                 FirestoreNotificationSender.sendFirestoreNotification(
-                                        userId,"meetingCreated",
+                                        userId, "meetingCreated",
                                         getResources().getString(R.string.invited_meeting),
                                         name,
                                         meetingId
@@ -433,17 +431,17 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
   @Override
   public void onClick(View view) {
 
-    if(view.getId() == R.id.doneFloatingBtn){
+    if (view.getId() == R.id.doneFloatingBtn) {
       publishMeeting();
-    }else if(view.getId() == R.id.groupIv){
+    } else if (view.getId() == R.id.groupIv) {
 
       Files.startImageFetchIntent(this);
 
-    }else if(view.getId() == R.id.dateSetterTv || view.getId() == R.id.settingsIv1){
+    } else if (view.getId() == R.id.dateSetterTv || view.getId() == R.id.settingsIv1) {
 
       getMeetingDate();
 
-    }else if(view.getId() == R.id.timeSetterTv || view.getId() == R.id.settingsIv2){
+    } else if (view.getId() == R.id.timeSetterTv || view.getId() == R.id.settingsIv2) {
 
       getMeetingTime();
 
@@ -451,8 +449,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
   }
 
 
-
-  private void getMeetingDate(){
+  private void getMeetingDate() {
 
     Calendar mcurrentDate = Calendar.getInstance(Locale.getDefault());
 
@@ -460,7 +457,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
     DatePickerDialog StartTime = new DatePickerDialog(this,
             (view, year, monthOfYear, dayOfMonth) -> {
 
-              if(mcurrentDate.get(Calendar.YEAR) > year ||
+              if (mcurrentDate.get(Calendar.YEAR) > year ||
 
                       (mcurrentDate.get(Calendar.YEAR) == year &&
                               mcurrentDate.get(Calendar.MONTH) > monthOfYear) ||
@@ -468,33 +465,33 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
                       (mcurrentDate.get(Calendar.YEAR) == year &&
                               mcurrentDate.get(Calendar.MONTH) == monthOfYear &&
                               mcurrentDate.get(Calendar.DAY_OF_MONTH) > dayOfMonth)
-              ){
+              ) {
 
                 String text;
-                if((timeWasSelected &&
+                if ((timeWasSelected &&
                         mcurrentDate.get(Calendar.YEAR) == year &&
                         mcurrentDate.get(Calendar.MONTH) == monthOfYear &&
                         mcurrentDate.get(Calendar.DAY_OF_MONTH) == dayOfMonth &&
                         (meetingStartTime[3] < mcurrentDate.get(Calendar.HOUR))
-                        && meetingStartTime[4] < mcurrentDate.get(Calendar.MINUTE))){
+                        && meetingStartTime[4] < mcurrentDate.get(Calendar.MINUTE))) {
 
                   text = "Meeting time cannot be scheduled to this time!" +
                           "Please Selected a different time day or change the day";
 
-                }else{
+                } else {
                   text = "Meeting time cannot be scheduled to this time!";
                 }
                 Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
-              }else{
+              } else {
 
                 dateWasSelected = true;
                 meetingStartTime[0] = year;
                 meetingStartTime[1] = monthOfYear;
                 meetingStartTime[2] = dayOfMonth;
-                dateSetterTv.setText(year+"/"+monthOfYear+"/"+dayOfMonth);
+                dateSetterTv.setText(year + "/" + monthOfYear + "/" + dayOfMonth);
 
 
-                if(timeWasSelected){
+                if (timeWasSelected) {
                   calculateTime();
                 }
               }
@@ -505,7 +502,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
 
   }
 
-  private void getMeetingTime(){
+  private void getMeetingTime() {
 
     Calendar mcurrentTime = Calendar.getInstance(Locale.getDefault());
     TimePickerDialog mTimePicker = new TimePickerDialog(
@@ -523,9 +520,9 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
         timeWasSelected = true;
         meetingStartTime[3] = selectedHour;
         meetingStartTime[4] = selectedMinute;
-        timeSetterTv.setText(selectedHour+":"+selectedMinute);
+        timeSetterTv.setText(selectedHour + ":" + selectedMinute);
 
-        if(dateWasSelected){
+        if (dateWasSelected) {
           calculateTime();
         }
       } else {
@@ -540,25 +537,25 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
 
   }
 
-  private void calculateTime(){
+  private void calculateTime() {
 
     final Calendar calendar = Calendar.getInstance(Locale.getDefault());
-    calendar.set(meetingStartTime[0],meetingStartTime[1],meetingStartTime[2],
-            meetingStartTime[3],meetingStartTime[4]);
+    calendar.set(meetingStartTime[0], meetingStartTime[1], meetingStartTime[2],
+            meetingStartTime[3], meetingStartTime[4]);
 
     scheduleTime = calendar.getTimeInMillis();
-    Log.d("ttt","scheduleTime: "+scheduleTime);
+    Log.d("ttt", "scheduleTime: " + scheduleTime);
 
   }
 
 
-  private void cancelUploadTasks(){
+  private void cancelUploadTasks() {
 
 
     final UploadTask uploadTask = uploadTaskMap.keySet().iterator().next();
 
     uploadTask.removeOnSuccessListener(
-              (OnSuccessListener<? super UploadTask.TaskSnapshot>) uploadTaskMap.get(uploadTask));
+            (OnSuccessListener<? super UploadTask.TaskSnapshot>) uploadTaskMap.get(uploadTask));
 
     uploadTask.addOnSuccessListener(taskSnapshot ->
             uploadTask.getSnapshot().getStorage().delete()
@@ -572,13 +569,13 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
   @Override
   public void onBackPressed() {
     super.onBackPressed();
-    if(uploadTaskMap!=null && !uploadTaskMap.isEmpty()){
+    if (uploadTaskMap != null && !uploadTaskMap.isEmpty()) {
 
       AlertDialog.Builder alert = new AlertDialog.Builder(this);
       alert.setTitle("Do you want to leave message is sending?");
       alert.setMessage("leaving while message is sending while cancel the message!");
 
-      alert.setPositiveButton("Yes",(dialogInterface, i) -> {
+      alert.setPositiveButton("Yes", (dialogInterface, i) -> {
         cancelUploadTasks();
         dialogInterface.dismiss();
         finish();
@@ -587,7 +584,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
       alert.setNegativeButton("No", (dialog, which) -> dialog.cancel());
       alert.create().show();
 
-    }else{
+    } else {
       super.onBackPressed();
     }
 

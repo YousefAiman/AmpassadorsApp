@@ -5,15 +5,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.viewpager.widget.ViewPager;
-
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +13,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -55,7 +54,7 @@ import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.TimeFormatter;
 
 public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickListener,
-        SwipeRefreshLayout.OnRefreshListener , View.OnClickListener{
+        SwipeRefreshLayout.OnRefreshListener, View.OnClickListener {
 
   private static final int POSTS_LIMIT = 10;
   private Query query;
@@ -78,8 +77,21 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
 
   private NotificationIndicatorReceiver notificationIndicatorReceiver;
+
   public PostsFragment() {
     // Required empty public constructor
+  }
+
+  static long remainingTime() {
+
+    Calendar calendar = new GregorianCalendar(Locale.getDefault());
+    calendar.setTime(new Date());
+
+    int totalMin = 1440 - 60 * calendar.get(Calendar.HOUR) - calendar.get(Calendar.MINUTE);
+
+    long timeLeftInMillis = totalMin * 60 * 1000;
+
+    return System.currentTimeMillis() + timeLeftInMillis;
   }
 
   @Override
@@ -89,7 +101,6 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
     titles = new ArrayList<>(5);
     pagerAdapter = new HomeNewsHeaderViewPagerAdapter(titles);
-
 
 
     query = FirebaseFirestore.getInstance().collection("Posts")
@@ -105,7 +116,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
     // Inflate the layout for this fragment
-    View view =  inflater.inflate(R.layout.fragment_posts, container, false);
+    View view = inflater.inflate(R.layout.fragment_posts, container, false);
     post_list = view.findViewById(R.id.home_list);
     swipeRefresh = view.findViewById(R.id.swipeRefresh);
     headerViewPager = view.findViewById(R.id.headerViewPager);
@@ -113,7 +124,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     swipeRefresh.setOnRefreshListener(this);
 
     toolbar = view.findViewById(R.id.home_activity_toolbar);
-    toolbar.setNavigationOnClickListener(v -> ((Home_Activity)requireActivity()).showDrawer());
+    toolbar.setNavigationOnClickListener(v -> ((Home_Activity) requireActivity()).showDrawer());
     toolbar.setOnMenuItemClickListener(this);
 
     floatingButton = view.findViewById(R.id.floatingButton);
@@ -122,21 +133,19 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     return view;
   }
 
-
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
     toolbar.getMenu().findItem(R.id.action_notifications)
-            .setIcon(GlobalVariables.getNotificationsCount() > 0?
-                    R.drawable.notification_indicator_icon:
+            .setIcon(GlobalVariables.getNotificationsCount() > 0 ?
+                    R.drawable.notification_indicator_icon :
                     R.drawable.notification_icon);
 
 //    if (GlobalVariables.getRole().equals("Admin") || GlobalVariables.getRole().equals("Publisher")){
 //
 //      floatingButton.setVisibility(View.VISIBLE);
 //    }
-
 
 
     setupNotificationReceiver();
@@ -153,9 +162,9 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
   @Override
   public boolean onMenuItemClick(MenuItem item) {
 
-    if(item.getItemId() == R.id.action_notifications){
+    if (item.getItemId() == R.id.action_notifications) {
       startActivity(new Intent(getContext(), NotificationsActivity.class)
-      .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+              .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
     return false;
@@ -168,7 +177,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     titles.clear();
     pagerAdapter.notifyDataSetChanged();
     createHeaderPager();
-    if(handler!=null && pagerRunnable!=null){
+    if (handler != null && pagerRunnable != null) {
       handler.removeCallbacks(pagerRunnable);
     }
     dotsLinear.removeAllViews();
@@ -179,14 +188,6 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     lastDocSnap = null;
     ReadPost(true);
 
-  }
-
-  @Override
-  public void onClick(View view) {
-    if(view.getId() == R.id.floatingButton){
-
-      showPostOptionsBottomSheet();
-    }
   }
 
 //  @Override
@@ -202,22 +203,13 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 //    new ImageFullScreenFragment(imageUrl).show(getChildFragmentManager(),"FullScreen");
 //  }
 
-  private class PostsBottomScrollListener extends RecyclerView.OnScrollListener {
-    @Override
-    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-      super.onScrollStateChanged(recyclerView, newState);
-      if (!isLoadingMessages &&
-              !recyclerView.canScrollVertically(1) &&
-              newState == RecyclerView.SCROLL_STATE_IDLE) {
+  @Override
+  public void onClick(View view) {
+    if (view.getId() == R.id.floatingButton) {
 
-        Log.d("ttt","is at bottom");
-
-        ReadPost(false);
-
-      }
+      showPostOptionsBottomSheet();
     }
   }
-
 
   private void ReadPost(boolean isInitial) {
 
@@ -228,7 +220,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
     Query updatedQuery = query;
 
-    if(lastDocSnap!=null){
+    if (lastDocSnap != null) {
 
       updatedQuery = query.startAfter(lastDocSnap);
 
@@ -238,29 +230,29 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
       if (!queryDocumentSnapshots.isEmpty()) {
 
         lastDocSnap = queryDocumentSnapshots.getDocuments().get(
-                queryDocumentSnapshots.size()-1
+                queryDocumentSnapshots.size() - 1
         );
 
-        for(QueryDocumentSnapshot snapshot:queryDocumentSnapshots){
+        for (QueryDocumentSnapshot snapshot : queryDocumentSnapshots) {
 
-          if(snapshot.getLong("type") == PostData.TYPE_POLL){
+          if (snapshot.getLong("type") == PostData.TYPE_POLL) {
 
-            if(snapshot.getBoolean("pollEnded")){
+            if (snapshot.getBoolean("pollEnded")) {
 
-              if(snapshot.getLong("totalVotes") > 0){
+              if (snapshot.getLong("totalVotes") > 0) {
                 addedCount.getAndIncrement();
                 posts.add(snapshot.toObject(PostData.class));
               }
 
-            }else{
+            } else {
 
-              if(System.currentTimeMillis() >
+              if (System.currentTimeMillis() >
                       snapshot.getLong("publishTime") +
-                              snapshot.getLong("pollDuration")){
+                              snapshot.getLong("pollDuration")) {
 
-                snapshot.getReference().update("pollEnded",true);
+                snapshot.getReference().update("pollEnded", true);
 
-                if(snapshot.getLong("totalVotes") > 0){
+                if (snapshot.getLong("totalVotes") > 0) {
 
                   final PostData post = snapshot.toObject(PostData.class);
                   post.setPollEnded(true);
@@ -268,7 +260,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                   addedCount.getAndIncrement();
                 }
 
-              }else{
+              } else {
 
                 posts.add(snapshot.toObject(PostData.class));
                 addedCount.getAndIncrement();
@@ -276,7 +268,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
             }
 
-          }else{
+          } else {
 
             addedCount.getAndIncrement();
             posts.add(snapshot.toObject(PostData.class));
@@ -292,19 +284,19 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     }).addOnCompleteListener(task -> {
 
 
-      if(isInitial){
+      if (isInitial) {
         adapter.notifyDataSetChanged();
 
-        if(posts.size() == POSTS_LIMIT){
+        if (posts.size() == POSTS_LIMIT) {
           post_list.addOnScrollListener(scrollListener = new PostsBottomScrollListener());
         }
 
-      }else{
+      } else {
 
         adapter.notifyItemRangeInserted((posts.size() - addedCount.get()),
                 addedCount.get());
 
-        if(addedCount.get() < POSTS_LIMIT && scrollListener != null){
+        if (addedCount.get() < POSTS_LIMIT && scrollListener != null) {
           post_list.removeOnScrollListener(scrollListener);
         }
       }
@@ -316,7 +308,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
   }
 
 
-  private void showPostOptionsBottomSheet(){
+  private void showPostOptionsBottomSheet() {
 
     final BottomSheetDialog bsd = new BottomSheetDialog(getContext(), R.style.SheetDialog);
     final View parentView = getLayoutInflater().inflate(R.layout.post_options_bsd, null);
@@ -344,110 +336,111 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
   }
 
 
+  private void createHeaderPager() {
 
-  private void createHeaderPager(){
+    FirebaseFirestore.getInstance().collection("Meetings")
+            .whereEqualTo("hasEnded", false)
+            .whereGreaterThan("startTime", System.currentTimeMillis())
+            .whereLessThan("startTime", remainingTime())
+            .orderBy("startTime", Query.Direction.ASCENDING)
+            .limit(5).get().addOnSuccessListener(snapshots -> {
+      for (DocumentSnapshot snapshot : snapshots) {
 
-      FirebaseFirestore.getInstance().collection("Meetings")
-      .whereEqualTo("hasEnded",false)
-       .whereGreaterThan("startTime",System.currentTimeMillis())
-      .whereLessThan("startTime",remainingTime())
-      .orderBy("startTime", Query.Direction.ASCENDING)
-      .limit(5).get().addOnSuccessListener(snapshots -> {
-        for(DocumentSnapshot snapshot:snapshots){
+        titles.add(snapshot.getString("title") + " at: " +
+                TimeFormatter.formatWithPattern(snapshot.getLong("startTime"),
+                        TimeFormatter.HOUR_MINUTE));
 
-          titles.add(snapshot.getString("title") + " at: "+
-                  TimeFormatter.formatWithPattern(snapshot.getLong("startTime"),
-                          TimeFormatter.HOUR_MINUTE));
+      }
+    }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+      @Override
+      public void onComplete(@NonNull Task<QuerySnapshot> task) {
+        if (task.isSuccessful() && titles.size() > 0) {
 
-        }
-      }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-        @Override
-        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-          if(task.isSuccessful() && titles.size() > 0){
-
-            for(String title:titles){
-              Log.d("ttt","title: "+title);
-            }
-
-            if(headerViewPager.getVisibility() == View.GONE){
-              headerViewPager.setVisibility(View.VISIBLE);
-              dotsLinear.setVisibility(View.VISIBLE);
-            }
-            pagerAdapter.notifyDataSetChanged();
-
-            if(titles.size() > 1){
-              final ImageView[] dots = new ImageView[titles.size()];
-
-              final LinearLayout.LayoutParams params =
-                      new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                              LinearLayout.LayoutParams.WRAP_CONTENT);
-
-              float density;
-              if(getContext()!=null){
-                density = requireContext().getResources().getDisplayMetrics().density;
-              }else{
-                density = 1;
-              }
-
-              for(int i=0;i<titles.size();i++){
-                dots[i] = new ImageView(requireContext());
-                dots[i].setImageResource(R.drawable.indicator_inactive_icon);
-                params.setMargins((int) (5 * density),0, (int) (5*density), 0);
-                dotsLinear.addView(dots[i], params);
-              }
-
-              dots[0].setImageResource(R.drawable.indicator_active_icon);
-
-              headerViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                int previousPage = 0;
-                @Override
-                public void onPageScrolled(int position, float positionOffset,
-                                           int positionOffsetPixels) {
-                }
-                @Override
-                public void onPageSelected(int position) {
-
-                  dots[previousPage].setImageResource(R.drawable.indicator_inactive_icon);
-                  dots[position].setImageResource(R.drawable.indicator_active_icon);
-
-                  previousPage = position;
-                }
-
-                @Override
-                public void onPageScrollStateChanged(int state) {
-                }
-              });
-
-               handler = new Handler();
-
-               pagerRunnable = new Runnable() {
-                int scrollPosition;
-                @Override
-                public void run() {
-
-                  if(scrollPosition + 1 == titles.size()){
-                    scrollPosition = 0;
-                  }else{
-                    scrollPosition++;
-                  }
-
-                  headerViewPager.setCurrentItem(scrollPosition,true);
-
-                  handler.postDelayed(this,5000);
-
-                }
-              };
-
-              handler.postDelayed(pagerRunnable,5000);
-
-            }
-          }else{
-            headerViewPager.setVisibility(View.GONE);
-            dotsLinear.setVisibility(View.GONE);
+          for (String title : titles) {
+            Log.d("ttt", "title: " + title);
           }
-        }
-      });
 
+          if (headerViewPager.getVisibility() == View.GONE) {
+            headerViewPager.setVisibility(View.VISIBLE);
+            dotsLinear.setVisibility(View.VISIBLE);
+          }
+          pagerAdapter.notifyDataSetChanged();
+
+          if (titles.size() > 1) {
+            final ImageView[] dots = new ImageView[titles.size()];
+
+            final LinearLayout.LayoutParams params =
+                    new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT);
+
+            float density;
+            if (getContext() != null) {
+              density = requireContext().getResources().getDisplayMetrics().density;
+            } else {
+              density = 1;
+            }
+
+            for (int i = 0; i < titles.size(); i++) {
+              dots[i] = new ImageView(requireContext());
+              dots[i].setImageResource(R.drawable.indicator_inactive_icon);
+              params.setMargins((int) (5 * density), 0, (int) (5 * density), 0);
+              dotsLinear.addView(dots[i], params);
+            }
+
+            dots[0].setImageResource(R.drawable.indicator_active_icon);
+
+            headerViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+              int previousPage = 0;
+
+              @Override
+              public void onPageScrolled(int position, float positionOffset,
+                                         int positionOffsetPixels) {
+              }
+
+              @Override
+              public void onPageSelected(int position) {
+
+                dots[previousPage].setImageResource(R.drawable.indicator_inactive_icon);
+                dots[position].setImageResource(R.drawable.indicator_active_icon);
+
+                previousPage = position;
+              }
+
+              @Override
+              public void onPageScrollStateChanged(int state) {
+              }
+            });
+
+            handler = new Handler();
+
+            pagerRunnable = new Runnable() {
+              int scrollPosition;
+
+              @Override
+              public void run() {
+
+                if (scrollPosition + 1 == titles.size()) {
+                  scrollPosition = 0;
+                } else {
+                  scrollPosition++;
+                }
+
+                headerViewPager.setCurrentItem(scrollPosition, true);
+
+                handler.postDelayed(this, 5000);
+
+              }
+            };
+
+            handler.postDelayed(pagerRunnable, 5000);
+
+          }
+        } else {
+          headerViewPager.setVisibility(View.GONE);
+          dotsLinear.setVisibility(View.GONE);
+        }
+      }
+    });
 
 
   }
@@ -456,7 +449,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
   public void onPause() {
     super.onPause();
 
-    if(handler!=null && pagerRunnable!=null){
+    if (handler != null && pagerRunnable != null) {
       handler.removeCallbacks(pagerRunnable);
     }
 
@@ -466,36 +459,23 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
   public void onResume() {
     super.onResume();
 
-    if(handler!=null && pagerRunnable!=null){
-      handler.postDelayed(pagerRunnable,3000);
+    if (handler != null && pagerRunnable != null) {
+      handler.postDelayed(pagerRunnable, 3000);
     }
 
   }
 
-  static long remainingTime() {
-
-    Calendar calendar = new GregorianCalendar(Locale.getDefault());
-    calendar.setTime(new Date());
-
-    int totalMin = 1440 - 60 * calendar.get(Calendar.HOUR) - calendar.get(Calendar.MINUTE);
-
-    long timeLeftInMillis = totalMin * 60 * 1000;
-
-    return System.currentTimeMillis() + timeLeftInMillis;
-  }
-
-
-  private void setupNotificationReceiver(){
+  private void setupNotificationReceiver() {
 
     notificationIndicatorReceiver =
-            new NotificationIndicatorReceiver(){
+            new NotificationIndicatorReceiver() {
               @Override
               public void onReceive(Context context, Intent intent) {
-                if(intent.hasExtra("showIndicator")){
+                if (intent.hasExtra("showIndicator")) {
                   final MenuItem item = toolbar.getMenu().findItem(R.id.action_notifications);
-                  if(intent.getBooleanExtra("showIndicator", false)){
+                  if (intent.getBooleanExtra("showIndicator", false)) {
                     item.setIcon(R.drawable.notification_indicator_icon);
-                  }else{
+                  } else {
                     item.setIcon(R.drawable.notification_icon);
                   }
                 }
@@ -503,23 +483,38 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             };
 
     getContext().registerReceiver(notificationIndicatorReceiver,
-            new IntentFilter(BuildConfig.APPLICATION_ID+".notificationIndicator"));
+            new IntentFilter(BuildConfig.APPLICATION_ID + ".notificationIndicator"));
 
   }
-
 
   @Override
   public void onDestroy() {
     super.onDestroy();
 
-    if(notificationIndicatorReceiver!=null){
+    if (notificationIndicatorReceiver != null) {
       requireContext().unregisterReceiver(notificationIndicatorReceiver);
     }
 
   }
 
-  public void addPostData(PostData post){
-    posts.add(0,post);
+  public void addPostData(PostData post) {
+    posts.add(0, post);
     adapter.notifyItemInserted(0);
+  }
+
+  private class PostsBottomScrollListener extends RecyclerView.OnScrollListener {
+    @Override
+    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+      super.onScrollStateChanged(recyclerView, newState);
+      if (!isLoadingMessages &&
+              !recyclerView.canScrollVertically(1) &&
+              newState == RecyclerView.SCROLL_STATE_IDLE) {
+
+        Log.d("ttt", "is at bottom");
+
+        ReadPost(false);
+
+      }
+    }
   }
 }

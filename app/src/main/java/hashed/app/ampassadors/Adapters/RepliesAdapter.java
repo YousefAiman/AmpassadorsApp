@@ -14,180 +14,175 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import hashed.app.ampassadors.Objects.Comment;
 import hashed.app.ampassadors.Objects.CommentReply;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.TimeFormatter;
 
 public class RepliesAdapter extends RecyclerView.Adapter<RepliesAdapter.RepliesVh> {
 
-    private final ArrayList<CommentReply> replies;
+  private final ArrayList<CommentReply> replies;
 
-    private final CollectionReference usersRef =
-            FirebaseFirestore.getInstance().collection("Users");
-    private final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-    private final RepliesListener repliesListener;
-    private final String commentId;
-    private final CollectionReference repliesRef;
-    private final int redColor
+  private final CollectionReference usersRef =
+          FirebaseFirestore.getInstance().collection("Users");
+  private final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+  private final RepliesListener repliesListener;
+  private final String commentId;
+  private final CollectionReference repliesRef;
+  private final int redColor
 //            ,blackColor
-            ;
+          ;
 
-    public interface RepliesListener{
-        void likeReply(CommentReply commentReply,TextView likeTv,String commentId);
-    }
+  public RepliesAdapter(ArrayList<CommentReply> replies, RepliesListener repliesListener
+          , String commentId, DocumentReference commentRef, Context context) {
 
-    public RepliesAdapter(ArrayList<CommentReply> replies, RepliesListener repliesListener
-    , String commentId, DocumentReference commentRef,Context context) {
-
-        this.replies = replies;
-        this.repliesListener = repliesListener;
-        this.commentId = commentId;
-        repliesRef = commentRef.collection("Replies");
-        redColor = context.getResources().getColor(R.color.red);
+    this.replies = replies;
+    this.repliesListener = repliesListener;
+    this.commentId = commentId;
+    repliesRef = commentRef.collection("Replies");
+    redColor = context.getResources().getColor(R.color.red);
 //        blackColor = context.getResources().getColor(R.color.black);
+  }
+
+  @NonNull
+  @Override
+  public RepliesVh onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    return new RepliesAdapter.RepliesVh(LayoutInflater.from(parent.getContext())
+            .inflate(R.layout.reply_item_layout, parent, false));
+  }
+
+  @Override
+  public void onBindViewHolder(@NonNull RepliesVh holder, int position) {
+
+    holder.bind(replies.get(position));
+
+  }
+
+  @Override
+  public int getItemCount() {
+    return replies.size();
+  }
+
+  private void checkUserLikedReply(int position, TextView likesTv) {
+
+    repliesRef.document(replies.get(position).getReplyId())
+            .collection("ReplyLikes").document(currentUid)
+            .get().addOnSuccessListener(documentSnapshot -> {
+      if (documentSnapshot.exists()) {
+
+        replies.get(position).setHasBeenCheckedForUserLike(true);
+        replies.get(position).setLikedByUser(true);
+        likesTv.setTextColor(redColor);
+
+      }
+    });
+
+  }
+
+  public interface RepliesListener {
+    void likeReply(CommentReply commentReply, TextView likeTv, String commentId);
+  }
+
+  public class RepliesVh extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+    private final CircleImageView imageIv;
+    private final TextView usernameTv;
+    private final TextView replyTv;
+    private final TextView timeTv;
+    private final TextView likesTv;
+
+    public RepliesVh(@NonNull View itemView) {
+      super(itemView);
+      usernameTv = itemView.findViewById(R.id.usernameTv);
+      imageIv = itemView.findViewById(R.id.imageIv);
+      replyTv = itemView.findViewById(R.id.replyTv);
+      timeTv = itemView.findViewById(R.id.timeTv);
+      likesTv = itemView.findViewById(R.id.likesTv);
     }
 
-    @NonNull
-    @Override
-    public RepliesVh onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new RepliesAdapter.RepliesVh(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.reply_item_layout, parent, false));
-    }
+    @SuppressLint("SetTextI18n")
+    private void bind(CommentReply commentReply) {
 
-    @Override
-    public void onBindViewHolder(@NonNull RepliesVh holder, int position) {
+      replyTv.setText(commentReply.getReply());
 
-        holder.bind(replies.get(position));
+      likesTv.setText(itemView.getResources().getString(R.string.likes) + " "
+              + commentReply.getLikes());
 
-    }
 
-    @Override
-    public int getItemCount() {
-        return replies.size();
-    }
+      if (commentReply.isHasBeenCheckedForUserLike()) {
 
-    public class RepliesVh extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-        private final CircleImageView imageIv;
-        private final TextView usernameTv;
-        private final TextView replyTv;
-        private final TextView timeTv;
-        private final TextView likesTv;
-
-        public RepliesVh(@NonNull View itemView) {
-            super(itemView);
-            usernameTv = itemView.findViewById(R.id.usernameTv);
-            imageIv = itemView.findViewById(R.id.imageIv);
-            replyTv = itemView.findViewById(R.id.replyTv);
-            timeTv = itemView.findViewById(R.id.timeTv);
-            likesTv = itemView.findViewById(R.id.likesTv);
+        if (commentReply.isLikedByUser()) {
+          likesTv.setTextColor(redColor);
         }
 
-        @SuppressLint("SetTextI18n")
-        private void bind(CommentReply commentReply){
-
-            replyTv.setText(commentReply.getReply());
-
-            likesTv.setText(itemView.getResources().getString(R.string.likes)+" "
-                    + commentReply.getLikes());
+      } else {
+        checkUserLikedReply(getAdapterPosition(), likesTv);
+      }
 
 
-            if(commentReply.isHasBeenCheckedForUserLike()){
+      if (commentReply.getUserName() == null) {
 
-                if(commentReply.isLikedByUser()){
-                    likesTv.setTextColor(redColor);
-                }
-
-            }else{
-                checkUserLikedReply(getAdapterPosition(),likesTv);
-            }
+        getUserData(commentReply.getUserId(), commentReply);
+      } else {
 
 
-            if(commentReply.getUserName() == null){
-
-                getUserData(commentReply.getUserId(),commentReply);
-            }else{
-
-
-                if(commentReply.getUserImage()!=null && !commentReply.getUserImage().isEmpty()){
-                    Picasso.get().load(commentReply.getUserImage()).fit().into(imageIv);
-                }
-
-
-                usernameTv.setText(commentReply.getUserName());
-            }
-
-            timeTv.setText(TimeFormatter.formatTime(commentReply.getTime()));
-
-            likesTv.setOnClickListener(this);
+        if (commentReply.getUserImage() != null && !commentReply.getUserImage().isEmpty()) {
+          Picasso.get().load(commentReply.getUserImage()).fit().into(imageIv);
         }
 
-        private void getUserData(String userId, CommentReply commentReply){
 
-            usersRef.document(userId).get()
-                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            if(documentSnapshot.exists()){
+        usernameTv.setText(commentReply.getUserName());
+      }
 
-                                commentReply.setUserImage(documentSnapshot.getString("imageUrl"));
-                                commentReply.setUserName(documentSnapshot.getString("username"));
+      timeTv.setText(TimeFormatter.formatTime(commentReply.getTime()));
 
-                            }
-                        }
-                    }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+      likesTv.setOnClickListener(this);
+    }
+
+    private void getUserData(String userId, CommentReply commentReply) {
+
+      usersRef.document(userId).get()
+              .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                  if (documentSnapshot.exists()) {
 
-                    if(commentReply.getUserImage()!=null && !commentReply.getUserImage().isEmpty()){
-                        Picasso.get().load(commentReply.getUserImage()).fit()
-                                .into(imageIv);
-                    }
+                    commentReply.setUserImage(documentSnapshot.getString("imageUrl"));
+                    commentReply.setUserName(documentSnapshot.getString("username"));
 
-                    usernameTv.setText(commentReply.getUserName());
-
+                  }
                 }
-            });
-
-        }
-
+              }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
         @Override
-        public void onClick(View view) {
+        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-            if(view.getId() == R.id.likesTv){
-                repliesListener.likeReply(replies.get(getAdapterPosition()),likesTv,commentId);
-            }
+          if (commentReply.getUserImage() != null && !commentReply.getUserImage().isEmpty()) {
+            Picasso.get().load(commentReply.getUserImage()).fit()
+                    .into(imageIv);
+          }
+
+          usernameTv.setText(commentReply.getUserName());
+
         }
-    }
-
-
-    private void checkUserLikedReply(int position, TextView likesTv){
-
-        repliesRef.document(replies.get(position).getReplyId())
-                .collection("ReplyLikes").document(currentUid)
-                .get().addOnSuccessListener(documentSnapshot -> {
-            if(documentSnapshot.exists()){
-
-                replies.get(position).setHasBeenCheckedForUserLike(true);
-                replies.get(position).setLikedByUser(true);
-                likesTv.setTextColor(redColor);
-
-            }
-        });
+      });
 
     }
+
+    @Override
+    public void onClick(View view) {
+
+      if (view.getId() == R.id.likesTv) {
+        repliesListener.likeReply(replies.get(getAdapterPosition()), likesTv, commentId);
+      }
+    }
+  }
 
 }

@@ -33,199 +33,199 @@ import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 
-public class CreatePollActivity extends AppCompatActivity implements View.OnClickListener ,
-        NumberPickerDialogFragment.OnTimePass{
+public class CreatePollActivity extends AppCompatActivity implements View.OnClickListener,
+        NumberPickerDialogFragment.OnTimePass {
 
 
-    private ImageView userIv;
-    private TextView usernameTv;
-    private EditText questionEd;
-    private TextView timeTv;
-    private RecyclerView pollRv;
-    private Button publishBtn;
-    private ArrayList<String> pollItems;
-    private long pollDuration;
-    private Integer[] durations;
+  private ImageView userIv;
+  private TextView usernameTv;
+  private EditText questionEd;
+  private TextView timeTv;
+  private RecyclerView pollRv;
+  private Button publishBtn;
+  private ArrayList<String> pollItems;
+  private long pollDuration;
+  private Integer[] durations;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_poll);
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_create_poll);
 
-        SetUpCompetent();
+    SetUpCompetent();
 
-        getUserInfo();
-
-
-        createPollItemsList();
+    getUserInfo();
 
 
-    }
+    createPollItemsList();
 
 
-    public void SetUpCompetent() {
-
-        userIv = findViewById(R.id.userIv);
-        usernameTv = findViewById(R.id.usernameTv);
-        publishBtn = findViewById(R.id.publishBtn);
-        questionEd = findViewById(R.id.questionEd);
-        timeTv = findViewById(R.id.timeTv);
-        pollRv = findViewById(R.id.pollRv);
-        NestedScrollView nestedScrollView = findViewById(R.id.nestedScrollView);
-        nestedScrollView.setNestedScrollingEnabled(false);
-
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setNavigationOnClickListener(v-> finish());
-
-        TextView timeTv = findViewById(R.id.timeTv);
-
-        timeTv.setOnClickListener(this);
-        publishBtn.setOnClickListener(this);
-
-    }
+  }
 
 
-    private void getUserInfo(){
+  public void SetUpCompetent() {
 
-        usernameTv.setText(GlobalVariables.getCurrentUsername());
-        Picasso.get().load(GlobalVariables.getCurrentUserImageUrl()).fit().into(userIv);
+    userIv = findViewById(R.id.userIv);
+    usernameTv = findViewById(R.id.usernameTv);
+    publishBtn = findViewById(R.id.publishBtn);
+    questionEd = findViewById(R.id.questionEd);
+    timeTv = findViewById(R.id.timeTv);
+    pollRv = findViewById(R.id.pollRv);
+    NestedScrollView nestedScrollView = findViewById(R.id.nestedScrollView);
+    nestedScrollView.setNestedScrollingEnabled(false);
 
-    }
+    Toolbar toolbar = findViewById(R.id.toolbar);
+    toolbar.setNavigationOnClickListener(v -> finish());
 
+    TextView timeTv = findViewById(R.id.timeTv);
 
-    private void createPollItemsList(){
+    timeTv.setOnClickListener(this);
+    publishBtn.setOnClickListener(this);
 
-        pollItems = new ArrayList<>();
-        pollItems.add("الخيار 1");
-        pollItems.add("الخيار 2");
-
-        PollItemsRecyclerAdapter adapter = new PollItemsRecyclerAdapter(pollItems);
-        pollRv.setAdapter(adapter);
-
-    }
-
-
-    @Override
-    public void onClick(View view) {
-
-        if(view.getId() == R.id.publishBtn){
-
-            Log.d("ttt","pollItems: "+pollItems.size());
-
-            final String question = questionEd.getText().toString();
-
-            if(question.isEmpty()){
-                Toast.makeText(this, R.string.add_question_poll,
-                        Toast.LENGTH_SHORT).show();
-                return;
-            }else if(pollDuration == 0){
-                Toast.makeText(this, R.string.set_duration_poll,
-                        Toast.LENGTH_SHORT).show();
-                return;
-            }
+  }
 
 
-            final List<Map<String, Object>> optionsMaps = new ArrayList<>();
+  private void getUserInfo() {
 
-            for(int i=0;i<pollItems.size();i++){
-                final EditText editText = (EditText)pollRv.getChildAt(i).findViewById(R.id.pollEd);
-                if(editText!=null && !editText.getText().toString().trim().isEmpty()){
+    usernameTv.setText(GlobalVariables.getCurrentUsername());
+    Picasso.get().load(GlobalVariables.getCurrentUserImageUrl()).fit().into(userIv);
 
-                    final HashMap<String, Object> map = new HashMap<>();
-                    map.put("option",editText.getText().toString().trim());
-                    map.put("votes",0);
-                    optionsMaps.add(map);
-
-                }
-            }
-
-            if(optionsMaps.size() < 2){
-                Toast.makeText(this, R.string.two_items_poll, Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            publishBtn.setClickable(false);
-            final ProgressDialog progressDialog = new ProgressDialog(this);
-            progressDialog.setCancelable(false);
-            progressDialog.setTitle("Publishing poll!");
-            progressDialog.show();
-
-            final Map<String, Object> map = new HashMap<>();
-            final String postId = UUID.randomUUID().toString();
-
-            map.put("postId", postId);
-            map.put("title", question);
-            map.put("publishTime", System.currentTimeMillis());
-            map.put("pollDuration", pollDuration);
-            map.put("type", PostData.TYPE_POLL);
-            map.put("publisherId", FirebaseAuth.getInstance().getCurrentUser().getUid());
-            map.put("likes",0);
-            map.put("comments",0);
-            map.put("pollEnded",false);
-            map.put("totalVotes",0);
-
-            final DocumentReference pollRef = FirebaseFirestore.getInstance()
-                    .collection("Posts").document(postId);
-
-            for(int i=0;i<optionsMaps.size();i++){
-
-                final Task<Void> task = pollRef.collection("Options")
-                        .document(String.valueOf(i)).set(optionsMaps.get(i));
-
-                if(i == optionsMaps.size() - 1){
-                    task.addOnSuccessListener(Void ->
-                            pollRef.set(map).addOnSuccessListener(v -> {
-                        progressDialog.dismiss();
-                        finish();
-                    }).addOnFailureListener(e -> {
-                        publishBtn.setClickable(true);
-                        progressDialog.dismiss();
-                        Toast.makeText(CreatePollActivity.this,
-                                R.string.poll_publish_failed,
-                                Toast.LENGTH_SHORT).show();
-                    }));
-                }
-            }
+  }
 
 
-        }else if(view.getId() == R.id.timeTv){
+  private void createPollItemsList() {
+
+    pollItems = new ArrayList<>();
+    pollItems.add("الخيار 1");
+    pollItems.add("الخيار 2");
+
+    PollItemsRecyclerAdapter adapter = new PollItemsRecyclerAdapter(pollItems);
+    pollRv.setAdapter(adapter);
+
+  }
 
 
-            if(pollDuration > 0){
+  @Override
+  public void onClick(View view) {
 
-                new NumberPickerDialogFragment(durations).show(
-                        getSupportFragmentManager(),"NumberPicker"
-                );
-            }else{
-                new NumberPickerDialogFragment().show(
-                        getSupportFragmentManager(),"NumberPicker"
-                );
-            }
+    if (view.getId() == R.id.publishBtn) {
+
+      Log.d("ttt", "pollItems: " + pollItems.size());
+
+      final String question = questionEd.getText().toString();
+
+      if (question.isEmpty()) {
+        Toast.makeText(this, R.string.add_question_poll,
+                Toast.LENGTH_SHORT).show();
+        return;
+      } else if (pollDuration == 0) {
+        Toast.makeText(this, R.string.set_duration_poll,
+                Toast.LENGTH_SHORT).show();
+        return;
+      }
+
+
+      final List<Map<String, Object>> optionsMaps = new ArrayList<>();
+
+      for (int i = 0; i < pollItems.size(); i++) {
+        final EditText editText = pollRv.getChildAt(i).findViewById(R.id.pollEd);
+        if (editText != null && !editText.getText().toString().trim().isEmpty()) {
+
+          final HashMap<String, Object> map = new HashMap<>();
+          map.put("option", editText.getText().toString().trim());
+          map.put("votes", 0);
+          optionsMaps.add(map);
 
         }
+      }
+
+      if (optionsMaps.size() < 2) {
+        Toast.makeText(this, R.string.two_items_poll, Toast.LENGTH_SHORT).show();
+        return;
+      }
+
+      publishBtn.setClickable(false);
+      final ProgressDialog progressDialog = new ProgressDialog(this);
+      progressDialog.setCancelable(false);
+      progressDialog.setTitle("Publishing poll!");
+      progressDialog.show();
+
+      final Map<String, Object> map = new HashMap<>();
+      final String postId = UUID.randomUUID().toString();
+
+      map.put("postId", postId);
+      map.put("title", question);
+      map.put("publishTime", System.currentTimeMillis());
+      map.put("pollDuration", pollDuration);
+      map.put("type", PostData.TYPE_POLL);
+      map.put("publisherId", FirebaseAuth.getInstance().getCurrentUser().getUid());
+      map.put("likes", 0);
+      map.put("comments", 0);
+      map.put("pollEnded", false);
+      map.put("totalVotes", 0);
+
+      final DocumentReference pollRef = FirebaseFirestore.getInstance()
+              .collection("Posts").document(postId);
+
+      for (int i = 0; i < optionsMaps.size(); i++) {
+
+        final Task<Void> task = pollRef.collection("Options")
+                .document(String.valueOf(i)).set(optionsMaps.get(i));
+
+        if (i == optionsMaps.size() - 1) {
+          task.addOnSuccessListener(Void ->
+                  pollRef.set(map).addOnSuccessListener(v -> {
+                    progressDialog.dismiss();
+                    finish();
+                  }).addOnFailureListener(e -> {
+                    publishBtn.setClickable(true);
+                    progressDialog.dismiss();
+                    Toast.makeText(CreatePollActivity.this,
+                            R.string.poll_publish_failed,
+                            Toast.LENGTH_SHORT).show();
+                  }));
+        }
+      }
+
+
+    } else if (view.getId() == R.id.timeTv) {
+
+
+      if (pollDuration > 0) {
+
+        new NumberPickerDialogFragment(durations).show(
+                getSupportFragmentManager(), "NumberPicker"
+        );
+      } else {
+        new NumberPickerDialogFragment().show(
+                getSupportFragmentManager(), "NumberPicker"
+        );
+      }
+
+    }
+  }
+
+  @Override
+  public void passTime(long time, Integer[] durations) {
+
+    pollDuration = time;
+    this.durations = durations;
+
+    String durationText = "";
+    if (durations[0] > 0) {
+      durationText = durationText.concat(durations[0] + " " +
+              getResources().getString(R.string.days) + " ");
+    }
+    if (durations[1] > 0) {
+      durationText = durationText.concat(durations[1] + " " +
+              getResources().getString(R.string.hours) + " ");
+    }
+    if (durations[2] > 0) {
+      durationText = durationText.concat(durations[2] + " " +
+              getResources().getString(R.string.minute));
     }
 
-    @Override
-    public void passTime(long time,Integer[] durations) {
+    timeTv.setText(durationText);
 
-        pollDuration = time;
-        this.durations = durations;
-
-        String durationText = "";
-        if(durations[0] > 0){
-            durationText = durationText.concat(durations[0]+" "+
-                    getResources().getString(R.string.days)+" ");
-        }
-        if(durations[1] > 0){
-            durationText = durationText.concat(durations[1]+" "+
-                    getResources().getString(R.string.hours)+" ");
-        }
-        if(durations[2] > 0){
-            durationText = durationText.concat(durations[2]+" "+
-                    getResources().getString(R.string.minute));
-        }
-
-        timeTv.setText(durationText);
-
-    }
+  }
 }

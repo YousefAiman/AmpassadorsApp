@@ -2,7 +2,6 @@ package hashed.app.ampassadors.Utils;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.DownloadManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,31 +10,15 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-
-import hashed.app.ampassadors.Adapters.PrivateMessagingAdapter;
-
-import static androidx.core.app.ActivityCompat.requestPermissions;
-import static androidx.core.app.ActivityCompat.startActivityForResult;
 
 public class Files {
 
@@ -48,13 +31,12 @@ public class Files {
           ZOOM = 6;
 
 
-
   public final static int EXTERNAL_STORAGE_PERMISSION = 1,
-                          EXTERNAL_STORAGE_WRITE_PERMISSION = 2,
-                            PICK_IMAGE = 10,
-                            PICK_VIDEO = 11,
-                            PICK_FILE = 12,
-                            WRITE_FILE = 13;
+          EXTERNAL_STORAGE_WRITE_PERMISSION = 2,
+          PICK_IMAGE = 10,
+          PICK_VIDEO = 11,
+          PICK_FILE = 12,
+          WRITE_FILE = 13;
 
   public final static String MESSAGE_IMAGE_REF = "Messaging-images/",
           MESSAGE_RECORD_REF = "Messaging-recordings/",
@@ -72,12 +54,12 @@ public class Files {
   private final static String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE,
           Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
-  private static final String[] supportedMimeTypes = {"application/pdf","application/msword",
-          "text/*", "application/mspowerpoint","application/vnd.ms-excel","application/zip"};
+  private static final String[] supportedMimeTypes = {"application/pdf", "application/msword",
+          "text/*", "application/mspowerpoint", "application/vnd.ms-excel", "application/zip"};
 
-  public static void startImageFetchIntent(Activity activity){
+  public static void startImageFetchIntent(Activity activity) {
 
-    if(checkStoragePermissions(activity,IMAGE)){
+    if (checkStoragePermissions(activity, IMAGE)) {
 
       final Intent i = new Intent(Intent.ACTION_GET_CONTENT);
       i.setType("image/*");
@@ -88,41 +70,37 @@ public class Files {
   }
 
 
-  public static void startDocumentFetchIntent(Activity activity){
+  public static void startDocumentFetchIntent(Activity activity) {
 
-    if(checkStoragePermissions(activity,PICK_FILE)){
+    if (checkStoragePermissions(activity, PICK_FILE)) {
       Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
       intent.setType("*/*");
       intent.putExtra(Intent.EXTRA_MIME_TYPES, supportedMimeTypes);
-      intent.putExtra(Intent.EXTRA_LOCAL_ONLY,true);
+      intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
 
       activity.startActivityForResult(intent, PICK_FILE);
     }
   }
 
 
-  public static void startVideoFetchIntent(Activity activity){
+  public static void startVideoFetchIntent(Activity activity) {
 
-    if(checkStoragePermissions(activity,PICK_VIDEO)){
+    if (checkStoragePermissions(activity, PICK_VIDEO)) {
 
-    Intent intent;
-    if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
-    {
-      intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-    }
-    else
-    {
-      intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.INTERNAL_CONTENT_URI);
-    }
+      Intent intent;
+      if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+        intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+      } else {
+        intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.INTERNAL_CONTENT_URI);
+      }
 
 
+      intent.setType("video/*");
+      intent.setAction(Intent.ACTION_GET_CONTENT);
+      intent.putExtra("return-data", true);
+      intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
 
-    intent.setType("video/*");
-    intent.setAction(Intent.ACTION_GET_CONTENT);
-    intent.putExtra("return-data", true);
-    intent.putExtra(Intent.EXTRA_LOCAL_ONLY,true);
-
-      activity.startActivityForResult(intent,PICK_VIDEO);
+      activity.startActivityForResult(intent, PICK_VIDEO);
 
 
 //      activity.startActivityForResult(Intent.createChooser(
@@ -133,23 +111,23 @@ public class Files {
 
   }
 
-  private static boolean checkStoragePermissions(Activity activity,int requestCode){
+  private static boolean checkStoragePermissions(Activity activity, int requestCode) {
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
-      if(activity.checkSelfPermission(permissions[0]) != PackageManager.PERMISSION_GRANTED){
+      if (activity.checkSelfPermission(permissions[0]) != PackageManager.PERMISSION_GRANTED) {
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
           //doesn't need to request write persmission
           activity.requestPermissions(new String[]{permissions[0]}, requestCode);
-        }else{
+        } else {
           //needs to request write persmission
           activity.requestPermissions(permissions, requestCode);
 
         }
 
         return false;
-      }else{
+      } else {
         return true;
       }
 
@@ -157,12 +135,11 @@ public class Files {
     return true;
   }
 
-  public static boolean checkStorageWritePermission(Activity activity){
+  public static boolean checkStorageWritePermission(Activity activity) {
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
             activity.checkSelfPermission(permissions[1]) != PackageManager.PERMISSION_GRANTED) {
       Log.d("ttt", "requesting location persmission");
-
 
 
       activity.requestPermissions(permissions, EXTERNAL_STORAGE_WRITE_PERMISSION);
@@ -179,7 +156,7 @@ public class Files {
   }
 
 
-  private static Cursor getFileCursor(Context context,Uri fileUri){
+  private static Cursor getFileCursor(Context context, Uri fileUri) {
 
     final ContentResolver contentResolver = context.getContentResolver();
 
@@ -192,27 +169,27 @@ public class Files {
   }
 
 
-  public static double getFileSizeInMB(Context context,Uri uri) {
+  public static double getFileSizeInMB(Context context, Uri uri) {
     String fileSize;
-    try (Cursor cursor = getFileCursor(context,uri)) {
+    try (Cursor cursor = getFileCursor(context, uri)) {
       if (cursor != null && cursor.moveToFirst()) {
         int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
         if (!cursor.isNull(sizeIndex)) {
           fileSize = cursor.getString(sizeIndex);
           cursor.close();
-          return Long.parseLong(fileSize)/1e+6;
+          return Long.parseLong(fileSize) / 1e+6;
         }
       }
     }
     return 0;
   }
 
-  public static Map<String, Object> getFileInfo(Context context,Uri fileUri){
+  public static Map<String, Object> getFileInfo(Context context, Uri fileUri) {
 
 
     final Map<String, Object> fileInfoMap = new HashMap<>();
 
-    try (Cursor cursor = getFileCursor(context,fileUri)) {
+    try (Cursor cursor = getFileCursor(context, fileUri)) {
       if (cursor != null && cursor.moveToFirst()) {
 
         final int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
@@ -226,9 +203,9 @@ public class Files {
           final String fileName = cursor.getString(nameIndex);
           final long fileSize = cursor.getLong(sizeIndex);
 
-          fileInfoMap.put("fileName",fileName);
-          fileInfoMap.put("fileSize",fileSize/1e+6);
-          fileInfoMap.put("fileType",fileType);
+          fileInfoMap.put("fileName", fileName);
+          fileInfoMap.put("fileSize", fileSize / 1e+6);
+          fileInfoMap.put("fileType", fileType);
 
 
           cursor.close();
@@ -242,22 +219,22 @@ public class Files {
 
 
   public static FileDownloadTask downloadFile(Activity activity,
-                                              String attachmentUrl,String fileName){
+                                              String attachmentUrl, String fileName) {
 
-    if(checkStoragePermissions(activity,WRITE_FILE)){
+    if (checkStoragePermissions(activity, WRITE_FILE)) {
 
-      File filePath = new File(Environment.DIRECTORY_DOWNLOADS,fileName);
+      File filePath = new File(Environment.DIRECTORY_DOWNLOADS, fileName);
 
       boolean fileWasCreated;
-      if(!filePath.exists()){
+      if (!filePath.exists()) {
         fileWasCreated = filePath.mkdirs();
-      }else{
+      } else {
         fileWasCreated = true;
       }
 
-      if(fileWasCreated){
+      if (fileWasCreated) {
         return FirebaseStorage.getInstance().getReferenceFromUrl(attachmentUrl).getFile(filePath);
-      }else{
+      } else {
         return null;
       }
     }
@@ -266,9 +243,9 @@ public class Files {
   }
 
 
-  public static Intent getFileLaunchIntentFromUri(String uriPath){
+  public static Intent getFileLaunchIntentFromUri(String uriPath) {
 
-    Log.d("ttt","uriString: "+uriPath);
+    Log.d("ttt", "uriString: " + uriPath);
 
     Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
 
@@ -276,13 +253,13 @@ public class Files {
 
     if (uriPath.contains(".doc") || uriPath.contains(".docx")) {
       intent.setDataAndType(launchUri, "application/msword");
-    }else if(uriPath.contains(".pdf")) {
+    } else if (uriPath.contains(".pdf")) {
       intent.setDataAndType(launchUri, "application/pdf");
-    } else if(uriPath.contains(".ppt") || uriPath.contains(".pptx")) {
+    } else if (uriPath.contains(".ppt") || uriPath.contains(".pptx")) {
       intent.setDataAndType(launchUri, "application/vnd.ms-powerpoint");
-    } else if(uriPath.contains(".xls") || uriPath.contains(".xlsx")) {
+    } else if (uriPath.contains(".xls") || uriPath.contains(".xlsx")) {
       intent.setDataAndType(launchUri, "application/vnd.ms-excel");
-    } else if(uriPath.contains(".zip") || uriPath.contains(".rar")) {
+    } else if (uriPath.contains(".zip") || uriPath.contains(".rar")) {
       intent.setDataAndType(launchUri, "application/x-wav");
     }
 

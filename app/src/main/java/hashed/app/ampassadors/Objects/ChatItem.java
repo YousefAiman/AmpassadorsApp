@@ -17,10 +17,10 @@ public class ChatItem implements Serializable {
   private long time;
   private long messageKey;
 
-  public ChatItem(){
+  public ChatItem() {
   }
 
-  public ChatItem(String messagingUid,String imageUrl, String username,
+  public ChatItem(String messagingUid, String imageUrl, String username,
                   PrivateMessagePreview message, long time) {
     this.messagingUid = messagingUid;
     this.imageUrl = imageUrl;

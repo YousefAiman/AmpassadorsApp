@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.util.Log;
 
 import hashed.app.ampassadors.Activities.GroupMessagingActivity;
-import hashed.app.ampassadors.Activities.Home_Activity;
 import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
 import hashed.app.ampassadors.MainActivity;
 import hashed.app.ampassadors.R;
@@ -25,7 +24,7 @@ public class NotificationClickReceiver extends BroadcastReceiver {
 
     if (intent.hasExtra("messagingBundle")) {
 
-      if(GlobalVariables.isAppIsRunning()) {
+      if (GlobalVariables.isAppIsRunning()) {
 
         if (sharedPreferences == null) {
           sharedPreferences = context.getSharedPreferences(
@@ -38,29 +37,29 @@ public class NotificationClickReceiver extends BroadcastReceiver {
 
         String sourceType = bundle.getString("sourceType");
 
-        if(sourceType.equals("privateMessaging")){
-          Log.d("ttt","sourceType privateMessaging");
+        if (sourceType.equals("privateMessaging")) {
+          Log.d("ttt", "sourceType privateMessaging");
 
           destinationIntent = new Intent(context, PrivateMessagingActivity.class);
 
-        }else if(sourceType.equals("groupMessaging")){
+        } else if (sourceType.equals("groupMessaging")) {
 
           destinationIntent = new Intent(context, GroupMessagingActivity.class);
 
-        }else if(sourceType.equals("meetingCreated")){
+        } else if (sourceType.equals("meetingCreated")) {
 
           destinationIntent = new Intent(context, MainActivity.class);
 
-        }else{
+        } else {
 
           destinationIntent = new Intent(context, MainActivity.class);
 
         }
 
-        destinationIntent.putExtra("destinationBundle",bundle);
+        destinationIntent.putExtra("destinationBundle", bundle);
 
-        if(sourceType.equals("privateMessaging") || sourceType.equals("groupMessaging") ||
-                sourceType.equals("meetingStarted") ||  sourceType.equals("zoomMeeting")){
+        if (sourceType.equals("privateMessaging") || sourceType.equals("groupMessaging") ||
+                sourceType.equals("meetingStarted") || sourceType.equals("zoomMeeting")) {
 
 
           if (sharedPreferences.contains("currentlyMessagingUid")) {
@@ -82,8 +81,7 @@ public class NotificationClickReceiver extends BroadcastReceiver {
             destinationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
           }
 
-        }else if(sourceType.equals("meetingCreated")){
-
+        } else if (sourceType.equals("meetingCreated")) {
 
 
         }

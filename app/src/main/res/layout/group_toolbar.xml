@@ -1,30 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="?actionBarSize"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/post_toolbar"
+    android:id="@+id/home_main_tool"
     android:elevation="4dp"
     android:layout_margin="0dp"
     android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
     android:fitsSystemWindows="true"
     app:titleTextColor="@color/white"
-    app:navigationContentDescription="post interface"
-    android:background="#FFFFFF"
-    app:navigationIcon="@drawable/back_arrow_green"
-    >
+    app:navigationContentDescription="side menu"
+    android:background="#1B5E20"
+    app:navigationIcon="@drawable/navigation_menu_icon"
+    app:menu="@menu/menu_for_home_toolbar">
+
+
     <TextView
-        android:id="@+id/posttitle"
-        android:layout_width="match_parent"
+        android:id="@+id/toolbar_title"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#02723A"
+        android:layout_marginStart="30dp"
+        android:textColor="@color/white"
         android:layoutDirection="ltr"
         android:fontFamily="@font/segoe_ui_bold"
-        android:text="@string/Post"
+        android:text="@string/meetings"
         android:textSize="24sp"
-        android:layout_marginRight="20dp"
-        android:textAlignment="textEnd"
         />
 </androidx.appcompat.widget.Toolbar>
-

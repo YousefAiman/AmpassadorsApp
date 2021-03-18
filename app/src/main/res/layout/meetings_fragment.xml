@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/light_medium_grey"
+    tools:context=".Fragments.MeetingsFragment">
+
+
+    <include android:id="@+id/groupToolbar"
+        layout="@layout/group_toolbar" />
+
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_below="@id/groupToolbar"
+        android:layout_alignParentBottom="true"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/childRv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="30dp"
+            android:visibility="invisible"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:id="@+id/emptyTv"
+        android:layout_gravity="center"
+        android:textSize="24sp"
+        android:visibility="gone"
+        android:textColor="@color/light_green"
+        android:fontFamily="@font/segoe_ui_bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/add_group"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        app:fabSize="normal"
+        app:tint="@color/white"
+        app:maxImageSize="40dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="14dp"
+        android:src="@drawable/add_group_icon" />
+
+</RelativeLayout>

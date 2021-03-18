@@ -2,9 +2,7 @@ package hashed.app.ampassadors.Fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.pm.ActivityInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -18,20 +16,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.util.Log;
 import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
 
 import hashed.app.ampassadors.R;
-import hashed.app.ampassadors.Utils.VideoDataSourceFactory;
 
 public class ImageFullScreenFragment extends DialogFragment {
 
@@ -61,7 +51,15 @@ public class ImageFullScreenFragment extends DialogFragment {
 
     }
   };
-
+  private final String imageUrl;
+  private ImageView fullScreenIv;
+  private boolean mVisible;
+  private final Runnable mHideRunnable = new Runnable() {
+    @Override
+    public void run() {
+      hide();
+    }
+  };
   private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -72,16 +70,9 @@ public class ImageFullScreenFragment extends DialogFragment {
     }
   };
 
-  private ImageView fullScreenIv;
-  private final String imageUrl;
-
-  private boolean mVisible;
-  private final Runnable mHideRunnable = new Runnable() {
-    @Override
-    public void run() {
-      hide();
-    }
-  };
+  public ImageFullScreenFragment(String imageUrl) {
+    this.imageUrl = imageUrl;
+  }
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -89,27 +80,22 @@ public class ImageFullScreenFragment extends DialogFragment {
     setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialogTheme);
   }
 
-  public ImageFullScreenFragment(String imageUrl){
-    this.imageUrl = imageUrl;
-  }
-
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater,
                            @Nullable ViewGroup container,
                            @Nullable Bundle savedInstanceState) {
-    View view =  inflater.inflate(R.layout.fragment_image_full_screen, container,
+    View view = inflater.inflate(R.layout.fragment_image_full_screen, container,
             false);
 
     Objects.requireNonNull(getDialog()).getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT);
 
 
-
     fullScreenIv = view.findViewById(R.id.fullScreenIv);
 
     final Toolbar fullScreenToolbar = view.findViewById(R.id.fullScreenToolbar);
-    fullScreenToolbar.setNavigationOnClickListener(v-> dismiss());
+    fullScreenToolbar.setNavigationOnClickListener(v -> dismiss());
 
     return view;
   }
@@ -120,8 +106,7 @@ public class ImageFullScreenFragment extends DialogFragment {
     mVisible = true;
 
 
-
-    fullScreenIv.setOnClickListener(v-> toggle());
+    fullScreenIv.setOnClickListener(v -> toggle());
 
     Picasso.get().load(imageUrl).fit().into(fullScreenIv);
 
@@ -129,12 +114,12 @@ public class ImageFullScreenFragment extends DialogFragment {
 
 
   private void toggle() {
-    if(mVisible){
+    if (mVisible) {
       hide();
-    }else{
+    } else {
 
       mVisible = true;
-      if(getActivity()!=null && getActivity().getWindow()!=null){
+      if (getActivity() != null && getActivity().getWindow() != null) {
 
         getActivity().getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -155,7 +140,7 @@ public class ImageFullScreenFragment extends DialogFragment {
   @SuppressLint("InlinedApi")
   public void show() {
     // Show the system bar
-    if(fullScreenIv!=null){
+    if (fullScreenIv != null) {
       fullScreenIv.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
               | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
       mVisible = true;

@@ -28,16 +28,16 @@ public class MainActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    if(WifiUtil.isConnectedToInternet(this)){
+    if (WifiUtil.isConnectedToInternet(this)) {
 
       final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-      if(user!=null){
+      if (user != null) {
 
-        if(!user.isAnonymous()){
+        if (!user.isAnonymous()) {
           FirebaseMessagingService.startMessagingService(this);
 
-          if(getIntent().hasExtra("destinationBundle")){
+          if (getIntent().hasExtra("destinationBundle")) {
 
             final Bundle destinationBundle = getIntent().getBundleExtra("destinationBundle");
 
@@ -68,30 +68,29 @@ public class MainActivity extends AppCompatActivity {
               public void run() {
                 startActivity(finalIntent);
               }
-            },800);
+            }, 800);
 
-          }else{
+          } else {
 
             new Handler().postDelayed(new Runnable() {
               @Override
               public void run() {
                 startHomeActivity();
               }
-            },1000);
+            }, 1000);
           }
 
-        }else{
+        } else {
           new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
               startHomeActivity();
             }
-          },1000);
+          }, 1000);
         }
 
 
-
-      }else{
+      } else {
 
         FirebaseAuth.getInstance().signInAnonymously().addOnSuccessListener(new OnSuccessListener<AuthResult>() {
           @Override
@@ -109,13 +108,13 @@ public class MainActivity extends AppCompatActivity {
       }
 
 
-    }else{
+    } else {
 
       startConnectionActivity();
 
     }
 
-}
+  }
 
   private void startConnectionActivity() {
     new Handler().postDelayed(() -> {
@@ -124,24 +123,24 @@ public class MainActivity extends AppCompatActivity {
     }, 800);
   }
 
-  private Intent startPrivateMessagingActivity(String userId){
+  private Intent startPrivateMessagingActivity(String userId) {
     return new Intent(MainActivity.this,
-            PrivateMessagingActivity.class).putExtra("messagingUid",userId);
+            PrivateMessagingActivity.class).putExtra("messagingUid", userId);
   }
 
-  private Intent startGroupMessagingActivity(String groupId){
+  private Intent startGroupMessagingActivity(String groupId) {
     return new Intent(MainActivity.this,
-            GroupMessagingActivity.class).putExtra("messagingUid",groupId);
-  }
-
-
-  private Intent startMeetingsHomeActivity(){
-    return new Intent(MainActivity.this,
-            Home_Activity.class).putExtra("showMeetings",true);
+            GroupMessagingActivity.class).putExtra("messagingUid", groupId);
   }
 
 
-  private void startHomeActivity(){
+  private Intent startMeetingsHomeActivity() {
+    return new Intent(MainActivity.this,
+            Home_Activity.class).putExtra("showMeetings", true);
+  }
+
+
+  private void startHomeActivity() {
     startActivity(new Intent(MainActivity.this, Home_Activity.class));
     finish();
   }
@@ -150,11 +149,11 @@ public class MainActivity extends AppCompatActivity {
   protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
 
-    if(resultCode == ConnectionActivity.CONNECTION_RESULT){
+    if (resultCode == ConnectionActivity.CONNECTION_RESULT) {
 
-      if(getIntent().hasExtra("messagingBundle")){
+      if (getIntent().hasExtra("messagingBundle")) {
 //        startMessagingActivity();
-      }else{
+      } else {
         startHomeActivity();
       }
 
