@@ -18,6 +18,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
 
 import hashed.app.ampassadors.Activities.Home_Activity;
 import hashed.app.ampassadors.Activities.UsersPickerActivity;
@@ -95,9 +96,22 @@ public class GroupsFragment extends Fragment implements View.OnClickListener {
 
     floatingButton.setOnClickListener(this);
 
-    if (GlobalVariables.getRole().equals("Admin") || GlobalVariables.getRole().equals("Coordinator")){
-      floatingButton.setVisibility(View.VISIBLE);
+    if(!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
+      if (GlobalVariables.getRole().equals("Admin") ||
+              GlobalVariables.getRole().equals("Publisher")){
+
+        floatingButton.setVisibility(View.VISIBLE);
+      }
     }
+
+    if(!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
+      if (GlobalVariables.getRole().equals("Admin") ||
+              GlobalVariables.getRole().equals("Coordinator")){
+
+        floatingButton.setVisibility(View.VISIBLE);
+      }
+    }
+
 
   }
 

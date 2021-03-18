@@ -4,9 +4,9 @@
     <item
         android:id="@+id/news"
         android:title="@string/news" />
-    <item
-        android:id="@+id/awreaness_post"
-        android:title="@string/AwarenessPosts" />
+<!--    <item-->
+<!--        android:id="@+id/awreaness_post"-->
+<!--        android:title="@string/AwarenessPosts" />-->
     <item
         android:id="@+id/polls"
         android:title="@string/poll" />
@@ -27,6 +27,11 @@
     <item
         android:id="@+id/about"
         android:title="@string/aboutus" />
+
+
+    <item
+        android:id="@+id/user_requests"
+        android:title="@string/user_requests" />
 
     <item
         android:id="@+id/log_out"

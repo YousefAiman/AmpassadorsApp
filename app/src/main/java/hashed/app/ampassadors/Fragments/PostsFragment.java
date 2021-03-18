@@ -26,6 +26,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -142,10 +143,14 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                     R.drawable.notification_indicator_icon :
                     R.drawable.notification_icon);
 
-    if (GlobalVariables.getRole().equals("Admin") || GlobalVariables.getRole().equals("Publisher")){
+    if(!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
+      if (GlobalVariables.getRole().equals("Admin") ||
+              GlobalVariables.getRole().equals("Publisher")){
 
-      floatingButton.setVisibility(View.VISIBLE);
+        floatingButton.setVisibility(View.VISIBLE);
+      }
     }
+
 
 
     setupNotificationReceiver();

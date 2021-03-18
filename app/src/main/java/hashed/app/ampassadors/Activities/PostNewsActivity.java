@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
@@ -42,9 +43,9 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
   //views
   private CardView cardView;
   private TextView usernameTv, dateTv, titleTv, descriptionTv, likesTv, commentsTv, likeTv, commentTv, newsTitleTv;
-  private ImageView newsIv, userIv, attachmentImage;
+  private ImageView newsIv, userIv, attachmentImage,playIv;
   private FrameLayout frameLayout;
-  private PlayerView playerView;
+
 
   //data
   private PostData postData;
@@ -92,8 +93,8 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
     likeTv = findViewById(R.id.likeTv);
     commentTv = findViewById(R.id.commentTv);
     frameLayout = findViewById(R.id.frameLayout);
-    playerView = findViewById(R.id.playerView);
     newsTitleTv = findViewById(R.id.newsTitleTv);
+    playIv = findViewById(R.id.playIv);
 
   }
 
@@ -137,20 +138,8 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
       case Files.VIDEO:
 
-        playerView.setVisibility(View.VISIBLE);
-
-        final ImageView playImage = new ImageView(this);
-        playImage.setImageResource(R.drawable.video_icon_circle);
-
-        final LayoutParams lp = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.gravity = Gravity.CENTER;
-        cardView.setLayoutParams(lp);
-
-        playImage.setOnClickListener(this);
-
-        cardView.addView(playImage);
-
+        playIv.setVisibility(View.VISIBLE);
+        newsIv.setOnClickListener(this);
         break;
 
       case Files.DOCUMENT:

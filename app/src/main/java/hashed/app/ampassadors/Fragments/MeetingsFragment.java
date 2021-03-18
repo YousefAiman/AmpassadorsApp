@@ -33,6 +33,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import hashed.app.ampassadors.Activities.Home_Activity;
+import hashed.app.ampassadors.Activities.NotificationsActivity;
 import hashed.app.ampassadors.Activities.UsersPickerActivity;
 import hashed.app.ampassadors.Adapters.MeetingsAdapter;
 import hashed.app.ampassadors.BroadcastReceivers.NotificationIndicatorReceiver;
@@ -122,6 +124,24 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
         }
       }
     });
+
+
+
+    Toolbar toolbar = view.findViewById(R.id.groupToolbar);
+    toolbar.setNavigationOnClickListener(v -> ((Home_Activity) requireActivity()).showDrawer());
+    toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+      @Override
+      public boolean onMenuItemClick(MenuItem item) {
+
+        if (item.getItemId() == R.id.action_notifications) {
+          startActivity(new Intent(getContext(), NotificationsActivity.class)
+                  .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        }
+
+        return false;
+      }
+    });
+
 
     swipeRefreshLayout.setOnRefreshListener(this);
 
