@@ -20,16 +20,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AmpassadorsApp">
-        <activity android:name=".Activities.PrivacyPolicy"></activity>
+        <activity android:name=".Activities.WelcomeActivity"/>
+        <activity android:name=".Activities.PrivacyPolicy" />
         <activity android:name=".Activities.About_us" />
         <activity android:name=".Activities.Profile" />
         <activity android:name=".Activities.PostNewActivity" />
-
-
-        <activity
-            android:name=".SideDrawer"
-            android:label="@string/title_activity_side_drawer"
-            android:theme="@style/Theme.AmpassadorsApp.NoActionBar" />
         <activity android:name=".Activities.PostPollActivity" />
         <activity android:name=".Activities.PostNewsActivity" />
         <activity android:name=".Activities.NotificationsActivity" />

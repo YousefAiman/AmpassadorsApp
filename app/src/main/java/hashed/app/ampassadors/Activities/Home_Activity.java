@@ -79,14 +79,19 @@ public class Home_Activity extends AppCompatActivity implements
     super.onCreate(savedInstanceState);
     setContentView(R.layout.home_activity);
 
+    SetUpCompetent();
+    GlobalVariables.setAppIsRunning(true);
+
 
     auth = FirebaseAuth.getInstance();
     userid = auth.getCurrentUser().getUid();
     firebaseFirestore = FirebaseFirestore.getInstance();
 
     if(FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
-
       replaceFragment(new PostsFragment());
+
+      navigationview.inflateMenu(R.menu.menu_nav);
+
     }else{
       firebaseFirestore.collection("Users").document(userid).get().
               addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -95,20 +100,25 @@ public class Home_Activity extends AppCompatActivity implements
 
           GlobalVariables.setRole(documentSnapshot.getString("Role"));
 
-
         }
       }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
         @Override
         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
           if(task.isSuccessful()){
             replaceFragment(new PostsFragment());
+
+            if (GlobalVariables.getRole()!=null && GlobalVariables.getRole().equals("Admin")) {
+              navigationview.inflateMenu(R.menu.menu_admin);
+            } else {
+              navigationview.inflateMenu(R.menu.menu_nav);
+            }
           }
         }
       });
     }
 
-    GlobalVariables.setAppIsRunning(true);
-    SetUpCompetent();
+
+
     OnClickButtons();
     createUserLikesListener();
     createNotificationListener();
@@ -163,52 +173,10 @@ public class Home_Activity extends AppCompatActivity implements
 
   // Buttons Click
   public void OnClickButtons() {
-    String admin = "AdmSSSin";
-    if (admin.equals("Admin")) {
-      navigationview.inflateMenu(R.menu.menu_admin);
-
-    } else {
-      navigationview.inflateMenu(R.menu.menu_nav);
-
-    }
 
 
     navigationview.setNavigationItemSelectedListener(this);
 
-    nav_btom.setOnNavigationItemSelectedListener(item -> {
-
-      drawer_layout.closeDrawer(GravityCompat.START);
-
-      if (item.getItemId() == R.id.home) {
-
-        if (nav_btom.getSelectedItemId() != R.id.home) {
-          replaceFragment(new PostsFragment());
-        }
-
-      } else if (item.getItemId() == R.id.profile) {
-
-                if(nav_btom.getSelectedItemId()!=R.id.profile){
-                    replaceFragment(new PostsProfileFragment());
-                }
-
-      } else if (item.getItemId() == R.id.chat) {
-
-        if (nav_btom.getSelectedItemId() != R.id.chat) {
-          replaceFragment(new ChattingFragment());
-        }
-
-      } else if (item.getItemId() == R.id.charity) {
-
-
-        if (nav_btom.getSelectedItemId() != R.id.charity) {
-          replaceFragment(new MeetingsFragment());
-        }
-
-      }
-
-
-      return true;
-    });
 
   }
 
@@ -227,6 +195,11 @@ public class Home_Activity extends AppCompatActivity implements
     if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
       drawer_layout.closeDrawer(GravityCompat.START);
     } else {
+      Log.d("ttt","first frag: "+getSupportFragmentManager().getFragments()
+              .get(0));
+
+      Log.d("ttt","last frag: "+getSupportFragmentManager().getFragments()
+      .get(getSupportFragmentManager().getFragments().size()-1));
       if (nav_btom.getSelectedItemId() != R.id.home) {
         nav_btom.setSelectedItemId(R.id.home);
         replaceFragment(new PostsFragment());
@@ -274,7 +247,9 @@ public class Home_Activity extends AppCompatActivity implements
 
         Log.d("ttt","navigation clicked");
 
-            if(item.getItemId() == R.id.log_out){
+      drawer_layout.closeDrawer(GravityCompat.START);
+
+      if(item.getItemId() == R.id.log_out){
                 Log.d("ttt","log_out clicked");
 //                if(WifiUtil.checkWifiConnection(this)){
 
@@ -292,7 +267,9 @@ public class Home_Activity extends AppCompatActivity implements
                     Toast.makeText(Home_Activity.this, "Logged out successfully",
                             Toast.LENGTH_SHORT).show();
 
-                    startActivity(new Intent(Home_Activity.this, sign_in.class));
+                    Intent intent = new Intent(Home_Activity.this, sign_in.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
                     finish();
 //                }
             }else if (item.getItemId() == R.id.news){
@@ -311,20 +288,26 @@ public class Home_Activity extends AppCompatActivity implements
               fragment.setArguments(bundle);
               replaceFragment(fragment);
 
-    } else if (item.getItemId() == R.id.policy) {
-
-    } else if (item.getItemId() == R.id.complaints) {
-              Intent mapIntent = new Intent(Home_Activity.this, ComplaintsActivity.class);
-              startActivity(mapIntent);
+    }else if (item.getItemId() == R.id.complaints) {
+              Intent intent = new Intent(Home_Activity.this, ComplaintsActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+              startActivity(intent);
             } else if (item.getItemId() == R.id.policy){
-                Intent inte = new Intent(Home_Activity.this, PrivacyPolicy.class);
-                startActivity(inte);
+                Intent intent = new Intent(Home_Activity.this, PrivacyPolicy.class);
+              intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             }else if (item.getItemId() == R.id.proposals){
-                Intent pIntent = new Intent(Home_Activity.this, SuggestionsActivity.class);
-                startActivity(pIntent);
+                Intent intent = new Intent(Home_Activity.this, SuggestionsActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
 
     } else if (item.getItemId() == R.id.about) {
               Intent intent = new Intent(Home_Activity.this, About_us.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+              startActivity(intent);
+    } else if (item.getItemId() == R.id.user_requests) {
+              Intent intent = new Intent(Home_Activity.this, Admin.class);
+              intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
               startActivity(intent);
     }
 

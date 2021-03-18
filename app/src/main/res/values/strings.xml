@@ -92,6 +92,7 @@
     <string name="listSuggestion">List Suggestion</string>
     <string name="listComplaints">List Complaints</string>
     <string name="poll">Poll</string>
+    <string name="polls">Polls</string>
     <string name="policyPrivacy">Policy Privacy</string>
     <string name="aboutus">About us</string>
     <string name="logout">Logout</string>
@@ -192,5 +193,6 @@
     <string name="read_more">read more</string>
     <string name="join">Join</string>
     <string name="Meetings">Meetings</string>
+    <string name="user_requests">User Requests</string>
 
 </resources>
