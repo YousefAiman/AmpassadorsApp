@@ -288,15 +288,13 @@ public class Home_Activity extends AppCompatActivity implements
               fragment.setArguments(bundle);
               replaceFragment(fragment);
 
-    } else if (item.getItemId() == R.id.policy) {
-
-    } else if (item.getItemId() == R.id.complaints) {
+    }else if (item.getItemId() == R.id.complaints) {
               Intent intent = new Intent(Home_Activity.this, ComplaintsActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
               startActivity(intent);
             } else if (item.getItemId() == R.id.policy){
                 Intent intent = new Intent(Home_Activity.this, PrivacyPolicy.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+              intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }else if (item.getItemId() == R.id.proposals){
                 Intent intent = new Intent(Home_Activity.this, SuggestionsActivity.class);
