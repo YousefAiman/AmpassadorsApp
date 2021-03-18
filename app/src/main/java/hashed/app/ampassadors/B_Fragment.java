@@ -58,13 +58,19 @@ public class B_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    int key = 1;
+    if(getArguments()!=null && getArguments().containsKey("postType")){
+      key = getArguments().getInt("postType");
+    }
 
     titles = new ArrayList<>(5);
     query = FirebaseFirestore.getInstance().collection("Posts")
             .orderBy("publishTime", Query.Direction.DESCENDING).whereEqualTo(
-                    "type", TYPE_NEWS).limit(POSTS_LIMIT);
+                    "type",key).limit(POSTS_LIMIT);
     postData = new ArrayList<>();
     adapter = new PostAdapter(postData, getContext());
+
+
 
   }
 

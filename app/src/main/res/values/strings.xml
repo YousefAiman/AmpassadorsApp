@@ -158,11 +158,14 @@
     <string name="older">Older</string>
     <string name="invited_meeting">Invitation to meeting</string>
     <string name="like">Like</string>
+    <string name="About_us">About us</string>
     <string name="comment">Comment</string>
     <string name="publish">Publish</string>
     <string name="Title">Title</string>
     <string name="new_post">NEW POST</string>
+    <string name="sign_in_man">You need to sing in to complete this operation</string>
     <string name="new_poll">NEW POLL</string>
+    <string name="close">Close</string>
     <string name="createsubject">Create Subject</string>
     <string name="Publish">Publish</string>
     <string name="qusetoin">qusetoin....</string>

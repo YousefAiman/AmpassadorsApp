@@ -27,6 +27,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
@@ -53,6 +54,7 @@ import hashed.app.ampassadors.Fragments.ChattingFragment;
 import hashed.app.ampassadors.Fragments.GroupsFragment;
 import hashed.app.ampassadors.Fragments.MeetingsFragment;
 import hashed.app.ampassadors.Fragments.PostsFragment;
+import hashed.app.ampassadors.Fragments.PostsProfileFragment;
 import hashed.app.ampassadors.Fragments.ProfileFragment;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
@@ -82,57 +84,37 @@ public class Home_Activity extends AppCompatActivity implements
     userid = auth.getCurrentUser().getUid();
     firebaseFirestore = FirebaseFirestore.getInstance();
 
-    firebaseFirestore.collection("Users").document(userid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-      @Override
-      public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-        if (task.isSuccessful()) {
-          if (task.getResult().exists()) {
+    if(FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
 
-            String role = task.getResult().getString("Role");
-            GlobalVariables.setRole(role);
+      replaceFragment(new PostsFragment());
+    }else{
+      firebaseFirestore.collection("Users").document(userid).get().
+              addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        @Override
+        public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+          GlobalVariables.setRole(documentSnapshot.getString("Role"));
+
+
+        }
+      }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        @Override
+        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+          if(task.isSuccessful()){
+            replaceFragment(new PostsFragment());
           }
         }
-      }
-    });
+      });
+    }
 
     GlobalVariables.setAppIsRunning(true);
     SetUpCompetent();
-    replaceFragment(new PostsFragment());
     OnClickButtons();
     createUserLikesListener();
     createNotificationListener();
   }
-        GlobalVariables.setAppIsRunning(true);
-        SetUpCompetent();
-
-        if(FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
-
-            replaceFragment(new PostsFragment());
-        }else{
-            firebaseFirestore.collection("Users").document(userid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-                    GlobalVariables.setRole(documentSnapshot.getString("Role"));
 
 
-                }
-            }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if(task.isSuccessful()){
-                        replaceFragment(new PostsFragment());
-                    }
-                }
-            });
-        }
-
-
-
-        OnClickButtons();
-        createUserLikesListener();
-        createNotificationListener();
-    }
 
   private void createUserLikesListener() {
 
@@ -313,10 +295,15 @@ public class Home_Activity extends AppCompatActivity implements
                     finish();
 //                }
             }else if (item.getItemId() == R.id.news){
-                replaceFragment(new B_Fragment());
+
+              B_Fragment fragment = new B_Fragment();
+              Bundle bundle = new Bundle();
+              bundle.putInt("postType",PostData.TYPE_NEWS);
+              fragment.setArguments(bundle);
+             replaceFragment(fragment);
 
     } else if (item.getItemId() == R.id.awreaness_post) {
-            }
+
 //            else if (item.getItemId() == R.id.awreaness_post){
 //
 //            }
@@ -326,15 +313,19 @@ public class Home_Activity extends AppCompatActivity implements
     } else if (item.getItemId() == R.id.courses) {
 
     } else if (item.getItemId() == R.id.polls) {
-      replaceFragment(new A_Fragment());
+              A_Fragment fragment = new A_Fragment();
+              Bundle bundle = new Bundle();
+              bundle.putInt("postType",PostData.TYPE_POLL);
+              fragment.setArguments(bundle);
+              replaceFragment(fragment);
 
       //getSupportFragmentManager().beginTransaction().replace( new A_Fragment()).commit();
     } else if (item.getItemId() == R.id.policy) {
 
     } else if (item.getItemId() == R.id.complaints) {
-      Intent mapIntent = new Intent(Home_Activity.this, ComplaintsActivity.class);
-      startActivity(mapIntent);
-            else if (item.getItemId() == R.id.polls){
+              Intent mapIntent = new Intent(Home_Activity.this, ComplaintsActivity.class);
+              startActivity(mapIntent);
+            }  else if (item.getItemId() == R.id.polls){
                 replaceFragment(new A_Fragment());
             }
             else if (item.getItemId() == R.id.policy){
@@ -350,16 +341,11 @@ public class Home_Activity extends AppCompatActivity implements
                 startActivity(pIntent);
 
     } else if (item.getItemId() == R.id.about) {
+              Intent intent = new Intent(Home_Activity.this, About_us.class);
+              startActivity(intent);
     }
 
     return true;
-  }
-            }
-            else if (item.getItemId() == R.id.about){
-                Intent intent = new Intent(Home_Activity.this, About_us.class);
-                startActivity(intent);
-            }
-        return true;
     }
 
 
@@ -410,20 +396,16 @@ public class Home_Activity extends AppCompatActivity implements
                                       notificationCount.get());
 
                               break;
-                            case REMOVED:
-                                    Log.d("ttt","notificationCount: "+
-                                            notificationCount.get());
-                                    break;
-                                case REMOVED:
+                              case REMOVED:
 
-                                   if(notificationCount.decrementAndGet() == 0){
+                                if(notificationCount.decrementAndGet() == 0){
 
-                                       Intent intent = new Intent(indicatorAction);
-                                       intent.putExtra("showIndicator",false);
-                                       sendBroadcast(intent);
+                                  Intent intent = new Intent(indicatorAction);
+                                  intent.putExtra("showIndicator",false);
+                                  sendBroadcast(intent);
 
-                                   }
-                                   break;
+                                }
+                                break;
                             }
 
                             GlobalVariables.setNotificationsCount(notificationCount.get());
@@ -434,4 +416,8 @@ public class Home_Activity extends AppCompatActivity implements
         );
 
     }
-}
+    }));
+
+
+  }
+  }

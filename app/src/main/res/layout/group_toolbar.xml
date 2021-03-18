@@ -25,7 +25,7 @@
         android:textColor="@color/white"
         android:layoutDirection="ltr"
         android:fontFamily="@font/segoe_ui_bold"
-        android:text="@string/meetings"
+        android:text="@string/Meetings"
         android:textSize="24sp"
         />
 </androidx.appcompat.widget.Toolbar>
