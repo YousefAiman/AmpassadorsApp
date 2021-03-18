@@ -1,6 +1,8 @@
 package hashed.app.ampassadors;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -18,6 +20,7 @@ import hashed.app.ampassadors.Activities.ConnectionActivity;
 import hashed.app.ampassadors.Activities.GroupMessagingActivity;
 import hashed.app.ampassadors.Activities.Home_Activity;
 import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
+import hashed.app.ampassadors.Activities.WelcomeActivity;
 import hashed.app.ampassadors.Services.FirebaseMessagingService;
 import hashed.app.ampassadors.Utils.WifiUtil;
 
@@ -35,50 +38,66 @@ public class MainActivity extends AppCompatActivity {
       if (user != null) {
 
         if (!user.isAnonymous()) {
-          FirebaseMessagingService.startMessagingService(this);
 
-          if (getIntent().hasExtra("destinationBundle")) {
+          SharedPreferences sharedPreferences =
+                  getSharedPreferences(getResources().getString(R.string.app_name),
+                  Context.MODE_PRIVATE);
 
-            final Bundle destinationBundle = getIntent().getBundleExtra("destinationBundle");
+          if(!sharedPreferences.contains("firstTime")){
 
-            final String sourceType = destinationBundle.getString("sourceType");
-            final String sourceId = destinationBundle.getString("sourceId");
+            startActivity(new Intent(this, WelcomeActivity.class)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 
-            Intent intent = null;
+            sharedPreferences.edit().putBoolean("firstTime",false).apply();
 
-            switch (sourceType) {
-              case "privateMessaging":
-                intent = startPrivateMessagingActivity(sourceId);
-                break;
-              case "groupMessaging":
-                intent = startGroupMessagingActivity(sourceId);
-                break;
-              case "meetingStarted":
-                intent = startMeetingsHomeActivity();
-                break;
-              default:
-                startHomeActivity();
-                break;
+          }else{
+
+            FirebaseMessagingService.startMessagingService(this);
+
+            if (getIntent().hasExtra("destinationBundle")) {
+
+              final Bundle destinationBundle = getIntent().getBundleExtra("destinationBundle");
+
+              final String sourceType = destinationBundle.getString("sourceType");
+              final String sourceId = destinationBundle.getString("sourceId");
+
+              Intent intent = null;
+
+              switch (sourceType) {
+                case "privateMessaging":
+                  intent = startPrivateMessagingActivity(sourceId);
+                  break;
+                case "groupMessaging":
+                  intent = startGroupMessagingActivity(sourceId);
+                  break;
+                case "meetingStarted":
+                  intent = startMeetingsHomeActivity();
+                  break;
+                default:
+                  startHomeActivity();
+                  break;
+              }
+
+
+              Intent finalIntent = intent;
+              new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                  startActivity(finalIntent);
+                }
+              }, 800);
+
+            } else {
+
+              new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                  startHomeActivity();
+                }
+              }, 1000);
             }
-
-
-            Intent finalIntent = intent;
-            new Handler().postDelayed(new Runnable() {
-              @Override
-              public void run() {
-                startActivity(finalIntent);
-              }
-            }, 800);
-
-          } else {
-
-            new Handler().postDelayed(new Runnable() {
-              @Override
-              public void run() {
-                startHomeActivity();
-              }
-            }, 1000);
           }
+
 
         } else {
           new Handler().postDelayed(new Runnable() {

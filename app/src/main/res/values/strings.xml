@@ -85,7 +85,7 @@
     <string name="title">we would like to hear from you</string>
     <string name="com_title">Complaints Title</string>
     <string name="defendant">Defendant</string>
-    <string name="subject" >Subject</string>
+    <string name="subject">Subject</string>
     <string name="send_btn">Send</string>
     <string name="Suggestion">Suggestion</string>
     <string name="suggest_title">Suggest Title</string>
@@ -194,5 +194,6 @@
     <string name="join">Join</string>
     <string name="Meetings">Meetings</string>
     <string name="user_requests">User Requests</string>
+    <string name="next">Next</string>
 
 </resources>

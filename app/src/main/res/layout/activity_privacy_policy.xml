@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.About_us">
+    tools:context=".Activities.PrivacyPolicy">
     <include
         android:id="@+id/about_toolbar"
         layout="@layout/policyprivacytoolbar" />
