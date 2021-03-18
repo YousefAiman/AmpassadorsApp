@@ -92,11 +92,10 @@
     <string name="listSuggestion">List Suggestion</string>
     <string name="listComplaints">List Complaints</string>
     <string name="poll">Poll</string>
-    <string name="polls">Polls</string>
     <string name="policyPrivacy">Policy Privacy</string>
     <string name="aboutus">About us</string>
     <string name="logout">Logout</string>
-
+    <string name="Error_message_defname">Enter your name pleas</string>
     <!--Notifications-->
     <string name="new_message">New message from </string>
     <string name="fullscreen_image">Fullscreen image</string>
@@ -193,6 +192,40 @@
     <string name="read_more">read more</string>
     <string name="join">Join</string>
     <string name="Meetings">Meetings</string>
-    <string name="user_requests">User Requests</string>
+    <string name="Error_meassage_titleCom">Enter your title pleas</string>
+    <string name="write_your_subject">Write your subject pleas</string>
+    <string name="dowonloading_">Downloading...</string>
+    <string name="SuccessfullMessage">Add Successfully</string>
+    <string name="Delete_success">Item Delete Successfully</string>
+    <string name="Download">Downloading...</string>
+    <string name="AuthMessage">Pleas Check your Intetnet Connection</string>
+    <string name="Meetings_Message_cant_Slected_item">Meeting time can\'t be at selected time!</string>
+    <string name="meeting_title">Select Meeting Time</string>
+    <string name="Auth_from_sending_message">Do you want to leave message is sending?</string>
+    <string name="Leaving_Message">leaving while message is sending while cancel the message!</string>
+    <string name="YES">Yes</string>
+    <string name="No">No</string>
+    <string name="Error_meassage_MeetingFiald">Failed to create meeting please try again!</string>
+    <string name="Publish_Meeting">Publishing Meeting!</string>
+    <string name="Choose_1">"The Choose 1 "</string>
+    <string name="Choose_2">The  Choose 2</string>
+    <string name="Publish_Poll">Publishing poll!</string>
+    <string name="EndMeeting_Message">Sorry this meeting has ended and all participants will be kicked out</string>
+    <string name="Error_Delete_Message">Failed To Delete the Message</string>
+    <string name="Error_Messsage_to_upload_video">You can not Upload the video form google directly</string>
+    <string name="Google_video_Message">You have to download video then try again!</string>
+    <string name="Message_Error_Uplaod_BigFile">You can\'t send files bigger than</string>
+    <string name="DataScale">MB!</string>
+    <string name="DownLoad_Asking">Do you want to download ?</string>
+    <string name="Download_btn">Download</string>
+    <string name="Cansle">Cansle</string>
+    <string name="Start_zoom_Meeting">"Zoom meeting started! "</string>
+    <string name="send_An_Message">send an image</string>
+    <string name="sen_Attachment">send an attachment</string>
+    <string name="send_video">" send an video"</string>
+    <string name="Succes_Login">Logged out successfully</string>
+    <string name="Message_Fill_title">Please fill in the title!</string>
+    <string name="Message_Fill_descr">Please fill in the description!</string>
+    <string name="Message_Attchent_post">Please choose an attachment!</string>
 
 </resources>
