@@ -175,8 +175,9 @@ public class Home_Activity extends AppCompatActivity implements
 
     navigationview.setNavigationItemSelectedListener(this);
 
-    drawer_layout.closeDrawer(GravityCompat.START);
     nav_btom.setOnNavigationItemSelectedListener(item -> {
+
+      drawer_layout.closeDrawer(GravityCompat.START);
 
       if (item.getItemId() == R.id.home) {
 
@@ -302,40 +303,22 @@ public class Home_Activity extends AppCompatActivity implements
               fragment.setArguments(bundle);
              replaceFragment(fragment);
 
-    } else if (item.getItemId() == R.id.awreaness_post) {
+            }else if (item.getItemId() == R.id.polls) {
 
-//            else if (item.getItemId() == R.id.awreaness_post){
-//
-//            }
-//            else if (item.getItemId() == R.id.courses){
-//            }
-
-    } else if (item.getItemId() == R.id.courses) {
-
-    } else if (item.getItemId() == R.id.polls) {
-              A_Fragment fragment = new A_Fragment();
+              B_Fragment fragment = new B_Fragment();
               Bundle bundle = new Bundle();
               bundle.putInt("postType",PostData.TYPE_POLL);
               fragment.setArguments(bundle);
               replaceFragment(fragment);
 
-      //getSupportFragmentManager().beginTransaction().replace( new A_Fragment()).commit();
     } else if (item.getItemId() == R.id.policy) {
 
     } else if (item.getItemId() == R.id.complaints) {
               Intent mapIntent = new Intent(Home_Activity.this, ComplaintsActivity.class);
               startActivity(mapIntent);
-            }  else if (item.getItemId() == R.id.polls){
-                replaceFragment(new A_Fragment());
-            }
-            else if (item.getItemId() == R.id.policy){
+            } else if (item.getItemId() == R.id.policy){
                 Intent inte = new Intent(Home_Activity.this, PrivacyPolicy.class);
                 startActivity(inte);
-            }
-            else if (item.getItemId() == R.id.complaints) {
-                Intent mapIntent = new Intent(Home_Activity.this, ComplaintsActivity.class);
-                startActivity(mapIntent);
-
             }else if (item.getItemId() == R.id.proposals){
                 Intent pIntent = new Intent(Home_Activity.this, SuggestionsActivity.class);
                 startActivity(pIntent);
@@ -348,8 +331,7 @@ public class Home_Activity extends AppCompatActivity implements
     return true;
     }
 
-
-  private void createNotificationListener() {
+    private void createNotificationListener() {
 
     final String indicatorAction = BuildConfig.APPLICATION_ID + ".notificationIndicator";
     final IntentFilter intentFilter = new IntentFilter();
