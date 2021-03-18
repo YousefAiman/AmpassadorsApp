@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white_grey"
+    tools:context=".Activities.WelcomeActivity">
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline202"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline201" />
+
+    <android.widget.Button
+        android:id="@+id/signintoAccountBtn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_design_post"
+        android:fontFamily="@font/segoe_ui"
+        android:gravity="center"
+        android:paddingVertical="10dp"
+        android:text="@string/create_an_account"
+        android:textAllCaps="false"
+        android:textColor="@color/dark_green"
+        android:layout_marginTop="20dp"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline250"
+        app:layout_constraintStart_toStartOf="@+id/guideline251"
+        app:layout_constraintTop_toBottomOf="@+id/nextSlideBtn" />
+
+    <android.widget.Button
+        android:id="@+id/nextSlideBtn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_bg"
+        android:fontFamily="@font/segoe_ui"
+        android:gravity="center"
+        android:text="@string/next"
+        android:paddingVertical="10dp"
+        android:textAllCaps="false"
+        android:layout_marginTop="20dp"
+        android:textColor="#ffffff"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline250"
+        app:layout_constraintStart_toStartOf="@+id/guideline251"
+        app:layout_constraintTop_toBottomOf="@+id/viewPager" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline251"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.12" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline250"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.8807786" />
+
+    <TextView
+        android:id="@+id/nextTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:fontFamily="@font/segoe_ui"
+        android:padding="5dp"
+        android:text="Skip"
+        android:textColor="#707070"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline205"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/dotsSlider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical|center_horizontal"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/guideline236"
+        app:layout_constraintTop_toTopOf="@+id/guideline236"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline201"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.17236662" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline202"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.67" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline205"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.93917274" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline236"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.075" />
+
+    <TextView
+        android:id="@+id/signinTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/segoe_ui"
+        android:text="@string/already_have_an_account_sign_in"
+        android:textColor="#373737"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signintoAccountBtn" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline271"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.67" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline272"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.33" />
+    <!--<Button-->
+    <!--android:id="@+id/button3"-->
+    <!--android:layout_width="@dimen/_100sdp"-->
+    <!--android:layout_height="@dimen/_35sdp"-->
+    <!--android:text="التالي"-->
+    <!--android:background="@drawable/signinbuttonlayout"-->
+    <!--android:textColor="#FFFFFF"-->
+    <!--android:textSize="@dimen/_15sdp"-->
+    <!--android:fontFamily="@font/a_google"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/viewPager" />-->
+</androidx.constraintlayout.widget.ConstraintLayout>

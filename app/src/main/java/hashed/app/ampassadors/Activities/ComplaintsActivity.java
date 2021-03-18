@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.SigninUtil;
 
 public class ComplaintsActivity extends AppCompatActivity {
 
@@ -37,8 +38,17 @@ public class ComplaintsActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_complaints);
 
-    setupCompontet();
+    if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
+
+      SigninUtil.getInstance(ComplaintsActivity.this,
+             ComplaintsActivity.this).show();
+    }
+
+      setupCompontet();
     onClickButtons();
+
+
+
 
   }
 
