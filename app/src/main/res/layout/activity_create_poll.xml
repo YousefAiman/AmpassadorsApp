@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:title="انشاء موضوع"
+        app:title="@string/create_topic"
         android:fitsSystemWindows="true"
         app:titleTextColor="@color/light_green"
         app:titleTextAppearance="@style/ToolbarTitleAppearanceEnd"/>
@@ -73,7 +73,7 @@
         android:background="@drawable/publish_btn_back"
         android:elevation="4dp"
         android:layout_marginStart="20dp"
-        android:text="نشر"
+        android:text="@string/publish"
         android:textColor="@color/white"
         android:textSize="14sp"
         android:fontFamily="@font/segoe_ui_bold"
@@ -88,7 +88,7 @@
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="30dp"
         android:background="@drawable/poll_item_selected_editext_back"
-        android:hint="اطرح سؤال..."
+        android:hint="@string/qusetoin"
         android:inputType="text"
         android:paddingVertical="5dp"
         android:paddingHorizontal="20dp"
@@ -144,7 +144,7 @@
                 android:layout_marginEnd="21dp"
                 android:textSize="16sp"
                 android:textColor="@color/black"
-                android:text="مدة الاستطلاع"/>
+                android:text="@string/timepoll"/>
 
             <TextView
                 android:id="@+id/timeTv"
@@ -158,7 +158,7 @@
                 android:layout_marginEnd="21dp"
                 android:textSize="16sp"
                 android:textColor="@color/black"
-                android:text="ضبط"/>
+                android:text="@string/Settings"/>
 
         </LinearLayout>
 

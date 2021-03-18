@@ -15,7 +15,7 @@
         android:layout_height="?actionBarSize"
         app:navigationIcon="@drawable/back_arrow_icon"
         android:layout_alignParentTop="true"
-        app:title="videos"
+        app:title="@string/videos"
         app:titleTextColor="@color/white" />
 
     <com.google.android.exoplayer2.ui.PlayerView

@@ -16,7 +16,7 @@
         app:navigationIcon="@drawable/back_arrow_icon"
         android:layout_alignParentTop="true"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="documents"
+        app:title="@string/document"
         app:titleTextColor="@color/white" />
 
 

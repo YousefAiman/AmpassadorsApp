@@ -71,7 +71,7 @@ public class SideDrawer extends AppCompatActivity implements NavigationView.OnNa
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
         int id = item.getItemId();
-        if (id == R.id.posts){
+        if (id == R.id.awreaness_post){
               //  getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, ).commit();
         }
         else if (id == R.id.courses){

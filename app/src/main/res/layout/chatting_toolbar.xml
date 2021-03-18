@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:fontFamily="@font/segoe_ui_bold"
-            android:text="chats"
+            android:text="@string/chats"
             android:textSize="24sp" />
 
 

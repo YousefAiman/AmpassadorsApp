@@ -154,6 +154,15 @@ public class Home_Activity extends AppCompatActivity  implements
 
     // Buttons Click
     public void OnClickButtons() {
+        String admin = "AdmSSSin";
+        if (admin.equals("Admin")){
+            navigationview.inflateMenu(R.menu.menu_admin);
+
+        }else {
+            navigationview.inflateMenu(R.menu.menu_nav);
+
+        }
+
 
         navigationview.setNavigationItemSelectedListener(this);
 

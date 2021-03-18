@@ -85,7 +85,7 @@
     <string name="title">we would like to hear from you</string>
     <string name="com_title">عنوان الشكوى</string>
     <string name="defendant">المشتكى عليه</string>
-    <string name="subject">الموضوع</string>
+    <string name="subject" >الموضوع</string>
     <string name="send_btn">Send</string>
     <string name="Suggestion">Suggestion</string>
     <string name="suggest_title">عنوان الاقتراح</string>
@@ -157,41 +157,5 @@
     <string name="Title">Title</string>
     <string name="new_post">NEW POST</string>
     <string name="new_poll">NEW POLL</string>
-    <string name="AboutUs">About us</string>
-    <string name="about_a">The Association for the Support of The Rights of the Palestinian People, known as the International Organization for the Support of the Palestinian People, is a non-profit non-profit human rights organization, founded in 2015 and registered under no. 8523 based on the Palestinian Associations and Ngos Act No. 01 of 2000. The international body works to protect the human rights and rights of the Palestinian people./n
-        The commissions vision is to embody its vision of fighting for a free and democratic Palestinian society in which the rule of law and human rights are respected.
-
-The Commission seeks to protect human rights in Palestine, raise awareness and culture of national and human rights among Palestinians, and enlist support and international solidarity with the rights of the Palestinian people, using strategies, tactics, monitoring tools, documentation and national and international protection of human rights.
-
-The Foundation contributes to the building, activating and expanding the base of human rights participation in cooperation with human rights institutions, civil society organizations and international human rights institutions.
-
-And contribute to the launch and organization of lobbying and advocacy campaigns in support of human rights and the Palestinian people
-
-And contribute to supporting development, social, economic and cultural initiatives promoting the protection of human rights
-
-To contribute to the dissemination of a culture of human rights and to activate the use of all mechanisms aimed at protecting human rights.
-
-Work on the establishment of a professional academy to build the capacity of young staff in the professional, technical, administrative and leadership fields, human rights and sustainable development
-
-The Commission's policy is to work in the occupied Palestinian territories and various places of Palestinian presence on the principles, values and standards of the rule of law and human rights, and works to promote the protection of human rights and justice for the Palestinians, on the way to ending the Israeli occupation, building an independent Palestinian state with Jerusalem as its capital, safeguarding the rights of Palestinian refugees, promoting the rule of law and respecting human rights in accordance with national and international human rights standards.
-        The Authority contains 5 basic programs, 1 capacity-building programme.  2- Legal and Human Rights Support Program 3 - Research and Policy Program 4 - International Media and Advocacy Program 5 - Bank of Development Opportunities and Initiatives
-
-
-    </string>
-    <string name="privacy_policy">
-        The International Commission for the Support of the Rights of the Palestinian People (Crowd) has dedicated this website to provide information on the status of the rights of the Palestinian people and human beings, and other information about its various activities including its various publications and publications, and the International Body (Rally) is deeply pleased with your visits to its websites, and considers this as a step to support victims of human rights violations, so please accept our advice to print copies of information for your personal non-commercial use and store computer files on some legal limits and restrictions. All visitors to this site are required to abide by the terms and conditions described below:
-
-        1. Your access to the site indicates that you know and agree to these terms and conditions, if you do not agree with these terms and conditions, do not enter and use this site.
-        2. The contents contained in this website, including but not limited to images, videos, publications, advertisements, downloads and links, except for those referred to as the property or joint property of third parties, are owned by the International Support Authority for the Rights of the Palestinian People and are protected by copyright. Together with its funders, donors and partners, The International Body (Mobil) has invested money, time and effort to develop it.
-        3- The International Body (Crowd) has no responsibility for the comments made by the visitors of the site, yet it has the full right to delete any comment that departs from the law, values and principles of the Commission's work.
-        4. The International Authority for the Support of The Rights of the Palestinian People (Crowd) retains all copyrights, patents and other intellectual property rights published on this site.
-        5. The International Commission for the Support of the Rights of the Palestinian People (Crowd) does not agree to bear and will not assume any responsibility for any loss or damage arising directly or indirectly from the use of this site, or the damage caused by it in any way.
-        6. The International Authority for the Support of the Rights of the Palestinian People (Amass) shall not take any responsibility for enabling you to link to another site or the consequences of dealing with the contents of another site.
-        7. Your Excellency has the right to use the content of this site in any way except for personal or non-commercial use, as mentioned above, and if you wish to use the contents of this site other than the above, you must obtain prior permission from the Department of the International Authority for the Support of the Rights of the Palestinian People (Crowd), knowing that legal action is required in the event of any violations of the above rights.
-
-
-
-    </string>
-
 
 </resources>
