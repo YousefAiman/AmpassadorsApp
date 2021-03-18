@@ -90,6 +90,7 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
             }
         });
         toolbar = view.findViewById(R.id.toolbar);
+        toolbar.setOnMenuItemClickListener(this);
         getUserNaImg();
         firebaseFirestore = FirebaseFirestore.getInstance();
         query = firebaseFirestore.collection("Users").

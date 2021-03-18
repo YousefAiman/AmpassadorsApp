@@ -8,9 +8,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
-import android.app.Activity;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -62,7 +60,6 @@ import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Services.FirebaseMessagingService;
 import hashed.app.ampassadors.Utils.GlobalVariables;
-import hashed.app.ampassadors.Utils.SigninUtil;
 
 public class Home_Activity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
@@ -109,6 +106,7 @@ public class Home_Activity extends AppCompatActivity implements
         }
       });
     }
+
     GlobalVariables.setAppIsRunning(true);
     SetUpCompetent();
     OnClickButtons();
@@ -116,11 +114,12 @@ public class Home_Activity extends AppCompatActivity implements
     createNotificationListener();
   }
 
+
+
   private void createUserLikesListener() {
-      if(FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
-          SigninUtil.getInstance(Home_Activity.this, Home_Activity.this).show();
-      }
+
     listenerRegistrations = new ArrayList<>();
+
     listenerRegistrations.add(
             FirebaseFirestore.getInstance().collection("Users")
                     .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -130,7 +129,9 @@ public class Home_Activity extends AppCompatActivity implements
                                           @Nullable FirebaseFirestoreException error) {
 
                         if (value != null && value.exists()) {
+
                           if (GlobalVariables.getCurrentUsername() == null) {
+
                             GlobalVariables.setCurrentUsername(
                                     value.getString("username"));
 

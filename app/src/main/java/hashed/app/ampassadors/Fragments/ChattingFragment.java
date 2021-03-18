@@ -64,7 +64,7 @@ public class ChattingFragment extends Fragment implements MenuItem.OnMenuItemCli
     chattingViewPager = view.findViewById(R.id.chattingViewPager);
     toolbar = view.findViewById(R.id.chattingToolbar);
     chattingSearchView = view.findViewById(R.id.chattingSearchView);
-    toolbar.setNavigationOnClickListener(v -> ((Home_Activity) getActivity()).showDrawer());
+    toolbar.setNavigationOnClickListener(v -> ((Home_Activity) requireActivity()).showDrawer());
     toolbar.setOnMenuItemClickListener(this::onMenuItemClick);
     return view;
   }

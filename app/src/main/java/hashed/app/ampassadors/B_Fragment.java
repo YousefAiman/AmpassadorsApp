@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import hashed.app.ampassadors.Activities.Home_Activity;
 import hashed.app.ampassadors.Adapters.PostAdapter;
 import hashed.app.ampassadors.Objects.PostData;
 
@@ -43,7 +45,7 @@ public class B_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
   private DocumentSnapshot lastDocSnap;
   private boolean isLoadingMessages;
   private PostsBottomScrollListener scrollListener;
-
+  private TextView toolbarTv;
 
   //header Pager
   private Handler handler;
@@ -80,10 +82,24 @@ public class B_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
     // Inflate the layout for this fragment
     View view = inflater.inflate(R.layout.fragment_b_, container, false);
     post_list = view.findViewById(R.id.home_listb);
+    toolbarTv = view.findViewById(R.id.toolbarTv);
     post_list.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
 
-    Toolbar toolbar = view.findViewById(R.id.toolbarbb);
-    toolbar.setOnMenuItemClickListener(this);
+    Toolbar toolbar = view.findViewById(R.id.toolbar);
+    toolbar.setNavigationOnClickListener(v -> ((Home_Activity) requireActivity()).showDrawer());
+
+
+    int key = 1;
+    if(getArguments()!=null && getArguments().containsKey("postType")){
+      key = getArguments().getInt("postType");
+    }
+
+    if(key == TYPE_NEWS){
+      toolbarTv.setText(getResources().getString(R.string.News));
+    }else{
+      toolbarTv.setText(getResources().getString(R.string.polls));
+    }
+
     return view;
   }
 
