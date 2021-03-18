@@ -48,6 +48,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -152,18 +153,33 @@ public class sign_up extends AppCompatActivity {
             @Override
             public void onSuccess(AuthResult authResult) {
                 auth.signOut();
-                userInfo = new UserInfo();
+              //  userInfo = new UserInfo();
                // Picasso.get().load(userInfo.getImageUrl()).fit().into(circleImageView);
                 FirebaseUser firebaseUser = auth.getCurrentUser();
-                userInfo.setUsername(username);
-                userInfo.setPassword(passwrod);
-                userInfo.setEmail(firebaseUser.getEmail());
-                userInfo.setCountry(country);
-                userInfo.setCity(city);
-                userInfo.setPhone(phone);
-                userInfo.setUserid(firebaseUser.getUid());
-                userInfo.setImageUrl(imageUrl);
-                userInfo.setStatus(true);
+                HashMap<String, Object> hashMap = new HashMap<>();
+                hashMap.put("username", username);
+                hashMap.put("password", passwrod);
+                hashMap.put("email", firebaseUser.getEmail());
+                hashMap.put("country", country);
+                hashMap.put("city", city);
+                hashMap.put("phone", phone);
+                hashMap.put("userid", firebaseUser.getUid());
+                hashMap.put("imageUrl", imageUrl);
+                hashMap.put("status", true);
+
+
+
+
+
+//                userInfo.setUsername(username);
+//                userInfo.setPassword(passwrod);
+//                userInfo.setEmail(firebaseUser.getEmail());
+//                userInfo.setCountry(country);
+//                userInfo.setCity(city);
+//                userInfo.setPhone(phone);
+//                userInfo.setUserid(firebaseUser.getUid());
+//                userInfo.setImageUrl(imageUrl);
+//                userInfo.setStatus(true);
               //  userInfo.setUserRole(spin);
 //                userInfo.setApprovement(false);
 
@@ -218,7 +234,6 @@ public class sign_up extends AppCompatActivity {
             }
         });
     }
-
     public void init() {
         auth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
@@ -239,7 +254,6 @@ public class sign_up extends AppCompatActivity {
         spinner = findViewById(R.id.options);
 
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -302,7 +316,6 @@ public class sign_up extends AppCompatActivity {
         }
 
     }
-
     private void SelectImage(Context context) {
         //  CHOOSE WHERE WILL UPLOAD THE IMAGE
         final CharSequence[] options = {"Take photo", "open Gallery", "Cancel"};
