@@ -16,7 +16,6 @@ import hashed.app.ampassadors.R;
 
 public class SigninUtil {
 
-
   public static Dialog getInstance(Context context, @Nullable Activity activity){
 
 
