@@ -132,10 +132,10 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                     R.drawable.notification_indicator_icon:
                     R.drawable.notification_icon);
 
-    if (GlobalVariables.getRole().equals("Admin") || GlobalVariables.getRole().equals("Publisher")){
-
-      floatingButton.setVisibility(View.VISIBLE);
-    }
+//    if (GlobalVariables.getRole().equals("Admin") || GlobalVariables.getRole().equals("Publisher")){
+//
+//      floatingButton.setVisibility(View.VISIBLE);
+//    }
 
 
 

@@ -15,7 +15,7 @@
         android:layout_height="?actionBarSize"
         app:navigationIcon="@drawable/back_arrow_icon"
         android:layout_alignParentTop="true"
-        app:title="photos"
+        app:title="@string/photo"
         app:titleTextColor="@color/white" />
 
         <ImageView

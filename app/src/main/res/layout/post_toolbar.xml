@@ -21,7 +21,7 @@
         android:textColor="#02723A"
         android:layoutDirection="ltr"
         android:fontFamily="@font/segoe_ui_bold"
-        android:text="post"
+        android:text="@string/Post"
         android:textSize="24sp"
         android:layout_marginRight="20dp"
         android:textAlignment="textEnd"

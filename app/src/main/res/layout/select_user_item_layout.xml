@@ -25,6 +25,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/black_transparent"
         android:textSize="18sp"
+        android:text="@string/username"
         android:fontFamily="@font/segoe_ui"
         app:layout_constraintEnd_toStartOf="@id/userIv"
         app:layout_constraintTop_toTopOf="@id/userIv"
