@@ -320,7 +320,7 @@ public class GroupMessagingActivity extends AppCompatActivity
         if (value != null) {
           if (value.getBoolean("hasEnded")) {
             Toast.makeText(GroupMessagingActivity.this,
-                    "Sorry this meeting has ended and all participants will be kicked out",
+                    R.string.EndMeeting_Message,
                     Toast.LENGTH_SHORT).show();
             finish();
           }
@@ -1185,7 +1185,7 @@ public class GroupMessagingActivity extends AppCompatActivity
                             dialog.dismiss())).addOnFailureListener(e -> {
       dialog.dismiss();
 
-      Toast.makeText(this, "لقد فشل حذف الرسالة", Toast.LENGTH_SHORT).show();
+      Toast.makeText(this, R.string.Error_Delete_Message, Toast.LENGTH_SHORT).show();
 
       Log.d("ttt", "failed: " + e.getMessage());
     });
@@ -1255,8 +1255,8 @@ public class GroupMessagingActivity extends AppCompatActivity
       if (resultCode == RESULT_OK && data != null) {
 
         if (Files.isFromGooglePhotos(data.getData())) {
-          Toast.makeText(this, "لا يمكن رفع فيديو مباشرة من صور جوجل!" +
-                  " يجب تحميل الفيديو اولا ثم المحاولة مرة اخرى", Toast.LENGTH_LONG).show();
+          Toast.makeText(this, R.string.Error_Messsage_to_upload_video +
+                  R.string.Google_video_Message, Toast.LENGTH_LONG).show();
           return;
         }
 
@@ -1272,8 +1272,8 @@ public class GroupMessagingActivity extends AppCompatActivity
       if (resultCode == RESULT_OK && data != null) {
 
         if (Files.getFileSizeInMB(this, data.getData()) > Files.MAX_FILE_SIZE) {
-          Toast.makeText(this, "You can't send files bigger than "
-                  + Files.MAX_FILE_SIZE + " MB!", Toast.LENGTH_SHORT).show();
+          Toast.makeText(this, R.string.Message_Error_Uplaod_BigFile
+                  + Files.MAX_FILE_SIZE + R.string.DataScale, Toast.LENGTH_SHORT).show();
         } else {
           showFullScreenFragment(new FilePickerPreviewFragment(data.getData(), Files.DOCUMENT));
         }
@@ -1336,16 +1336,16 @@ public class GroupMessagingActivity extends AppCompatActivity
     } else if (uploadTasks != null && !uploadTasks.isEmpty()) {
 
       AlertDialog.Builder alert = new AlertDialog.Builder(this);
-      alert.setTitle("Do you want to leave message is sending?");
-      alert.setMessage("leaving while message is sending while cancel the message!");
+      alert.setTitle(getString(R.string.Auth_from_sending_message));
+      alert.setMessage(getString(R.string.Leaving_Message));
 
-      alert.setPositiveButton("Yes", (dialogInterface, i) -> {
+      alert.setPositiveButton(R.string.YES, (dialogInterface, i) -> {
         cancelUploadTasks();
         dialogInterface.dismiss();
         finish();
       });
 
-      alert.setNegativeButton("No", (dialog, which) -> {
+      alert.setNegativeButton(R.string.No, (dialog, which) -> {
         dialog.cancel();
       });
       alert.create().show();
@@ -1385,13 +1385,13 @@ public class GroupMessagingActivity extends AppCompatActivity
   public void startDownload(int position, String url, String fileName) {
 
     final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-    alertDialogBuilder.setMessage("Do you want to download " + fileName);
+    alertDialogBuilder.setMessage(getString(R.string.DownLoad_Asking) + fileName);
 
-    alertDialogBuilder.setPositiveButton("Download", (dialogInterface, i) -> {
+    alertDialogBuilder.setPositiveButton(getText(R.string.Download_btn), (dialogInterface, i) -> {
       downloadFile(position, url, fileName);
     });
 
-    alertDialogBuilder.setNegativeButton("Cancel", (dialogInterface, i) -> {
+    alertDialogBuilder.setNegativeButton(getText(R.string.Cansle), (dialogInterface, i) -> {
       dialogInterface.dismiss();
     });
 
@@ -1426,7 +1426,7 @@ public class GroupMessagingActivity extends AppCompatActivity
 
     request = new DownloadManager.Request(Uri.parse(url))
             .setTitle(fileName)
-            .setDescription("Downloading")
+            .setDescription(getString(R.string.Download))
             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
             .setAllowedOverMetered(true)
             .setAllowedOverRoaming(true);
@@ -1520,7 +1520,7 @@ public class GroupMessagingActivity extends AppCompatActivity
 
   private void sendZoomMeetingNotification(String topic, String joinUrl) {
 
-    String body = "Zoom meeting started! " + topic;
+    String body = getString(R.string.Start_zoom_Meeting) + topic;
 
     if (data == null) {
 
@@ -1550,16 +1550,16 @@ public class GroupMessagingActivity extends AppCompatActivity
     switch (messageType) {
 
       case Files.IMAGE:
-        body = currentUserName + " send an image";
+        body = currentUserName + getString(R.string.send_An_Message);
         break;
 
       case Files.DOCUMENT:
       case Files.AUDIO:
-        body = currentUserName + " send an attachment";
+        body = currentUserName + getString(R.string.sen_Attachment);
         break;
 
       case Files.VIDEO:
-        body = currentUserName + " send an video";
+        body = currentUserName + getString(R.string.send_video);
         break;
 
 

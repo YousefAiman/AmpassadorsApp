@@ -147,20 +147,20 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
       final String description = descriptionEd.getText().toString().trim();
 
       if (title.isEmpty()) {
-        Toast.makeText(this, "Please fill in the title!"
+        Toast.makeText(this, R.string.Message_Fill_title
                 , Toast.LENGTH_SHORT).show();
         return;
       }
 
       if (description.isEmpty()) {
-        Toast.makeText(this, "Please fill in the description!"
+        Toast.makeText(this, R.string.Message_Fill_descr
                 , Toast.LENGTH_SHORT).show();
         return;
       }
 
 
       if (attachmentUri == null) {
-        Toast.makeText(this, "Please choose an attachment!"
+        Toast.makeText(this, R.string.Message_Attchent_post
                 , Toast.LENGTH_SHORT).show();
         return;
       }
@@ -173,7 +173,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
       }
 
       final ProgressDialog progressDialog = new ProgressDialog(this);
-      progressDialog.setMessage("Publishing Post!");
+      progressDialog.setMessage(getString(R.string.Publish));
       progressDialog.setCancelable(false);
       progressDialog.show();
 

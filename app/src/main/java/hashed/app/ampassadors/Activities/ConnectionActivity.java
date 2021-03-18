@@ -24,7 +24,7 @@ public class ConnectionActivity extends AppCompatActivity {
         finish();
       } else {
         Toast.makeText(ConnectionActivity.this,
-                "الرجاء التحقق من الاتصال بالانترنت!", Toast.LENGTH_SHORT).show();
+                R.string.AuthMessage, Toast.LENGTH_SHORT).show();
       }
     });
   }

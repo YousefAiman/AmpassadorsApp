@@ -44,21 +44,7 @@ public class ComplanitsListActivity extends AppCompatActivity {
     recyclerView.setAdapter(adapter);
     showSuggestions(true);
   }
-//
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == 3){
-//            String id = data.getStringExtra("Deleted");
-//            for (int i = 0 ; i<complaints.size();i++){
-//                if (id.equals(i)){
-//                   adapter.notifyItemRemoved(i);
-//                    break;
-//                }
-//            }
-//        }
-//
-//    }
+
 
   public void setUpComponte() {
     recyclerView = findViewById(R.id.list_com);

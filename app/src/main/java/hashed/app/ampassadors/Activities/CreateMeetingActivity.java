@@ -302,7 +302,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
             !selectedUserIdsList.isEmpty() && selectedUserIdsList.size() > 1) {
 
       ProgressDialog progressDialog = new ProgressDialog(CreateMeetingActivity.this);
-      progressDialog.setTitle("Publishing Meeting!");
+      progressDialog.setTitle(getString(R.string.Publish_Meeting));
       progressDialog.setCancelable(false);
       progressDialog.show();
 
@@ -420,7 +420,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
       public void onFailure(@NonNull Exception e) {
 
         Toast.makeText(CreateMeetingActivity.this,
-                "Failed to create meeting please try again!", Toast.LENGTH_SHORT).show();
+                R.string.Error_meassage_MeetingFiald, Toast.LENGTH_SHORT).show();
         progressDialog.dismiss();
 
       }
@@ -527,12 +527,12 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
         }
       } else {
         Toast.makeText(this,
-                "Meeting time can't be at selected time!", Toast.LENGTH_SHORT).show();
+                R.string.Meetings_Message_cant_Slected_item, Toast.LENGTH_SHORT).show();
       }
 
     }, mcurrentTime.get(Calendar.HOUR_OF_DAY), mcurrentTime.get(Calendar.MINUTE),
             true);
-    mTimePicker.setTitle("Select Meeting Time");
+    mTimePicker.setTitle(R.string.meeting_title);
     mTimePicker.show();
 
   }
@@ -572,16 +572,16 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
     if (uploadTaskMap != null && !uploadTaskMap.isEmpty()) {
 
       AlertDialog.Builder alert = new AlertDialog.Builder(this);
-      alert.setTitle("Do you want to leave message is sending?");
-      alert.setMessage("leaving while message is sending while cancel the message!");
+      alert.setTitle(R.string.Auth_from_sending_message);
+      alert.setMessage(R.string.Leaving_Message);
 
-      alert.setPositiveButton("Yes", (dialogInterface, i) -> {
+      alert.setPositiveButton(R.string.YES, (dialogInterface, i) -> {
         cancelUploadTasks();
         dialogInterface.dismiss();
         finish();
       });
 
-      alert.setNegativeButton("No", (dialog, which) -> dialog.cancel());
+      alert.setNegativeButton(R.string.No, (dialog, which) -> dialog.cancel());
       alert.create().show();
 
     } else {
