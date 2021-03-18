@@ -22,16 +22,17 @@
         app:cardBackgroundColor="@color/white">
 
         <ImageView
+            android:id="@+id/newsIv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+
+        <ImageView
             android:id="@+id/newsPlayIv"
             android:src="@drawable/video_icon_circle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"/>
-
-        <ImageView
-            android:id="@+id/newsIv"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
 
         <TextView
             android:id="@+id/newsTitleTv"
