@@ -92,7 +92,16 @@
     <string name="listSuggestion">List Suggestion</string>
     <string name="listComplaints">List Complaints</string>
     <string name="poll">Poll</string>
-    <string name="policyPrivacy">Policy Privacy</string>
+    <string name="policyPrivacy">
+        The International Commission for the Support of the Rights of the Palestinian People has dedicated this application to provide information on the situation of the palestinian peoples rights, and other information about its various activities including its various publications and publications, and the International Body expresses its deep happiness with your visits to apply it, and considers this as a step to support the victims of human rights violations, so please accept our advice to print copies of information for your personal use other than commercial and store files on the computer, and with this we would like to offer you advice on some legal limits and restrictions imposed on all visitors. The application and your honor are required to abide by the terms and conditions described below:
+        1. Your access to the site indicates that you know and agree to these terms and conditions, if you do not agree with these terms and conditions, do not enter and use this site.
+2. The contents contained in this website, including but not limited to images, videos, publications, advertisements, downloads and links, except for those referred to as the property or joint property of third parties, are owned by the International Support Authority for the Rights of the Palestinian People and are protected by copyright. Together with its funders, donors and partners, The International Group has invested money, time and effort to develop it.
+3- The International Body (Crowd) assumes no responsibility for the comments made by the visitors to the site, yet it has the full right to delete any comment that departs from the law, values and principles of the Commission's work.
+4. The International Authority for the Support of The Rights of the Palestinian People (Crowd) retains all copyrights, patents and other intellectual property rights published on this website.
+5. The International Commission for the Support of the Rights of the Palestinian People (Crowd) does not agree to bear and will not assume any responsibility for any loss or damage arising directly or indirectly from the use of this site, or the damage caused by it in any way.
+6. The International Authority for the Support of the Rights of the Palestinian People (Amass) shall not take any responsibility for enabling you to link to another site or the consequences of dealing with the contents of another site.
+7. Your Excellency has the right to use the content of this site in any way except for personal or non-commercial use, as mentioned above, and if you wish to use the contents of this site other than the above, you must obtain prior permission from the Department of the International Authority for the Support of the Rights of the Palestinian People (Crowd), knowing that legal action is required in the event of any violations of the above rights.
+    </string>
     <string name="aboutus">About us</string>
     <string name="logout">Logout</string>
 
@@ -158,7 +167,29 @@
     <string name="older">Older</string>
     <string name="invited_meeting">Invitation to meeting</string>
     <string name="like">Like</string>
-    <string name="About_us">About us</string>
+    <string name="About_us">
+        An association to support the rights of the Palestinian people, known as the International Organization for the Support of the Palestinian People, is a non-profit non-profit non-governmental organization founded in 2015 and registered under no. 8523 based on the Palestinian Associations and Ngos Act No. 01 of 2000. The international body works to protect the human rights and rights of the Palestinian people.
+The Commission embodies its vision in the struggle for a free and democratic Palestinian society in which the rule of law and human rights are respected.
+
+The Authority seeks to protect human rights in Palestine, raise awareness and culture of national and human rights among Palestinians, and enlist support and international solidarity with the rights of the Palestinian people, using strategies, tactics, monitoring tools, documentation and national and international protection of human rights.
+
+        The associations strategic objectives are:
+
+Contribute to building, activating and expanding the base of human rights participation in cooperation with human rights institutions, civil society organizations and international human rights institutions.
+And contribute to the launch and organization of lobbying and advocacy campaigns in support of human rights and the Palestinian people
+And contribute to supporting development, social, economic and cultural initiatives promoting the protection of human rights
+To contribute to the dissemination of a culture of human rights and to activate the use of all mechanisms aimed at protecting human rights.
+Then work on the establishment of a professional academy to build the capacity of young staff in the professional, technical, administrative and leadership fields and in the field of human rights and sustainable development
+
+The Commission relies on the work of the occupied Palestinian territories and various places of Palestinian presence on the principles, values and standards of the rule of law and human rights and works to promote the protection of human rights and justice for the Palestinians, on the way to ending the Israeli occupation, building an independent Palestinian state with Jerusalem as its capital, ensuring the rights of Palestinian refugees, strengthening the rule of law and respecting human rights in accordance with national and international human rights standards.
+
+        As for the program of the Authority, they are:
+Capacity-building programme.
+Legal and human rights support program.
+3. Research and Policy Program
+4. International Media and Advocacy Program
+5- Bank of Development Opportunities and Initiatives
+    </string>
     <string name="comment">Comment</string>
     <string name="publish">Publish</string>
     <string name="Title">Title</string>
