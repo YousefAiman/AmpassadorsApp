@@ -280,19 +280,18 @@ public class Home_Activity extends AppCompatActivity  implements
                 replaceFragment(new B_Fragment());
 
             }
-            else if (item.getItemId() == R.id.awreaness_post){
+//            else if (item.getItemId() == R.id.awreaness_post){
+//
+//            }
+//            else if (item.getItemId() == R.id.courses){
+//            }
 
-            }
-            else if (item.getItemId() == R.id.courses){
-
-            }
             else if (item.getItemId() == R.id.polls){
                 replaceFragment(new A_Fragment());
-
-                //getSupportFragmentManager().beginTransaction().replace( new A_Fragment()).commit();
             }
             else if (item.getItemId() == R.id.policy){
-
+                Intent inte = new Intent(Home_Activity.this, PrivacyPolicy.class);
+                startActivity(inte);
             }
             else if (item.getItemId() == R.id.complaints) {
                 Intent mapIntent = new Intent(Home_Activity.this, ComplaintsActivity.class);
@@ -304,8 +303,9 @@ public class Home_Activity extends AppCompatActivity  implements
 
             }
             else if (item.getItemId() == R.id.about){
+                Intent intent = new Intent(Home_Activity.this, About_us.class);
+                startActivity(intent);
             }
-
         return true;
     }
 
@@ -316,9 +316,7 @@ public class Home_Activity extends AppCompatActivity  implements
     final IntentFilter intentFilter = new IntentFilter();
     intentFilter.addAction(indicatorAction);
     registerReceiver(new NotificationIndicatorReceiver(), intentFilter);
-
         final AtomicInteger notificationCount = new AtomicInteger();
-
         listenerRegistrations.add(
                 FirebaseFirestore.getInstance().collection("Notifications")
                 .whereEqualTo("receiverId", FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -347,7 +345,6 @@ public class Home_Activity extends AppCompatActivity  implements
 
                                     Log.d("ttt","notificationCount: "+
                                             notificationCount.get());
-
                                     break;
                                 case REMOVED:
 
