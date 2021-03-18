@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".Fragments.ProfileFragment">
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/profile_toolbar" />
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:background="@color/dark_green"
+            android:paddingTop="50dp"
+            android:paddingRight="30dp"
+            android:textAlignment="viewEnd"
+            android:textColor="#fff"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_picture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/profile_background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.050000012" />
+
+        <TextView
+            android:id="@+id/in_username"
+            android:layout_width="269dp"
+            android:layout_height="42dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="180dp"
+            android:layout_marginEnd="32dp"
+            android:background="@drawable/profile_shape"
+            android:drawableLeft="@drawable/ic_baseline_person"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:padding="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/profile_picture" />
+
+        <TextView
+            android:id="@+id/in_password"
+            android:layout_width="0dp"
+            android:layout_height="39dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/profile_shape"
+            android:drawableLeft="@drawable/ic_baseline_lock"
+            android:ems="10"
+            android:inputType="text"
+            android:padding="10dp"
+            app:layout_constraintEnd_toEndOf="@+id/in_username"
+            app:layout_constraintStart_toStartOf="@+id/in_username"
+            app:layout_constraintTop_toBottomOf="@+id/in_username" />
+
+
+
+        <TextView
+            android:id="@+id/in_email"
+            android:layout_width="0dp"
+            android:layout_height="39dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/profile_shape"
+            android:drawableLeft="@drawable/ic_baseline_email"
+            android:ems="10"
+            android:padding="10dp"
+            app:layout_constraintEnd_toEndOf="@+id/in_password"
+            app:layout_constraintStart_toStartOf="@+id/in_password"
+            app:layout_constraintTop_toBottomOf="@+id/in_password" />
+
+        <TextView
+            android:id="@+id/in_country"
+            android:layout_width="0dp"
+            android:layout_height="39dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/profile_shape"
+            android:drawableLeft="@drawable/ic_baseline_home"
+            android:ems="10"
+            android:padding="10dp"
+            app:layout_constraintEnd_toEndOf="@+id/in_email"
+            app:layout_constraintStart_toStartOf="@+id/in_email"
+            app:layout_constraintTop_toBottomOf="@+id/in_email" />
+
+        <TextView
+            android:id="@+id/in_city"
+            android:layout_width="0dp"
+            android:layout_height="39dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/profile_shape"
+            android:drawableLeft="@drawable/ic_baseline_place"
+            android:ems="10"
+            android:padding="10dp"
+            app:layout_constraintEnd_toEndOf="@+id/in_country"
+            app:layout_constraintStart_toStartOf="@+id/in_country"
+            app:layout_constraintTop_toBottomOf="@+id/in_country" />
+
+        <TextView
+            android:id="@+id/in_phone"
+            android:layout_width="0dp"
+            android:layout_height="39dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/profile_shape"
+            android:drawableLeft="@drawable/ic_baseline_phone"
+            android:ems="10"
+            android:padding="10dp"
+            app:layout_constraintEnd_toEndOf="@+id/in_city"
+            app:layout_constraintStart_toStartOf="@+id/in_city"
+            app:layout_constraintTop_toBottomOf="@+id/in_city" />
+
+        <Button
+            android:id="@+id/edit_data"
+            android:layout_width="147dp"
+            android:layout_height="47dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/btn_bg"
+            android:text="Edit"
+            app:backgroundTint="@color/design_default_color_error"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/in_phone"
+            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintStart_toStartOf="@+id/in_phone"
+            app:layout_constraintTop_toBottomOf="@+id/in_phone"
+            tools:ignore="MissingConstraints" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

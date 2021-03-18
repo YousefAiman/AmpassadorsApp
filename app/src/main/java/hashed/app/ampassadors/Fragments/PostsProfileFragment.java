@@ -36,8 +36,11 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import hashed.app.ampassadors.Activities.ComplaintsActivity;
 import hashed.app.ampassadors.Activities.Home_Activity;
 import hashed.app.ampassadors.Activities.PostNewActivity;
+import hashed.app.ampassadors.Activities.Profile;
+import hashed.app.ampassadors.Activities.profile_edit;
 import hashed.app.ampassadors.Adapters.UserPostAdapter;
 import hashed.app.ampassadors.Objects.UserPostData;
 import hashed.app.ampassadors.R;
@@ -73,6 +76,9 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         View view = inflater.inflate(R.layout.fragment_posts_profile, container,
                 false);
         floatingButton = view.findViewById(R.id.floatingbtn);
+        username = view.findViewById(R.id.textView6);
+        imageView = view.findViewById(R.id.profile_picture);
+
         floatingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -119,26 +125,24 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
                     }
                 });
             }else{
-
                 reference.update("status", true).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         status = true;
                         toolbar.getMenu().findItem(R.id.action_online).setTitle("away");
-
                     }
                 });
             }
-
         }else if(item.getItemId() == R.id.action_online){
-
             ((Home_Activity)requireActivity()).replaceFragment(new ProfileFragment());
 
-        }
+        }else if(item.getItemId() == R.id.action_about){
 
+            Intent mapIntent = new Intent(getActivity(), Profile.class);
+            startActivity(mapIntent);
+        }
         return false;
     }
-
     @Override
     public void onRefresh() {
 
@@ -212,11 +216,9 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
     }
 
     private void getUserNaImg(){
-        username = getView().findViewById(R.id.textView6);
         fAuth = FirebaseAuth.getInstance();
         userid = fAuth.getCurrentUser().getUid();
         fStore = FirebaseFirestore.getInstance();
-        imageView = getView().findViewById(R.id.profile_picture);
 
         fStore.collection("Users").document(userid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override

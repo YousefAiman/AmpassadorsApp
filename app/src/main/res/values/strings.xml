@@ -65,16 +65,16 @@
     <string name="set_duration_poll">Please set the duration for the poll!</string>
     <string name="two_items_poll">Please enter at least two choices for your poll!</string>
     <string name="poll_publish_failed">Failed to publish poll please try again!</string>
-    <string name="vote">Vote</string>
-    <string name="num_of_people">Number of people</string>
+    <string name="vote">صوت</string>
+    <string name="num_of_people">من الاشخاص</string>
     <string name="vote_check">Vote check</string>
 
     <!--Post-->
     <string name="Post">Post</string>
     <string name="username">Name</string>
     <string name="title_interface">post</string>
-    <string name="title_string">News Title </string>
-    <string name="Details">Details</string>
+    <string name="title_string">عنوان الخبر </string>
+    <string name="Details">التفاصيل</string>
     <string name="create_topic">Create Topic</string>
     <string name="Notifications">Notifications</string>
     <string name="post_publish_error">
@@ -83,18 +83,12 @@
     <!--Suggestions And Complaints-->
     <string name="Complaints">Complaints</string>
     <string name="title">we would like to hear from you</string>
-    <string name="com_title">Complaints Title</string>
-    <string name="defendant">Defendant</string>
-    <string name="subject" >Subject</string>
+    <string name="com_title">عنوان الشكوى</string>
+    <string name="defendant">المشتكى عليه</string>
+    <string name="subject" >الموضوع</string>
     <string name="send_btn">Send</string>
     <string name="Suggestion">Suggestion</string>
-    <string name="suggest_title">Suggest Title</string>
-    <string name="listSuggestion">List Suggestion</string>
-    <string name="listComplaints">List Complaints</string>
-    <string name="poll">Poll</string>
-    <string name="policyPrivacy">Policy Privacy</string>
-    <string name="aboutus">About us</string>
-    <string name="logout">Logout</string>
+    <string name="suggest_title">عنوان الاقتراح</string>
 
     <!--Notifications-->
     <string name="new_message">New message from </string>
@@ -141,7 +135,7 @@
     <string name="AwarenessPosts">Awareness Posts</string>
     <string name="Courses">Courses</string>
     <string name="Polls">Polls</string>
-    <string name="PolicyPrivacy">Privacy Policy</string>
+    <string name="PolicyPrivacy">Policy Privacy</string>
     <string name="Proposals">Suggestions</string>
     <string name="Aboutus">About us</string>
     <string name="Logout">Logout</string>
@@ -163,30 +157,5 @@
     <string name="Title">Title</string>
     <string name="new_post">NEW POST</string>
     <string name="new_poll">NEW POLL</string>
-    <string name="createsubject">Create Subject</string>
-    <string name="Publish">Publish</string>
-    <string name="qusetoin">qusetoin....</string>
-    <string name="timepoll">Poll Time</string>
-    <string name="Settings">Settings</string>
-    <string name="country">Country</string>
-    <string name="city">City</string>
-    <string name="phone">Phone</string>
-    <string name="save">Save</string>
-    <string name="email">Email</string>
-    <string name="password">Password</string>
-    <string name="sign_in">Sign In</string>
-    <string name="forget_password">Forget Password</string>
-    <string name="verify_email">Verify Email</string>
-    <string name="create_new_account">Create New Account</string>
-    <string name="confirm_password">Confirm Password</string>
-
-    <string name="sign_up">Sign Up</string>
-    <string name="alread_have_account">Already Have Account</string>
-    <string name="approve">Approve</string>
-    <string name="photo">photos</string>
-    <string name="edit">Edit</string>
-    <string name="videos">videos</string>
-    <string name="read_more">read more</string>
-    <string name="join">Join</string>
 
 </resources>
