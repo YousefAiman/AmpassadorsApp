@@ -4,9 +4,11 @@
     <item
         android:id="@+id/news"
         android:title="@string/news" />
+    <!--
     <item
         android:id="@+id/awarenesspost"
         android:title="@string/AwarenessPosts" />
+        -->
     <item
         android:id="@+id/polls"
         android:title="@string/poll" />

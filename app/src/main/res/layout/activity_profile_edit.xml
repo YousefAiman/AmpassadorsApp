@@ -1,147 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout_b"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
 
-    <com.google.android.material.navigation.NavigationView
-
-        android:id="@+id/navigationview_b"
-        android:layout_width="320dp"
-        android:layout_height="match_parent"
-        app:menu="@menu/navigation_menu"
-        android:layout_marginTop="55dp"
-        android:background="@color/black"
-        app:itemTextColor="@color/white"
-        app:headerLayout="@layout/layout_navegation_header"
-        android:layout_gravity="start"/>
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".Fragments.profile.edit">
-
-        <include
-            android:id="@+id/toolbar"
-            layout="@layout/profile_toolbar"
-
-            />
-
-        <TextView
-            android:id="@+id/textView6"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:background="@color/dark_green"
-            android:paddingTop="50dp"
-            android:paddingRight="30dp"
-            android:textAlignment="viewEnd"
-            android:textColor="#fff"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+            android:layout_height="match_parent"
+            tools:context=".Fragments.profile.edit">
+
+            <include
+                android:id="@+id/toolbar"
+                layout="@layout/profile_toolbar"
+
+                />
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:background="@color/dark_green"
+                android:paddingTop="50dp"
+                android:paddingRight="30dp"
+                android:textAlignment="viewEnd"
+                android:textColor="#fff"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profile_picture"
-            android:layout_width="149dp"
-            android:layout_height="147dp"
-            android:layout_marginTop="36dp"
-            android:background="@drawable/profile_background"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profile_picture"
+                android:layout_width="149dp"
+                android:layout_height="147dp"
+                android:layout_marginTop="36dp"
+                android:background="@drawable/profile_background"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
-        <EditText
-            android:padding="10dp"
-            android:id="@+id/input_username"
-            android:layout_width="269dp"
-            android:layout_height="42dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="200dp"
-            android:layout_marginEnd="32dp"
-            android:background="@drawable/profile_shape"
-            android:drawableLeft="@drawable/ic_baseline_person"
-            android:ems="10"
-            android:hint="@string/username"
-            android:inputType="textPersonName"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/profile_picture" />
+            <EditText
+                android:padding="10dp"
+                android:id="@+id/input_username"
+                android:layout_width="269dp"
+                android:layout_height="42dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="200dp"
+                android:layout_marginEnd="32dp"
+                android:background="@drawable/profile_shape"
+                android:drawableLeft="@drawable/ic_baseline_person"
+                android:ems="10"
+                android:hint="@string/username"
+                android:inputType="textPersonName"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/profile_picture" />
 
 
 
-        <EditText
-            android:id="@+id/input_country"
-            android:layout_width="0dp"
-            android:layout_height="39dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/profile_shape"
-            android:drawableLeft="@drawable/ic_baseline_home"
-            android:ems="10"
-            android:hint="@string/country"
-            android:inputType="text"
-            android:padding="10dp"
-            app:layout_constraintEnd_toEndOf="@+id/input_username"
-            app:layout_constraintStart_toStartOf="@+id/input_username"
-            app:layout_constraintTop_toBottomOf="@+id/input_username" />
+            <EditText
+                android:id="@+id/input_country"
+                android:layout_width="0dp"
+                android:layout_height="39dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/profile_shape"
+                android:drawableLeft="@drawable/ic_baseline_home"
+                android:ems="10"
+                android:hint="@string/country"
+                android:inputType="text"
+                android:padding="10dp"
+                app:layout_constraintEnd_toEndOf="@+id/input_username"
+                app:layout_constraintStart_toStartOf="@+id/input_username"
+                app:layout_constraintTop_toBottomOf="@+id/input_username" />
 
-        <EditText
-            android:id="@+id/input_city"
-            android:layout_width="0dp"
-            android:layout_height="39dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/profile_shape"
-            android:drawableLeft="@drawable/ic_baseline_place"
-            android:ems="10"
-            android:hint="@string/city"
-            android:inputType="text"
-            android:padding="10dp"
-            app:layout_constraintEnd_toEndOf="@+id/input_country"
-            app:layout_constraintStart_toStartOf="@+id/input_country"
-            app:layout_constraintTop_toBottomOf="@+id/input_country" />
+            <EditText
+                android:id="@+id/input_city"
+                android:layout_width="0dp"
+                android:layout_height="39dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/profile_shape"
+                android:drawableLeft="@drawable/ic_baseline_place"
+                android:ems="10"
+                android:hint="@string/city"
+                android:inputType="text"
+                android:padding="10dp"
+                app:layout_constraintEnd_toEndOf="@+id/input_country"
+                app:layout_constraintStart_toStartOf="@+id/input_country"
+                app:layout_constraintTop_toBottomOf="@+id/input_country" />
 
-        <EditText
-            android:id="@+id/input_phone"
-            android:layout_width="0dp"
-            android:layout_height="39dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/profile_shape"
-            android:drawableLeft="@drawable/ic_baseline_phone"
-            android:ems="10"
-            android:hint="@string/phone"
-            android:inputType="text"
-            android:padding="10dp"
-            app:layout_constraintEnd_toEndOf="@+id/input_city"
-            app:layout_constraintStart_toStartOf="@+id/input_city"
-            app:layout_constraintTop_toBottomOf="@+id/input_city" />
+            <EditText
+                android:id="@+id/input_phone"
+                android:layout_width="0dp"
+                android:layout_height="39dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/profile_shape"
+                android:drawableLeft="@drawable/ic_baseline_phone"
+                android:ems="10"
+                android:hint="@string/phone"
+                android:inputType="text"
+                android:padding="10dp"
+                app:layout_constraintEnd_toEndOf="@+id/input_city"
+                app:layout_constraintStart_toStartOf="@+id/input_city"
+                app:layout_constraintTop_toBottomOf="@+id/input_city" />
 
-        <Button
-            android:id="@+id/save"
-            android:layout_width="147dp"
-            android:layout_height="47dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/btn_bg"
-            android:text="@string/save"
-            app:backgroundTint="@color/design_default_color_error"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/input_phone"
-            app:layout_constraintHorizontal_bias="0.496"
-            app:layout_constraintStart_toStartOf="@+id/input_phone"
-            app:layout_constraintTop_toBottomOf="@+id/input_phone"
-            tools:ignore="MissingConstraints" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
-  </androidx.drawerlayout.widget.DrawerLayout>
+            <Button
+                android:id="@+id/save"
+                android:layout_width="147dp"
+                android:layout_height="47dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/btn_bg"
+                android:text="@string/save"
+                app:backgroundTint="@color/design_default_color_error"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/input_phone"
+                app:layout_constraintHorizontal_bias="0.496"
+                app:layout_constraintStart_toStartOf="@+id/input_phone"
+                app:layout_constraintTop_toBottomOf="@+id/input_phone"
+                tools:ignore="MissingConstraints" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>

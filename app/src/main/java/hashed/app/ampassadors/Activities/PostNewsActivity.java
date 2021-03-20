@@ -186,7 +186,6 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
           Picasso.get().load(imageUrl).fit().into(userIv);
         }
         usernameTv.setText(snapshot.getString("username"));
-
       }
     });
 

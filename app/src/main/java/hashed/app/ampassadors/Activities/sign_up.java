@@ -70,7 +70,8 @@ public class sign_up extends AppCompatActivity {
   FirebaseStorage storage;
   Spinner spinner;
   private Uri filePath;
-
+  FirebaseUser firebaseUser;
+  private String currentUid ;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -148,18 +149,24 @@ public class sign_up extends AppCompatActivity {
       @Override
       public void onSuccess(AuthResult authResult) {
         auth.signOut();
-        userInfo = new UserInfo();
+       userInfo = new UserInfo();
         // Picasso.get().load(userInfo.getImageUrl()).fit().into(circleImageView);
-        FirebaseUser firebaseUser = auth.getCurrentUser();
+
+        FirebaseUser mFirebaseUser = auth.getCurrentUser();
+        if(mFirebaseUser != null) {
+          currentUid = mFirebaseUser.getUid(); //Do what you need to do with the id
+        }
+
+
 
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("username", username);
         hashMap.put("password", passwrod);
-        hashMap.put("email", firebaseUser.getEmail());
+        hashMap.put("email", email);
         hashMap.put("country", country);
         hashMap.put("city", city);
         hashMap.put("phone", phone);
-        hashMap.put("userid", firebaseUser.getUid());
+        hashMap.put("userid", currentUid);
         hashMap.put("imageUrl", imageUrl);
         hashMap.put("status", true);
 
@@ -177,7 +184,7 @@ public class sign_up extends AppCompatActivity {
 //                userInfo.setApprovement(false);
 
 
-        reference.document(firebaseUser.getUid()).set(userInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
+        reference.document(firebaseUser.getUid()).set(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
           @Override
           public void onComplete(@NonNull Task<Void> task) {
             if (task.isSuccessful()) {
@@ -246,7 +253,7 @@ public class sign_up extends AppCompatActivity {
     mProgressDialog = new ProgressDialog(this);
     userid = auth.getUid();
     spinner = findViewById(R.id.options);
-
+    firebaseUser = auth.getCurrentUser();
   }
 
   @Override
