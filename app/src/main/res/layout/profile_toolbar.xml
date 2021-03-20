@@ -12,7 +12,7 @@
     android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
     android:fitsSystemWindows="true"
-    app:menu="@menu/chatting_toolbar_menu"
+    app:menu="@menu/profile_menu"
     android:background="@color/dark_green">
 
     <LinearLayout

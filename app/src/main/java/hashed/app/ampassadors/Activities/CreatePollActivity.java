@@ -96,10 +96,10 @@ public class CreatePollActivity extends AppCompatActivity implements View.OnClic
   private void createPollItemsList() {
 
     pollItems = new ArrayList<>();
-    pollItems.add(getString(R.string.Choose_1));
-    pollItems.add(getString(R.string.Choose_2));
-
-    PollItemsRecyclerAdapter adapter = new PollItemsRecyclerAdapter(pollItems);
+    final String option = getResources().getString(R.string.option);
+    pollItems.add(option+"1 ");
+    pollItems.add(option+"2 ");
+    PollItemsRecyclerAdapter adapter = new PollItemsRecyclerAdapter(pollItems,this);
     pollRv.setAdapter(adapter);
 
   }
@@ -140,7 +140,8 @@ public class CreatePollActivity extends AppCompatActivity implements View.OnClic
       }
 
       if (optionsMaps.size() < 2) {
-        Toast.makeText(this, R.string.two_items_poll, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.two_items_poll,
+                Toast.LENGTH_SHORT).show();
         return;
       }
 
@@ -213,16 +214,13 @@ public class CreatePollActivity extends AppCompatActivity implements View.OnClic
 
     String durationText = "";
     if (durations[0] > 0) {
-      durationText = durationText.concat(durations[0] + " " +
-              getResources().getString(R.string.days) + " ");
+      durationText = durationText.concat(durations[0] + " " + getResources().getString(R.string.days) + " ");
     }
     if (durations[1] > 0) {
-      durationText = durationText.concat(durations[1] + " " +
-              getResources().getString(R.string.hours) + " ");
+      durationText = durationText.concat(durations[1] + " " + getResources().getString(R.string.hours) + " ");
     }
     if (durations[2] > 0) {
-      durationText = durationText.concat(durations[2] + " " +
-              getResources().getString(R.string.minute));
+      durationText = durationText.concat(durations[2] + " " + getResources().getString(R.string.minute));
     }
 
     timeTv.setText(durationText);

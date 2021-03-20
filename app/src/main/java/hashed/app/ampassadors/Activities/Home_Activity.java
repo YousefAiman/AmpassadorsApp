@@ -61,14 +61,13 @@ import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Services.FirebaseMessagingService;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 
-public class
-Home_Activity extends AppCompatActivity implements
+public class Home_Activity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
 
-  String userid;
-  FirebaseAuth auth;
-  DocumentReference reference;
-  FirebaseFirestore firebaseFirestore;
+  private String userid;
+  private FirebaseAuth auth;
+  private DocumentReference reference;
+  private FirebaseFirestore firebaseFirestore;
   private BottomNavigationView nav_btom;
   private FrameLayout homeFrameLayout;
   private DrawerLayout drawer_layout;
@@ -88,41 +87,22 @@ Home_Activity extends AppCompatActivity implements
     userid = auth.getCurrentUser().getUid();
     firebaseFirestore = FirebaseFirestore.getInstance();
 
+    replaceFragment(new PostsFragment());
+
     if(FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
-      replaceFragment(new PostsFragment());
-
       navigationview.inflateMenu(R.menu.menu_nav);
-
     }else{
-      firebaseFirestore.collection("Users").document(userid).get().
-              addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-        @Override
-        public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-          GlobalVariables.setRole(documentSnapshot.getString("Role"));
-
-        }
-      }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-        @Override
-        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-          if(task.isSuccessful()){
-            replaceFragment(new PostsFragment());
-
-            if (GlobalVariables.getRole()!=null && GlobalVariables.getRole().equals("Admin")) {
-              navigationview.inflateMenu(R.menu.menu_admin);
-            } else {
-              navigationview.inflateMenu(R.menu.menu_nav);
-            }
-          }
-        }
-      });
+      if (GlobalVariables.getRole()!=null && GlobalVariables.getRole().equals("Admin")) {
+        navigationview.inflateMenu(R.menu.menu_admin);
+      } else {
+        navigationview.inflateMenu(R.menu.menu_nav);
+      }
     }
-
-
 
     OnClickButtons();
     createUserLikesListener();
     createNotificationListener();
+
   }
 
 

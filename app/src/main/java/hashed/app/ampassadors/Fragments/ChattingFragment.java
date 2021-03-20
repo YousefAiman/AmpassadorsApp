@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,8 +37,8 @@ public class ChattingFragment extends Fragment implements MenuItem.OnMenuItemCli
   private TabAdapterTitle tabAdapterTitle;
   private Toolbar toolbar;
   private NotificationIndicatorReceiver notificationIndicatorReceiver;
-  private SearchView chattingSearchView;
-
+//  private SearchView chattingSearchView;
+  private TextView searchTv;
   public ChattingFragment() {
     // Required empty public constructor
   }
@@ -63,7 +64,8 @@ public class ChattingFragment extends Fragment implements MenuItem.OnMenuItemCli
     chattingTabLayout = view.findViewById(R.id.chattingTabLayout);
     chattingViewPager = view.findViewById(R.id.chattingViewPager);
     toolbar = view.findViewById(R.id.chattingToolbar);
-    chattingSearchView = view.findViewById(R.id.chattingSearchView);
+    searchTv = view.findViewById(R.id.searchTv);
+//    chattingSearchView = view.findViewById(R.id.chattingSearchView);
     toolbar.setNavigationOnClickListener(v -> ((Home_Activity) requireActivity()).showDrawer());
     toolbar.setOnMenuItemClickListener(this::onMenuItemClick);
     return view;
@@ -85,8 +87,9 @@ public class ChattingFragment extends Fragment implements MenuItem.OnMenuItemCli
     chattingViewPager.setAdapter(tabAdapterTitle);
     chattingTabLayout.setupWithViewPager(chattingViewPager);
 
-    chattingSearchView.setOnClickListener(this);
-    chattingSearchView.setOnSearchClickListener(this);
+    searchTv.setOnClickListener(this);
+//    chattingSearchView.setOnClickListener(this);
+//    chattingSearchView.setOnSearchClickListener(this);
 
   }
 
@@ -137,11 +140,9 @@ public class ChattingFragment extends Fragment implements MenuItem.OnMenuItemCli
 
   @Override
   public void onClick(View view) {
-    if (view.getId() == R.id.chattingSearchView) {
-
+    if (view.getId() == R.id.searchTv) {
       startActivity(new Intent(requireContext(), UserMessageSearchActivity.class)
               .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-
     }
   }
 

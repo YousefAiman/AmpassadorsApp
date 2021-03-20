@@ -60,6 +60,9 @@ public class UsersPickerActivity extends AppCompatActivity implements
       previousSelectedUserIdsList = new ArrayList<>();
     }
 
+
+
+
     updateSubtitle();
 
     users = new ArrayList<>();
@@ -105,12 +108,12 @@ public class UsersPickerActivity extends AppCompatActivity implements
     if (resultCode == 3 && data != null && data.hasExtra("previousSelectedUserIdsList")) {
 
       users.clear();
-      updateSubtitle();
       pickerAdapter.notifyDataSetChanged();
 
       previousSelectedUserIdsList =
               data.getStringArrayListExtra("previousSelectedUserIdsList");
 
+      updateSubtitle();
       pickerAdapter.selectedUserIds = previousSelectedUserIdsList;
 
       getPreviousUsers();

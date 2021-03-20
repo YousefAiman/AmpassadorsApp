@@ -274,7 +274,7 @@ public class profile_edit extends AppCompatActivity {
     userInfo.setCountry(country);
     userInfo.setCity(city);
     userInfo.setPhone(phone);
-    userInfo.setUserid(firebaseUser.getUid());
+    userInfo.setUserId(firebaseUser.getUid());
     userInfo.setStatus(true);
 
 

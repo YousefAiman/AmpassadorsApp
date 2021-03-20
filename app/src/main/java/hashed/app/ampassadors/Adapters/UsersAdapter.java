@@ -23,11 +23,13 @@ import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
 
-public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
+public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+//        implements Filterable
+{
 
   private final int itemLayout;
   private ArrayList<UserPreview> users;
-  private ArrayList<UserPreview> filteredUsers;
+//  private ArrayList<UserPreview> filteredUsers;
   private UserAdapterClicker userAdapterClicker;
 
   public UsersAdapter(ArrayList<UserPreview> users, int itemLayout) {
@@ -38,7 +40,7 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
   public UsersAdapter(ArrayList<UserPreview> users, int itemLayout,
                       UserAdapterClicker userAdapterClicker) {
     this.users = users;
-    this.filteredUsers = users;
+//    this.filteredUsers = users;
     this.userAdapterClicker = userAdapterClicker;
     this.itemLayout = itemLayout;
   }
@@ -74,42 +76,42 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
   }
 
-  @Override
-  public Filter getFilter() {
-    return new Filter() {
-      @Override
-      protected FilterResults performFiltering(CharSequence constraint) {
-        String filterString = constraint.toString().toLowerCase();
-        FilterResults results = new FilterResults();
-
-        final List<UserPreview> list = users;
-
-        int count = list.size();
-        final ArrayList<UserPreview> nlist = new ArrayList<>(count);
-
-        UserPreview filteredUser;
-
-        for (int i = 0; i < count; i++) {
-          filteredUser = list.get(i);
-          if (list.get(i).getUsername().toLowerCase().contains(filterString)) {
-            nlist.add(filteredUser);
-          }
-        }
-        results.values = nlist;
-        results.count = nlist.size();
-
-        return results;
-      }
-
-      @Override
-      protected void publishResults(CharSequence constraint, FilterResults results) {
-
-        filteredUsers = (ArrayList<UserPreview>) results.values;
-        users = filteredUsers;
-        notifyDataSetChanged();
-      }
-    };
-  }
+//  @Override
+//  public Filter getFilter() {
+//    return new Filter() {
+//      @Override
+//      protected FilterResults performFiltering(CharSequence constraint) {
+//        String filterString = constraint.toString().toLowerCase();
+//        FilterResults results = new FilterResults();
+//
+//        final List<UserPreview> list = users;
+//
+//        int count = list.size();
+//        final ArrayList<UserPreview> nlist = new ArrayList<>(count);
+//
+//        UserPreview filteredUser;
+//
+//        for (int i = 0; i < count; i++) {
+//          filteredUser = list.get(i);
+//          if (list.get(i).getUsername().toLowerCase().contains(filterString)) {
+//            nlist.add(filteredUser);
+//          }
+//        }
+//        results.values = nlist;
+//        results.count = nlist.size();
+//
+//        return results;
+//      }
+//
+//      @Override
+//      protected void publishResults(CharSequence constraint, FilterResults results) {
+//
+//        filteredUsers = (ArrayList<UserPreview>) results.values;
+//        users = filteredUsers;
+//        notifyDataSetChanged();
+//      }
+//    };
+//  }
 
   public interface UserAdapterClicker {
     void clickUser(String userId);

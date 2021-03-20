@@ -59,6 +59,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
@@ -103,7 +104,7 @@ public class GroupMessagingActivity extends AppCompatActivity
   public static final int RECORD_AUDIO_REQUEST = 30;
   //constants
   private static final String TAG = "GroupMessages";
-  private static final int MESSAGES_PAGE_SIZE = 15;
+  private static final int MESSAGES_PAGE_SIZE = 25;
   //database
   private static final DatabaseReference databaseReference
           = FirebaseDatabase.getInstance().getReference().child("GroupMessages").getRef();
@@ -128,6 +129,8 @@ public class GroupMessagingActivity extends AppCompatActivity
   private toTopScrollListener currentScrollListener;
   private Map<UploadTask, StorageTask<UploadTask.TaskSnapshot>> uploadTasks;
   private boolean isLoadingMessages;
+  private List<ListenerRegistration> listenerRegistrations;
+
   //views
   private RecyclerView privateMessagingRv;
   private ImageView messageSendIv;
@@ -303,6 +306,8 @@ public class GroupMessagingActivity extends AppCompatActivity
   //Group messages
   private void fetchGroupPreviousMessages() {
 
+    messagesProgressBar.setVisibility(View.VISIBLE);
+
     adapter = new PrivateMessagingAdapter(privateMessages,
             this, this, this,
             this, this, true);
@@ -313,9 +318,12 @@ public class GroupMessagingActivity extends AppCompatActivity
     firebaseMessageDocRef = FirebaseFirestore.getInstance().collection("Meetings")
             .document(groupId);
 
+    listenerRegistrations = new ArrayList<>();
+    listenerRegistrations.add(
     firebaseMessageDocRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
       @Override
-      public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+      public void onEvent(@Nullable DocumentSnapshot value,
+                          @Nullable FirebaseFirestoreException error) {
 
         if (value != null) {
           if (value.getBoolean("hasEnded")) {
@@ -326,7 +334,7 @@ public class GroupMessagingActivity extends AppCompatActivity
           }
         }
       }
-    });
+    }));
     Log.d("ttt", "looking to group");
     currentMessagingRef.addListenerForSingleValueEvent(new ValueEventListener() {
       @Override
@@ -379,12 +387,14 @@ public class GroupMessagingActivity extends AppCompatActivity
                           currentScrollListener = new toTopScrollListener());
                 }
                 addDeleteFieldListener();
+                messagesProgressBar.setVisibility(View.GONE);
               }
 
               @Override
               public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(GroupMessagingActivity.this,
                         R.string.message_load_failed, Toast.LENGTH_SHORT).show();
+                messagesProgressBar.setVisibility(View.GONE);
                 finish();
               }
             });
@@ -1306,6 +1316,12 @@ public class GroupMessagingActivity extends AppCompatActivity
     if (downloadCompleteReceiver != null) {
       unregisterReceiver(downloadCompleteReceiver);
     }
+    if(listenerRegistrations!=null && !listenerRegistrations.isEmpty()){
+      for(ListenerRegistration listenerRegistration:listenerRegistrations){
+        listenerRegistration.remove();
+      }
+    }
+
   }
 
   @Override

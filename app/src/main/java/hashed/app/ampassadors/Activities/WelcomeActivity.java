@@ -1,5 +1,6 @@
 package hashed.app.ampassadors.Activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
@@ -12,25 +13,26 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+
 import hashed.app.ampassadors.Adapters.WelcomePagerAdapter;
 import hashed.app.ampassadors.R;
 
-public class WelcomeActivity extends AppCompatActivity {
+public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener {
 
-  ViewPager viewPager;
-  LinearLayout sliderLayout;
-  int dotsCount;
-  ImageView[] dots;
-  TextView signinTv;
-  Button nextSlideBtn;
-  Button signintoAccountBtn;
-  TextView nexttv;
+  private ViewPager viewPager;
+  private int dotsCount;
+  private ImageView[] dots;
+  private TextView signinTv,skipTv;
+  private Button nextSlideBtn,signintoAccountBtn,guestBtn;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.welcome_activity);
-//        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    setContentView(R.layout.activity_welcome);
 
     String[] strings = new String[]{
             "Welcome to Pal Vision",
@@ -39,33 +41,31 @@ public class WelcomeActivity extends AppCompatActivity {
             "Welcome to Pal Vision"
     };
 
+    guestBtn = findViewById(R.id.guestBtn);
     viewPager = findViewById(R.id.viewPager);
+
     final WelcomePagerAdapter viewPagerAdapter =
             new WelcomePagerAdapter(this, strings);
 
     viewPager.setAdapter(viewPagerAdapter);
-    nexttv = findViewById(R.id.nextTv);
+    skipTv = findViewById(R.id.nextTv);
 
     signinTv = findViewById(R.id.signinTv);
     signinTv.setVisibility(View.INVISIBLE);
-    signinTv.setOnClickListener(v -> {
-      Intent intent = new Intent(getApplicationContext(), sign_in.class);
-      startActivity(intent);
-    });
 
     signintoAccountBtn = findViewById(R.id.signintoAccountBtn);
     signintoAccountBtn.setVisibility(View.INVISIBLE);
 
-    signintoAccountBtn.setOnClickListener(v -> {
-      startActivity(new Intent(getApplicationContext(), sign_up.class));
-    });
+    guestBtn.setOnClickListener(this);
+    signinTv.setOnClickListener(this);
+    signintoAccountBtn.setOnClickListener(this);
+    nextSlideBtn.setOnClickListener(this);
 
-
-    sliderLayout = findViewById(R.id.dotsSlider);
+    final LinearLayout sliderLayout = findViewById(R.id.dotsSlider);
     dotsCount = viewPagerAdapter.getCount();
     dots = new ImageView[dotsCount];
     nextSlideBtn = findViewById(R.id.nextSlideBtn);
-    nextSlideBtn.setOnClickListener(v -> viewPager.setCurrentItem(viewPager.getCurrentItem() + 1));
+
     int nonActive = R.drawable.indicator_inactive_icon;
     int FullDot = R.drawable.indicator_active_icon;
 
@@ -87,9 +87,13 @@ public class WelcomeActivity extends AppCompatActivity {
       public void onPageSelected(final int position) {
         for (int i = 0; i < dotsCount; i++) {
           if (i == position) continue;
-          dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), nonActive));
+          dots[i].setImageDrawable(
+                  ContextCompat.getDrawable(getApplicationContext(), nonActive));
         }
-        dots[position].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), FullDot));
+
+        dots[position].setImageDrawable(
+                ContextCompat.getDrawable(getApplicationContext(), FullDot));
+
         if (position == dotsCount - 1) {
           signinTv.setVisibility(View.VISIBLE);
           signinTv.setClickable(true);
@@ -97,6 +101,7 @@ public class WelcomeActivity extends AppCompatActivity {
           nextSlideBtn.setClickable(false);
           signintoAccountBtn.setVisibility(View.VISIBLE);
           signintoAccountBtn.setClickable(true);
+          skipTv.setVisibility(View.INVISIBLE);
         } else {
           signintoAccountBtn.setVisibility(View.INVISIBLE);
           signintoAccountBtn.setClickable(false);
@@ -104,6 +109,7 @@ public class WelcomeActivity extends AppCompatActivity {
           signinTv.setClickable(false);
           nextSlideBtn.setVisibility(View.VISIBLE);
           nextSlideBtn.setClickable(true);
+          skipTv.setVisibility(View.VISIBLE);
         }
       }
 
@@ -112,23 +118,41 @@ public class WelcomeActivity extends AppCompatActivity {
       }
     });
 
-    nexttv.setOnClickListener(v -> {
-      if (viewPager.getCurrentItem() == dotsCount - 1) {
-        Intent intent = new Intent(getApplicationContext(), WelcomeActivity.class);
-//                intent.putExtra("guest", true);
-        startActivity(intent);
-      } else {
-        viewPager.setCurrentItem(dotsCount);
-      }
-
-    });
-
-
+    skipTv.setOnClickListener(this);
   }
 
   @Override
-  public void onBackPressed() {
-    moveTaskToBack(true);
-  }
+  public void onClick(View view) {
 
+    if(view.getId() == guestBtn.getId()){
+      guestBtn.setClickable(false);
+      FirebaseAuth.getInstance().signInAnonymously()
+              .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                @Override
+                public void onSuccess(AuthResult authResult) {
+                  startActivity(new Intent(WelcomeActivity.this, Home_Activity.class)
+                          .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                  finish();
+                }
+              }).addOnFailureListener(new OnFailureListener() {
+        @Override
+        public void onFailure(@NonNull Exception e) {
+          guestBtn.setClickable(true);
+          finish();
+        }
+      });
+    }else if(view.getId() == signinTv.getId()){
+      startActivity(new Intent(getApplicationContext(), sign_in.class)
+              .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+      finish();
+    }else if(view.getId() == signintoAccountBtn.getId()){
+      startActivity(new Intent(getApplicationContext(), sign_up.class)
+              .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+      finish();
+    }else if(view.getId() == nextSlideBtn.getId()){
+      viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
+    }else if(view.getId() == skipTv.getId()){
+      viewPager.setCurrentItem(viewPager.getChildCount() - 1);
+    }
+    }
 }

@@ -6,10 +6,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
@@ -50,6 +53,10 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
   //data
   private PostData postData;
   private BroadcastReceiver downloadCompleteReceiver;
+
+  @Override
+  public void onConfigurationChanged(@NonNull Configuration newConfig) {
+  }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +105,6 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
   }
 
-
   private void setClickListeners() {
 
     newsIv.setOnClickListener(this);
@@ -113,7 +119,9 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
     postData = (PostData) getIntent().getSerializableExtra("postData");
 
     if (postData.getAttachmentType() == Files.IMAGE) {
-      Picasso.get().load(postData.getAttachmentUrl()).fit().into(newsIv);
+      Picasso.get().load(postData.getAttachmentUrl()).fit().centerCrop().into(newsIv);
+    }else if(postData.getAttachmentType() == Files.VIDEO){
+      Picasso.get().load(postData.getVideoThumbnailUrl()).fit().centerInside().into(newsIv);
     }
 
     titleTv.setText(postData.getTitle());
@@ -209,8 +217,13 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
       if (postData.getAttachmentUrl() != null) {
         if (postData.getAttachmentType() == Files.IMAGE) {
-          new ImageFullScreenFragment(postData.getAttachmentUrl())
-                  .show(getSupportFragmentManager(), "FullScreen");
+
+          frameLayout.setVisibility(View.VISIBLE);
+
+          getSupportFragmentManager().beginTransaction().replace(frameLayout.getId(),
+                  new ImageFullScreenFragment(postData.getAttachmentUrl()),"FullScreen")
+                  .commit();
+
         } else if (postData.getAttachmentType() == Files.VIDEO) {
 
           frameLayout.setVisibility(View.VISIBLE);
@@ -222,7 +235,6 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
       }
     }
   }
-
 
   private void likeOrDislike() {
 
@@ -271,15 +283,11 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
   @Override
   public void onBackPressed() {
-    super.onBackPressed();
 
     if (frameLayout.getVisibility() == View.VISIBLE) {
-
       getSupportFragmentManager().beginTransaction().remove(
               getSupportFragmentManager().getFragments().get(0)).commit();
-
       frameLayout.setVisibility(View.GONE);
-
     } else {
       super.onBackPressed();
     }
@@ -364,7 +372,6 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
             new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
   }
-
 
   @Override
   protected void onDestroy() {

@@ -49,6 +49,7 @@ import hashed.app.ampassadors.Adapters.HomeNewsHeaderViewPagerAdapter;
 import hashed.app.ampassadors.Adapters.PostAdapter;
 import hashed.app.ampassadors.BroadcastReceivers.NotificationIndicatorReceiver;
 import hashed.app.ampassadors.BuildConfig;
+import hashed.app.ampassadors.Objects.MeetingPreview;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.GlobalVariables;
@@ -74,7 +75,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
   private Handler handler;
   private Runnable pagerRunnable;
   private HomeNewsHeaderViewPagerAdapter pagerAdapter;
-  private ArrayList<String> titles;
+  private ArrayList<MeetingPreview> meetingPreviews;
 
 
   private NotificationIndicatorReceiver notificationIndicatorReceiver;
@@ -100,8 +101,8 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     super.onCreate(savedInstanceState);
 
 
-    titles = new ArrayList<>(5);
-    pagerAdapter = new HomeNewsHeaderViewPagerAdapter(titles);
+    meetingPreviews = new ArrayList<>(5);
+    pagerAdapter = new HomeNewsHeaderViewPagerAdapter(meetingPreviews);
 
 
     query = FirebaseFirestore.getInstance().collection("Posts")
@@ -179,7 +180,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
   public void onRefresh() {
 
     //header pager
-    titles.clear();
+    meetingPreviews.clear();
     pagerAdapter.notifyDataSetChanged();
     createHeaderPager();
     if (handler != null && pagerRunnable != null) {
@@ -218,10 +219,11 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
   private void ReadPost(boolean isInitial) {
 
+    isLoadingMessages = true;
+
     final AtomicInteger addedCount = new AtomicInteger();
 
     swipeRefresh.setRefreshing(true);
-    isLoadingMessages = false;
 
     Query updatedQuery = query;
 
@@ -245,8 +247,8 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             if (snapshot.getBoolean("pollEnded")) {
 
               if (snapshot.getLong("totalVotes") > 0) {
-                addedCount.getAndIncrement();
                 posts.add(snapshot.toObject(PostData.class));
+                addedCount.getAndIncrement();
               }
 
             } else {
@@ -274,10 +276,8 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             }
 
           } else {
-
-            addedCount.getAndIncrement();
             posts.add(snapshot.toObject(PostData.class));
-
+            addedCount.getAndIncrement();
           }
 
 
@@ -297,8 +297,9 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         }
 
       } else {
+        Log.d("ttt","Added count: "+addedCount.get());
 
-        adapter.notifyItemRangeInserted((posts.size() - addedCount.get()),
+        adapter.notifyItemRangeInserted(posts.size() - addedCount.get(),
                 addedCount.get());
 
         if (addedCount.get() < POSTS_LIMIT && scrollListener != null) {
@@ -306,9 +307,9 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         }
       }
 
-
       swipeRefresh.setRefreshing(false);
 
+      isLoadingMessages = false;
     });
   }
 
@@ -349,21 +350,14 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             .whereLessThan("startTime", remainingTime())
             .orderBy("startTime", Query.Direction.ASCENDING)
             .limit(5).get().addOnSuccessListener(snapshots -> {
-      for (DocumentSnapshot snapshot : snapshots) {
-
-        titles.add(snapshot.getString("title") + " at: " +
-                TimeFormatter.formatWithPattern(snapshot.getLong("startTime"),
-                        TimeFormatter.HOUR_MINUTE));
-
-      }
+              if(!snapshots.isEmpty()){
+                meetingPreviews.addAll(snapshots.toObjects(MeetingPreview.class));
+              }
     }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
       @Override
       public void onComplete(@NonNull Task<QuerySnapshot> task) {
-        if (task.isSuccessful() && titles.size() > 0) {
+        if (task.isSuccessful() && meetingPreviews.size() > 0) {
 
-          for (String title : titles) {
-            Log.d("ttt", "title: " + title);
-          }
 
           if (headerViewPager.getVisibility() == View.GONE) {
             headerViewPager.setVisibility(View.VISIBLE);
@@ -371,8 +365,8 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
           }
           pagerAdapter.notifyDataSetChanged();
 
-          if (titles.size() > 1) {
-            final ImageView[] dots = new ImageView[titles.size()];
+          if (meetingPreviews.size() > 1) {
+            final ImageView[] dots = new ImageView[meetingPreviews.size()];
 
             final LinearLayout.LayoutParams params =
                     new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -385,7 +379,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
               density = 1;
             }
 
-            for (int i = 0; i < titles.size(); i++) {
+            for (int i = 0; i < meetingPreviews.size(); i++) {
               dots[i] = new ImageView(requireContext());
               dots[i].setImageResource(R.drawable.indicator_inactive_icon);
               params.setMargins((int) (5 * density), 0, (int) (5 * density), 0);
@@ -424,7 +418,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
               @Override
               public void run() {
 
-                if (scrollPosition + 1 == titles.size()) {
+                if (scrollPosition + 1 == meetingPreviews.size()) {
                   scrollPosition = 0;
                 } else {
                   scrollPosition++;

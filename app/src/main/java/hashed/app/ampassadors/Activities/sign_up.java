@@ -159,7 +159,7 @@ public class sign_up extends AppCompatActivity {
         hashMap.put("country", country);
         hashMap.put("city", city);
         hashMap.put("phone", phone);
-        hashMap.put("userid", firebaseUser.getUid());
+        hashMap.put("userId", firebaseUser.getUid());
         hashMap.put("imageUrl", imageUrl);
         hashMap.put("status", true);
 

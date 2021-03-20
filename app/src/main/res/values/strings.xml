@@ -92,13 +92,10 @@
     <string name="listSuggestion">List Suggestion</string>
     <string name="listComplaints">List Complaints</string>
     <string name="poll">Poll</string>
-    <string name="polls">Polls</string>
-    <string name="policyPrivacy">
-       Privacy policy </string>
-    <string name="policyPrivacy">Policy Privacy</string>
+    <string name="Polls">Polls</string>
+    <string name="privacyPolicy">Privacy policy</string>
     <string name="aboutus">About us</string>
     <string name="logout">Logout</string>
-
 
     <string name="Error_message_defname">Enter your name pleas</string>
     <!--Notifications-->
@@ -145,10 +142,7 @@
     <string name="Send">Send</string>
     <string name="AwarenessPosts">Awareness Posts</string>
     <string name="Courses">Courses</string>
-    <string name="Polls">Polls</string>
-    <string name="PolicyPrivacy">
-        Our privacy policy
-    </string>
+
     <string name="Proposals">Suggestions</string>
     <string name="Aboutus">About us</string>
     <string name="Logout">Logout</string>
@@ -165,9 +159,6 @@
     <string name="older">Older</string>
     <string name="invited_meeting">Invitation to meeting</string>
     <string name="like">Like</string>
-    <string name="About_us">
-about us
-    </string>
     <string name="About_us">About us</string>
     <string name="comment">Comment</string>
     <string name="publish">Publish</string>
@@ -178,7 +169,7 @@ about us
     <string name="close">Close</string>
     <string name="createsubject">Create Subject</string>
     <string name="Publish">Publish</string>
-    <string name="qusetoin">qusetoin....</string>
+    <string name="question">question....</string>
     <string name="timepoll">Poll Time</string>
     <string name="Settings">Settings</string>
     <string name="country">Country</string>
@@ -202,14 +193,14 @@ about us
     <string name="read_more">read more</string>
     <string name="join">Join</string>
     <string name="Meetings">Meetings</string>
-    <string name="user_requests">User Requests</string>
+    <string name="user_requests">User Registration Requests</string>
     <string name="already_have_an_account_sign_in">Already have an account? Sign in</string>
     <string name="Error_meassage_titleCom">Enter your title pleas</string>
     <string name="write_your_subject">Write your subject pleas</string>
-    <string name="dowonloading_">Downloading...</string>
+    <string name="dowonloading_">Downloading…</string>
     <string name="SuccessfullMessage">Add Successfully</string>
     <string name="Delete_success">Item Delete Successfully</string>
-    <string name="Download">Downloading...</string>
+    <string name="Download">Downloading…</string>
     <string name="AuthMessage">Pleas Check your Intetnet Connection</string>
     <string name="Meetings_Message_cant_Slected_item">Meeting time can\'t be at selected time!</string>
     <string name="meeting_title">Select Meeting Time</string>
@@ -228,7 +219,7 @@ about us
     <string name="Google_video_Message">You have to download video then try again!</string>
     <string name="Message_Error_Uplaod_BigFile">You can\'t send files bigger than</string>
     <string name="DataScale">MB!</string>
-    <string name="DownLoad_Asking">Do you want to download ?</string>
+    <string name="DownLoad_Asking">Do you want to download?</string>
     <string name="Download_btn">Download</string>
     <string name="Cansle">Cansle</string>
     <string name="Start_zoom_Meeting">"Zoom meeting started! "</string>
@@ -239,5 +230,10 @@ about us
     <string name="Message_Fill_title">Please fill in the title!</string>
     <string name="Message_Fill_descr">Please fill in the description!</string>
     <string name="Message_Attchent_post">Please choose an attachment!</string>
+    <string name="option">Option</string>
+    <string name="create_poll">Create poll</string>
+    <string name="next">Next</string>
+    <string name="continue_guest">Continue as guest</string>
+    <string name="skip">Skip</string>
 
 </resources>

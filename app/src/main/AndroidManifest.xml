@@ -20,31 +20,59 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AmpassadorsApp">
-        <activity android:name=".Activities.WelcomeActivity"/>
-        <activity android:name=".Activities.PrivacyPolicy" />
-        <activity android:name=".Activities.About_us" />
-        <activity android:name=".Activities.Profile" />
-        <activity android:name=".Activities.PostNewActivity" />
-        <activity android:name=".Activities.PostPollActivity" />
-        <activity android:name=".Activities.PostNewsActivity" />
-        <activity android:name=".Activities.NotificationsActivity" />
-        <activity android:name=".Activities.UserSearchActivity" />
-        <activity android:name=".Activities.ConnectionActivity" />
-        <activity android:name=".Activities.GroupMessagingActivity" />
+
+        <activity android:name=".Activities.WelcomeActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.PrivacyPolicy"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".Activities.About_us"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.Profile"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.PostNewActivity"
+            android:screenOrientation="portrait"
+            android:configChanges = "orientation|keyboard|keyboardHidden|screenLayout|screenSize"/>
+
+        <activity android:name=".Activities.PostPollActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.PostNewsActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.NotificationsActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.UserSearchActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.UserMessageSearchActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.ConnectionActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.GroupMessagingActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Activities.Home_Activity"
             android:screenOrientation="portrait" />
-        <activity android:name=".Activities.Admin" />
-        <activity android:name=".Activities.profile_edit" />
-        <activity android:name=".Activities.sign_up" />
-        <activity android:name=".Activities.CreateMeetingActivity" />
-        <activity android:name=".Activities.CreatePollActivity" />
-        <activity android:name=".Activities.UsersPickerActivity" />
-        <activity android:name=".Activities.sign_in" />
-        <activity android:name=".Activities.ComplaintsActivity" />
-        <activity android:name=".Activities.SuggestionsActivity" />
-        <activity android:name=".Activities.PrivateMessagingActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".Activities.Admin"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.profile_edit"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.sign_up"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.CreateMeetingActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.CreatePollActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.UsersPickerActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.sign_in"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.ComplaintsActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.SuggestionsActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.PrivateMessagingActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -93,7 +121,9 @@
             android:stopWithTask="false" />
 
         <receiver android:name=".NotificationUtil.NotificationClickReceiver" />
+
         <receiver android:name=".NotificationUtil.NotificationDeleteListener" />
+
         <receiver
             android:name=".BroadcastReceivers.NotificationIndicatorReceiver"
             android:exported="true">

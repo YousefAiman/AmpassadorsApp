@@ -55,6 +55,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
@@ -97,7 +98,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
   public static final int RECORD_AUDIO_REQUEST = 30;
   //constants
   private static final String TAG = "privateMessaging";
-  private static final int MESSAGES_PAGE_SIZE = 15;
+  private static final int MESSAGES_PAGE_SIZE = 25;
   //database
   private static final DatabaseReference databaseReference
           = FirebaseDatabase.getInstance().getReference().child("PrivateMessages").getRef();
@@ -121,6 +122,8 @@ public class PrivateMessagingActivity extends AppCompatActivity
   private toTopScrollListener currentScrollListener;
   private Map<UploadTask, StorageTask<UploadTask.TaskSnapshot>> uploadTasks;
   private boolean isLoadingMessages;
+
+
   //views
   private RecyclerView privateMessagingRv;
   private ImageView messageSendIv;
@@ -387,7 +390,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
               public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 if (snapshot.exists()) {
-
+                  messagesProgressBar.setVisibility(View.VISIBLE);
                   fetchMessagesFromSnapshot(snapshot);
 
                 } else {
@@ -398,7 +401,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                               if (snapshot.exists()) {
-
+                                messagesProgressBar.setVisibility(View.VISIBLE);
                                 fetchMessagesFromSnapshot(snapshot);
 
                               } else {
@@ -483,13 +486,14 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
                 addDeleteFieldListener();
 
+                messagesProgressBar.setVisibility(View.GONE);
               }
 
               @Override
               public void onCancelled(@NonNull DatabaseError error) {
+                messagesProgressBar.setVisibility(View.GONE);
                 Toast.makeText(PrivateMessagingActivity.this,
                         R.string.message_load_failed, Toast.LENGTH_SHORT).show();
-                finish();
               }
             });
 
@@ -713,6 +717,14 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
   }
 
+  private boolean checkIsUploading(){
+    if (uploadTasks != null && !uploadTasks.isEmpty()) {
+      Toast.makeText(this, "Please wait while your previous attachment is being sent!"
+              , Toast.LENGTH_SHORT).show();
+      return true;
+    }
+    return false;
+  }
   private void showMessageOptionsBottomSheet() {
 
     messageAttachIv.setClickable(false);
@@ -723,26 +735,36 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
     parentView.findViewById(R.id.imageIv).setOnClickListener(view -> {
 
+      if (checkIsUploading()) {
+        return;
+      }
+
       bsd.dismiss();
 
       Files.startImageFetchIntent(PrivateMessagingActivity.this);
     });
 
     parentView.findViewById(R.id.audioIv).setOnClickListener(view -> {
-
+      if (checkIsUploading()) {
+        return;
+      }
 //        bsd.dismiss();
 //
 //        Files.startImageFetchIntent(PrivateMessagingActivity.this);
     });
 
     parentView.findViewById(R.id.videoIv).setOnClickListener(view -> {
-
+      if (checkIsUploading()) {
+        return;
+      }
       bsd.dismiss();
       Files.startVideoFetchIntent(PrivateMessagingActivity.this);
     });
 
     parentView.findViewById(R.id.documentIv).setOnClickListener(view -> {
-
+      if (checkIsUploading()) {
+        return;
+      }
       bsd.dismiss();
       Files.startDocumentFetchIntent(PrivateMessagingActivity.this);
     });
@@ -755,6 +777,10 @@ public class PrivateMessagingActivity extends AppCompatActivity
   }
 
   private void startAudioRecording() {
+
+      if (checkIsUploading()) {
+        return;
+      }
 
     if (ActivityCompat.checkSelfPermission(this,
             Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
@@ -1270,6 +1296,9 @@ public class PrivateMessagingActivity extends AppCompatActivity
           Files.startVideoFetchIntent(this);
           break;
 
+        case RECORD_AUDIO_REQUEST:
+          startAudioRecording();
+          break;
       }
 
     } else {
@@ -1412,8 +1441,8 @@ public class PrivateMessagingActivity extends AppCompatActivity
     } else if (uploadTasks != null && !uploadTasks.isEmpty()) {
 
       AlertDialog.Builder alert = new AlertDialog.Builder(this);
-      alert.setTitle("Do you want to leave message is sending?");
-      alert.setMessage("leaving while message is sending while cancel the message!");
+      alert.setTitle("Do you want to leave while your message is being sent?");
+      alert.setMessage("leaving will cancel the message!");
 
       alert.setPositiveButton("Yes", (dialogInterface, i) -> {
         cancelUploadTasks();
@@ -1618,6 +1647,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
   }
 
   //click listeners
+  //click listeners
   private class FirstMessageClickListener implements View.OnClickListener {
 
     @Override
@@ -1689,7 +1719,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
         Log.d(TAG, "is at top man");
 
         isLoadingMessages = true;
-        messagesProgressBar.setVisibility(View.GONE);
+        messagesProgressBar.setVisibility(View.VISIBLE);
         getMoreTopMessages();
 
       }

@@ -3,37 +3,31 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-    <item
-        android:id="@+id/action_more"
-        android:orderInCategory="100"
-        android:icon="@drawable/dots_more_icon"
-        android:title="@string/showmore"
-        app:showAsAction="always"
-        >
+<!--    <item-->
+<!--        android:id="@+id/action_more"-->
+<!--        android:orderInCategory="100"-->
+<!--        android:icon="@drawable/dots_more_icon"-->
+<!--        android:title="@string/showmore"-->
+<!--        app:showAsAction="always"-->
+<!--        >-->
 
-        <menu>
-            <item
-                android:id="@+id/action_online"
-                android:icon="@drawable/dots_more_icon"
-                android:title="@string/online"
-                app:showAsAction="always"
-                />
+<!--        <menu>-->
+<!--            <item-->
+<!--                android:id="@+id/action_online"-->
+<!--                android:icon="@drawable/dots_more_icon"-->
+<!--                android:title="@string/online"-->
+<!--                app:showAsAction="always"-->
+<!--                />-->
 
-            <item
-                android:id="@+id/action_about"
-                android:icon="@drawable/dots_more_icon"
-                android:title="@string/About"
-                app:showAsAction="always"
-                />
-        </menu>
+<!--            <item-->
+<!--                android:id="@+id/action_about"-->
+<!--                android:icon="@drawable/dots_more_icon"-->
+<!--                android:title="@string/About"-->
+<!--                app:showAsAction="always"-->
+<!--                />-->
+<!--        </menu>-->
 
-    </item>
-
-
-
-
-
-
+<!--    </item>-->
 <!--    <item android:id="@+id/search"-->
 <!--        android:title="Search"-->
 <!--        android:icon="@drawable/search_icon"-->

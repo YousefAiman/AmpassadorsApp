@@ -2,6 +2,7 @@ package hashed.app.ampassadors.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -355,7 +356,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private void bind(PostData postData) {
 
       if (postData.getAttachmentUrl() != null) {
-        Picasso.get().load(postData.getAttachmentUrl()).fit().into(newsIv);
+        Picasso.get().load(postData.getAttachmentUrl()).fit().centerCrop().into(newsIv);
       }
       newsTitleTv.setText(postData.getTitle());
       itemView.setOnClickListener(this);
@@ -387,7 +388,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private void bind(PostData postData) {
 
       if (postData.getVideoThumbnailUrl() != null) {
-        Picasso.get().load(postData.getVideoThumbnailUrl()).fit().into(newsIv);
+        Picasso.get().load(postData.getVideoThumbnailUrl()).fit().centerCrop().into(newsIv);
       }
 
       newsTitleTv.setText(postData.getTitle());
@@ -625,8 +626,6 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private void bind(PostData postData) {
 
-      if (postData.getPollOptions() == null) {
-
         if (postData.isPollEnded()) {
 
           getPollRecycler(true);
@@ -646,12 +645,9 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             getPollRecycler(false);
 
           }
-
         }
 
-      }
       questionTv.setText(postData.getTitle());
-
 
       itemView.setOnClickListener(this);
     }
@@ -659,7 +655,10 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private void getPollRecycler(boolean hasEnded) {
 
       final PostData postData = posts.get(getAdapterPosition());
-      postData.setPollOptions(new ArrayList<>());
+
+      if(postData.getPollOptions() == null){
+        postData.setPollOptions(new ArrayList<>());
+      }
 
       final PollPostAdapter adapter = new PollPostAdapter(postData.getPollOptions()
               , postData.getPostId(), hasEnded, postData.getTotalVotes());
@@ -669,45 +668,54 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
       adapter.setHasStableIds(true);
       pollRv.setAdapter(adapter);
 
-      final AtomicInteger chosenOption = new AtomicInteger(-1);
 
-      postsCollectionRef.document(postData.getPostId())
-              .collection("UserVotes").whereEqualTo("userId", currentUid)
-              .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-        @Override
-        public void onSuccess(QuerySnapshot snapshots) {
-          if (!snapshots.isEmpty()) {
-            chosenOption.set(snapshots.getDocuments().get(0).get("voteOption", Integer.class));
-          }
-        }
-      }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-        @Override
-        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-          postsCollectionRef.document(postData.getPostId())
-                  .collection("Options").get()
-                  .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot snapshots) {
-                      if (!snapshots.isEmpty()) {
-                        postData.getPollOptions().addAll(snapshots.toObjects(PollOption.class));
-                      }
-                    }
-                  }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-              if (task.isSuccessful() && !postData.getPollOptions().isEmpty()) {
+      if(postData.getPollOptions().isEmpty()){
 
-                if (chosenOption.get() != -1) {
-                  postData.getPollOptions().get(chosenOption.get()).setChosen(true);
-                  adapter.showProgress = true;
-                }
+        final AtomicInteger chosenOption = new AtomicInteger(-1);
 
-                adapter.notifyDataSetChanged();
-              }
+        postsCollectionRef.document(postData.getPostId())
+                .collection("UserVotes").whereEqualTo("userId", currentUid)
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+          @Override
+          public void onSuccess(QuerySnapshot snapshots) {
+            if (!snapshots.isEmpty()) {
+              chosenOption.set(snapshots.getDocuments().get(0).get("voteOption", Integer.class));
             }
-          });
-        }
-      });
+          }
+        })
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                  @Override
+                  public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    postsCollectionRef.document(postData.getPostId())
+                            .collection("Options").get()
+                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                              @Override
+                              public void onSuccess(QuerySnapshot snapshots) {
+                                if (!snapshots.isEmpty()) {
+                                  postData.getPollOptions().addAll(snapshots.toObjects(PollOption.class));
+                                }
+                              }
+                            }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                      @Override
+                      public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && !postData.getPollOptions().isEmpty()) {
+
+                          if (chosenOption.get() != -1) {
+                            postData.getPollOptions().get(chosenOption.get()).setChosen(true);
+                            adapter.showProgress = true;
+                          }
+
+                          adapter.notifyDataSetChanged();
+                        }
+                      }
+                    });
+                  }
+                });
+
+
+      }
+
+
 
     }
 
