@@ -34,6 +34,12 @@
             android:screenOrientation="portrait"
             android:configChanges = "orientation|keyboard|keyboardHidden|screenLayout|screenSize"/>
 
+        <activity android:name=".Activities.List_Sug_Activity"/>
+        <activity android:name=".Activities.Suggestions_DtailesActivity"/>
+        <activity android:name=".Activities.ComplanitsListActivity"/>
+
+        <activity android:name=".Activities.Complanits_DetailsActivity"/>
+
         <activity android:name=".Activities.PostPollActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".Activities.PostNewsActivity"

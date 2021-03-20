@@ -195,7 +195,7 @@
     <string name="Meetings">Meetings</string>
     <string name="user_requests">User Registration Requests</string>
     <string name="already_have_an_account_sign_in">Already have an account? Sign in</string>
-    <string name="Error_meassage_titleCom">Enter your title pleas</string>
+    <string name="Error_meassage_subjectTitle">Enter your subject title pleas</string>
     <string name="write_your_subject">Write your subject pleas</string>
     <string name="dowonloading_">Downloading…</string>
     <string name="SuccessfullMessage">Add Successfully</string>
@@ -236,4 +236,15 @@
     <string name="continue_guest">Continue as guest</string>
     <string name="skip">Skip</string>
 
+    <string name="Error_message_Details">Plaes Enter Your Details</string>
+    <string name="Finish_message">Download Finish</string>
+    <string name="Title_AlretDialoge">Choose you profile photo</string>
+    <string name="CaptuerPhoto">Take photo</string>
+    <string name="OpenGallray">open Gallery</string>
+    <string name="Rest_Password">Reset Password</string>
+    <string name="Email_Rest_Password">Enter your Email to Revived Reset Link</string>
+    <string name="Link_rest_password_sent">"Reset Link To Your Email. "</string>
+    <string name="Email_Verfiy">Verification Email Has been Sent.</string>
+    <string name="Email_not_Sent">Email not Sent</string>
+    <string name="Password_verfiy">Password must match and confirm password</string>
 </resources>
