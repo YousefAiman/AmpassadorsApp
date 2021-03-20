@@ -7,7 +7,7 @@ import com.google.firebase.database.PropertyName;
 import java.io.Serializable;
 
 @IgnoreExtraProperties
-public class UserPreview implements Serializable {
+public class UserSearchPreview implements Serializable {
 
   @PropertyName("userId")
   public String userId;
@@ -15,18 +15,8 @@ public class UserPreview implements Serializable {
   public String imageUrl;
   @PropertyName("username")
   public String username;
-  @PropertyName("online")
-  public boolean online;
 
-  public UserPreview() {
-  }
-
-
-  public UserPreview(String userId, String imageUrl, String username, boolean online) {
-    this.userId = userId;
-    this.imageUrl = imageUrl;
-    this.username = username;
-    this.online = online;
+  public UserSearchPreview() {
   }
 
   public String getImageUrl() {
@@ -53,11 +43,4 @@ public class UserPreview implements Serializable {
     this.userId = userId;
   }
 
-  public boolean isOnline() {
-    return online;
-  }
-
-  public void setOnline(boolean online) {
-    this.online = online;
-  }
 }

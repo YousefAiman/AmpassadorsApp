@@ -144,7 +144,6 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
 
   }
 
-
   private void setViewClickers() {
 
     toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -255,7 +254,9 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
 
     selectedUsers = new ArrayList<>();
 
-    selectedUsersAdapter = new UsersAdapter(selectedUsers, R.layout.user_picked_preview_item_layout);
+    selectedUsersAdapter = new UsersAdapter(selectedUsers,
+            R.layout.user_picked_preview_item_layout);
+
     usersPickedRv.setAdapter(selectedUsersAdapter);
 
     getUsers();
@@ -268,7 +269,12 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
 
   private void getUsers() {
 
+//    double loopCount = Math.ceil(selectedUserIdsList.size()/10.0);
+//
+//    for(int i=0;i<loopCount)
+
     for (String id : selectedUserIdsList) {
+//      usersRef.whereArrayContainsAny(id,selectedUserIdsList)
 
       usersRef.document(id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
         @Override
@@ -283,14 +289,11 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
           }
         }
       });
-
-
     }
   }
 
   private void updateContributorsCount() {
-    contributorsTv.setText(getResources().getString(R.string.contributors) + ": " +
-            selectedUserIdsList.size());
+    contributorsTv.setText(getResources().getString(R.string.contributors) + ": " + selectedUserIdsList.size());
   }
 
 

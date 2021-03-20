@@ -1,181 +1,96 @@
-<?xml version="1.0"?>
-
-    <resources>
+<resources>
 
     <string name="app_name">Pal vision</string>
-
     <string name="more">More</string>
-
     <string name="notification_indicator">notification indicator</string>
-
     <string name="notifications">notifications</string>
-
     <string name="profile_image">profile image</string>
 
     <!--Messaging-->
-
-
     <string name="record_audio_message">record audio message</string>
-
     <string name="text_message">Text Message …</string>
-
     <string name="attach_files">Attach files</string>
-
     <string name="send_message">Send Message</string>
-
     <string name="message_deleted">Message deleted</string>
-
     <string name="message_send_empty">You can\'t send an empty message</string>
-
     <string name="message_send_failed">Failed to send message!</string>
-
     <string name="message_load_failed">Failed to load messages!</string>
-
     <string name="message_delete">Do you want to delete this message?</string>
-
     <string name="new_group">New Group</string>
 
     <!--actions-->
-
-
     <string name="delete">Delete</string>
-
     <string name="cancel">Cancel</string>
-
     <string name="dummy_button">Dummy Button</string>
-
     <string name="dummy_content">DUMMY\nCONTENT</string>
-
     <string name="chosen_image">Chosen image</string>
-
     <string name="message_image">message image</string>
-
     <string name="video">video</string>
-
     <string name="audio">audio</string>
-
     <string name="skype">skype</string>
-
     <string name="document">document</string>
-
     <string name="zoom">zoom</string>
-
     <string name="image">image</string>
-
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
     <string name="chats">Chats</string>
-
     <string name="add_group">Add Group</string>
-
     <string name="online">online</string>
-
     <string name="offline">offline</string>
-
     <string name="done">done</string>
-
     <string name="no_current_messages">No Current Messages</string>
-
     <string name="no_online_users">No Online Users</string>
-
     <string name="no_current_meetings">No Current Meetings</string>
-
     <string name="profile">Profile</string>
-
     <string name="away">away</string>
-
     <string name="showmore">Showmore</string>
-
     <string name="About">About</string>
-
     <string name="set_duration">Set duration</string>
-
     <string name="days">Days</string>
-
     <string name="comments">Comments</string>
-
     <string name="text_comment">Text Comment …</string>
-
     <string name="likes">Likes</string>
-
     <string name="hours">Hours</string>
-
     <string name="minute">Minute</string>
-
     <string name="minutes">Minutes</string>
-
     <string name="set">Set</string>
-
     <string name="selected">Selected</string>
-
     <string name="out_of">out of</string>
 
     <!--Comments-->
-
-
     <string name="failed_to_like">Failed to like comment!</string>
-
     <string name="failed_to_remove_like">Failed to remove like!</string>
 
     <!--Poll-->
-
-
     <string name="add_question_poll">Please Add at least two question to the poll!</string>
-
     <string name="set_duration_poll">Please set the duration for the poll!</string>
-
     <string name="two_items_poll">Please enter at least two choices for your poll!</string>
-
     <string name="poll_publish_failed">Failed to publish poll please try again!</string>
-
     <string name="vote">Vote</string>
-
     <string name="num_of_people">Number of people</string>
-
     <string name="vote_check">Vote check</string>
 
     <!--Post-->
-
-
     <string name="Post">Post</string>
-
     <string name="username">Name</string>
-
     <string name="title_interface">post</string>
-
     <string name="title_string">News Title </string>
-
     <string name="Details">Details</string>
-
     <string name="create_topic">Create Topic</string>
-
     <string name="Notifications">Notifications</string>
-
-    <string name="post_publish_error">An error occurred while trying to publish post! Please try again!</string>
+    <string name="post_publish_error">
+        An error occurred while trying to publish post! Please try again!</string>
 
     <!--Suggestions And Complaints-->
-
-
     <string name="Complaints">Complaints</string>
-
     <string name="title">we would like to hear from you</string>
-
     <string name="com_title">Complaints Title</string>
-
     <string name="defendant">Defendant</string>
-
-    <string name="subject">Subject</string>
-
+    <string name="subject" >Subject</string>
     <string name="send_btn">Send</string>
-
     <string name="Suggestion">Suggestion</string>
-
     <string name="suggest_title">Suggest Title</string>
-
     <string name="listSuggestion">List Suggestion</string>
-
     <string name="listComplaints">List Complaints</string>
-
     <string name="poll">Poll</string>
 
     <string name="polls">Polls</string>
@@ -196,120 +111,73 @@
 
 
     <string name="aboutus">About us</string>
-
     <string name="logout">Logout</string>
 
+
     <string name="Error_message_defname">Enter your name pleas</string>
-
     <!--Notifications-->
-
-
     <string name="new_message">New message from </string>
-
     <string name="fullscreen_image">Fullscreen image</string>
-
     <string name="try_again">Try again</string>
-
     <string name="you_are_not_currently_connected_to_the_internet">You are not currently connected to the internet!</string>
-
     <string name="please_check_your_internet_connection_and_try_again">Please check your internet connection and try again.</string>
-
     <string name="enter_meeting_topic">Meeting topic…</string>
-
     <string name="news">News</string>
-
     <string name="meeting_talk_points">Meeting talk points</string>
-
     <string name="meeting_duration">Meeting duration</string>
-
     <string name="create_meeting_now">Create Meeting now</string>
-
     <string name="schedule_meeting">Schedule meeting</string>
-
     <string name="date">Date:</string>
-
     <string name="time">Time:</string>
-
     <string name="liked_post"> Liked your post</string>
-
     <string name="commented_post"> Commented on your post</string>
-
     <string name="replied_comment"> Replied to your comment</string>
+
 
     <!-- ٍ Spinner persons -->
 
+    <string-array name="persons_array">
+        <item>Ambassador</item>
+        <item>Publisher</item>
+        <item>Admin</item>
+        <item>Coordinator</item>
+        <item>Guest</item>
 
 
-    -<string-array name="persons_array">
-
-    <item>Ambassador</item>
-
-    <item>Publisher</item>
-
-    <item>Admin</item>
-
-    <item>Coordinator</item>
-
-    <item>Guest</item>
-
-</string-array>
-
+    </string-array>
     <string name="title_activity_side_drawer">SideDrawer</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
-
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="nav_header_title">Android Studio</string>
-
     <string name="nav_header_subtitle">android.studio@android.com</string>
-
     <string name="nav_header_desc">Navigation header</string>
-
     <string name="action_settings">Settings</string>
 
     <string name="menu_home">Home</string>
-
     <string name="menu_gallery">Gallery</string>
-
     <string name="menu_slideshow">Slideshow</string>
-
     <string name="Send">Send</string>
-
     <string name="AwarenessPosts">Awareness Posts</string>
-
     <string name="Courses">Courses</string>
-
     <string name="Polls">Polls</string>
-
-    <string name="PolicyPrivacy">Our privacy policy </string>
-
+    <string name="PolicyPrivacy">
+        Our privacy policy
+    </string>
     <string name="Proposals">Suggestions</string>
-
     <string name="Aboutus">About us</string>
-
     <string name="Logout">Logout</string>
-
     <string name="Poll">Polls</string>
-
     <string name="News">News</string>
 
     <string name="search_for_users">Search for users</string>
-
     <string name="search_user">Search user</string>
-
-    <string name="select_name_and_group_image_image_is_optional">Select name and groupimage - image is optional</string>
-
+    <string name="select_name_and_group_image_image_is_optional">Select name and group
+        image - image is optional</string>
     <string name="enter_group_name_here">Enter group name here…</string>
-
     <string name="contributors">Contributors</string>
-
     <string name="newer">Newer</string>
-
     <string name="older">Older</string>
-
     <string name="invited_meeting">Invitation to meeting</string>
-
     <string name="like">Like</string>
 
 
@@ -341,141 +209,74 @@ Legal and human rights support program.
     </string>
 
     <string name="comment">Comment</string>
-
     <string name="publish">Publish</string>
-
     <string name="Title">Title</string>
-
     <string name="new_post">NEW POST</string>
-
     <string name="sign_in_man">You need to sing in to complete this operation</string>
-
     <string name="new_poll">NEW POLL</string>
-
     <string name="close">Close</string>
-
     <string name="createsubject">Create Subject</string>
-
     <string name="Publish">Publish</string>
-
     <string name="qusetoin">qusetoin....</string>
-
     <string name="timepoll">Poll Time</string>
-
     <string name="Settings">Settings</string>
-
     <string name="country">Country</string>
-
     <string name="city">City</string>
-
     <string name="phone">Phone</string>
-
     <string name="save">Save</string>
-
     <string name="email">Email</string>
-
     <string name="password">Password</string>
-
     <string name="sign_in">Sign In</string>
-
     <string name="forget_password">Forget Password</string>
-
     <string name="verify_email">Verify Email</string>
-
     <string name="create_new_account">Create New Account</string>
-
     <string name="confirm_password">Confirm Password</string>
 
     <string name="sign_up">Sign Up</string>
-
     <string name="alread_have_account">Already Have Account</string>
-
     <string name="approve">Approve</string>
-
     <string name="photo">photos</string>
-
     <string name="edit">Edit</string>
-
     <string name="videos">videos</string>
-
     <string name="read_more">read more</string>
-
     <string name="join">Join</string>
-
     <string name="Meetings">Meetings</string>
-
     <string name="user_requests">User Requests</string>
-
     <string name="already_have_an_account_sign_in">Already have an account? Sign in</string>
-
     <string name="Error_meassage_titleCom">Enter your title pleas</string>
-
     <string name="write_your_subject">Write your subject pleas</string>
-
     <string name="dowonloading_">Downloading...</string>
-
     <string name="SuccessfullMessage">Add Successfully</string>
-
     <string name="Delete_success">Item Delete Successfully</string>
-
     <string name="Download">Downloading...</string>
-
     <string name="AuthMessage">Pleas Check your Intetnet Connection</string>
-
     <string name="Meetings_Message_cant_Slected_item">Meeting time can\'t be at selected time!</string>
-
     <string name="meeting_title">Select Meeting Time</string>
-
     <string name="Auth_from_sending_message">Do you want to leave message is sending?</string>
-
     <string name="Leaving_Message">leaving while message is sending while cancel the message!</string>
-
     <string name="YES">Yes</string>
-
     <string name="No">No</string>
-
     <string name="Error_meassage_MeetingFiald">Failed to create meeting please try again!</string>
-
     <string name="Publish_Meeting">Publishing Meeting!</string>
-
     <string name="Choose_1">"The Choose 1 "</string>
-
-    <string name="Choose_2">The Choose 2</string>
-
+    <string name="Choose_2">The  Choose 2</string>
     <string name="Publish_Poll">Publishing poll!</string>
-
     <string name="EndMeeting_Message">Sorry this meeting has ended and all participants will be kicked out</string>
-
     <string name="Error_Delete_Message">Failed To Delete the Message</string>
-
     <string name="Error_Messsage_to_upload_video">You can not Upload the video form google directly</string>
-
     <string name="Google_video_Message">You have to download video then try again!</string>
-
     <string name="Message_Error_Uplaod_BigFile">You can\'t send files bigger than</string>
-
     <string name="DataScale">MB!</string>
-
     <string name="DownLoad_Asking">Do you want to download ?</string>
-
     <string name="Download_btn">Download</string>
-
     <string name="Cansle">Cansle</string>
-
     <string name="Start_zoom_Meeting">"Zoom meeting started! "</string>
-
     <string name="send_An_Message">send an image</string>
-
     <string name="sen_Attachment">send an attachment</string>
-
     <string name="send_video">" send an video"</string>
-
     <string name="Succes_Login">Logged out successfully</string>
-
     <string name="Message_Fill_title">Please fill in the title!</string>
-
     <string name="Message_Fill_descr">Please fill in the description!</string>
-
     <string name="Message_Attchent_post">Please choose an attachment!</string>
 
 </resources>

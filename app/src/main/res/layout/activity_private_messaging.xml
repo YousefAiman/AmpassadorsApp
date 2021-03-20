@@ -22,10 +22,18 @@
             android:layout_width="wrap_content"
             android:layout_below="@id/privateMessagingTb"
             android:layout_centerHorizontal="true"
+            android:theme="@style/progressBarGreen"
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:layout_margin="2dp"/>
 
+
+<!--        <ProgressBar-->
+<!--            android:id="@+id/progressBar"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:visibility="visible"-->
+<!--            android:layout_centerInParent="true" />-->
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/privateMessagingRv"

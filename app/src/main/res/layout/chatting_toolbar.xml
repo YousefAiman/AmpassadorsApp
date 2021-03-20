@@ -31,16 +31,26 @@
             android:textSize="24sp" />
 
 
-        <SearchView
-            android:id="@+id/chattingSearchView"
+        <TextView
+            android:id="@+id/searchTv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:queryHint="Search"
-            android:layout_marginVertical="12dp"
-            style="@style/searchViewStyle"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="10dp"
             android:layout_marginHorizontal="10dp"
-            android:searchIcon="@drawable/search_icon"
-            android:background="@drawable/search_view_back" />
+            android:background="@drawable/search_view_back"
+            android:paddingHorizontal="15dp"
+            app:drawableStartCompat="@drawable/search_icon" />
+<!--        <SearchView-->
+<!--            android:id="@+id/chattingSearchView"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:queryHint="Search"-->
+<!--            android:layout_marginVertical="12dp"-->
+<!--            style="@style/searchViewStyle"-->
+<!--            android:searchHintIcon="@drawable/download_icon"-->
+<!--            android:searchIcon="@drawable/download_icon"-->
+<!--            android:layout_marginHorizontal="10dp"-->
+<!--            android:background="@drawable/search_view_back" />-->
 
     </LinearLayout>
 

@@ -27,88 +27,91 @@ import hashed.app.ampassadors.Utils.SigninUtil;
 
 public class SuggestionsActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener {
 
-  EditText titleSubject;
-  EditText subject;
-  Button send;
-  FirebaseFirestore firebaseFirestore;
-  CollectionReference reference;
-  ProgressDialog progressBar;
+    EditText titleSubject;
+    EditText subject;
+    Button send;
+    FirebaseFirestore firebaseFirestore;
+    CollectionReference reference;
+    ProgressDialog progressBar;
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_suggestions);
-    if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_suggestions);
+        if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
 
-      SigninUtil.getInstance(SuggestionsActivity.this,
-              SuggestionsActivity.this).show();
+            SigninUtil.getInstance(SuggestionsActivity.this,
+                    SuggestionsActivity.this).show();
+        }
+
+        setupCompontet();
+        OnClick();
+        setUpToolBarAndActions();
     }
 
-    setupCompontet();
-    OnClick();
-    setUpToolBarAndActions();
-  }
+    public void setupCompontet() {
+        titleSubject = findViewById(R.id.defendant);
+        send = findViewById(R.id.send);
+        subject = findViewById(R.id.subject);
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        reference = firebaseFirestore.collection("Suggestions");
+        progressBar = new ProgressDialog(this);
+    }
 
-  public void setupCompontet() {
-    titleSubject = findViewById(R.id.defendant);
-    send = findViewById(R.id.send);
-    subject = findViewById(R.id.subject);
-    firebaseFirestore = FirebaseFirestore.getInstance();
-    reference = firebaseFirestore.collection("Suggestions");
-    progressBar = new ProgressDialog(this);
-  }
-
-  public void OnClick() {
-    send.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        String subjectText = subject.getText().toString();
-        String title = titleSubject.getText().toString();
-        String suggid = UUID.randomUUID().toString();
-        if (subjectText.trim().isEmpty() && title.trim().isEmpty()) {
-          Toast.makeText(SuggestionsActivity.this, "All failed required ", Toast.LENGTH_SHORT).show();
-        } else {
-          HashMap<String, Object> hashMap = new HashMap<String, Object>();
-          hashMap.put("title", title);
-          hashMap.put("description", subjectText);
-          hashMap.put("time", System.currentTimeMillis());
-          hashMap.put("userid", FirebaseAuth.getInstance().getUid());
-          hashMap.put("SuggestionId", suggid);
-          hashMap.put("reviewed", false);
-          progressBar.setMessage("Downloading ...");
-          progressBar.show();
-          reference.document(suggid).set(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+    public void OnClick() {
+        send.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onSuccess(Void aVoid) {
-              progressBar.dismiss();
-              Intent intent = new Intent(getApplicationContext(), List_Sug_Activity.class);
-              startActivity(intent);
-              Toast.makeText(SuggestionsActivity.this, "Add Successfully", Toast.LENGTH_SHORT).show();
+            public void onClick(View v) {
+                String subjectText = subject.getText().toString();
+                String title = titleSubject.getText().toString();
+                String suggid = UUID.randomUUID().toString();
+                if (title.trim().isEmpty()) {
+                    Toast.makeText(SuggestionsActivity.this, R.string.Error_meassage_subjectTitle, Toast.LENGTH_SHORT).show();
+                } else if (subjectText.trim().isEmpty()) {
+                    Toast.makeText(SuggestionsActivity.this, R.string.write_your_subject, Toast.LENGTH_SHORT).show();
+
+                } else {
+                    HashMap<String, Object> hashMap = new HashMap<String, Object>();
+                    hashMap.put("title", title);
+                    hashMap.put("description", subjectText);
+                    hashMap.put("time", System.currentTimeMillis());
+                    hashMap.put("userid", FirebaseAuth.getInstance().getUid());
+                    hashMap.put("SuggestionId", suggid);
+                    hashMap.put("reviewed", false);
+                    progressBar.setMessage(getString(R.string.Download));
+                    progressBar.show();
+                    reference.document(suggid).set(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            progressBar.dismiss();
+                            Toast.makeText(SuggestionsActivity.this, R.string.SuccessfullMessage, Toast.LENGTH_SHORT).show();
+                            subject.setText("");
+                            titleSubject.setText("");
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressBar.dismiss();
+                            Toast.makeText(SuggestionsActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+
+                }
             }
-          }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-              progressBar.dismiss();
-              Toast.makeText(SuggestionsActivity.this, "Error" + e.getMessage(), Toast.LENGTH_SHORT).show();
+        });
+    }
 
-            }
-          });
+    private void setUpToolBarAndActions() {
 
-        }
-      }
-    });
-  }
+        final Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+        toolbar.setOnMenuItemClickListener(this);
 
-  private void setUpToolBarAndActions() {
+    }
 
-    final Toolbar toolbar = findViewById(R.id.toolbar);
-    toolbar.setNavigationOnClickListener(v -> onBackPressed());
-    toolbar.setOnMenuItemClickListener(this);
-
-  }
-
-  @Override
-  public boolean onMenuItemClick(MenuItem item) {
-    return false;
-  }
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        return false;
+    }
 }

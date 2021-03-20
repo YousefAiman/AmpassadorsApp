@@ -23,7 +23,7 @@
 
     <item
         android:id="@+id/policy"
-        android:title="@string/PolicyPrivacy" />
+        android:title="@string/privacyPolicy" />
 
 
     <item

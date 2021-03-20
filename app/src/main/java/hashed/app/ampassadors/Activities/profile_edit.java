@@ -154,7 +154,7 @@ public class profile_edit extends AppCompatActivity {
 
     // CAMERA
     if (requestCode == 2 && resultCode == RESULT_OK) {
-      mProgressDialog.setMessage("جاري التحميل...");
+      mProgressDialog.setMessage(getString(R.string.Download));
       mProgressDialog.show();
       Uri uri = data.getData();
       StorageReference filepath = sreference.child("Profile img").child(uri.getLastPathSegment());
@@ -175,13 +175,13 @@ public class profile_edit extends AppCompatActivity {
               Log.d("ttt", imageUrl);
             }
           });
-          Toast.makeText(profile_edit.this, "انتهى التحميل...", Toast.LENGTH_SHORT).show();
+          Toast.makeText(profile_edit.this, R.string.Finish_message, Toast.LENGTH_SHORT).show();
         }
       });
     } else if (requestCode == CAMERA_REQUEST_CODE) {
       /// GALLERY
       uploading = true;
-      mProgressDialog.setMessage("جاري التحميل ......");
+      mProgressDialog.setMessage(getString(R.string.Download));
       mProgressDialog.show();
       filePath = Uri.parse("file://" + cameraImageFilePath);
       sreference = FirebaseStorage.getInstance().getReference().child("Profile img/" + UUID.randomUUID().toString());
@@ -199,7 +199,7 @@ public class profile_edit extends AppCompatActivity {
               Toast.makeText(profile_edit.this, imageUrl, Toast.LENGTH_SHORT).show();
             }
           });
-          Toast.makeText(profile_edit.this, "انتهى التحميل...", Toast.LENGTH_SHORT).show();
+          Toast.makeText(profile_edit.this, R.string.Finish_message, Toast.LENGTH_SHORT).show();
         }
       }).addOnFailureListener(new OnFailureListener() {
         @Override
@@ -213,9 +213,9 @@ public class profile_edit extends AppCompatActivity {
 
   private void SelectImage(Context context) {
     //  CHOOSE WHERE WILL UPLOAD THE IMAGE
-    final CharSequence[] options = {"Take photo", "open Gallery", "Cancel"};
+    final CharSequence[] options = {getString(R.string.CaptuerPhoto), getString(R.string.OpenGallray), getString(R.string.Cansle)};
     final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-    builder.setTitle("Choose you profile photo");
+    builder.setTitle(getString(R.string.Title_AlretDialoge));
     builder.setItems(options, new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialogInterface, int i) {
@@ -280,7 +280,7 @@ public class profile_edit extends AppCompatActivity {
     userInfo.setCountry(country);
     userInfo.setCity(city);
     userInfo.setPhone(phone);
-    userInfo.setUserid(firebaseUser.getUid());
+    userInfo.setUserId(firebaseUser.getUid());
     userInfo.setStatus(true);
 
 

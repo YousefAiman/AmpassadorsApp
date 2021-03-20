@@ -46,7 +46,7 @@ import hashed.app.ampassadors.Utils.GlobalVariables;
 public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,
         View.OnClickListener {
 
-  private static final int MEETING_LIMIT = 8;
+  private static final int MEETING_LIMIT = 10;
   //views
   private RecyclerView meetingsRv;
   private TextView noMessagesTv;
@@ -180,6 +180,7 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
 
   private void getMoreMeetings(boolean isInitial) {
 
+    swipeRefreshLayout.setRefreshing(true);
     isLoading = true;
 
     if (lastDocSnap != null) {
@@ -229,15 +230,14 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
           }
 
           adapter.notifyItemRangeInserted(
-                  (meetings.size() - task.getResult().size()) - 1,
+                  (meetings.size() - task.getResult().size()),
                   task.getResult().size());
 
         }
         isLoading = false;
-        swipeRefreshLayout.setRefreshing(false);
 
       }
-
+      swipeRefreshLayout.setRefreshing(false);
     });
 
   }

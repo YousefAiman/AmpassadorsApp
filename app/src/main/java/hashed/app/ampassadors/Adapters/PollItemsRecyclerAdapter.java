@@ -1,5 +1,6 @@
 package hashed.app.ampassadors.Adapters;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +16,13 @@ import hashed.app.ampassadors.R;
 
 public class PollItemsRecyclerAdapter extends RecyclerView.Adapter<PollItemsRecyclerAdapter.PollVh> {
 
-  ArrayList<String> pollOptions;
+  private final static int POLL_LIMIT = 100;
+  private final ArrayList<String> pollOptions;
+  private final Context context;
 
-  public PollItemsRecyclerAdapter(ArrayList<String> pollOptions) {
+  public PollItemsRecyclerAdapter(ArrayList<String> pollOptions, Context context) {
     this.pollOptions = pollOptions;
+    this.context = context;
   }
 
   @NonNull
@@ -34,13 +38,11 @@ public class PollItemsRecyclerAdapter extends RecyclerView.Adapter<PollItemsRecy
 
     holder.pollEd.setHint(pollOptions.get(position));
 
-    if (position == getItemCount() - 1 && position != 4) {
+    if (position == getItemCount() - 1 && position != POLL_LIMIT) {
       holder.pollAddIv.setVisibility(View.VISIBLE);
       holder.pollAddIv.setOnClickListener(v -> {
         holder.pollAddIv.setVisibility(View.INVISIBLE);
         addPollItem(position + 1);
-
-
       });
     } else {
       holder.pollAddIv.setVisibility(View.INVISIBLE);
@@ -51,7 +53,7 @@ public class PollItemsRecyclerAdapter extends RecyclerView.Adapter<PollItemsRecy
 
   private void addPollItem(int position) {
 
-    pollOptions.add("الخيار " + (position + 1));
+    pollOptions.add(context.getResources().getString(R.string.option)+" "+ (position + 1));
     notifyItemInserted(pollOptions.size());
 
   }

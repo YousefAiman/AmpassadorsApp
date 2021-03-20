@@ -15,7 +15,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -73,11 +75,26 @@ public class UserSearchActivity extends AppCompatActivity implements
     }
 
     users = new ArrayList<>();
-    pickerAdapter = new UsersPickerAdapter(users, previousSelectedUserIdsList, true);
-    userRv.setAdapter(pickerAdapter);
 
+    usersRef.orderBy("username")
+            .limit(100).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+      @Override
+      public void onSuccess(QuerySnapshot snapshots) {
+        if(!snapshots.isEmpty()){
+          users.addAll(snapshots.toObjects(UserPreview.class));
+        }
+      }
+    }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+      @Override
+      public void onComplete(@NonNull Task<QuerySnapshot> task) {
+        if(task.isSuccessful()){
+          pickerAdapter = new UsersPickerAdapter(users, previousSelectedUserIdsList,
+                  true);
+          userRv.setAdapter(pickerAdapter);
+        }
+      }
+    });
   }
-
   @Override
   public boolean onQueryTextSubmit(String query) {
 

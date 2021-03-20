@@ -66,7 +66,7 @@ public class Suggestions_DtailesActivity extends AppCompatActivity {
       }).addOnFailureListener(new OnFailureListener() {
         @Override
         public void onFailure(@NonNull Exception e) {
-          Toast.makeText(Suggestions_DtailesActivity.this, "Error" + e.getMessage(), Toast.LENGTH_SHORT).show();
+          Toast.makeText(Suggestions_DtailesActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
       });
 
@@ -88,7 +88,7 @@ public class Suggestions_DtailesActivity extends AppCompatActivity {
             finish();
             Intent intent = new Intent(getApplicationContext(), List_Sug_Activity.class);
             startActivity(intent);
-            Toast.makeText(Suggestions_DtailesActivity.this, "Delete Successfully", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Suggestions_DtailesActivity.this, R.string.Delete_success, Toast.LENGTH_SHORT).show();
           }
         }).addOnFailureListener(new OnFailureListener() {
           @Override

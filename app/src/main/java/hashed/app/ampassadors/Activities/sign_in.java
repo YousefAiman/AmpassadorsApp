@@ -1,9 +1,11 @@
 package hashed.app.ampassadors.Activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -22,9 +24,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.GlobalVariables;
 
 public class sign_in extends AppCompatActivity {
 
@@ -55,28 +59,28 @@ public class sign_in extends AppCompatActivity {
         EditText resetMail = new EditText(view.getContext());
         AlertDialog.Builder passwordResetDaialog = new AlertDialog.Builder(view.getContext());
 
-        passwordResetDaialog.setTitle("Reset Password");
-        passwordResetDaialog.setMessage("Enter your Email Ro Recived Reset Link");
+        passwordResetDaialog.setTitle(getString(R.string.Rest_Password));
+        passwordResetDaialog.setMessage(getString(R.string.Email_Rest_Password));
         passwordResetDaialog.setView(resetMail);
 
-        passwordResetDaialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        passwordResetDaialog.setPositiveButton(getString(R.string.YES), new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialogInterface, int i) {
             String mail = resetMail.getText().toString();
             auth.sendPasswordResetEmail(mail).addOnSuccessListener(new OnSuccessListener<Void>() {
               @Override
               public void onSuccess(Void aVoid) {
-                Toast.makeText(sign_in.this, "Reset Link To Your Email. ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(sign_in.this, R.string.Link_rest_password_sent, Toast.LENGTH_SHORT).show();
               }
             }).addOnFailureListener(new OnFailureListener() {
               @Override
               public void onFailure(@NonNull Exception e) {
-                Toast.makeText(sign_in.this, "Error! Reset Link is Not Sent" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(sign_in.this,  e.getMessage(), Toast.LENGTH_SHORT).show();
               }
             });
           }
         });
-        passwordResetDaialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        passwordResetDaialog.setNegativeButton(R.string.No, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -100,14 +104,14 @@ public class sign_in extends AppCompatActivity {
             @Override
             public void onSuccess(Void aVoid) {
               Toast.makeText(sign_in.this,
-                      "Verification Email Has been Sent.",
+                      R.string.Email_Verfiy,
                       Toast.LENGTH_SHORT).show();
             }
           }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
               Toast.makeText(sign_in.this,
-                      "Email not Sent", Toast.LENGTH_SHORT).show();
+                      R.string.Email_not_Sent, Toast.LENGTH_SHORT).show();
             }
           });
         }
@@ -142,18 +146,49 @@ public class sign_in extends AppCompatActivity {
         if (TextUtils.isEmpty(txt_email) || TextUtils.isEmpty(txt_password)) {
           Toast.makeText(sign_in.this, "All field are required", Toast.LENGTH_SHORT).show();
         } else {
+
+          final ProgressDialog dialog = new ProgressDialog(sign_in.this);
+          dialog.setMessage("Signing in!");
+          dialog.setCancelable(false);
+          dialog.show();
+
           auth.signInWithEmailAndPassword(txt_email, txt_password)
                   .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                       if (task.isSuccessful()) {
-                        Intent intent = new Intent(sign_in.this,
-                                Home_Activity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK |
-                                Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        finish();
+
+                        FirebaseFirestore.getInstance().collection("Users")
+                                .document(task.getResult().getUser().getUid()).get().
+                                addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                  @Override
+                                  public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    GlobalVariables.setRole(documentSnapshot.getString("Role"));
+                                  }
+                                }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                          @Override
+                          public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if(task.isSuccessful()){
+                              Intent intent = new Intent(sign_in.this,
+                                      Home_Activity.class);
+                              intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                                      Intent.FLAG_ACTIVITY_NEW_TASK);
+                              startActivity(intent);
+                              finish();
+                            }else{
+                              dialog.dismiss();
+                            }
+                          }
+                        }).addOnFailureListener(new OnFailureListener() {
+                          @Override
+                          public void onFailure(@NonNull Exception e) {
+                            dialog.dismiss();
+                          }
+                        });
                       } else {
+
+                        dialog.dismiss();
+
                         Toast.makeText(sign_in.this,
                                 "Error Authentication!", Toast.LENGTH_SHORT).show();
                       }
@@ -161,6 +196,7 @@ public class sign_in extends AppCompatActivity {
                   }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+              dialog.dismiss();
               Toast.makeText(sign_in.this, "Error: " +
                       e.getMessage(), Toast.LENGTH_SHORT).show();
             }

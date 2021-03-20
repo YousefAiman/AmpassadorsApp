@@ -10,18 +10,24 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import hashed.app.ampassadors.Activities.ConnectionActivity;
 import hashed.app.ampassadors.Activities.GroupMessagingActivity;
 import hashed.app.ampassadors.Activities.Home_Activity;
 import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
 import hashed.app.ampassadors.Activities.WelcomeActivity;
+import hashed.app.ampassadors.Fragments.PostsFragment;
 import hashed.app.ampassadors.Services.FirebaseMessagingService;
+import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.WifiUtil;
 
 public class MainActivity extends AppCompatActivity {
@@ -54,50 +60,61 @@ public class MainActivity extends AppCompatActivity {
 
             FirebaseMessagingService.startMessagingService(this);
 
-            if (getIntent().hasExtra("destinationBundle")) {
+            FirebaseFirestore.getInstance().collection("Users")
+                    .document(user.getUid()).get().
+                    addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                      @Override
+                      public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        GlobalVariables.setRole(documentSnapshot.getString("Role"));
+                      }
+                    }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+              @Override
+              public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                  if (getIntent().hasExtra("destinationBundle")) {
 
-              final Bundle destinationBundle = getIntent().getBundleExtra("destinationBundle");
+                    final Bundle destinationBundle = getIntent().getBundleExtra("destinationBundle");
 
-              final String sourceType = destinationBundle.getString("sourceType");
-              final String sourceId = destinationBundle.getString("sourceId");
+                    final String sourceType = destinationBundle.getString("sourceType");
+                    final String sourceId = destinationBundle.getString("sourceId");
 
-              Intent intent = null;
+                    Intent intent = null;
 
-              switch (sourceType) {
-                case "privateMessaging":
-                  intent = startPrivateMessagingActivity(sourceId);
-                  break;
-                case "groupMessaging":
-                  intent = startGroupMessagingActivity(sourceId);
-                  break;
-                case "meetingStarted":
-                  intent = startMeetingsHomeActivity();
-                  break;
-                default:
-                  startHomeActivity();
-                  break;
+                    switch (sourceType) {
+                      case "privateMessaging":
+                        intent = startPrivateMessagingActivity(sourceId);
+                        break;
+                      case "groupMessaging":
+                        intent = startGroupMessagingActivity(sourceId);
+                        break;
+                      case "meetingStarted":
+                        intent = startMeetingsHomeActivity();
+                        break;
+                      default:
+                        startHomeActivity();
+                        break;
+                    }
+
+
+                    Intent finalIntent = intent;
+                    new Handler().postDelayed(new Runnable() {
+                      @Override
+                      public void run() {
+                        startActivity(finalIntent);
+                      }
+                    }, 800);
+
+                  } else {
+                    new Handler().postDelayed(new Runnable() {
+                      @Override
+                      public void run() {
+                        startHomeActivity();
+                      }
+                    }, 500);
+                  }
+                }
               }
-
-
-              Intent finalIntent = intent;
-              new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                  startActivity(finalIntent);
-                }
-              }, 800);
-
-            } else {
-
-              new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                  startHomeActivity();
-                }
-              }, 1000);
-            }
-
-
+            });
           } else {
             new Handler().postDelayed(new Runnable() {
               @Override
@@ -163,7 +180,8 @@ public class MainActivity extends AppCompatActivity {
 
 
   private void startHomeActivity() {
-    startActivity(new Intent(MainActivity.this, Home_Activity.class));
+    startActivity(new Intent(MainActivity.this, Home_Activity.class)
+    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     finish();
   }
 

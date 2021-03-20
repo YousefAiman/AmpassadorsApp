@@ -9,14 +9,16 @@
     android:theme="@style/ThemeOverlay.AmpassadorsApp.FullscreenContainer"
     tools:context=".Fragments.VideoFullScreenFragment">
 
-    <include
-        android:id="@+id/fullScreenToolbar"
-        layout="@layout/fullscreen_toolbar"/>
 
     <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/playerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:controller_layout_id="@layout/custom_video_controller_no_next"/>
+
+    <include
+        android:id="@+id/fullScreenToolbar"
+        layout="@layout/fullscreen_toolbar"/>
+
 
 </FrameLayout>

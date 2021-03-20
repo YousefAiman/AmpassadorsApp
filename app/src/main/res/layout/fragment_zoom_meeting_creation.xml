@@ -132,7 +132,7 @@
             android:fontFamily="@font/segoe_ui_bold"
             android:paddingHorizontal="10dp"
             android:paddingVertical="8dp"
-            android:text="00"
+            android:hint="00"
             android:textColor="@color/black_transparent"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="@+id/textView9"
