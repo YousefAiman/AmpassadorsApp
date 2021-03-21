@@ -78,8 +78,6 @@
                 android:text="@string/approve"
                 />
 
-
-
         </LinearLayout>
 
         <LinearLayout
