@@ -2,6 +2,7 @@ package hashed.app.ampassadors.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -9,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -22,7 +24,7 @@ import java.util.List;
 import hashed.app.ampassadors.Objects.Suggestions;
 import hashed.app.ampassadors.R;
 
-public class Suggestions_DtailesActivity extends AppCompatActivity {
+public class Suggestions_DtailesActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener{
 
   FirebaseFirestore firebaseFirestore;
   CollectionReference reference;
@@ -39,8 +41,7 @@ public class Suggestions_DtailesActivity extends AppCompatActivity {
     SetUpCompntet();
     ReadSuggest();
     ReviewedSuggest();
-
-  }
+    setUpToolBarAndActions();  }
 
   public void SetUpCompntet() {
     firebaseFirestore = FirebaseFirestore.getInstance();
@@ -80,6 +81,8 @@ public class Suggestions_DtailesActivity extends AppCompatActivity {
     delete.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
+
+
         String id = suggestion.getSuggestionId();
 
         reference.document(id).update("reviewed", true).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -99,5 +102,16 @@ public class Suggestions_DtailesActivity extends AppCompatActivity {
         });
       }
     });
+  }
+  private void setUpToolBarAndActions() {
+
+    final Toolbar toolbar = findViewById(R.id.toolbar);
+    toolbar.setNavigationOnClickListener(v -> onBackPressed());
+    toolbar.setOnMenuItemClickListener(this);
+
+  }
+  @Override
+  public boolean onMenuItemClick(MenuItem item) {
+    return false;
   }
 }

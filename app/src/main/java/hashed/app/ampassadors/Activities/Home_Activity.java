@@ -289,48 +289,54 @@ public class Home_Activity extends AppCompatActivity implements
 
             }else if (item.getItemId() == R.id.polls) {
 
-          Intent intent = new Intent(Home_Activity.this, ShowPollsActivity.class);
-          Bundle bundle = new Bundle();
-          bundle.putInt("postType",PostData.TYPE_POLL);
-          intent.putExtras(bundle);
-          intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-          startActivity(intent);
+            Intent intent = new Intent(Home_Activity.this, ShowPollsActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt("postType", PostData.TYPE_POLL);
+            intent.putExtras(bundle);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
 
 
-    }else if (item.getItemId() == R.id.complaints) {
-          if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
+//              B_Fragment fragment = new B_Fragment();
+//              Bundle bundle = new Bundle();
+//              bundle.putInt("postType",PostData.TYPE_POLL);
+//              fragment.setArguments(bundle);
+//              replaceFragment(fragment);
 
-              SigninUtil.getInstance(Home_Activity.this,
-                      Home_Activity.this).show();
-          }else {
-              Intent intent = new Intent(Home_Activity.this, ComplaintsActivity.class);
-              intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-              startActivity(intent);
-          }
-            } else if (item.getItemId() == R.id.policy){
-                Intent intent = new Intent(Home_Activity.this, PrivacyPolicy.class);
-              intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            }else if (item.getItemId() == R.id.proposals){
 
-          if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
+        } else if (item.getItemId() == R.id.complaints) {
+            Intent intent = new Intent(Home_Activity.this, ComplaintsActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } else if (item.getItemId() == R.id.listComplaints && GlobalVariables.getRole().equals("Admin")) {
 
-              SigninUtil.getInstance(Home_Activity.this,
-                      Home_Activity.this).show();
-          }else {
-              Intent intent = new Intent(Home_Activity.this, SuggestionsActivity.class);
-              intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-              startActivity(intent);
-          }
-    } else if (item.getItemId() == R.id.about) {
-              Intent intent = new Intent(Home_Activity.this, About_us.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-              startActivity(intent);
-    } else if (item.getItemId() == R.id.user_requests) {
-              Intent intent = new Intent(Home_Activity.this, Admin.class);
-              intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-              startActivity(intent);
-    }
+            Intent intent = new Intent(Home_Activity.this, ComplanitsListActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } else if (item.getItemId() == R.id.policy) {
+            Intent intent = new Intent(Home_Activity.this, PrivacyPolicy.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+
+
+        } else if (item.getItemId() == R.id.proposals) {
+            Intent intent = new Intent(Home_Activity.this, SuggestionsActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+
+        } else if (item.getItemId() == R.id.listSuggestion && GlobalVariables.getRole().equals("Admin")) {
+            Intent intent = new Intent(Home_Activity.this, List_Sug_Activity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } else if (item.getItemId() == R.id.about) {
+            Intent intent = new Intent(Home_Activity.this, About_us.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } else if (item.getItemId() == R.id.user_requests) {
+            Intent intent = new Intent(Home_Activity.this, Admin.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
 
     return true;
     }
