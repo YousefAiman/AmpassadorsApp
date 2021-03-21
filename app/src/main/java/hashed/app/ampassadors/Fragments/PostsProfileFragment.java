@@ -92,6 +92,7 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         username = view.findViewById(R.id.textView6);
         imageView = view.findViewById(R.id.profile_picture);
         swipeRefresh = view.findViewById(R.id.swipeRefreshLayout);
+        swipeRefresh.setOnRefreshListener(this);
 
         floatingButton.setOnClickListener(new View.OnClickListener() {
             @Override

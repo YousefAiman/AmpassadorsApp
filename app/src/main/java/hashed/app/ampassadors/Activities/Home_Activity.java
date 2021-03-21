@@ -45,6 +45,7 @@ import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Services.FirebaseMessagingService;
 import hashed.app.ampassadors.Utils.GlobalVariables;
+import hashed.app.ampassadors.Utils.SigninUtil;
 
 public class Home_Activity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
@@ -150,17 +151,40 @@ public class Home_Activity extends AppCompatActivity implements
           replaceFragment(new PostsFragment());
         }
       } else if (item.getItemId() == R.id.profile) {
-        if (nav_btom.getSelectedItemId() != R.id.profile) {
-          replaceFragment(new PostsProfileFragment());
-        }
+          if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
+
+              SigninUtil.getInstance(Home_Activity.this,
+                      Home_Activity.this).show();
+          }else{
+              if (nav_btom.getSelectedItemId() != R.id.profile) {
+                  replaceFragment(new PostsProfileFragment());
+              }
+          }
+
       } else if (item.getItemId() == R.id.chat) {
-        if (nav_btom.getSelectedItemId() != R.id.chat) {
-          replaceFragment(new ChattingFragment());
-        }
+
+          if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
+              SigninUtil.getInstance(Home_Activity.this,
+                      Home_Activity.this).show();
+
+          }else{
+              if (nav_btom.getSelectedItemId() != R.id.chat) {
+                  replaceFragment(new ChattingFragment());
+              }
+          }
+
       } else if (item.getItemId() == R.id.charity) {
-        if (nav_btom.getSelectedItemId() != R.id.charity) {
-          replaceFragment(new MeetingsFragment());
-        }
+
+          if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
+              SigninUtil.getInstance(Home_Activity.this,
+                      Home_Activity.this).show();
+
+          }else{
+              if (nav_btom.getSelectedItemId() != R.id.charity) {
+                  replaceFragment(new MeetingsFragment());
+              }
+          }
+
       }
 
       return true;
@@ -176,7 +200,6 @@ public class Home_Activity extends AppCompatActivity implements
     ).commit();
 
   }
-
   @Override
   public void onBackPressed() {
 
@@ -226,7 +249,6 @@ public class Home_Activity extends AppCompatActivity implements
             }
         }
     }
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
@@ -267,25 +289,48 @@ public class Home_Activity extends AppCompatActivity implements
 
             }else if (item.getItemId() == R.id.polls) {
 
-              B_Fragment fragment = new B_Fragment();
-              Bundle bundle = new Bundle();
-              bundle.putInt("postType",PostData.TYPE_POLL);
-              fragment.setArguments(bundle);
-              replaceFragment(fragment);
+          Intent intent = new Intent(Home_Activity.this, ShowPollsActivity.class);
+          Bundle bundle = new Bundle();
+            bundle.putInt("postType",PostData.TYPE_POLL);
+          intent.putExtras(bundle);
+          intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+          startActivity(intent);
+
+
+//              B_Fragment fragment = new B_Fragment();
+//              Bundle bundle = new Bundle();
+//              bundle.putInt("postType",PostData.TYPE_POLL);
+//              fragment.setArguments(bundle);
+//              replaceFragment(fragment);
+
+
+
 
     }else if (item.getItemId() == R.id.complaints) {
+          if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
+
+              SigninUtil.getInstance(Home_Activity.this,
+                      Home_Activity.this).show();
+          }else {
               Intent intent = new Intent(Home_Activity.this, ComplaintsActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+              intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
               startActivity(intent);
+          }
             } else if (item.getItemId() == R.id.policy){
                 Intent intent = new Intent(Home_Activity.this, PrivacyPolicy.class);
               intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }else if (item.getItemId() == R.id.proposals){
-                Intent intent = new Intent(Home_Activity.this, SuggestionsActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
 
+          if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
+
+              SigninUtil.getInstance(Home_Activity.this,
+                      Home_Activity.this).show();
+          }else {
+              Intent intent = new Intent(Home_Activity.this, SuggestionsActivity.class);
+              intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+              startActivity(intent);
+          }
     } else if (item.getItemId() == R.id.about) {
               Intent intent = new Intent(Home_Activity.this, About_us.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -182,7 +182,6 @@ public class sign_in extends AppCompatActivity {
                             dialog.dismiss();
 
                           }else{
-
                             if(snapshot.getBoolean("approvement")){
 
                               GlobalVariables.setRole(snapshot.getString("Role"));

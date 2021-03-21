@@ -85,7 +85,6 @@ public class A_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
     super.onViewCreated(view, savedInstanceState);
     post_list.setAdapter(adapter);
     ReadPost(true);
-
   }
 
   @Override
@@ -232,7 +231,7 @@ public class A_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
     }
   }
 
-  private class PostsBottomScrollListener extends RecyclerView.OnScrollListener {
+  public class PostsBottomScrollListener extends RecyclerView.OnScrollListener {
     @Override
     public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
       super.onScrollStateChanged(recyclerView, newState);

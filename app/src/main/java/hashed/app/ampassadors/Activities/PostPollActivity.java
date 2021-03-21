@@ -28,6 +28,7 @@ import hashed.app.ampassadors.Objects.PollOption;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.GlobalVariables;
+import hashed.app.ampassadors.Utils.SigninUtil;
 import hashed.app.ampassadors.Utils.TimeFormatter;
 
 public class PostPollActivity extends AppCompatActivity implements View.OnClickListener,
@@ -145,26 +146,31 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
 
 
   private void likeOrDislike() {
+        if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
 
-    if (likeTv.getCurrentTextColor() == getResources().getColor(R.color.red)) {
+      SigninUtil.getInstance(PostPollActivity.this,
+              PostPollActivity.this).show();
+    }else {
+          if (likeTv.getCurrentTextColor() == getResources().getColor(R.color.red)) {
 
-      likeTv.setTextColor(getResources().getColor(R.color.black));
+            likeTv.setTextColor(getResources().getColor(R.color.black));
 
-      likesTv.setText(String.valueOf(
-              (Integer.parseInt(likesTv.getText().toString()) - 1)));
+            likesTv.setText(String.valueOf(
+                    (Integer.parseInt(likesTv.getText().toString()) - 1)));
 
-      PostData.likePost(postData.getPostId(), 2, postData.getPublisherId(), this);
+            PostData.likePost(postData.getPostId(), 2, postData.getPublisherId(), this);
+          } else {
+            likeTv.setTextColor(getResources().getColor(R.color.red));
 
-    } else {
+            likesTv.setText(String.valueOf(
+                    (Integer.parseInt(likesTv.getText().toString()) + 1)));
 
-      likeTv.setTextColor(getResources().getColor(R.color.red));
+            PostData.likePost(postData.getPostId(), 1, postData.getPublisherId(), this);
 
-      likesTv.setText(String.valueOf(
-              (Integer.parseInt(likesTv.getText().toString()) + 1)));
+          }
+        }
 
-      PostData.likePost(postData.getPostId(), 1, postData.getPublisherId(), this);
 
-    }
   }
 
   @Override

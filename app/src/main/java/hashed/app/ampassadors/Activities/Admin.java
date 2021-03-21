@@ -79,19 +79,14 @@ public class Admin extends AppCompatActivity {
 
   }
 
-
   private void getUsers(boolean isInitial) {
 
     isLoadingUsers = true;
-
     final AtomicInteger addedCount = new AtomicInteger();
-
     Query updatedQuery = query;
-
     if (lastDocSnap != null) {
 
       updatedQuery = query.startAfter(lastDocSnap);
-
     }
 
     updatedQuery.get().addOnSuccessListener(queryDocumentSnapshots -> {
@@ -103,7 +98,6 @@ public class Admin extends AppCompatActivity {
 
         data.addAll(queryDocumentSnapshots.toObjects(UserApprovment.class));
       }
-
     }).addOnCompleteListener(task -> {
 
       if (isInitial) {

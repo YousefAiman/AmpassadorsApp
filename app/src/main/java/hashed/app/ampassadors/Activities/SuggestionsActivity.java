@@ -42,11 +42,12 @@ public class SuggestionsActivity extends AppCompatActivity implements Toolbar.On
 
             SigninUtil.getInstance(SuggestionsActivity.this,
                     SuggestionsActivity.this).show();
+
+            setupCompontet();
+            OnClick();
+            setUpToolBarAndActions();
         }
 
-        setupCompontet();
-        OnClick();
-        setUpToolBarAndActions();
     }
 
     public void setupCompontet() {

@@ -37,18 +37,8 @@ public class ComplaintsActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_complaints);
-
-    if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
-
-      SigninUtil.getInstance(ComplaintsActivity.this,
-             ComplaintsActivity.this).show();
-    }
-
-      setupCompontet();
+    setupCompontet();
     onClickButtons();
-
-
-
 
   }
 

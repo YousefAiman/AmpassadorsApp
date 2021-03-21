@@ -13,14 +13,12 @@
             <menu>
                <item
                     android:id="@+id/action_online"
-                    android:icon="@drawable/dots_more_icon"
                     android:title="@string/online"
                     app:showAsAction="always"
                    />
 
                 <item
                     android:id="@+id/action_about"
-                    android:icon="@drawable/dots_more_icon"
                   android:title="@string/About"
                    app:showAsAction="always"
                     />

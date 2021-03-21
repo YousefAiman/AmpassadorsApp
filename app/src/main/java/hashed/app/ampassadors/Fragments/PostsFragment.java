@@ -108,8 +108,6 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     query = FirebaseFirestore.getInstance().collection("Posts")
             .orderBy("publishTime", Query.Direction.DESCENDING).limit(POSTS_LIMIT);
     posts = new ArrayList<>();
-
-
     adapter = new PostAdapter(posts, getContext());
 
   }

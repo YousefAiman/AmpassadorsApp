@@ -28,6 +28,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
@@ -38,6 +39,7 @@ import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
 import hashed.app.ampassadors.Utils.GlobalVariables;
+import hashed.app.ampassadors.Utils.SigninUtil;
 import hashed.app.ampassadors.Utils.TimeFormatter;
 
 public class PostNewsActivity extends AppCompatActivity implements View.OnClickListener,
@@ -238,25 +240,39 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
   private void likeOrDislike() {
 
 
-    if (likeTv.getCurrentTextColor() == getResources().getColor(R.color.red)) {
+    if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
 
-      likeTv.setTextColor(getResources().getColor(R.color.black));
+      SigninUtil.getInstance(PostNewsActivity.this,
+              PostNewsActivity.this).show();
+    }else{
 
-      likesTv.setText(String.valueOf(
-              (Integer.parseInt(likesTv.getText().toString()) - 1)));
 
-      PostData.likePost(postData.getPostId(), 2, postData.getPublisherId(), this);
+      if (likeTv.getCurrentTextColor() == getResources().getColor(R.color.red)) {
 
-    } else {
+        likeTv.setTextColor(getResources().getColor(R.color.black));
 
-      likeTv.setTextColor(getResources().getColor(R.color.red));
+        likesTv.setText(String.valueOf(
+                (Integer.parseInt(likesTv.getText().toString()) - 1)));
 
-      likesTv.setText(String.valueOf(
-              (Integer.parseInt(likesTv.getText().toString()) + 1)));
+        PostData.likePost(postData.getPostId(), 2, postData.getPublisherId(), this);
 
-      PostData.likePost(postData.getPostId(), 1, postData.getPublisherId(), this);
+      } else {
+
+        likeTv.setTextColor(getResources().getColor(R.color.red));
+
+        likesTv.setText(String.valueOf(
+                (Integer.parseInt(likesTv.getText().toString()) + 1)));
+
+        PostData.likePost(postData.getPostId(), 1, postData.getPublisherId(), this);
+
+      }
+
+
+
 
     }
+
+
   }
 
   @Override

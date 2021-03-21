@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -258,17 +259,23 @@ public class profile_edit extends AppCompatActivity {
   @Override
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
     super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-
-
-
+    switch (requestCode) {
+      case CAMERA_REQUEST_CODE:
+        if (grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+        {
+          try {
+            createImageFile();
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        }
+          break;
+    }
   }
 
   private void SelectImage(Context context) {
     //  CHOOSE WHERE WILL UPLOAD THE IMAGE
-
-
-
     final CharSequence[] options = {getString(R.string.CaptuerPhoto),
             getString(R.string.OpenGallray), getString(R.string.Cansle)};
     final AlertDialog.Builder builder = new AlertDialog.Builder(context);
