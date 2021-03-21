@@ -28,8 +28,10 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Services.FirebaseMessagingService;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 
 public class sign_in extends AppCompatActivity {
@@ -38,9 +40,7 @@ public class sign_in extends AppCompatActivity {
   Button btn_login, create_account_btn;
   FirebaseAuth auth;
   TextView verifyEmail, forgetPass;
-  ProgressDialog progressDialog;
   FirebaseFirestore fStore;
-  String userid;
   FirebaseAuth fAuth;
 
   @Override
@@ -187,6 +187,18 @@ public class sign_in extends AppCompatActivity {
 
                               GlobalVariables.setRole(snapshot.getString("Role"));
 
+
+                              FirebaseMessaging.getInstance()
+                                      .getToken().addOnSuccessListener(new OnSuccessListener<String>() {
+                                @Override
+                                public void onSuccess(String s) {
+                                  GlobalVariables.setCurrentToken(s);
+                                  snapshot.getReference().update("token",s);
+                                }
+                              });
+
+                              FirebaseMessagingService.startMessagingService(sign_in.this);
+
                               Intent intent = new Intent(sign_in.this,
                                       Home_Activity.class);
                               intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK |
@@ -195,10 +207,10 @@ public class sign_in extends AppCompatActivity {
                               startActivity(intent);
                               finish();
 
-
                             }else{
 
                               auth.signOut();
+                              dialog.dismiss();
 
                               Toast.makeText(sign_in.this,
                                       "You haven't been approved by the admin!",

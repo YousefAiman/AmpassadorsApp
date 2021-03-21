@@ -133,9 +133,9 @@ public class sign_up extends AppCompatActivity {
         } else {
           register(txt_username, txt_password, txt_email,
                   txt_country, txt_city, txt_phone);
-          Intent intent = new Intent(sign_up.this, sign_in.class);
-          startActivity(intent);
-          finish();
+//          Intent intent = new Intent(sign_up.this, sign_in.class);
+//          startActivity(intent);
+//          finish();
 
         }
       }
@@ -148,7 +148,10 @@ public class sign_up extends AppCompatActivity {
     task.addOnSuccessListener(new OnSuccessListener<AuthResult>() {
       @Override
       public void onSuccess(AuthResult authResult) {
-        auth.signOut();
+
+        if(authResult == null || authResult.getUser() == null){
+          return;
+        }
 
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("username", username);
@@ -172,10 +175,16 @@ public class sign_up extends AppCompatActivity {
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                       @Override
                       public void onSuccess(Void aVoid) {
-
+                        auth.signOut();
                         authResult.getUser().sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
                           @Override
                           public void onSuccess(Void aVoid) {
+
+                            Intent intent = new Intent(sign_up.this, sign_in.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            finish();
+
                             Toast.makeText(sign_up.this, R.string.Email_Verfiy,
                                     Toast.LENGTH_SHORT).show();
                           }
@@ -187,9 +196,8 @@ public class sign_up extends AppCompatActivity {
                           }
                         });
 
-                        Toast.makeText(sign_up.this, R.string.SuccessfullMessage,
-                                Toast.LENGTH_LONG).show();
-
+//                        Toast.makeText(sign_up.this, R.string.SuccessfullMessage,
+//                                Toast.LENGTH_LONG).show();
 
                       }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -212,6 +220,12 @@ public class sign_up extends AppCompatActivity {
       }
     });
 
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    auth.signOut();
   }
 
   private void backSignIn() {

@@ -93,7 +93,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
         implements Toolbar.OnMenuItemClickListener, PrivateMessagingAdapter.DeleteMessageListener,
         PrivateMessagingAdapter.VideoMessageListener, PrivateMessagingAdapter.DocumentMessageListener,
         View.OnClickListener, RecyclerView.OnLayoutChangeListener,
-        PrivateMessagingAdapter.ImageMessageListener {
+        PrivateMessagingAdapter.ImageMessageListener ,PrivateMessagingAdapter.TimeClickListener{
 
   public static final int RECORD_AUDIO_REQUEST = 30;
   //constants
@@ -143,7 +143,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
   private Handler progressHandle;
   private Runnable progressRunnable;
 //  int lastVisiblePosition;
-
+  private int previousSelected = -1;
 
   //notifications
   private SharedPreferences sharedPreferences;
@@ -196,8 +196,11 @@ public class PrivateMessagingActivity extends AppCompatActivity
     messagingTbNameTv = findViewById(R.id.messagingTbNameTv);
 
     privateMessagingRv.addOnLayoutChangeListener(this);
-    messageAttachIv.setOnClickListener(this);
-    micIv.setOnClickListener(this);
+
+    messageAttachIv.setOnClickListener(PrivateMessagingActivity.this);
+    messageAttachIv.setClickable(false);
+    micIv.setOnClickListener(PrivateMessagingActivity.this);
+    micIv.setClickable(false);
   }
 
   private void setUpToolBarAndActions() {
@@ -269,23 +272,23 @@ public class PrivateMessagingActivity extends AppCompatActivity
   // remove messaging notifcation if one exists
   private void handleNotification() {
 
-    sharedPreferences = getSharedPreferences(getResources().getString(R.string.app_name),
-            Context.MODE_PRIVATE);
+    sharedPreferences = getSharedPreferences(getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
 
     sharedPreferences.edit()
             .putString("currentlyMessagingUid", currentUid).apply();
 
     if (GlobalVariables.getMessagesNotificationMap() != null) {
 
-      if (GlobalVariables.getMessagesNotificationMap().containsKey(messagingUid)) {
-        Log.d("ttt", "removing: " + messagingUid);
+      String title = messagingUid + "privateMessaging";
+      if (GlobalVariables.getMessagesNotificationMap().containsKey(title)) {
+        Log.d("ttt", "removing: " + title);
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-        notificationManager.cancel(GlobalVariables.getMessagesNotificationMap().get(messagingUid));
+        notificationManager.cancel(GlobalVariables.getMessagesNotificationMap().get(title));
 
-        GlobalVariables.getMessagesNotificationMap().remove(messagingUid);
+        GlobalVariables.getMessagesNotificationMap().remove(title);
       }
     }
 
@@ -355,7 +358,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
               message,
               getResources().getString(R.string.new_message) + " " + currentUserName,
               currentImageUrl,
-              "message",
+              "Messages",
               "privateMessaging",
               currentUid
       );
@@ -372,13 +375,9 @@ public class PrivateMessagingActivity extends AppCompatActivity
   //database messages functions
   private void fetchPreviousMessages() {
 
-    adapter = new PrivateMessagingAdapter(privateMessages,
-            this,
-            this,
-            this,
-            this,
-            this,
-            false);
+    adapter = new PrivateMessagingAdapter(privateMessages, this,
+            this, this, this,
+            this, this, false);
 
     privateMessagingRv.setAdapter(adapter);
 
@@ -412,6 +411,9 @@ public class PrivateMessagingActivity extends AppCompatActivity
                                         .document(currentMessagingRef.getKey());
 
                                 messageSendIv.setOnClickListener(new FirstMessageClickListener());
+                                messageAttachIv.setClickable(true);
+                                micIv.setClickable(true);
+
 
                               }
 
@@ -445,6 +447,9 @@ public class PrivateMessagingActivity extends AppCompatActivity
             .document(Objects.requireNonNull(currentMessagingRef.getKey()));
 
     createMessagesListener();
+
+    messageAttachIv.setClickable(true);
+    micIv.setClickable(true);
 
   }
 
@@ -520,13 +525,15 @@ public class PrivateMessagingActivity extends AppCompatActivity
 //          addFileMessageUploadListener(snapshot.child("attachmentUrl").getRef()
 //                  ,privateMessages.size());
 //        }
-        if (messageAttachmentUploadedIndex != -1) {
+        if (messageAttachmentUploadedIndex != -1 &&
+                message.getSender().equals(currentUid) &&
+                message.getType()!= Files.TEXT) {
 
           privateMessages.set(messageAttachmentUploadedIndex, message);
           adapter.notifyItemChanged(messageAttachmentUploadedIndex);
           messageAttachmentUploadedIndex = -1;
-        } else {
 
+        } else {
           privateMessages.add(message);
           adapter.notifyItemInserted(privateMessages.size());
           scrollToBottom();
@@ -669,6 +676,9 @@ public class PrivateMessagingActivity extends AppCompatActivity
       createMessagesListener();
 
       messageSendIv.setOnClickListener(new TextMessageSenderClickListener());
+
+
+
       messageSendIv.setClickable(true);
 
     }).addOnFailureListener(e -> {
@@ -1258,6 +1268,18 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
   }
 
+  @Override
+  public void hideTime(int itemPosition) {
+
+//    if(previousSelected != -1 && previousSelected != itemPosition){
+//
+//      privateMessagingRv.getLayoutManager().getChildAt(previousSelected).findViewById(R.id.timeTv)
+//              .setVisibility(View.GONE);
+//    }
+//    previousSelected = itemPosition;
+
+  }
+
   //interfaces
   @Override
   public void onClick(View view) {
@@ -1646,6 +1668,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
     }
   }
 
+
   //click listeners
   //click listeners
   private class FirstMessageClickListener implements View.OnClickListener {
@@ -1725,4 +1748,5 @@ public class PrivateMessagingActivity extends AppCompatActivity
       }
     }
   }
+
 }

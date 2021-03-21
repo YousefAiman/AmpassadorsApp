@@ -142,7 +142,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
       Log.d("ttt", "before builder createiong");
       builder = new NotificationCompat.Builder(this, type)
-              .setSmallIcon(R.drawable.app_icon)
+              .setSmallIcon(R.drawable.icon_vector)
               .setContentTitle(data.get("title"))
               .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
               .setContentText(data.get("body"))
@@ -163,7 +163,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                         .submit()
                         .get());
       } else {
-        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.app_icon));
+        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.icon_vector));
       }
 
       Log.d("ttt", "after imageUrl");
@@ -173,7 +173,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 //    if (GlobalVariables.getMessagesNotificationMap() == null)
 //      GlobalVariables.setMessagesNotificationMap(new HashMap<>());
 
-      final String identifierTitle = data.get("sourceId") + type;
+      final String identifierTitle = data.get("sourceId") + data.get("sourceType");
 
       builder.setDeleteIntent(
               PendingIntent.getBroadcast(this, notificationNum,
@@ -245,8 +245,8 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
       if (notificationManager.getNotificationChannel(channelId) == null) {
         Log.d("ttt", "didn't find: " + channelId);
         Log.d("ttt", "creating notificaiton channel");
-        NotificationChannel channel = new NotificationChannel(channelId, channelId +
-                " channel", NotificationManager.IMPORTANCE_HIGH);
+        NotificationChannel channel = new NotificationChannel(channelId, channelId,
+                NotificationManager.IMPORTANCE_HIGH);
         channel.setShowBadge(true);
         channel.setDescription("notifications");
         channel.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),
