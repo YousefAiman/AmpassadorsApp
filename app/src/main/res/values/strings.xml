@@ -289,5 +289,23 @@ Legal and human rights support program.
     <string name="continue_guest">Continue Guest</string>
     <string name="next">Next</string>
     <string name="skip">Skip</string>
+    <string name="Error_Message_SignUp_username">Your name is Requered</string>
+    <string name="Error_Message_password">Your Password is Reqired</string>
+    <string name="Error_Message_Confrim_password">Confirm password is required</string>
+    <string name="Error_Message_Match_password">Your password must be matched</string>
+    <string name="Error_Message_Email">Your Email is Required</string>
+    <string name="Error_Message_Country">Your Country is Required</string>
+    <string name="Error_Message_City">Your City name is Required</string>
+    <string name="Error_Message_Phone">Your Phone is Required</string>
+    <string name="SignUp_Message">Signing in...</string>
+    <string name="Rejcetet_Message">You have been rejected by the admin!</string>
+    <string name="Appromvent_Message">You haven\'t been approved by the admin!</string>
+    <string name="Error_Auth">"Error Authentication!: "</string>
+    <string name="Update_Message">Updating info</string>
+    <string name="Update_Error_Message">Info update error</string>
+    <string name="Error">"Error.....   "</string>
+    <string name="Warring_Group_Message">You need to add at least two people to this group!</string>
+
+
 
 </resources>

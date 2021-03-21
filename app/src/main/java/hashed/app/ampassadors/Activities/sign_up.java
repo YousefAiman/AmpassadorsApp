@@ -126,11 +126,26 @@ public class sign_up extends AppCompatActivity {
 //                        }
 //                    }
 //                });
-                if (TextUtils.isEmpty(txt_username) || TextUtils.isEmpty(txt_password) || TextUtils.isEmpty(txt_email)
-                        || TextUtils.isEmpty(txt_country) || TextUtils.isEmpty(txt_city) || TextUtils.isEmpty(txt_phone)) {
-                    Toast.makeText(sign_up.this, "All field are required", Toast.LENGTH_SHORT).show();
-                } else if (!txt_password.equals(txt_confrim_password)) {
-                    Toast.makeText(sign_up.this, "Password must match and confirm password", Toast.LENGTH_LONG).show();
+                if (TextUtils.isEmpty(txt_username)) {
+                    Toast.makeText(sign_up.this, R.string.Error_Message_SignUp_username, Toast.LENGTH_SHORT).show();
+                } else if (TextUtils.isEmpty(txt_password)) {
+                    Toast.makeText(sign_up.this, R.string.Error_Message_password, Toast.LENGTH_LONG).show();
+                } else if (TextUtils.isEmpty(txt_confrim_password)) {
+                    Toast.makeText(sign_up.this, R.string.Error_Message_Confrim_password, Toast.LENGTH_LONG).show();
+
+                } else if (!TextUtils.equals(txt_password, txt_confrim_password)) {
+                    Toast.makeText(sign_up.this, R.string.Error_Message_Match_password, Toast.LENGTH_SHORT).show();
+                } else if (TextUtils.isEmpty(txt_email)) {
+                    Toast.makeText(sign_up.this, R.string.Error_Message_Email, Toast.LENGTH_SHORT).show();
+                } else if (TextUtils.isEmpty(txt_country)) {
+                    Toast.makeText(sign_up.this, R.string.Error_Message_Country, Toast.LENGTH_LONG).show();
+
+                } else if (TextUtils.isEmpty(txt_city)) {
+                    Toast.makeText(sign_up.this, R.string.Error_Message_City, Toast.LENGTH_LONG).show();
+
+                } else if (TextUtils.isEmpty(txt_phone)) {
+                    Toast.makeText(sign_up.this, R.string.Error_Message_Phone, Toast.LENGTH_LONG).show();
+
                 } else {
                     register(txt_username, txt_password, txt_email,
                             txt_country, txt_city, txt_phone);
@@ -182,24 +197,24 @@ public class sign_up extends AppCompatActivity {
                 //  userInfo.setUserRole(spin);
 //                userInfo.setApprovement(false);
 
-  reference.document(userid).set(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-      @Override
-      public void onComplete(@NonNull Task<Void> task) {
-          if (task.isSuccessful()) {
-              FirebaseUser user = auth.getCurrentUser();
-              user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
-                  @Override
-                  public void onSuccess(Void aVoid) {
-                      Toast.makeText(sign_up.this, "Verification Email Has been Sent. ", Toast.LENGTH_SHORT).show();
-                  }
-              }).addOnFailureListener(new OnFailureListener() {
-                  @Override
-                  public void onFailure(@NonNull Exception e) {
-                      Toast.makeText(sign_up.this, "Email not Sent", Toast.LENGTH_SHORT).show();
-                  }
-              });
+                reference.document(userid).set(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = auth.getCurrentUser();
+                            user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(sign_up.this, R.string.Email_Verfiy, Toast.LENGTH_SHORT).show();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(sign_up.this, R.string.Email_not_Sent, Toast.LENGTH_SHORT).show();
+                                }
+                            });
 
-                            Toast.makeText(sign_up.this, "Added successfully", Toast.LENGTH_LONG).show();
+                            Toast.makeText(sign_up.this, R.string.SuccessfullMessage, Toast.LENGTH_LONG).show();
                         }
                     }
                 })
@@ -259,7 +274,7 @@ public class sign_up extends AppCompatActivity {
 
         // CAMERA
         if (requestCode == 2 && resultCode == RESULT_OK) {
-            mProgressDialog.setMessage("جاري التحميل...");
+            mProgressDialog.setMessage(getString(R.string.Download));
             mProgressDialog.show();
             Uri uri = data.getData();
             StorageReference filepath = sreference.child("Profile img").child(uri.getLastPathSegment());
@@ -280,13 +295,13 @@ public class sign_up extends AppCompatActivity {
                             Log.d("ttt", imageUrl);
                         }
                     });
-                    Toast.makeText(sign_up.this, "انتهى التحميل...", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(sign_up.this, R.string.Finish_message, Toast.LENGTH_SHORT).show();
                 }
             });
         } else if (requestCode == CAMERA_REQUEST_CODE) {
             /// GALLERY
             uploading = true;
-            mProgressDialog.setMessage("جاري التحميل ......");
+            mProgressDialog.setMessage(getString(R.string.Download));
             mProgressDialog.show();
             filePath = Uri.parse("file://" + cameraImageFilePath);
             sreference = FirebaseStorage.getInstance().getReference().child("Profile img/" + UUID.randomUUID().toString());
@@ -304,7 +319,7 @@ public class sign_up extends AppCompatActivity {
                             Toast.makeText(sign_up.this, imageUrl, Toast.LENGTH_SHORT).show();
                         }
                     });
-                    Toast.makeText(sign_up.this, "انتهى التحميل...", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(sign_up.this, R.string.Finish_message, Toast.LENGTH_SHORT).show();
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -318,7 +333,7 @@ public class sign_up extends AppCompatActivity {
 
     private void SelectImage(Context context) {
         //  CHOOSE WHERE WILL UPLOAD THE IMAGE
-        final CharSequence[] options = {"Take photo", "open Gallery", "Cancel"};
+        final CharSequence[] options = {getString(R.string.CaptuerPhoto), getString(R.string.OpenGallray), getString(R.string.Cansle)};
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Choose you profile photo");
         builder.setItems(options, new DialogInterface.OnClickListener() {

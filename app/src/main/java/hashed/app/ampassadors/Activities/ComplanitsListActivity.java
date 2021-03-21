@@ -1,10 +1,12 @@
 package hashed.app.ampassadors.Activities;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,7 +26,7 @@ import hashed.app.ampassadors.Adapters.ComplaintsAdapter;
 import hashed.app.ampassadors.Objects.Complaints;
 import hashed.app.ampassadors.R;
 
-public class ComplanitsListActivity extends AppCompatActivity {
+public class ComplanitsListActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener{
   RecyclerView recyclerView;
   Task<QuerySnapshot> task;
   FirebaseFirestore firebaseFirestore;
@@ -43,6 +45,7 @@ public class ComplanitsListActivity extends AppCompatActivity {
     adapter = new ComplaintsAdapter(complaints, ComplanitsListActivity.this);
     recyclerView.setAdapter(adapter);
     showSuggestions(true);
+    setUpToolBarAndActions();
   }
 
 
@@ -76,4 +79,16 @@ public class ComplanitsListActivity extends AppCompatActivity {
     });
   }
 
+  private void setUpToolBarAndActions() {
+
+    final Toolbar toolbar = findViewById(R.id.toolbar);
+    toolbar.setNavigationOnClickListener(v -> onBackPressed());
+    toolbar.setOnMenuItemClickListener(this);
+
+  }
+
+  @Override
+  public boolean onMenuItemClick(MenuItem item) {
+    return false;
+  }
 }

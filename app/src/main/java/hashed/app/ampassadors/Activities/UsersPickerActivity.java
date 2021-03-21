@@ -80,7 +80,7 @@ public class UsersPickerActivity extends AppCompatActivity implements
 
         if (pickerAdapter.selectedUserIds.size() < 2) {
           Toast.makeText(UsersPickerActivity.this,
-                  "You need to add at least two people to this group!",
+                  R.string.Warring_Group_Message,
                   Toast.LENGTH_SHORT).show();
           return;
         }

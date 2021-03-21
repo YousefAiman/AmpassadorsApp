@@ -28,7 +28,7 @@
 
     <item
         android:id="@+id/about"
-        android:title="@string/aboutus" />
+        android:title="@string/Aboutus" />
 
     <item
         android:id="@+id/log_out"

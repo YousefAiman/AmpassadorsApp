@@ -12,12 +12,12 @@
         android:title="@string/poll" />
 
     <item
-        android:id="@+id/complaints"
-        android:title="@string/listSuggestion" />
+        android:id="@+id/listComplaints"
+        android:title="@string/listComplaints" />
 
     <item
-        android:id="@+id/proposals"
-        android:title="@string/listComplaints" />
+        android:id="@+id/listSuggestion"
+        android:title="@string/listSuggestion" />
 
     <item
         android:id="@+id/policy"
@@ -26,7 +26,7 @@
 
     <item
         android:id="@+id/about"
-        android:title="@string/aboutus" />
+        android:title="@string/Aboutus" />
 
 
     <item
