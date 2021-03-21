@@ -92,14 +92,9 @@
     <string name="listSuggestion">List Suggestion</string>
     <string name="listComplaints">List Complaints</string>
     <string name="poll">Poll</string>
-    <string name="polls">Polls</string>
-    <string name="policyPrivacy">
-       Privacy policy </string>
     <string name="policyPrivacy">Policy Privacy</string>
     <string name="aboutus">About us</string>
     <string name="logout">Logout</string>
-
-
     <string name="Error_message_defname">Enter your name pleas</string>
     <!--Notifications-->
     <string name="new_message">New message from </string>
@@ -165,9 +160,7 @@
     <string name="older">Older</string>
     <string name="invited_meeting">Invitation to meeting</string>
     <string name="like">Like</string>
-    <string name="About_us">
-about us
-    </string>
+
     <string name="About_us">About us</string>
     <string name="comment">Comment</string>
     <string name="publish">Publish</string>
@@ -204,7 +197,7 @@ about us
     <string name="Meetings">Meetings</string>
     <string name="user_requests">User Requests</string>
     <string name="already_have_an_account_sign_in">Already have an account? Sign in</string>
-    <string name="Error_meassage_titleCom">Enter your title pleas</string>
+    <string name="Error_meassage_subjectTitle">Enter your subject title pleas</string>
     <string name="write_your_subject">Write your subject pleas</string>
     <string name="dowonloading_">Downloading...</string>
     <string name="SuccessfullMessage">Add Successfully</string>
@@ -239,5 +232,15 @@ about us
     <string name="Message_Fill_title">Please fill in the title!</string>
     <string name="Message_Fill_descr">Please fill in the description!</string>
     <string name="Message_Attchent_post">Please choose an attachment!</string>
-
+    <string name="Error_message_Details">Plaes Enter Your Details</string>
+    <string name="Finish_message">Download Finish</string>
+    <string name="Title_AlretDialoge">Choose you profile photo</string>
+    <string name="CaptuerPhoto">Take photo</string>
+    <string name="OpenGallray">open Gallery</string>
+    <string name="Rest_Password">Reset Password</string>
+    <string name="Email_Rest_Password">Enter your Email to Revived Reset Link</string>
+    <string name="Link_rest_password_sent">"Reset Link To Your Email. "</string>
+    <string name="Email_Verfiy">Verification Email Has been Sent.</string>
+    <string name="Email_not_Sent">Email not Sent</string>
+    <string name="Password_verfiy">Password must match and confirm password</string>
 </resources>

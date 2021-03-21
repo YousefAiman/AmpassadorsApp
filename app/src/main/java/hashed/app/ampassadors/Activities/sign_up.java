@@ -128,7 +128,7 @@ public class sign_up extends AppCompatActivity {
                 || TextUtils.isEmpty(txt_country) || TextUtils.isEmpty(txt_city) || TextUtils.isEmpty(txt_phone)) {
           Toast.makeText(sign_up.this, "All field are required", Toast.LENGTH_SHORT).show();
         } else if (!txt_password.equals(txt_confrim_password)) {
-          Toast.makeText(sign_up.this, "Password must match and confirm password", Toast.LENGTH_LONG).show();
+          Toast.makeText(sign_up.this, R.string.Password_verfiy, Toast.LENGTH_LONG).show();
         } else {
           register(txt_username, txt_password, txt_email,
                   txt_country, txt_city, txt_phone);
@@ -185,16 +185,16 @@ public class sign_up extends AppCompatActivity {
               user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
-                  Toast.makeText(sign_up.this, "Verification Email Has been Sent. ", Toast.LENGTH_SHORT).show();
+                  Toast.makeText(sign_up.this, R.string.Email_Verfiy, Toast.LENGTH_SHORT).show();
                 }
               }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                  Toast.makeText(sign_up.this, "Email not Sent", Toast.LENGTH_SHORT).show();
+                  Toast.makeText(sign_up.this, R.string.Email_not_Sent, Toast.LENGTH_SHORT).show();
                 }
               });
 
-              Toast.makeText(sign_up.this, "Added successfully", Toast.LENGTH_LONG).show();
+              Toast.makeText(sign_up.this, R.string.SuccessfullMessage, Toast.LENGTH_LONG).show();
 
             }
           }
@@ -255,7 +255,7 @@ public class sign_up extends AppCompatActivity {
 
     // CAMERA
     if (requestCode == 2 && resultCode == RESULT_OK) {
-      mProgressDialog.setMessage("جاري التحميل...");
+      mProgressDialog.setMessage(getString(R.string.Download));
       mProgressDialog.show();
       Uri uri = data.getData();
       StorageReference filepath = sreference.child("Profile img").child(uri.getLastPathSegment());
@@ -276,13 +276,13 @@ public class sign_up extends AppCompatActivity {
               Log.d("ttt", imageUrl);
             }
           });
-          Toast.makeText(sign_up.this, "انتهى التحميل...", Toast.LENGTH_SHORT).show();
+          Toast.makeText(sign_up.this, R.string.Finish_message, Toast.LENGTH_SHORT).show();
         }
       });
     } else if (requestCode == CAMERA_REQUEST_CODE) {
       /// GALLERY
       uploading = true;
-      mProgressDialog.setMessage("جاري التحميل ......");
+      mProgressDialog.setMessage(getString(R.string.Download));
       mProgressDialog.show();
       filePath = Uri.parse("file://" + cameraImageFilePath);
       sreference = FirebaseStorage.getInstance().getReference().child("Profile img/" + UUID.randomUUID().toString());
@@ -300,7 +300,7 @@ public class sign_up extends AppCompatActivity {
               Toast.makeText(sign_up.this, imageUrl, Toast.LENGTH_SHORT).show();
             }
           });
-          Toast.makeText(sign_up.this, "انتهى التحميل...", Toast.LENGTH_SHORT).show();
+          Toast.makeText(sign_up.this, R.string.Finish_message, Toast.LENGTH_SHORT).show();
         }
       }).addOnFailureListener(new OnFailureListener() {
         @Override
@@ -314,9 +314,9 @@ public class sign_up extends AppCompatActivity {
 
   private void SelectImage(Context context) {
     //  CHOOSE WHERE WILL UPLOAD THE IMAGE
-    final CharSequence[] options = {"Take photo", "open Gallery", "Cancel"};
+    final CharSequence[] options = {getString(R.string.CaptuerPhoto), getString(R.string.OpenGallray), getString(R.string.Cansle)};
     final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-    builder.setTitle("Choose you profile photo");
+    builder.setTitle(getString(R.string.Title_AlretDialoge));
     builder.setItems(options, new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialogInterface, int i) {

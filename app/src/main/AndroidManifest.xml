@@ -31,9 +31,10 @@
         <activity android:name=".Activities.UserSearchActivity" />
         <activity android:name=".Activities.ConnectionActivity" />
         <activity android:name=".Activities.GroupMessagingActivity" />
-        <activity
-            android:name=".Activities.Home_Activity"
-            android:screenOrientation="portrait" />
+        <activity android:name=".Activities.List_Sug_Activity"/>
+        <activity android:name=".Activities.Suggestions_DtailesActivity"/>
+        <activity android:name=".Activities.ComplanitsListActivity"/>
+        <activity android:name=".Activities.Home_Activity" android:screenOrientation="portrait" />
         <activity android:name=".Activities.Admin" />
         <activity android:name=".Activities.profile_edit" />
         <activity android:name=".Activities.sign_up" />
@@ -43,6 +44,7 @@
         <activity android:name=".Activities.sign_in" />
         <activity android:name=".Activities.ComplaintsActivity" />
         <activity android:name=".Activities.SuggestionsActivity" />
+        <activity android:name=".Activities.Complanits_DetailsActivity"/>
         <activity android:name=".Activities.PrivateMessagingActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>

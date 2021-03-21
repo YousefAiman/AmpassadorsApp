@@ -110,6 +110,7 @@ Home_Activity extends AppCompatActivity implements
 
             if (GlobalVariables.getRole()!=null && GlobalVariables.getRole().equals("Admin")) {
               navigationview.inflateMenu(R.menu.menu_admin);
+
             } else {
               navigationview.inflateMenu(R.menu.menu_nav);
             }
@@ -266,7 +267,6 @@ Home_Activity extends AppCompatActivity implements
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
         Log.d("ttt","navigation clicked");
-
       drawer_layout.closeDrawer(GravityCompat.START);
 
       if(item.getItemId() == R.id.log_out){
@@ -292,6 +292,7 @@ Home_Activity extends AppCompatActivity implements
                     startActivity(intent);
                     finish();
 //                }
+
             }else if (item.getItemId() == R.id.news){
 
               B_Fragment fragment = new B_Fragment();

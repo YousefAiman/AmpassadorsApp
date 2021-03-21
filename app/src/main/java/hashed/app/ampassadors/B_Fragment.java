@@ -97,7 +97,7 @@ public class B_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
     if(key == TYPE_NEWS){
       toolbarTv.setText(getResources().getString(R.string.News));
     }else{
-      toolbarTv.setText(getResources().getString(R.string.polls));
+      toolbarTv.setText(getResources().getString(R.string.poll));
     }
 
     return view;

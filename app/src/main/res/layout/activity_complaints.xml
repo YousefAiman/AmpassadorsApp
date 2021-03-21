@@ -18,7 +18,7 @@
     <TextView
         android:id="@+id/textView7"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
@@ -73,7 +73,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline4"
         app:layout_constraintTop_toTopOf="@+id/guideline36"
-        app:layout_constraintVertical_bias="0.142" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/subject"
@@ -100,7 +100,7 @@
     <android.widget.Button
         android:id="@+id/sendd"
         android:layout_width="138dp"
-        android:layout_height="34dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/publish_btn_back"
         android:fontFamily="@font/segoe_ui"
         android:text="@string/send_btn"
@@ -108,9 +108,10 @@
         android:textColor="#fff"
         app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintEnd_toStartOf="@+id/guideline6"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="@+id/guideline4"
         app:layout_constraintTop_toTopOf="@+id/guideline38"
-        app:layout_constraintVertical_bias="0.767" />
+        app:layout_constraintVertical_bias="0.761" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline3"
@@ -154,7 +155,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.2094082"
+        app:layout_constraintGuide_percent="0.19"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.Guideline

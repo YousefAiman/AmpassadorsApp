@@ -55,28 +55,28 @@ public class sign_in extends AppCompatActivity {
         EditText resetMail = new EditText(view.getContext());
         AlertDialog.Builder passwordResetDaialog = new AlertDialog.Builder(view.getContext());
 
-        passwordResetDaialog.setTitle("Reset Password");
-        passwordResetDaialog.setMessage("Enter your Email Ro Recived Reset Link");
+        passwordResetDaialog.setTitle(getString(R.string.Rest_Password));
+        passwordResetDaialog.setMessage(getString(R.string.Email_Rest_Password));
         passwordResetDaialog.setView(resetMail);
 
-        passwordResetDaialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        passwordResetDaialog.setPositiveButton(getString(R.string.YES), new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialogInterface, int i) {
             String mail = resetMail.getText().toString();
             auth.sendPasswordResetEmail(mail).addOnSuccessListener(new OnSuccessListener<Void>() {
               @Override
               public void onSuccess(Void aVoid) {
-                Toast.makeText(sign_in.this, "Reset Link To Your Email. ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(sign_in.this, R.string.Link_rest_password_sent, Toast.LENGTH_SHORT).show();
               }
             }).addOnFailureListener(new OnFailureListener() {
               @Override
               public void onFailure(@NonNull Exception e) {
-                Toast.makeText(sign_in.this, "Error! Reset Link is Not Sent" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(sign_in.this,  e.getMessage(), Toast.LENGTH_SHORT).show();
               }
             });
           }
         });
-        passwordResetDaialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        passwordResetDaialog.setNegativeButton(R.string.No, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -100,14 +100,14 @@ public class sign_in extends AppCompatActivity {
             @Override
             public void onSuccess(Void aVoid) {
               Toast.makeText(sign_in.this,
-                      "Verification Email Has been Sent.",
+                      R.string.Email_Verfiy,
                       Toast.LENGTH_SHORT).show();
             }
           }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
               Toast.makeText(sign_in.this,
-                      "Email not Sent", Toast.LENGTH_SHORT).show();
+                      R.string.Email_not_Sent, Toast.LENGTH_SHORT).show();
             }
           });
         }

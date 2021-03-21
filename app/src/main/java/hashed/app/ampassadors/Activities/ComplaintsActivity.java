@@ -75,7 +75,7 @@ public class ComplaintsActivity extends AppCompatActivity {
           Toast.makeText(ComplaintsActivity.this, R.string.Error_message_defname, Toast.LENGTH_SHORT).show();
 
         } else if (title.trim().isEmpty()) {
-          Toast.makeText(ComplaintsActivity.this, R.string.Error_meassage_titleCom, Toast.LENGTH_SHORT).show();
+          Toast.makeText(ComplaintsActivity.this, R.string.Error_meassage_subjectTitle, Toast.LENGTH_SHORT).show();
 
         } else if (subjectText.trim().isEmpty()) {
           Toast.makeText(ComplaintsActivity.this, R.string.write_your_subject, Toast.LENGTH_SHORT).show();
@@ -99,8 +99,6 @@ public class ComplaintsActivity extends AppCompatActivity {
               defendant.setText("");
               titleSubject.setText("");
               subject.setText("");
-              Intent intent = new Intent(getApplicationContext(), ComplanitsListActivity.class);
-              startActivity(intent);
             }
           }).addOnFailureListener(new OnFailureListener() {
             @Override
