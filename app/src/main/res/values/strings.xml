@@ -109,7 +109,7 @@
     </string>
 
 
-    <string name="aboutus">About us</string>
+    <string name="About_us">About us</string>
     <string name="logout">Logout</string>
 
 
@@ -159,9 +159,7 @@
     <string name="AwarenessPosts">Awareness Posts</string>
     <string name="Courses">Courses</string>
     <string name="Polls">Polls</string>
-    <string name="PolicyPrivacy">
-        Our privacy policy
-    </string>
+
     <string name="Proposals">Suggestions</string>
     <string name="Aboutus">About us</string>
     <string name="Logout">Logout</string>
@@ -180,7 +178,7 @@
     <string name="like">Like</string>
 
 
-    <string name="About_us">
+    <string name="About__us">
 
         An association to support the rights of the Palestinian people, known as the International Organization for the Support of the Palestinian People, is a non-profit non-profit non-governmental organization founded in 2015 and registered under no. 8523 based on the Palestinian Associations and Ngos Act No. 01 of 2000. The international body works to protect the human rights and rights of the Palestinian people.
 The Commission embodies its vision in the struggle for a free and democratic Palestinian society in which the rule of law and human rights are respected.
@@ -230,7 +228,8 @@ Legal and human rights support program.
     <string name="verify_email">Verify Email</string>
     <string name="create_new_account">Create New Account</string>
     <string name="confirm_password">Confirm Password</string>
-
+    <string name="option">option</string>
+    <string name="create_poll">Create Poll</string>
     <string name="sign_up">Sign Up</string>
     <string name="alread_have_account">Already Have Account</string>
     <string name="approve">Approve</string>
@@ -292,5 +291,5 @@ Legal and human rights support program.
     <string name="continue_guest">Continue Guest</string>
     <string name="next">Next</string>
     <string name="skip">Skip</string>
-    <string name="privacyPolicy">Privacy Policy</string>
+
 </resources>

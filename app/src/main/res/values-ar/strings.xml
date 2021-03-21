@@ -218,7 +218,7 @@
     <string name="next">التالي</string>
     <string name="continue_guest">الدخول كضيف</string>
     <string name="skip">تخطي</string>
-    <string name="qusetoin">السؤال....</string>
+    <string name="question">السؤال....</string>
     <string name="Finish_message">انتهى التحميل</string>
     <string name="Title_AlretDialoge">اختار الصورة الشخصية</string>
     <string name="CaptuerPhoto">التقاط صورة</string>
@@ -230,16 +230,37 @@
     <string name="Email_not_Sent">لم يتم ارسال البريد</string>
     <string name="Password_verfiy">يجب ان تكون كلمة المرور متطابقة </string>
     <string name="policyPrivacy">
-    The International Commission for the Support of the Rights of the Palestinian People has dedicated this application to provide information on the situation of the palestinian peoples rights, and other information about its various activities including its various publications and publications, and the International Body expresses its deep happiness with your visits to apply it, and considers this as a step to support the victims of human rights violations, so please accept our advice to print copies of information for your personal use other than commercial and store files on the computer, and with this we would like to offer you advice on some legal limits and restrictions imposed on all visitors. The application and your honor are required to abide by the terms and conditions described below:
-        1. Your access to the site indicates that you know and agree to these terms and conditions, if you do not agree with these terms and conditions, do not enter and use this site.
-2. The contents contained in this website, including but not limited to images, videos, publications, advertisements, downloads and links, except for those referred to as the property or joint property of third parties, are owned by the International Support Authority for the Rights of the Palestinian People and are protected by copyright. Together with its funders, donors and partners, The International Group has invested money, time and effort to develop it.
-3- The International Body (Crowd) assumes no responsibility for the comments made by the visitors to the site, yet it has the full right to delete any comment that departs from the law, values and principles of the Commissions work.
-4. The International Authority for the Support of The Rights of the Palestinian People (Crowd) retains all copyrights, patents and other intellectual property rights published on this website.
-5. The International Commission for the Support of the Rights of the Palestinian People (Crowd) does not agree to bear and will not assume any responsibility for any loss or damage arising directly or indirectly from the use of this site, or the damage caused by it in any way.
-6. The International Authority for the Support of the Rights of the Palestinian People (Amass) shall not take any responsibility for enabling you to link to another site or the consequences of dealing with the contents of another site.
-7. Your Excellency has the right to use the content of this site in any way except for personal or non-commercial use, as mentioned above, and if you wish to use the contents of this site other than the above, you must obtain prior permission from the Department of the International Authority for the Support of the Rights of the Palestinian People (Crowd), knowing that legal action is required in the event of any violations of the above rights.
+ وقد كرست اللجنة الدولية لدعم حقوق الشعب الفلسطيني هذا الطلب لتقديم معلومات عن حالة حقوق الشعوب الفلسطينية، وغيرها من المعلومات عن أنشطتها المختلفة بما في ذلك منشوراتها ومنشوراتها المختلفة، وتعرب الهيئة الدولية عن سعادتها العميقة بزياراتكم لتطبيقها، وتعتبر ذلك خطوة لدعم ضحايا انتهاكات حقوق الإنسان لذا يرجى قبول نصيحتنا لطباعة نسخ من المعلومات لاستخدامك الشخصي غير الملفات التجارية وتخزينها على الكمبيوتر، وبهذا نود أن نقدم لك المشورة بشأن بعض القيود القانونية المفروضة على جميع الزوار. يجب على الطلب وشرفك الالتزام بالشروط والأحكام الموضحة أدناه:
+        1. يشير وصولك إلى الموقع إلى أنك تعرف وتوافق على هذه الشروط والأحكام، إذا كنت لا توافق على هذه الشروط والأحكام، لا تدخل هذا الموقع ولا تستخدمه.
+2. المحتويات الواردة في هذا الموقع، بما في ذلك على سبيل المثال لا الحصر الصور والفيديو والمنشورات والإعلانات والتنزيلات والروابط، باستثناء تلك المشار إليها على أنها ملكية أو ملكية مشتركة لأطراف ثالثة، مملوكة من قبل هيئة الدعم الدولية لحقوق الشعب الفلسطيني ومحمية بموجب حقوق النشر. وقد استثمرت المجموعة الدولية، إلى جانب مموليها والجهات المانحة والشركاء، الأموال والوقت والجهد لتطويرها.
+3- لا تتحمل الهيئة الدولية (الحشد) أي مسؤولية عن التعليقات التي أدلى بها زوار الموقع، ومع ذلك يحق لها تماماً حذف أي تعليق يخرج عن القانون والقيم والمبادئ التي يقوم بها عمل اللجان.
+   4. تحتفظ الهيئة الدولية لدعم حقوق الشعب الفلسطيني (Crowd) بجميع حقوق الطبع والنشر والبراءات وغيرها من حقوق الملكية الفكرية المنشورة على هذا الموقع.
+5- لا تقبل اللجنة الدولية لدعم حقوق الشعب الفلسطيني (الحشد) تحمل أي خسارة أو ضرر ناجم بشكل مباشر أو غير مباشر عن استخدام هذا الموقع أو الأضرار التي يسببها بأي شكل من الأشكال.
+6. لا تتحمل الهيئة الدولية لدعم حقوق الشعب الفلسطيني (Amass) أي مسؤولية لتمكينك من الارتباط بموقع آخر أو عواقب التعامل مع محتويات موقع آخر.
+7. يحق لسعادتكم استخدام محتوى هذا الموقع بأي شكل من الأشكال باستثناء الاستخدام الشخصي أو غير التجاري، كما ذكر أعلاه، وإذا كنت ترغب في استخدام محتويات هذا الموقع بخلاف ما سبق، يجب الحصول على إذن مسبق من إدارة السلطة الدولية لدعم حقوق الشعب الفلسطيني (الحشد) مع العلم أن الإجراءات القانونية مطلوبة في حالة حدوث أي انتهاك للحقوق المذكورة أعلاه.
+    </string>
+    <string name="About__us">
 
+    جمعية لدعم حقوق الشعب الفلسطيني، تعرف باسم المنظمة الدولية لدعم الشعب الفلسطيني، هي منظمة غير ربحية غير حكومية تأسست في عام 2015 ومسجلة تحت رقم 8523 استنادا إلى قانون الجمعيات والمنظمات غير الحكومية الفلسطينية رقم 01 لسنة 2000. وتعمل الهيئة الدولية على حماية حقوق الإنسان وحقوق الشعب الفلسطيني.
+وتجسّد اللجنة رؤيتها في الكفاح من أجل مجتمع فلسطيني حر وديمقراطي تحترم فيه سيادة القانون وحقوق الإنسان.
 
+تسعى السلطة إلى حماية حقوق الإنسان في فلسطين، وتوعية الفلسطينيين بثقافة الحقوق الوطنية والإنسانية، وحشد الدعم والتضامن الدولي مع حقوق الشعب الفلسطيني، باستخدام الاستراتيجيات والتكتيكات وأدوات الرصد والتوثيق والحماية الوطنية والدولية لحقوق الإنسان.
+
+وتتمثل الأهداف الاستراتيجية للجمعيات في ما يلي:
+المساهمة في بناء وتفعيل وتوسيع قاعدة المشاركة في مجال حقوق الإنسان بالتعاون مع مؤسسات حقوق الإنسان ومنظمات المجتمع المدني والمؤسسات الدولية لحقوق الإنسان.
+والمساهمة في إطلاق وتنظيم حملات الضغط والدعوة لدعم حقوق الإنسان والشعب الفلسطيني
+والمساهمة في دعم المبادرات التنموية والاجتماعية والاقتصادية والثقافية التي تعزز حماية حقوق الإنسان
+المساهمة في نشر ثقافة حقوق الإنسان وتفعيل استخدام كافة الآليات التي تهدف إلى حماية حقوق الإنسان.
+بعد ذلك العمل على إنشاء أكاديمية مهنية لبناء قدرات الموظفين الشباب في المجالات المهنية والفنية والإدارية والقيادية وفي مجال حقوق الإنسان والتنمية المستدامة
+تعتمد اللجنة على عمل الأراضي الفلسطينية المحتلة ومختلف أماكن الوجود الفلسطيني على مبادئ وقيم ومعايير سيادة القانون وحقوق الإنسان وتعمل على تعزيز حماية حقوق الإنسان والعدالة للفلسطينيين، على طريق إنهاء الاحتلال الإسرائيلي، وبناء دولة فلسطينية مستقلة عاصمتها القدس. ضمان حقوق اللاجئين الفلسطينيين، وتعزيز سيادة القانون، واحترام حقوق الإنسان وفقا للمعايير الوطنية والدولية لحقوق الإنسان.
+
+أما بالنسبة لبرنامج الهيئة فهي:
+1 - برنامج بناء القدرات.
+برنامج الدعم القانوني وحقوق الإنسان.
+3. برنامج البحوث والسياسات
+4- برنامج وسائط الإعلام الدولية والدعوة
+5- بنك فرص ومبادرات التنمية
+    </string>
     <!-- Generated by Automatic String Resource Translation -->
     <!--          https://asrt.gluege.boerde.de             -->
 </resources>
