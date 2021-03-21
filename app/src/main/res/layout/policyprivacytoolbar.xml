@@ -18,7 +18,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/PolicyPrivacy"
+        android:text="@string/policy_Privacy"
         android:textColor="#fff"
         android:textAlignment="center"
         android:paddingTop="15dp"

@@ -89,7 +89,7 @@
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="30dp"
         android:background="@drawable/poll_item_selected_editext_back"
-        android:hint="@string/question"
+        android:hint="question"
         android:inputType="text"
         android:paddingVertical="5dp"
         android:paddingHorizontal="20dp"
