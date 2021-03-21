@@ -291,19 +291,10 @@ public class Home_Activity extends AppCompatActivity implements
 
           Intent intent = new Intent(Home_Activity.this, ShowPollsActivity.class);
           Bundle bundle = new Bundle();
-            bundle.putInt("postType",PostData.TYPE_POLL);
+          bundle.putInt("postType",PostData.TYPE_POLL);
           intent.putExtras(bundle);
           intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
           startActivity(intent);
-
-
-//              B_Fragment fragment = new B_Fragment();
-//              Bundle bundle = new Bundle();
-//              bundle.putInt("postType",PostData.TYPE_POLL);
-//              fragment.setArguments(bundle);
-//              replaceFragment(fragment);
-
-
 
 
     }else if (item.getItemId() == R.id.complaints) {
