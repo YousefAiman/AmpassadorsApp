@@ -27,7 +27,6 @@
             android:visibility="gone"
             android:layout_margin="2dp"/>
 
-
 <!--        <ProgressBar-->
 <!--            android:id="@+id/progressBar"-->
 <!--            android:layout_width="wrap_content"-->

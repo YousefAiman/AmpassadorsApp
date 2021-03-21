@@ -301,21 +301,24 @@ public class PrivateMessagingActivity extends AppCompatActivity
     switch (messageType) {
 
       case Files.IMAGE:
-        body = currentUserName + R.string.send_An_Message;
+        body = getString(R.string.sent_an_image);
         break;
 
       case Files.DOCUMENT:
-      case Files.AUDIO:
-        body = currentUserName + R.string.send_An_Message;
+        body = getString(R.string.sent_an_attachment);
         break;
+
+      case Files.AUDIO:
+        body = getString(R.string.sent_audio_message);
+        break;
+
 
       case Files.VIDEO:
-        body = currentUserName +R.string.send_video ;
+        body = getString(R.string.sent_a_video);
         break;
 
-
       default:
-        body = currentUserName + ": " + message;
+        body = message;
     }
 
 
@@ -328,11 +331,11 @@ public class PrivateMessagingActivity extends AppCompatActivity
           final String messaging = documentSnapshot.getString("ActivelyMessaging");
           if (messaging == null || !messaging.equals(currentUid)) {
             Log.d("ttt", "sendBothNotifs");
-            sendBothNotifs(message);
+            sendBothNotifs(body);
           }
         } else {
           Log.d("ttt", "sendBothNotifs");
-          sendBothNotifs(message);
+          sendBothNotifs(body);
         }
 
       }
@@ -358,7 +361,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
               message,
               getResources().getString(R.string.new_message) + " " + currentUserName,
               currentImageUrl,
-              "Messages",
+              "Private Messages",
               "privateMessaging",
               currentUid
       );

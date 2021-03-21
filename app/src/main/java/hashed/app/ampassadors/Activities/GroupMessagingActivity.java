@@ -286,19 +286,9 @@ public class GroupMessagingActivity extends AppCompatActivity
 
   //my data
   private void getMyData() {
-
     usersRef.document(currentUid).get().addOnSuccessListener(documentSnapshot -> {
       if (documentSnapshot.exists()) {
-//        currentImageUrl = documentSnapshot.getString("imageUrl");
         currentUserName = documentSnapshot.getString("username");
-      }
-    }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-      @Override
-      public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-        if (task.isSuccessful()) {
-//          Picasso.get().load(currentImageUrl).fit().into(messagingTbProfileIv);
-          messagingTbNameTv.setText(currentUserName);
-        }
       }
     });
   }
@@ -1567,16 +1557,20 @@ public class GroupMessagingActivity extends AppCompatActivity
     switch (messageType) {
 
       case Files.IMAGE:
-        body = currentUserName + getString(R.string.send_An_Message);
+        body = currentUserName + getString(R.string.sent_an_image);
         break;
 
       case Files.DOCUMENT:
+        body = currentUserName + getString(R.string.sent_an_attachment);
+      break;
+
       case Files.AUDIO:
-        body = currentUserName + getString(R.string.sen_Attachment);
-        break;
+        body = currentUserName + getString(R.string.sent_audio_message);
+      break;
+
 
       case Files.VIDEO:
-        body = currentUserName + getString(R.string.send_video);
+        body = currentUserName + getString(R.string.sent_a_video);
         break;
 
 
@@ -1591,8 +1585,8 @@ public class GroupMessagingActivity extends AppCompatActivity
               body,
               currentGroupName,
               currentGroupImage,
-              "message",
-              "privateMessaging",
+              "Group Messages",
+              "groupMessaging",
               groupId
       );
 

@@ -8,8 +8,6 @@
     android:background="@color/white_grey"
     tools:context=".Activities.PostNewsActivity">
 
-
-
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -17,8 +15,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_alignParentTop="true"
         android:background="@color/dark_green"
-        app:navigationIcon="@drawable/back_arrow_icon"
-        app:menu="@menu/suggestions_toolbar_menu"/>
+        app:navigationIcon="@drawable/back_arrow_icon"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

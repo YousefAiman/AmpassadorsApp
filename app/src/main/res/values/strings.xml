@@ -291,4 +291,8 @@ Legal and human rights support program.
     <string name="next">Next</string>
     <string name="skip">Skip</string>
     <string name="privacyPolicy">Privacy Policy</string>
+    <string name="sent_an_image">sent an image</string>
+    <string name="sent_a_video">sent a video</string>
+    <string name="sent_audio_message">sent an audio message</string>
+    <string name="sent_an_attachment">sent an attachment</string>
 </resources>
