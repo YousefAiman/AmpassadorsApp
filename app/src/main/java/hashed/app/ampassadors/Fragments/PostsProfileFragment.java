@@ -1,6 +1,8 @@
-                                                       package hashed.app.ampassadors.Fragments;
+package hashed.app.ampassadors.Fragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -44,10 +46,13 @@ import hashed.app.ampassadors.Activities.Profile;
 import hashed.app.ampassadors.Activities.profile_edit;
 import hashed.app.ampassadors.Adapters.PostAdapter;
 import hashed.app.ampassadors.Adapters.UserPostAdapter;
+import hashed.app.ampassadors.BroadcastReceivers.NotificationIndicatorReceiver;
+import hashed.app.ampassadors.BuildConfig;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.Objects.UserPostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
+import hashed.app.ampassadors.Utils.GlobalVariables;
 
 public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItemClickListener,
         SwipeRefreshLayout.OnRefreshListener {
@@ -71,6 +76,7 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
     boolean status;
     FloatingActionButton floatingButton;
     Toolbar toolbar;
+    private NotificationIndicatorReceiver notificationIndicatorReceiver;
 
     public PostsProfileFragment() {
         // Required empty public constructor
@@ -101,6 +107,15 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         toolbar.setNavigationOnClickListener(v -> ((Home_Activity) requireActivity()).showDrawer());
 
         toolbar.setOnMenuItemClickListener(this);
+
+        toolbar.getMenu().findItem(R.id.action_notifications)
+                .setIcon(GlobalVariables.getNotificationsCount() > 0 ?
+                        R.drawable.notification_indicator_icon :
+                        R.drawable.notification_icon);
+
+        setupNotificationReceiver();
+
+
         getUserNaImg();
         firebaseFirestore = FirebaseFirestore.getInstance();
         query = firebaseFirestore.collection("Users").
@@ -219,6 +234,35 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         });
     }
 
+    private void setupNotificationReceiver() {
+
+        notificationIndicatorReceiver =
+                new NotificationIndicatorReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        if (intent.hasExtra("showIndicator")) {
+                            final MenuItem item = toolbar.getMenu().findItem(R.id.action_notifications);
+                            if (intent.getBooleanExtra("showIndicator", false)) {
+                                item.setIcon(R.drawable.notification_indicator_icon);
+                            } else {
+                                item.setIcon(R.drawable.notification_icon);
+                            }
+                        }
+                    }
+                };
+
+        getContext().registerReceiver(notificationIndicatorReceiver,
+                new IntentFilter(BuildConfig.APPLICATION_ID + ".notificationIndicator"));
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (notificationIndicatorReceiver != null) {
+            requireContext().unregisterReceiver(notificationIndicatorReceiver);
+        }
+    }
 
     private void setUpToolBarAndActions() {
 

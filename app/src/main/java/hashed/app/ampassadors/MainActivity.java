@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
 
     if (WifiUtil.isConnectedToInternet(this)) {
 
-      final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
       SharedPreferences sharedPreferences =
               getSharedPreferences(getResources().getString(R.string.app_name),
                       Context.MODE_PRIVATE);
@@ -53,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences.edit().putBoolean("firstTime",false).apply();
 
       }else{
+
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
 
         if (user != null) {
 

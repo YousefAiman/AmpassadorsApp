@@ -71,12 +71,12 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
   private LinearLayout dotsLinear;
   private Toolbar toolbar;
   private FloatingActionButton floatingButton;
+
   //header Pager
   private Handler handler;
   private Runnable pagerRunnable;
   private HomeNewsHeaderViewPagerAdapter pagerAdapter;
   private ArrayList<MeetingPreview> meetingPreviews;
-
 
   private NotificationIndicatorReceiver notificationIndicatorReceiver;
 
@@ -492,6 +492,9 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
       requireContext().unregisterReceiver(notificationIndicatorReceiver);
     }
 
+    if(post_list!=null && scrollListener!=null){
+      post_list.removeOnScrollListener(scrollListener);
+    }
   }
 
   public void addPostData(PostData post) {

@@ -107,9 +107,6 @@
         <item>الناشر</item>
         <item>مسؤل</item>
         <item>منسق</item>
-        <item>ضيف</item>
-
-
     </string-array>
     <string name="title_activity_side_drawer">درج جانبي</string>
     <string name="navigation_drawer_open">افتح درج التنقل</string>
@@ -182,8 +179,7 @@
     <string name="dowonloading_">جارى التحميل...</string>
     <string name="SuccessfullMessage">أضف بنجاح</string>
     <string name="Delete_success">تم حذف العنصر بنجاح</string>
-    <string name="user_requests">طلبات التسجيل </string>
-    <string name="already_have_an_account_sign_in">هل لديك حساب مسبقا</string>    <string name="Download">جارى التحميل...</string>
+    <string name="Download">جارى التحميل...</string>
     <string name="AuthMessage">مناشدات تحقق من اتصال Intetnet الخاص بك</string>
     <string name="Meetings_Message_cant_Slected_item">لا يمكن أن يكون وقت الاجتماع في الوقت المحدد!</string>
     <string name="meeting_title">حدد وقت الاجتماع</string>

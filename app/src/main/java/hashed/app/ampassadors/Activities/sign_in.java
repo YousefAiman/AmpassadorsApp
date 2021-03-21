@@ -24,8 +24,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.GlobalVariables;
@@ -140,11 +142,13 @@ public class sign_in extends AppCompatActivity {
     btn_login.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
+
         String txt_email = email.getText().toString();
         String txt_password = password.getText().toString();
 
         if (TextUtils.isEmpty(txt_email) || TextUtils.isEmpty(txt_password)) {
-          Toast.makeText(sign_in.this, "All field are required", Toast.LENGTH_SHORT).show();
+          Toast.makeText(sign_in.this, "All field are required",
+                  Toast.LENGTH_SHORT).show();
         } else {
 
           final ProgressDialog dialog = new ProgressDialog(sign_in.this);
@@ -153,54 +157,97 @@ public class sign_in extends AppCompatActivity {
           dialog.show();
 
           auth.signInWithEmailAndPassword(txt_email, txt_password)
-                  .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                  .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                      if (task.isSuccessful()) {
+                    public void onSuccess(AuthResult authResult) {
 
-                        FirebaseFirestore.getInstance().collection("Users")
-                                .document(task.getResult().getUser().getUid()).get().
-                                addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                  @Override
-                                  public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                    GlobalVariables.setRole(documentSnapshot.getString("Role"));
-                                  }
-                                }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                          @Override
-                          public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if(task.isSuccessful()){
+                      FirebaseFirestore.getInstance().collection("Users")
+                              .document(authResult.getUser().getUid())
+                              .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot snapshot) {
+                          if(!snapshot.exists()){
+                            auth.signOut();
+                            return;
+                          }
+
+                          if(snapshot.contains("rejected")
+                           && snapshot.getBoolean("rejected")){
+
+                            auth.signOut();
+
+                            Toast.makeText(sign_in.this,
+                                    "You have been rejected by the admin!",
+                                    Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+
+                          }else{
+
+                            if(snapshot.getBoolean("approvement")){
+
+                              GlobalVariables.setRole(snapshot.getString("Role"));
+
                               Intent intent = new Intent(sign_in.this,
                                       Home_Activity.class);
                               intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK |
                                       Intent.FLAG_ACTIVITY_NEW_TASK);
+                              dialog.dismiss();
                               startActivity(intent);
                               finish();
+
+
                             }else{
-                              dialog.dismiss();
+
+                              auth.signOut();
+
+                              Toast.makeText(sign_in.this,
+                                      "You haven't been approved by the admin!",
+                                      Toast.LENGTH_SHORT).show();
                             }
+
                           }
-                        }).addOnFailureListener(new OnFailureListener() {
-                          @Override
-                          public void onFailure(@NonNull Exception e) {
+
+                        }
+                      }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                          if(!task.isSuccessful()){
+
+                            auth.signOut();
+
+                            Toast.makeText(sign_in.this,
+                                    "You have been rejected by the admin!",
+                                    Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
+
                           }
-                        });
-                      } else {
 
-                        dialog.dismiss();
+                        }
+                      }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                          auth.signOut();
+                          dialog.dismiss();
+                        }
+                      });
 
-                        Toast.makeText(sign_in.this,
-                                "Error Authentication!", Toast.LENGTH_SHORT).show();
-                      }
+
                     }
+
                   }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
               dialog.dismiss();
-              Toast.makeText(sign_in.this, "Error: " +
-                      e.getMessage(), Toast.LENGTH_SHORT).show();
+
+              Toast.makeText(sign_in.this,
+                      "Error Authentication!: "+e.getLocalizedMessage(),
+                      Toast.LENGTH_SHORT).show();
             }
           });
+
+
+
         }
       }
     });

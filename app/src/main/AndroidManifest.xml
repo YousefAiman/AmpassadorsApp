@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
@@ -34,11 +36,15 @@
             android:screenOrientation="portrait"
             android:configChanges = "orientation|keyboard|keyboardHidden|screenLayout|screenSize"/>
 
-        <activity android:name=".Activities.List_Sug_Activity"/>
-        <activity android:name=".Activities.Suggestions_DtailesActivity"/>
-        <activity android:name=".Activities.ComplanitsListActivity"/>
+        <activity android:name=".Activities.List_Sug_Activity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.Suggestions_DtailesActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.ComplanitsListActivity"
+            android:screenOrientation="portrait"/>
 
-        <activity android:name=".Activities.Complanits_DetailsActivity"/>
+        <activity android:name=".Activities.Complanits_DetailsActivity"
+            android:screenOrientation="portrait"/>
 
         <activity android:name=".Activities.PostPollActivity"
             android:screenOrientation="portrait"/>

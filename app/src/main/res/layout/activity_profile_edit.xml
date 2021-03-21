@@ -14,9 +14,7 @@
 
             <include
                 android:id="@+id/toolbar"
-                layout="@layout/profile_toolbar"
-
-                />
+                layout="@layout/profile_toolbar" />
 
             <TextView
                 android:id="@+id/textView6"
@@ -36,13 +34,27 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profile_picture"
-                android:layout_width="149dp"
-                android:layout_height="147dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:layout_marginTop="36dp"
+                app:layout_constraintWidth_percent="0.4"
+                app:layout_constraintDimensionRatio="1"
                 android:background="@drawable/profile_background"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+            <ImageView
+                android:id="@+id/updateImageIV"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintWidth_percent="0.12"
+                app:layout_constraintDimensionRatio="1"
+                android:src="@drawable/ic_menu_camera"
+                app:layout_constraintBottom_toBottomOf="@+id/profile_picture"
+                app:layout_constraintEnd_toEndOf="@+id/profile_picture"
+                app:layout_constraintStart_toStartOf="@+id/profile_picture"
+                app:layout_constraintTop_toTopOf="@+id/profile_picture" />
 
             <EditText
                 android:padding="10dp"
