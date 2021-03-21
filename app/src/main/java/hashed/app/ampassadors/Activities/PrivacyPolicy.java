@@ -17,6 +17,5 @@ public class PrivacyPolicy extends AppCompatActivity {
 
         final Toolbar toolbar = findViewById(R.id.about_toolbar);
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
-
     }
 }

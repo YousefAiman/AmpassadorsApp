@@ -74,7 +74,7 @@ public class profile_edit extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_profile_edit);
-    updatedata();
+  //  updatedata();
     init();
 // toolbar
     final Toolbar toolbar = findViewById(R.id.toolbar);
@@ -287,34 +287,29 @@ public class profile_edit extends AppCompatActivity {
   }
 
 
-  private void updatedata() {
+//  private void updatedata() {
+//    save.setOnClickListener(new View.OnClickListener() {
+//      @Override
+//      public void onClick(View view) {
+//        String txt_username = username.getText().toString();
+//       // String txt_email = email.getText().toString();
+//        String txt_country = country.getText().toString();
+//        String txt_city = city.getText().toString();
+//        String txt_phone = phone.getText().toString();
+//
+//
+//        if (TextUtils.isEmpty(txt_username)
+//                || TextUtils.isEmpty(txt_country) || TextUtils.isEmpty(txt_city) || TextUtils.isEmpty(txt_phone)) {
+//          Toast.makeText(profile_edit.this, "All field are required", Toast.LENGTH_SHORT).show();
+//        } else {
+//          register(txt_username,
+//                  txt_country, txt_city, txt_phone);
+//          Intent intent = new Intent(profile_edit.this, Profile.class);
+//          startActivity(intent);
+//          finish();
+//        }
+//      }
+//    });
 
-
-    save.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        String txt_username = username.getText().toString();
-       // String txt_email = email.getText().toString();
-        String txt_country = country.getText().toString();
-        String txt_city = city.getText().toString();
-        String txt_phone = phone.getText().toString();
-
-
-        if (TextUtils.isEmpty(txt_username)
-                || TextUtils.isEmpty(txt_country) || TextUtils.isEmpty(txt_city) || TextUtils.isEmpty(txt_phone)) {
-          Toast.makeText(profile_edit.this, "All field are required", Toast.LENGTH_SHORT).show();
-        } else {
-          register(txt_username,
-                  txt_country, txt_city, txt_phone);
-          Intent intent = new Intent(profile_edit.this, Profile.class);
-          startActivity(intent);
-          finish();
-
-        }
-      }
-    });
-
-  }
-
-
+  //}
 }
