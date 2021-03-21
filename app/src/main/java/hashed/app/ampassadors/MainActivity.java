@@ -68,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
                       @Override
                       public void onSuccess(DocumentSnapshot documentSnapshot) {
                         GlobalVariables.setRole(documentSnapshot.getString("Role"));
+                        if(documentSnapshot.contains("token")){
+                          GlobalVariables.setCurrentToken(documentSnapshot.getString("token"));
+                        }
                       }
                     }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
               @Override
@@ -193,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
 
     if (resultCode == ConnectionActivity.CONNECTION_RESULT) {
 
-      if (getIntent().hasExtra("messagingBundle")) {
+      if (getIntent().hasExtra("destinationBundle")) {
 //        startMessagingActivity();
       } else {
         startHomeActivity();

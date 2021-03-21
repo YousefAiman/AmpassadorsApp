@@ -13,10 +13,10 @@ public class FirestoreNotificationSender {
   private static final CollectionReference notificationRef =
           FirebaseFirestore.getInstance().collection("Notifications");
 
-  private static final String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
   public static void sendFirestoreNotification(String userId, String type, String body,
                                                String senderName, String destinationId) {
+
+    final String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     final String notificationPath =
             currentUserId + "_" + destinationId + "_" + type;
@@ -53,6 +53,9 @@ public class FirestoreNotificationSender {
   }
 
   public static void deleteFirestoreNotification(String destinationId, String type) {
+
+    final String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
     final String notificationPath = currentUserId + "_" + destinationId + "_" + type;
     notificationRef.document(notificationPath).delete();
   }

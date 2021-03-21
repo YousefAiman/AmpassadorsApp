@@ -28,8 +28,10 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Services.FirebaseMessagingService;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 
 public class sign_in extends AppCompatActivity {
@@ -38,9 +40,7 @@ public class sign_in extends AppCompatActivity {
   Button btn_login, create_account_btn;
   FirebaseAuth auth;
   TextView verifyEmail, forgetPass;
-  ProgressDialog progressDialog;
   FirebaseFirestore fStore;
-  String userid;
   FirebaseAuth fAuth;
 
   @Override
@@ -146,13 +146,15 @@ public class sign_in extends AppCompatActivity {
         String txt_email = email.getText().toString();
         String txt_password = password.getText().toString();
 
-        if (TextUtils.isEmpty(txt_email) || TextUtils.isEmpty(txt_password)) {
-          Toast.makeText(sign_in.this, "All field are required",
+        if (TextUtils.isEmpty(txt_email)) {
+          Toast.makeText(sign_in.this, R.string.Error_Message_Email,
                   Toast.LENGTH_SHORT).show();
-        } else {
+        }else if (TextUtils.isEmpty(txt_password)){
+          Toast.makeText(sign_in.this, R.string.Error_Message_password, Toast.LENGTH_SHORT).show();
+        }else {
 
           final ProgressDialog dialog = new ProgressDialog(sign_in.this);
-          dialog.setMessage("Signing in!");
+          dialog.setMessage(getString(R.string.SignUp_Message));
           dialog.setCancelable(false);
           dialog.show();
 
@@ -177,7 +179,7 @@ public class sign_in extends AppCompatActivity {
                             auth.signOut();
 
                             Toast.makeText(sign_in.this,
-                                    "You have been rejected by the admin!",
+                                    R.string.Rejcetet_Message,
                                     Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
 
@@ -185,6 +187,18 @@ public class sign_in extends AppCompatActivity {
                             if(snapshot.getBoolean("approvement")){
 
                               GlobalVariables.setRole(snapshot.getString("Role"));
+
+
+                              FirebaseMessaging.getInstance()
+                                      .getToken().addOnSuccessListener(new OnSuccessListener<String>() {
+                                @Override
+                                public void onSuccess(String s) {
+                                  GlobalVariables.setCurrentToken(s);
+                                  snapshot.getReference().update("token",s);
+                                }
+                              });
+
+                              FirebaseMessagingService.startMessagingService(sign_in.this);
 
                               Intent intent = new Intent(sign_in.this,
                                       Home_Activity.class);
@@ -194,13 +208,13 @@ public class sign_in extends AppCompatActivity {
                               startActivity(intent);
                               finish();
 
-
                             }else{
 
                               auth.signOut();
+                              dialog.dismiss();
 
                               Toast.makeText(sign_in.this,
-                                      "You haven't been approved by the admin!",
+                                      R.string.Appromvent_Message,
                                       Toast.LENGTH_SHORT).show();
                             }
 
@@ -216,7 +230,7 @@ public class sign_in extends AppCompatActivity {
                             auth.signOut();
 
                             Toast.makeText(sign_in.this,
-                                    "You have been rejected by the admin!",
+                                    R.string.Rejcetet_Message,
                                     Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
 
@@ -240,7 +254,7 @@ public class sign_in extends AppCompatActivity {
               dialog.dismiss();
 
               Toast.makeText(sign_in.this,
-                      "Error Authentication!: "+e.getLocalizedMessage(),
+                      R.string.Error_Auth +e.getLocalizedMessage(),
                       Toast.LENGTH_SHORT).show();
             }
           });

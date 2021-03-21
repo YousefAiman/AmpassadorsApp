@@ -18,7 +18,7 @@
         android:title="@string/Polls" />
     <item
         android:id="@+id/policy"
-        android:title="@string/privacyPolicy" />
+        android:title="@string/policy_Privacy" />
 
     <item
         android:id="@+id/complaints"

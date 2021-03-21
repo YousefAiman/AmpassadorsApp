@@ -97,24 +97,29 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
   private static VideoMessageListener videoMessageListener;
   private static ImageMessageListener imageMessageListener;
   private static DocumentMessageListener documentMessageListener;
+  private static TimeClickListener timeClickListener;
   //date formats
-  private final DateFormat
-          hourMinuteFormat = new SimpleDateFormat("h:mm a", Locale.getDefault()),
-          withoutYearFormat = new SimpleDateFormat("h:mm a MMM dd", Locale.getDefault()),
-          formatter = new SimpleDateFormat("h:mm a yyyy MMM dd", Locale.getDefault()),
-          todayYearFormat = new SimpleDateFormat("yyyy", Locale.getDefault()),
-          todayYearMonthDayFormat = new SimpleDateFormat("yyyy MMM dd", Locale.getDefault());
+//  private final DateFormat
+//          hourMinuteFormat = new SimpleDateFormat("h:mm a", Locale.getDefault()),
+//          withoutYearFormat = new SimpleDateFormat("h:mm a MMM dd", Locale.getDefault()),
+//          formatter = new SimpleDateFormat("h:mm a yyyy MMM dd", Locale.getDefault()),
+//          todayYearFormat = new SimpleDateFormat("yyyy", Locale.getDefault()),
+//          todayYearMonthDayFormat = new SimpleDateFormat("yyyy MMM dd", Locale.getDefault());
   private final Context context;
   private boolean longCLickEnabled = true;
+
+
 
   public PrivateMessagingAdapter(ArrayList<PrivateMessage> privateMessages,
                                  Context context,
                                  DeleteMessageListener deleteMessageListener,
                                  VideoMessageListener videoMessageListener,
                                  DocumentMessageListener documentMessageListener,
-                                 ImageMessageListener imageMessageListener
-          , boolean isForGroup
+                                 ImageMessageListener imageMessageListener,
+                                 TimeClickListener timeClickListener,
+                                 boolean isForGroup
   ) {
+
 
     PrivateMessagingAdapter.privateMessages = privateMessages;
     this.context = context;
@@ -126,6 +131,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
     PrivateMessagingAdapter.videoMessageListener = videoMessageListener;
     PrivateMessagingAdapter.documentMessageListener = documentMessageListener;
     PrivateMessagingAdapter.imageMessageListener = imageMessageListener;
+    PrivateMessagingAdapter.timeClickListener = timeClickListener;
   }
 
   private static void getUserName(String userId, TextView tv) {
@@ -442,6 +448,10 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
     void showImage(String url);
   }
 
+  public interface TimeClickListener {
+    void hideTime(int itemPosition);
+  }
+
 
   public interface DocumentMessageListener {
 
@@ -454,15 +464,18 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
   static class PrivateMessagingTextVh extends RecyclerView.ViewHolder
           implements View.OnLongClickListener, View.OnClickListener {
 
-    private final TextView messageTv;
+    private final TextView messageTv,timeTv;
     private TextView senderTv;
+
 
     public PrivateMessagingTextVh(@NonNull View itemView) {
       super(itemView);
       messageTv = itemView.findViewById(R.id.messageTv);
+      timeTv = itemView.findViewById(R.id.timeTv);
       if (isForGroup) {
         senderTv = itemView.findViewById(R.id.senderTv);
       }
+
 //       messageTimeTv =  itemView.findViewById(R.id.messageTimeTv);
     }
 
@@ -482,6 +495,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
       if (message.getSender().equals(currentUid)) {
         itemView.setOnLongClickListener(this);
       }
+      itemView.setOnClickListener(this);
     }
 
     @Override
@@ -495,35 +509,23 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
     @Override
     public void onClick(View view) {
 
-//
-//       if (messageTimeTv.getVisibility() == View.INVISIBLE) {
-//
-//         long time = messages.get(getAdapterPosition()).getTime();
-//
-//         if(messageTimeTv.getText().toString().isEmpty()){
-//
-//           if (time < 1000000000000L) {
-//             time *= 1000;
-//           }
-//
-//           if (todayYearMonthDayFormat.format(date)
-//                   .equals(todayYearMonthDayFormat.format(time))) {
-//             messageTimeTv.setText(hourMinuteFormat.format(time));
-//           } else if (todayYearFormat.format(date).equals(todayYearFormat.format(time))) {
-//             messageTimeTv.setText(withoutYearFormat.format(time));
-//           } else {
-//             messageTimeTv.setText(formatter.format(time));
-//           }
-//         }
-//
-//         messageTimeTv.setVisibility(View.VISIBLE);
-//       } else {
-//         messageTimeTv.setVisibility(View.INVISIBLE);
-//       }
+      Log.d("ttt","clicked");
+
+      timeClickListener.hideTime(getAdapterPosition());
+
+       if (timeTv.getVisibility() == View.GONE) {
+         timeTv.setText(TimeFormatter.formatTime(privateMessages
+                 .get(getAdapterPosition()).getTime()));
+
+         timeTv.setVisibility(View.VISIBLE);
+       } else {
+         timeTv.setVisibility(View.GONE);
+       }
 
     }
 
   }
+
 
   static class PrivateMessagingImageVh extends RecyclerView.ViewHolder
           implements View.OnLongClickListener, View.OnClickListener {
@@ -637,13 +639,10 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
         return;
 
       if (message.getAttachmentUrl() != null) {
-
         playIv.setOnClickListener(this);
-
       } else {
-
+        itemView.setClickable(false);
         playIv.setClickable(false);
-
       }
 
       if (bindUsername && !message.getSender().equals(currentUid)) {
@@ -667,6 +666,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
     public void onClick(View view) {
 
       if (view.getId() == R.id.playIv) {
+
 
         Log.d("audioMessage", "item clicked");
         PrivateMessage message = privateMessages.get(getAdapterPosition());

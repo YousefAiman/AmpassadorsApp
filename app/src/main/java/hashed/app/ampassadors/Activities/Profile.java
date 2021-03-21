@@ -74,7 +74,7 @@ public class Profile extends AppCompatActivity {
                     phone.setText(userInfo[0].getPhone());
                     Picasso.get().load(userInfo[0].getImageUrl()).fit().into(imageView);
                 }else {
-                    Toast.makeText(Profile.this, "Error"+task.getException().getMessage(),
+                    Toast.makeText(Profile.this, R.string.Error +task.getException().getMessage(),
                             Toast.LENGTH_SHORT).show();
                 }
             }

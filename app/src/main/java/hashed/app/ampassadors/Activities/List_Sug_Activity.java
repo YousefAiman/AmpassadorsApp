@@ -1,10 +1,12 @@
 package hashed.app.ampassadors.Activities;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,7 +26,7 @@ import hashed.app.ampassadors.Adapters.SuggestionsAdapter;
 import hashed.app.ampassadors.Objects.Suggestions;
 import hashed.app.ampassadors.R;
 
-public class List_Sug_Activity extends AppCompatActivity {
+public class List_Sug_Activity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener{
   RecyclerView recyclerView;
   Task<QuerySnapshot> task;
   FirebaseFirestore firebaseFirestore;
@@ -32,7 +34,6 @@ public class List_Sug_Activity extends AppCompatActivity {
   List<Suggestions> suggestions;
   Query query;
   CollectionReference collectionReference;
-
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +45,7 @@ public class List_Sug_Activity extends AppCompatActivity {
     adapter = new SuggestionsAdapter(List_Sug_Activity.this, suggestions);
     recyclerView.setAdapter(adapter);
     showSuggestions(true);
-
+    setUpToolBarAndActions();
   }
 
   public void setUpComponte() {
@@ -76,5 +77,16 @@ public class List_Sug_Activity extends AppCompatActivity {
         Toast.makeText(List_Sug_Activity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
       }
     });
+  }
+  private void setUpToolBarAndActions() {
+
+    final Toolbar toolbar = findViewById(R.id.toolbar);
+    toolbar.setNavigationOnClickListener(v -> onBackPressed());
+    toolbar.setOnMenuItemClickListener(this);
+
+  }
+  @Override
+  public boolean onMenuItemClick(MenuItem item) {
+    return false;
   }
 }

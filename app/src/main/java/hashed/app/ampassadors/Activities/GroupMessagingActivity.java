@@ -99,7 +99,7 @@ public class GroupMessagingActivity extends AppCompatActivity
         implements Toolbar.OnMenuItemClickListener, PrivateMessagingAdapter.DeleteMessageListener,
         PrivateMessagingAdapter.VideoMessageListener, PrivateMessagingAdapter.DocumentMessageListener,
         View.OnClickListener, RecyclerView.OnLayoutChangeListener,
-        PrivateMessagingAdapter.ImageMessageListener {
+        PrivateMessagingAdapter.ImageMessageListener ,PrivateMessagingAdapter.TimeClickListener{
 
   public static final int RECORD_AUDIO_REQUEST = 30;
   //constants
@@ -149,7 +149,7 @@ public class GroupMessagingActivity extends AppCompatActivity
   private MediaRecorder mediaRecorder;
   private Handler progressHandle;
   private Runnable progressRunnable;
-
+  private int previousSelected = -1;
 
   //notifications
   private SharedPreferences sharedPreferences;
@@ -286,19 +286,9 @@ public class GroupMessagingActivity extends AppCompatActivity
 
   //my data
   private void getMyData() {
-
     usersRef.document(currentUid).get().addOnSuccessListener(documentSnapshot -> {
       if (documentSnapshot.exists()) {
-//        currentImageUrl = documentSnapshot.getString("imageUrl");
         currentUserName = documentSnapshot.getString("username");
-      }
-    }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-      @Override
-      public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-        if (task.isSuccessful()) {
-//          Picasso.get().load(currentImageUrl).fit().into(messagingTbProfileIv);
-          messagingTbNameTv.setText(currentUserName);
-        }
       }
     });
   }
@@ -310,7 +300,7 @@ public class GroupMessagingActivity extends AppCompatActivity
 
     adapter = new PrivateMessagingAdapter(privateMessages,
             this, this, this,
-            this, this, true);
+            this, this, this,true);
     privateMessagingRv.setAdapter(adapter);
 
     currentMessagingRef = databaseReference.child(groupId);
@@ -348,6 +338,7 @@ public class GroupMessagingActivity extends AppCompatActivity
 
           } else {
             Log.d("ttt", "didn't find group");
+            messagesProgressBar.setVisibility(View.GONE);
             messageSendIv.setOnClickListener(new FirstMessageClickListener());
           }
         }
@@ -1566,16 +1557,20 @@ public class GroupMessagingActivity extends AppCompatActivity
     switch (messageType) {
 
       case Files.IMAGE:
-        body = currentUserName + getString(R.string.send_An_Message);
+        body = currentUserName + getString(R.string.sent_an_image);
         break;
 
       case Files.DOCUMENT:
+        body = currentUserName + getString(R.string.sent_an_attachment);
+      break;
+
       case Files.AUDIO:
-        body = currentUserName + getString(R.string.sen_Attachment);
-        break;
+        body = currentUserName + getString(R.string.sent_audio_message);
+      break;
+
 
       case Files.VIDEO:
-        body = currentUserName + getString(R.string.send_video);
+        body = currentUserName + getString(R.string.sent_a_video);
         break;
 
 
@@ -1590,8 +1585,8 @@ public class GroupMessagingActivity extends AppCompatActivity
               body,
               currentGroupName,
               currentGroupImage,
-              "message",
-              "privateMessaging",
+              "Group Messages",
+              "groupMessaging",
               groupId
       );
 
@@ -1631,6 +1626,16 @@ public class GroupMessagingActivity extends AppCompatActivity
 
     CloudMessagingNotificationsSender.sendNotification(userId, data);
 
+  }
+
+  @Override
+  public void hideTime(int itemPosition) {
+
+//        if(previousSelected != -1 && previousSelected != itemPosition){
+//      privateMessagingRv.getChildAt(previousSelected).findViewById(R.id.timeTv)
+//              .setVisibility(View.GONE);
+//    }
+//    previousSelected = itemPosition;
   }
 
   //click listeners
