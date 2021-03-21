@@ -55,9 +55,7 @@ public class PollItemsRecyclerAdapter extends RecyclerView.Adapter<PollItemsRecy
 
     pollOptions.add(context.getResources().getString(R.string.option)+" "+ (position + 1));
     notifyItemInserted(pollOptions.size());
-
   }
-
   @Override
   public int getItemCount() {
     return pollOptions.size();

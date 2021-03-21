@@ -157,8 +157,6 @@ public class sign_up extends AppCompatActivity {
           currentUid = mFirebaseUser.getUid(); //Do what you need to do with the id
         }
 
-
-
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("username", username);
         hashMap.put("password", passwrod);
@@ -182,9 +180,7 @@ public class sign_up extends AppCompatActivity {
 //        userInfo.setStatus(true);
         //  userInfo.setUserRole(spin);
 //                userInfo.setApprovement(false);
-
-
-        reference.document(firebaseUser.getUid()).set(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+        reference.document(currentUid).set(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
           @Override
           public void onComplete(@NonNull Task<Void> task) {
             if (task.isSuccessful()) {
@@ -202,7 +198,6 @@ public class sign_up extends AppCompatActivity {
               });
 
               Toast.makeText(sign_up.this, "Added successfully", Toast.LENGTH_LONG).show();
-
             }
           }
         })

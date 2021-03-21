@@ -159,7 +159,9 @@
     <string name="AwarenessPosts">Awareness Posts</string>
     <string name="Courses">Courses</string>
     <string name="Polls">Polls</string>
-
+    <string name="PolicyPrivacy">
+        Our privacy policy
+    </string>
     <string name="Proposals">Suggestions</string>
     <string name="Aboutus">About us</string>
     <string name="Logout">Logout</string>
@@ -214,6 +216,7 @@ Legal and human rights support program.
     <string name="close">Close</string>
     <string name="createsubject">Create Subject</string>
     <string name="Publish">Publish</string>
+    <string name="qusetoin">qusetoin....</string>
     <string name="timepoll">Poll Time</string>
     <string name="Settings">Settings</string>
     <string name="country">Country</string>
@@ -239,6 +242,7 @@ Legal and human rights support program.
     <string name="Meetings">Meetings</string>
     <string name="user_requests">User Requests</string>
     <string name="already_have_an_account_sign_in">Already have an account? Sign in</string>
+    <string name="Error_meassage_subjectTitle">Enter your subject title pleas</string>
     <string name="write_your_subject">Write your subject pleas</string>
     <string name="dowonloading_">Downloading...</string>
     <string name="SuccessfullMessage">Add Successfully</string>
@@ -273,23 +277,20 @@ Legal and human rights support program.
     <string name="Message_Fill_title">Please fill in the title!</string>
     <string name="Message_Fill_descr">Please fill in the description!</string>
     <string name="Message_Attchent_post">Please choose an attachment!</string>
-
-    <string name="option">الخيار</string>
-    <string name="create_poll">انشاء استبيان</string>
-    <string name="next">التالي</string>
-    <string name="continue_guest">الدخول كضيف</string>
-    <string name="skip">تخطي</string>
-    <string name="qusetoin">السؤال....</string>
-    <string name="Finish_message">انتهى التحميل</string>
-    <string name="Title_AlretDialoge">اختار الصورة الشخصية</string>
-    <string name="CaptuerPhoto">التقاط صورة</string>
-    <string name="OpenGallray">الاستوديو</string>
-    <string name="Rest_Password">اعادة تعين كلمة السر</string>
-    <string name="Email_Rest_Password">ادخل بريدك الخاص بك لاستلام بريد تغير كلمة السر</string>
-    <string name="Link_rest_password_sent"> رابط تغير كلمة المرور</string>
-    <string name="Email_Verfiy">تم ارسال رسالة التحقق من البريد الالكتروني .</string>
-    <string name="Email_not_Sent">لم يتم ارسال البريد</string>
-    <string name="Password_verfiy">يجب ان تكون كلمة المرور متطابقة </string>
-    <string name="Error_message_Details">Pleas write your details</string>
-    <string name="Error_meassage_subjectTitle">Enter the Title </string>
+    <string name="Error_message_Details">Plaes Enter Your Details</string>
+    <string name="Finish_message">Download Finish</string>
+    <string name="Title_AlretDialoge">Choose you profile photo</string>
+    <string name="CaptuerPhoto">Take photo</string>
+    <string name="OpenGallray">open Gallery</string>
+    <string name="Rest_Password">Reset Password</string>
+    <string name="Email_Rest_Password">Enter your Email to Revived Reset Link</string>
+    <string name="Link_rest_password_sent">"Reset Link To Your Email. "</string>
+    <string name="Email_Verfiy">Verification Email Has been Sent.</string>
+    <string name="Email_not_Sent">Email not Sent</string>
+    <string name="Password_verfiy">Password must match and confirm password</string>
+    <string name="question">Question</string>
+    <string name="continue_guest">Continue Guest</string>
+    <string name="next">Next</string>
+    <string name="skip">Skip</string>
+    <string name="privacyPolicy">Privacy Policy</string>
 </resources>

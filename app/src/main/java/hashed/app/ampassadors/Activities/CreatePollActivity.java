@@ -109,11 +109,8 @@ public class CreatePollActivity extends AppCompatActivity implements View.OnClic
   public void onClick(View view) {
 
     if (view.getId() == R.id.publishBtn) {
-
       Log.d("ttt", "pollItems: " + pollItems.size());
-
       final String question = questionEd.getText().toString();
-
       if (question.isEmpty()) {
         Toast.makeText(this, R.string.add_question_poll,
                 Toast.LENGTH_SHORT).show();
@@ -123,10 +120,7 @@ public class CreatePollActivity extends AppCompatActivity implements View.OnClic
                 Toast.LENGTH_SHORT).show();
         return;
       }
-
-
       final List<Map<String, Object>> optionsMaps = new ArrayList<>();
-
       for (int i = 0; i < pollItems.size(); i++) {
         final EditText editText = pollRv.getChildAt(i).findViewById(R.id.pollEd);
         if (editText != null && !editText.getText().toString().trim().isEmpty()) {

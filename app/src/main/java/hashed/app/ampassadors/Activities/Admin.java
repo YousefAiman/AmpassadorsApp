@@ -58,11 +58,9 @@ public class Admin extends AppCompatActivity {
     userid = fAuth.getCurrentUser().getUid();
     spinner = findViewById(R.id.options);
 
-
     approve.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-
         List<String> persons = new ArrayList<>();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, persons);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -80,7 +78,6 @@ public class Admin extends AppCompatActivity {
           }
         });
         DocumentReference reference = firebaseFirestore.collection("Users").document(userid);
-
         if (approvment) {
           reference.update("approvement", true).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
@@ -91,7 +88,6 @@ public class Admin extends AppCompatActivity {
         }
       }
     });
-
     delete.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
@@ -107,14 +103,11 @@ public class Admin extends AppCompatActivity {
         }
       }
     });
-
-
     firebaseFirestore = FirebaseFirestore.getInstance();
     list_users = findViewById(R.id.users_list);
     list_users.setHasFixedSize(true);
     list_users.setLayoutManager(new LinearLayoutManager(this));
     data = new ArrayList<>();
-
     task = firebaseFirestore.collection("Users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
       @Override
       public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -126,7 +119,6 @@ public class Admin extends AppCompatActivity {
             UserInfo info = new UserInfo();
             info.setEmail("Email : " + email);
             info.setPassword("Password : " + pass);
-
             data.add(info);
           }
         }
@@ -140,12 +132,10 @@ public class Admin extends AppCompatActivity {
         Toast.makeText(Admin.this, e.getMessage(), Toast.LENGTH_SHORT).show();
       }
     });
-
     Spinner spinner = findViewById(R.id.options);
     ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
             R.array.persons_array, android.R.layout.simple_spinner_item);
     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     spinner.setAdapter(adapter);
-
   }
 }
