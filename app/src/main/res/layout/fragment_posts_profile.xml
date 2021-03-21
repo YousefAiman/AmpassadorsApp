@@ -30,11 +30,9 @@
 
         <include
             android:id="@+id/toolbar"
-            layout="@layout/profile_toolbar"
+            layout="@layout/toolbar_prof"
 
             />
-
-
         <LinearLayout
             android:id="@+id/linearLayout2"
             android:layout_width="match_parent"

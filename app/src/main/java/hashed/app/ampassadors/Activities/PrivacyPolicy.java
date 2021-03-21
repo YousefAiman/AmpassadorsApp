@@ -1,6 +1,7 @@
 package hashed.app.ampassadors.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
 
@@ -14,5 +15,7 @@ public class PrivacyPolicy extends AppCompatActivity {
         setContentView(R.layout.activity_privacy_policy);
 
 
+        final Toolbar toolbar = findViewById(R.id.about_toolbar);
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
     }
 }

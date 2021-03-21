@@ -3,10 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/profile_toolbar"
-    app:menu="@menu/chatting_toolbar_menu"
+    android:id="@+id/profile_toolbara"
+    app:menu="@menu/toolbar_menu"
     android:layout_width="match_parent"
-    app:navigationIcon="@drawable/back_arrow_icon"
+    app:navigationIcon="@drawable/navigation_menu_icon"
     app:navigationContentDescription="Side menu"
     android:layout_height="?actionBarSize"
     android:elevation="4dp"
@@ -19,8 +19,6 @@
         android:layout_height="match_parent"
         android:gravity="center_vertical"
         android:orientation="horizontal">
-
-
         <TextView
             android:id="@+id/messagingTbNameTv"
             android:layout_width="wrap_content"
@@ -31,9 +29,5 @@
             android:layout_gravity="center"
             android:text="@string/profile"
             android:textSize="24sp" />
-
-
-
     </LinearLayout>
-
 </androidx.appcompat.widget.Toolbar>

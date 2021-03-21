@@ -11,7 +11,7 @@
     <string name="text_message">رسالة نصية …</string>
     <string name="attach_files">إرفاق ملفات</string>
     <string name="send_message">أرسل رسالة</string>
-    <string name="message_deleted">رسالة محذوفة</string>
+    <string name="message_deleted">الرسالة مسحت</string>
     <string name="message_send_empty">لا يمكنك إرسال رسالة فارغة</string>
     <string name="message_send_failed">فشل في إرسال الرسالة!</string>
     <string name="message_load_failed">فشل تحميل الرسائل!</string>
@@ -81,7 +81,7 @@
     <string name="listSuggestion">قائمة اقتراح</string>
     <string name="listComplaints">قائمة الشكاوى</string>
     <string name="poll">تصويت</string>
-    <string name="privacyPolicy">سياسة الخصوصية</string>
+    <string name="policyPrivacy">سياسة الخصوصية</string>
     <string name="aboutus">معلومات عنا</string>
     <string name="logout">تسجيل خروج</string>
     <string name="Error_message_defname">أدخل اسمك مناشدات</string>
@@ -123,6 +123,7 @@
     <string name="AwarenessPosts">المشاركات التوعوية</string>
     <string name="Courses">الدورات</string>
     <string name="Polls">استطلاعات الرأي</string>
+    <string name="PolicyPrivacy">سياسة خاصة</string>
     <string name="Proposals">اقتراحات</string>
     <string name="Aboutus">معلومات عنا</string>
     <string name="Logout">تسجيل خروج</string>
@@ -149,7 +150,7 @@
     <string name="close">قريب</string>
     <string name="createsubject">إنشاء الموضوع</string>
     <string name="Publish">ينشر</string>
-    <string name="question">question....</string>
+    <string name="qusetoin">qusetoin ....</string>
     <string name="timepoll">وقت الاستطلاع</string>
     <string name="Settings">إعدادات</string>
     <string name="country">دولة</string>
@@ -206,16 +207,9 @@
     <string name="sen_Attachment">إرسال مرفق</string>
     <string name="send_video">"إرسال فيديو"</string>
     <string name="Succes_Login">تم تسجيل الخروج بنجاح</string>
-    <string name="Message_Fill_title">استبيان</string>
-    <string name="Message_Fill_descr">الاستبيانات</string>
+    <string name="Message_Fill_title">الرجاء ملء العنوان!</string>
+    <string name="Message_Fill_descr">الرجاء ملء الوصف!</string>
     <string name="Message_Attchent_post">الرجاء اختيار مرفق!</string>
-    <string name="user_requests">طلبات تسجيل المستخدمين</string>
-    <string name="already_have_an_account_sign_in">لديك حساب مسبق؟ سجل الدخول</string>
-    <string name="option">الخيار</string>
-    <string name="create_poll">انشاء استبيان</string>
-    <string name="next">التالي</string>
-    <string name="continue_guest">الدخول كضيف</string>
-    <string name="skip">تخطي</string>
 
     <string name="Finish_message">انتهى التحميل</string>
     <string name="Title_AlretDialoge">اختار الصورة الشخصية</string>

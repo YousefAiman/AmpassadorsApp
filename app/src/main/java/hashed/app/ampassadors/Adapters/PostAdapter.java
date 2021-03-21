@@ -58,8 +58,6 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //        this.commentsInterface = commentsInterface;
 //        this.imageInterface = imageInterface;
   }
-
-
   @NonNull
   @Override
   public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
