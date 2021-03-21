@@ -13,7 +13,7 @@
     android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
     android:fitsSystemWindows="true"
-    app:menu="@menu/suggestions_toolbar_menu"
+
     android:background="@color/dark_green">
 
 
@@ -22,7 +22,8 @@
         android:layout_height="match_parent"
         android:text="@string/com_title"
         android:textColor="#fff"
-        android:textAlignment="center"
+
+        android:paddingStart="30dp"
         android:paddingTop="15dp"
         android:fontFamily="@font/segoe_ui_bold"
         android:textSize="24sp"

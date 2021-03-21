@@ -92,9 +92,10 @@
     <string name="listSuggestion">List Suggestion</string>
     <string name="listComplaints">List Complaints</string>
     <string name="poll">Poll</string>
-    <string name="policyPrivacy">
+    <string name="policy_Privacy">Privacy Policy</string>
 
-         The International Commission for the Support of the Rights of the Palestinian People has dedicated this application to provide information on the situation of the palestinian peoples rights, and other information about its various activities including its various publications and publications, and the International Body expresses its deep happiness with your visits to apply it, and considers this as a step to support the victims of human rights violations, so please accept our advice to print copies of information for your personal use other than commercial and store files on the computer, and with this we would like to offer you advice on some legal limits and restrictions imposed on all visitors. The application and your honor are required to abide by the terms and conditions described below:
+    <string name="policyPrivacy">
+    The International Commission for the Support of the Rights of the Palestinian People has dedicated this application to provide information on the situation of the palestinian peoples rights, and other information about its various activities including its various publications and publications, and the International Body expresses its deep happiness with your visits to apply it, and considers this as a step to support the victims of human rights violations, so please accept our advice to print copies of information for your personal use other than commercial and store files on the computer, and with this we would like to offer you advice on some legal limits and restrictions imposed on all visitors. The application and your honor are required to abide by the terms and conditions described below:
         1. Your access to the site indicates that you know and agree to these terms and conditions, if you do not agree with these terms and conditions, do not enter and use this site.
 2. The contents contained in this website, including but not limited to images, videos, publications, advertisements, downloads and links, except for those referred to as the property or joint property of third parties, are owned by the International Support Authority for the Rights of the Palestinian People and are protected by copyright. Together with its funders, donors and partners, The International Group has invested money, time and effort to develop it.
 3- The International Body (Crowd) assumes no responsibility for the comments made by the visitors to the site, yet it has the full right to delete any comment that departs from the law, values and principles of the Commissions work.
@@ -105,12 +106,13 @@
 
 
 
-
-
     </string>
-    <string name="option">Option</string>
-    <string name="aboutus">About us</string>
+
+
+    <string name="About_us">About us</string>
     <string name="logout">Logout</string>
+
+
     <string name="Error_message_defname">Enter your name pleas</string>
     <!--Notifications-->
     <string name="new_message">New message from </string>
@@ -155,9 +157,7 @@
     <string name="AwarenessPosts">Awareness Posts</string>
     <string name="Courses">Courses</string>
     <string name="Polls">Polls</string>
-    <string name="PolicyPrivacy">
-        Our privacy policy
-    </string>
+
     <string name="Proposals">Suggestions</string>
     <string name="Aboutus">About us</string>
     <string name="Logout">Logout</string>
@@ -175,7 +175,9 @@
     <string name="invited_meeting">Invitation to meeting</string>
     <string name="like">Like</string>
 
-    <string name="About_us">
+
+    <string name="About__us">
+
         An association to support the rights of the Palestinian people, known as the International Organization for the Support of the Palestinian People, is a non-profit non-profit non-governmental organization founded in 2015 and registered under no. 8523 based on the Palestinian Associations and Ngos Act No. 01 of 2000. The international body works to protect the human rights and rights of the Palestinian people.
 The Commission embodies its vision in the struggle for a free and democratic Palestinian society in which the rule of law and human rights are respected.
 
@@ -199,12 +201,8 @@ Legal and human rights support program.
 5- Bank of Development Opportunities and Initiatives
 
 
-
-
-
-
-
     </string>
+
     <string name="comment">Comment</string>
     <string name="publish">Publish</string>
     <string name="Title">Title</string>
@@ -228,7 +226,8 @@ Legal and human rights support program.
     <string name="verify_email">Verify Email</string>
     <string name="create_new_account">Create New Account</string>
     <string name="confirm_password">Confirm Password</string>
-
+    <string name="option">option</string>
+    <string name="create_poll">Create Poll</string>
     <string name="sign_up">Sign Up</string>
     <string name="alread_have_account">Already Have Account</string>
     <string name="approve">Approve</string>
@@ -242,10 +241,10 @@ Legal and human rights support program.
     <string name="already_have_an_account_sign_in">Already have an account? Sign in</string>
     <string name="Error_meassage_subjectTitle">Enter your subject title pleas</string>
     <string name="write_your_subject">Write your subject pleas</string>
-    <string name="dowonloading_">Downloading...</string>
+    <string name="dowonloading_">Downloading…</string>
     <string name="SuccessfullMessage">Add Successfully</string>
     <string name="Delete_success">Item Delete Successfully</string>
-    <string name="Download">Downloading...</string>
+    <string name="Download">Downloading…</string>
     <string name="AuthMessage">Pleas Check your Intetnet Connection</string>
     <string name="Meetings_Message_cant_Slected_item">Meeting time can\'t be at selected time!</string>
     <string name="meeting_title">Select Meeting Time</string>
@@ -290,6 +289,25 @@ Legal and human rights support program.
     <string name="continue_guest">Continue Guest</string>
     <string name="next">Next</string>
     <string name="skip">Skip</string>
+    <string name="Error_Message_SignUp_username">Your name is Requered</string>
+    <string name="Error_Message_password">Your Password is Reqired</string>
+    <string name="Error_Message_Confrim_password">Confirm password is required</string>
+    <string name="Error_Message_Match_password">Your password must be matched</string>
+    <string name="Error_Message_Email">Your Email is Required</string>
+    <string name="Error_Message_Country">Your Country is Required</string>
+    <string name="Error_Message_City">Your City name is Required</string>
+    <string name="Error_Message_Phone">Your Phone is Required</string>
+    <string name="SignUp_Message">Signing in…</string>
+    <string name="Rejcetet_Message">You have been rejected by the admin!</string>
+    <string name="Appromvent_Message">You haven\'t been approved by the admin!</string>
+    <string name="Error_Auth">"Error Authentication!: "</string>
+    <string name="Update_Message">Updating info</string>
+    <string name="Update_Error_Message">Info update error</string>
+    <string name="Error">"Error.....   "</string>
+    <string name="Warring_Group_Message">You need to add at least two people to this group!</string>
+
+
+
     <string name="privacyPolicy">Privacy Policy</string>
     <string name="sent_an_image">sent an image</string>
     <string name="sent_a_video">sent a video</string>

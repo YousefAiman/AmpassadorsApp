@@ -11,7 +11,7 @@
     <string name="text_message">رسالة نصية …</string>
     <string name="attach_files">إرفاق ملفات</string>
     <string name="send_message">أرسل رسالة</string>
-    <string name="message_deleted">الرسالة مسحت</string>
+    <string name="message_deleted">رسالة محذوفة</string>
     <string name="message_send_empty">لا يمكنك إرسال رسالة فارغة</string>
     <string name="message_send_failed">فشل في إرسال الرسالة!</string>
     <string name="message_load_failed">فشل تحميل الرسائل!</string>
@@ -45,7 +45,7 @@
     <string name="set_duration">حدد المدة</string>
     <string name="days">أيام</string>
     <string name="comments">تعليقات</string>
-    <string name="text_comment">تعليق نصي ...</string>
+    <string name="text_comment">تعليق نصي …</string>
     <string name="likes">الإعجابات</string>
     <string name="hours">ساعات</string>
     <string name="minute">دقيقة</string>
@@ -81,17 +81,18 @@
     <string name="listSuggestion">قائمة اقتراح</string>
     <string name="listComplaints">قائمة الشكاوى</string>
     <string name="poll">تصويت</string>
-    <string name="policyPrivacy">سياسة الخصوصية</string>
-    <string name="aboutus">معلومات عنا</string>
+    <string name="policy_Privacy">سياسة الخصوصية</string>
     <string name="logout">تسجيل خروج</string>
     <string name="Error_message_defname">أدخل اسمك مناشدات</string>
+    <string name="user_requests">طلبات التسجيل </string>
+    <string name="already_have_an_account_sign_in">هل لديك حساب مسبقا ؟ انشاء حساب </string>
 
     <string name="new_message">رسالة جديدة من</string>
     <string name="fullscreen_image">صورة ملء الشاشة</string>
     <string name="try_again">حاول مجددا</string>
     <string name="you_are_not_currently_connected_to_the_internet">أنت غير متصل حاليا بالإنترنت!</string>
     <string name="please_check_your_internet_connection_and_try_again">يرجى التحقق من اتصالك بالإنترنت وحاول مرة أخرى.</string>
-    <string name="enter_meeting_topic">موضوع الاجتماع ...</string>
+    <string name="enter_meeting_topic">موضوع الاجتماع …</string>
     <string name="news">أخبار</string>
     <string name="meeting_talk_points">نقاط الحديث عن الاجتماع</string>
     <string name="meeting_duration">مدة الاجتماع</string>
@@ -123,7 +124,6 @@
     <string name="AwarenessPosts">المشاركات التوعوية</string>
     <string name="Courses">الدورات</string>
     <string name="Polls">استطلاعات الرأي</string>
-    <string name="PolicyPrivacy">سياسة خاصة</string>
     <string name="Proposals">اقتراحات</string>
     <string name="Aboutus">معلومات عنا</string>
     <string name="Logout">تسجيل خروج</string>
@@ -134,7 +134,7 @@
     <string name="search_user">مستخدم البحث</string>
     <string name="select_name_and_group_image_image_is_optional">حدد الاسم والمجموعة
         الصورة - الصورة اختيارية</string>
-    <string name="enter_group_name_here">أدخل اسم المجموعة هنا ...</string>
+    <string name="enter_group_name_here">أدخل اسم المجموعة هنا …</string>
     <string name="contributors">المساهمون</string>
     <string name="newer">أحدث</string>
     <string name="older">اكبر سنا</string>
@@ -177,10 +177,10 @@
     <string name="Error_message_Details">الرجاء كتابة التفاصيل</string>
     <string name="Error_meassage_subjectTitle">أدخل مناشدات العنوان الخاص بك</string>
     <string name="write_your_subject">اكتب نداءات الموضوع الخاص بك</string>
-    <string name="dowonloading_">جارى التحميل...</string>
+    <string name="dowonloading_">جارى التحميل…</string>
     <string name="SuccessfullMessage">أضف بنجاح</string>
     <string name="Delete_success">تم حذف العنصر بنجاح</string>
-    <string name="Download">جارى التحميل...</string>
+    <string name="Download">جارى التحميل…</string>
     <string name="AuthMessage">مناشدات تحقق من اتصال Intetnet الخاص بك</string>
     <string name="Meetings_Message_cant_Slected_item">لا يمكن أن يكون وقت الاجتماع في الوقت المحدد!</string>
     <string name="meeting_title">حدد وقت الاجتماع</string>
@@ -210,7 +210,12 @@
     <string name="Message_Fill_title">الرجاء ملء العنوان!</string>
     <string name="Message_Fill_descr">الرجاء ملء الوصف!</string>
     <string name="Message_Attchent_post">الرجاء اختيار مرفق!</string>
-
+    <string name="option">الخيار</string>
+    <string name="create_poll">انشاء استبيان</string>
+    <string name="next">التالي</string>
+    <string name="continue_guest">الدخول كضيف</string>
+    <string name="skip">تخطي</string>
+    <string name="question">السؤال....</string>
     <string name="Finish_message">انتهى التحميل</string>
     <string name="Title_AlretDialoge">اختار الصورة الشخصية</string>
     <string name="CaptuerPhoto">التقاط صورة</string>
@@ -225,6 +230,60 @@
     <string name="sent_a_video">قام بإرسال فيديو</string>
     <string name="sent_audio_message">قام بإرسال رسالة صوتية</string>
     <string name="sent_an_attachment">قام بإرسال مرفق</string>
+    <string name="policyPrivacy">
+ وقد كرست اللجنة الدولية لدعم حقوق الشعب الفلسطيني هذا الطلب لتقديم معلومات عن حالة حقوق الشعوب الفلسطينية، وغيرها من المعلومات عن أنشطتها المختلفة بما في ذلك منشوراتها ومنشوراتها المختلفة، وتعرب الهيئة الدولية عن سعادتها العميقة بزياراتكم لتطبيقها، وتعتبر ذلك خطوة لدعم ضحايا انتهاكات حقوق الإنسان لذا يرجى قبول نصيحتنا لطباعة نسخ من المعلومات لاستخدامك الشخصي غير الملفات التجارية وتخزينها على الكمبيوتر، وبهذا نود أن نقدم لك المشورة بشأن بعض القيود القانونية المفروضة على جميع الزوار. يجب على الطلب وشرفك الالتزام بالشروط والأحكام الموضحة أدناه:
+        1. يشير وصولك إلى الموقع إلى أنك تعرف وتوافق على هذه الشروط والأحكام، إذا كنت لا توافق على هذه الشروط والأحكام، لا تدخل هذا الموقع ولا تستخدمه.
+2. المحتويات الواردة في هذا الموقع، بما في ذلك على سبيل المثال لا الحصر الصور والفيديو والمنشورات والإعلانات والتنزيلات والروابط، باستثناء تلك المشار إليها على أنها ملكية أو ملكية مشتركة لأطراف ثالثة، مملوكة من قبل هيئة الدعم الدولية لحقوق الشعب الفلسطيني ومحمية بموجب حقوق النشر. وقد استثمرت المجموعة الدولية، إلى جانب مموليها والجهات المانحة والشركاء، الأموال والوقت والجهد لتطويرها.
+3- لا تتحمل الهيئة الدولية (الحشد) أي مسؤولية عن التعليقات التي أدلى بها زوار الموقع، ومع ذلك يحق لها تماماً حذف أي تعليق يخرج عن القانون والقيم والمبادئ التي يقوم بها عمل اللجان.
+   4. تحتفظ الهيئة الدولية لدعم حقوق الشعب الفلسطيني (Crowd) بجميع حقوق الطبع والنشر والبراءات وغيرها من حقوق الملكية الفكرية المنشورة على هذا الموقع.
+5- لا تقبل اللجنة الدولية لدعم حقوق الشعب الفلسطيني (الحشد) تحمل أي خسارة أو ضرر ناجم بشكل مباشر أو غير مباشر عن استخدام هذا الموقع أو الأضرار التي يسببها بأي شكل من الأشكال.
+6. لا تتحمل الهيئة الدولية لدعم حقوق الشعب الفلسطيني (Amass) أي مسؤولية لتمكينك من الارتباط بموقع آخر أو عواقب التعامل مع محتويات موقع آخر.
+7. يحق لسعادتكم استخدام محتوى هذا الموقع بأي شكل من الأشكال باستثناء الاستخدام الشخصي أو غير التجاري، كما ذكر أعلاه، وإذا كنت ترغب في استخدام محتويات هذا الموقع بخلاف ما سبق، يجب الحصول على إذن مسبق من إدارة السلطة الدولية لدعم حقوق الشعب الفلسطيني (الحشد) مع العلم أن الإجراءات القانونية مطلوبة في حالة حدوث أي انتهاك للحقوق المذكورة أعلاه.
+    </string>
+    <string name="About__us">
+
+    جمعية لدعم حقوق الشعب الفلسطيني، تعرف باسم المنظمة الدولية لدعم الشعب الفلسطيني، هي منظمة غير ربحية غير حكومية تأسست في عام 2015 ومسجلة تحت رقم 8523 استنادا إلى قانون الجمعيات والمنظمات غير الحكومية الفلسطينية رقم 01 لسنة 2000. وتعمل الهيئة الدولية على حماية حقوق الإنسان وحقوق الشعب الفلسطيني.
+وتجسّد اللجنة رؤيتها في الكفاح من أجل مجتمع فلسطيني حر وديمقراطي تحترم فيه سيادة القانون وحقوق الإنسان.
+
+تسعى السلطة إلى حماية حقوق الإنسان في فلسطين، وتوعية الفلسطينيين بثقافة الحقوق الوطنية والإنسانية، وحشد الدعم والتضامن الدولي مع حقوق الشعب الفلسطيني، باستخدام الاستراتيجيات والتكتيكات وأدوات الرصد والتوثيق والحماية الوطنية والدولية لحقوق الإنسان.
+
+وتتمثل الأهداف الاستراتيجية للجمعيات في ما يلي:
+المساهمة في بناء وتفعيل وتوسيع قاعدة المشاركة في مجال حقوق الإنسان بالتعاون مع مؤسسات حقوق الإنسان ومنظمات المجتمع المدني والمؤسسات الدولية لحقوق الإنسان.
+والمساهمة في إطلاق وتنظيم حملات الضغط والدعوة لدعم حقوق الإنسان والشعب الفلسطيني
+والمساهمة في دعم المبادرات التنموية والاجتماعية والاقتصادية والثقافية التي تعزز حماية حقوق الإنسان
+المساهمة في نشر ثقافة حقوق الإنسان وتفعيل استخدام كافة الآليات التي تهدف إلى حماية حقوق الإنسان.
+بعد ذلك العمل على إنشاء أكاديمية مهنية لبناء قدرات الموظفين الشباب في المجالات المهنية والفنية والإدارية والقيادية وفي مجال حقوق الإنسان والتنمية المستدامة
+تعتمد اللجنة على عمل الأراضي الفلسطينية المحتلة ومختلف أماكن الوجود الفلسطيني على مبادئ وقيم ومعايير سيادة القانون وحقوق الإنسان وتعمل على تعزيز حماية حقوق الإنسان والعدالة للفلسطينيين، على طريق إنهاء الاحتلال الإسرائيلي، وبناء دولة فلسطينية مستقلة عاصمتها القدس. ضمان حقوق اللاجئين الفلسطينيين، وتعزيز سيادة القانون، واحترام حقوق الإنسان وفقا للمعايير الوطنية والدولية لحقوق الإنسان.
+
+أما بالنسبة لبرنامج الهيئة فهي:
+1 - برنامج بناء القدرات.
+برنامج الدعم القانوني وحقوق الإنسان.
+3. برنامج البحوث والسياسات
+4- برنامج وسائط الإعلام الدولية والدعوة
+5- بنك فرص ومبادرات التنمية
+    </string>
+
+
+    <string name="Error_Message_SignUp_username">املأحقل الاسم مطلوب </string>
+    <string name="Error_Message_password">املأ حقل كلمة المرور  </string>
+    <string name="Error_Message_Confrim_password">املأ حقل تأكيد كلمة المرور </string>
+    <string name="Error_Message_Match_password">يجب ان تكون كلمة المرور متطابقة </string>
+    <string name="Error_Message_Email">املأ بريدك الالكتروني  </string>
+    <string name="Error_Message_Country">ادخل اسم الدولة</string>
+    <string name="Error_Message_City">ادخل اسم المدينة</string>
+    <string name="Error_Message_Phone">رقم هاتفك المحمول مطلوب</string>
+    <string name="SignUp_Message">جاري تسجيل الدخول </string>
+    <string name="Rejcetet_Message">تم رفضك من قبل الادمن </string>
+    <string name="Appromvent_Message">لم تتم قبولك بعد
+    </string>
+    <string name="Error_Auth">"خطأ في التحقق "</string>
+    <string name="Update_Message">يتم تحديث البيانات </string>
+    <string name="Update_Error_Message">حدث خطأ في التحديث </string>
+    <string name="Error">خطأ</string>
+    <string name="Warring_Group_Message">لانشاء مجموعة عليك ارسال دعوة الى 2 من المستخدمين </string>
+
+
+
 
     <!-- Generated by Automatic String Resource Translation -->
     <!--          https://asrt.gluege.boerde.de             -->
