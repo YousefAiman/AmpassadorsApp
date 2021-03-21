@@ -124,10 +124,8 @@
         <item>Publisher</item>
         <item>Admin</item>
         <item>Coordinator</item>
-        <item>Guest</item>
-
-
     </string-array>
+
     <string name="title_activity_side_drawer">SideDrawer</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

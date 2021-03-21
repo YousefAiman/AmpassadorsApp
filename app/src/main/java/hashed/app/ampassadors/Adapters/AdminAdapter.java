@@ -4,23 +4,36 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
 import java.util.List;
 
+import hashed.app.ampassadors.Objects.UserApprovment;
 import hashed.app.ampassadors.Objects.UserInfo;
 import hashed.app.ampassadors.R;
 
 public class AdminAdapter extends RecyclerView.Adapter<AdminAdapter.AdminHolder> {
 
   Context context;
-  List<UserInfo> data;
+  List<UserApprovment> data;
 
-  public AdminAdapter(Context context, List<UserInfo> data) {
+  public AdminAdapter(Context context, List<UserApprovment> data) {
     this.context = context;
     this.data = data;
   }
@@ -34,9 +47,9 @@ public class AdminAdapter extends RecyclerView.Adapter<AdminAdapter.AdminHolder>
 
   @Override
   public void onBindViewHolder(@NonNull AdminHolder holder, int position) {
-    UserInfo user_info = data.get(position);
-    holder.email.setText(user_info.getEmail());
-    holder.password.setText(user_info.getPassword());
+
+    holder.bind(data.get(position));
+
   }
 
   @Override
@@ -45,15 +58,71 @@ public class AdminAdapter extends RecyclerView.Adapter<AdminAdapter.AdminHolder>
   }
 
   public class AdminHolder extends RecyclerView.ViewHolder {
+
     TextView email;
     TextView password;
-    LinearLayout linearLayout;
+    Button delete_account;
+    Button approve_account;
+    Spinner options;
 
     public AdminHolder(@NonNull View itemView) {
       super(itemView);
       email = itemView.findViewById(R.id.ema);
       password = itemView.findViewById(R.id.pass);
-      linearLayout = itemView.findViewById(R.id.item_recycle);
+      delete_account = itemView.findViewById(R.id.delete_account);
+      approve_account = itemView.findViewById(R.id.approve_account);
+      options = itemView.findViewById(R.id.options);
     }
+
+    private void bind(UserApprovment userApprovment){
+
+      email.setText(userApprovment.getEmail());
+      password.setText(userApprovment.getUsername());
+
+      delete_account.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+          FirebaseFirestore.getInstance()
+                  .collection("Users").document(userApprovment.getUserId())
+                  .update("rejected",true).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+              data.remove(userApprovment);
+              notifyItemRemoved(getAdapterPosition());
+            }
+          });
+
+        }
+      });
+
+     approve_account.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+
+          FirebaseFirestore.getInstance()
+                  .collection("Users").document(userApprovment.getUserId())
+                  .update("approvement",true,
+                          "Role",options.getSelectedItem().toString())
+                  .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                      data.remove(userApprovment);
+                      notifyItemRemoved(getAdapterPosition());
+                    }
+                  });
+
+        }
+      });
+
+
+
+
+
+
+    }
+
+
   }
 }

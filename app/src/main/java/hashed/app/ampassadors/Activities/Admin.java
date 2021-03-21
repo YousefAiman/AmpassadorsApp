@@ -1,6 +1,7 @@
 package hashed.app.ampassadors.Activities;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -21,131 +22,134 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import hashed.app.ampassadors.Adapters.AdminAdapter;
+import hashed.app.ampassadors.Fragments.PostsFragment;
+import hashed.app.ampassadors.Objects.PostData;
+import hashed.app.ampassadors.Objects.UserApprovment;
 import hashed.app.ampassadors.Objects.UserInfo;
 import hashed.app.ampassadors.R;
 
 public class Admin extends AppCompatActivity {
+
+  private static final int USER_LIMIT = 15;
   FirebaseFirestore firebaseFirestore;
   RecyclerView list_users;
-  List<UserInfo> data;
+  List<UserApprovment> data;
   AdminAdapter adapter;
   Task<QuerySnapshot> task;
-  Button delete, approve;
-  UserInfo info;
   String userid;
-  boolean approvment;
   FirebaseAuth fAuth;
   Spinner spinner;
-
-  CollectionReference ref;
-
+  private ScrollListener scrollListener;
+  private boolean isLoadingUsers;
+  private Query query;
+  private DocumentSnapshot lastDocSnap;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_admin);
-
-    delete = findViewById(R.id.delete_account);
-    approve = findViewById(R.id.approve_account);
 
     fAuth = FirebaseAuth.getInstance();
     userid = fAuth.getCurrentUser().getUid();
     spinner = findViewById(R.id.options);
 
 
-    approve.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-
-        List<String> persons = new ArrayList<>();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, persons);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        ref.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-          @Override
-          public void onComplete(@NonNull Task<QuerySnapshot> task) {
-            if (task.isSuccessful()) {
-              for (QueryDocumentSnapshot document : task.getResult()) {
-                String name = document.getString("Role");
-                persons.add(name);
-              }
-              adapter.notifyDataSetChanged();
-            }
-          }
-        });
-        DocumentReference reference = firebaseFirestore.collection("Users").document(userid);
-
-        if (approvment) {
-          reference.update("approvement", true).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-              approvment = true;
-            }
-          });
-        }
-      }
-    });
-
-    delete.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        DocumentReference reference = firebaseFirestore.collection("Users").document(userid);
-
-        if (approvment) {
-          reference.update("approvement", false).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-              approvment = false;
-            }
-          });
-        }
-      }
-    });
-
-
     firebaseFirestore = FirebaseFirestore.getInstance();
     list_users = findViewById(R.id.users_list);
-    list_users.setHasFixedSize(true);
     list_users.setLayoutManager(new LinearLayoutManager(this));
     data = new ArrayList<>();
 
-    task = firebaseFirestore.collection("Users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-      @Override
-      public void onComplete(@NonNull Task<QuerySnapshot> task) {
-        if (task.isSuccessful()) {
-          for (DocumentSnapshot qs : task.getResult().getDocuments()) {
-            String email = qs.getString("email");
-            String pass = qs.getString("password");
+    adapter = new AdminAdapter(Admin.this, data);
+    list_users.setAdapter(adapter);
 
-            UserInfo info = new UserInfo();
-            info.setEmail("Email : " + email);
-            info.setPassword("Password : " + pass);
+     query = firebaseFirestore.collection("Users")
+            .whereEqualTo("approvement",false)
+            .whereEqualTo("rejected",false)
+            .limit(USER_LIMIT);
 
-            data.add(info);
-          }
-        }
-        adapter = new AdminAdapter(Admin.this, data);
-        list_users.setAdapter(adapter);
-      }
-    });
-    task.addOnFailureListener(new OnFailureListener() {
-      @Override
-      public void onFailure(@NonNull Exception e) {
-        Toast.makeText(Admin.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-      }
-    });
-
-    Spinner spinner = findViewById(R.id.options);
-    ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-            R.array.persons_array, android.R.layout.simple_spinner_item);
-    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-    spinner.setAdapter(adapter);
+    getUsers(true);
 
   }
+
+
+  private void getUsers(boolean isInitial) {
+
+    isLoadingUsers = true;
+
+    final AtomicInteger addedCount = new AtomicInteger();
+
+    Query updatedQuery = query;
+
+    if (lastDocSnap != null) {
+
+      updatedQuery = query.startAfter(lastDocSnap);
+
+    }
+
+    updatedQuery.get().addOnSuccessListener(queryDocumentSnapshots -> {
+      if (!queryDocumentSnapshots.isEmpty()) {
+
+        lastDocSnap = queryDocumentSnapshots.getDocuments().get(
+                queryDocumentSnapshots.size() - 1
+        );
+
+        data.addAll(queryDocumentSnapshots.toObjects(UserApprovment.class));
+      }
+
+    }).addOnCompleteListener(task -> {
+
+      if (isInitial) {
+        adapter.notifyDataSetChanged();
+
+        if (data.size() == USER_LIMIT) {
+          list_users.addOnScrollListener(scrollListener =
+                  new ScrollListener());
+        }
+
+      } else {
+        Log.d("ttt","Added count: "+addedCount.get());
+
+        adapter.notifyItemRangeInserted(data.size() - addedCount.get(),
+                addedCount.get());
+
+        if (addedCount.get() < USER_LIMIT && scrollListener != null) {
+          list_users.removeOnScrollListener(scrollListener);
+        }
+      }
+
+      isLoadingUsers = false;
+    });
+  }
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    if(list_users!=null && scrollListener!=null){
+      list_users.removeOnScrollListener(scrollListener);
+    }
+  }
+
+  private class ScrollListener extends RecyclerView.OnScrollListener {
+    @Override
+    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+      super.onScrollStateChanged(recyclerView, newState);
+      if (!isLoadingUsers &&
+              !recyclerView.canScrollVertically(1) &&
+              newState == RecyclerView.SCROLL_STATE_IDLE) {
+
+        getUsers(false);
+
+
+      }
+    }
+  }
+
 }

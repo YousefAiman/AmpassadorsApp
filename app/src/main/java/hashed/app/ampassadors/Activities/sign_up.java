@@ -35,6 +35,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -45,6 +46,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.UUID;
 
 import hashed.app.ampassadors.Objects.UserInfo;
@@ -59,7 +61,6 @@ public class sign_up extends AppCompatActivity {
   FirebaseAuth auth;
   FirebaseFirestore firebaseFirestore;
   CollectionReference reference;
-  UserInfo userInfo;
   String imageUrl;
   String userid;
   ImageView iamge;
@@ -148,67 +149,63 @@ public class sign_up extends AppCompatActivity {
       @Override
       public void onSuccess(AuthResult authResult) {
         auth.signOut();
-        userInfo = new UserInfo();
-        // Picasso.get().load(userInfo.getImageUrl()).fit().into(circleImageView);
-        FirebaseUser firebaseUser = auth.getCurrentUser();
 
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("username", username);
         hashMap.put("password", passwrod);
-        hashMap.put("email", firebaseUser.getEmail());
+        hashMap.put("email", email);
         hashMap.put("country", country);
         hashMap.put("city", city);
+        hashMap.put("approvement", false);
+        hashMap.put("rejected", false);
         hashMap.put("phone", phone);
-        hashMap.put("userId", firebaseUser.getUid());
+        hashMap.put("userId", authResult.getUser().getUid());
         hashMap.put("imageUrl", imageUrl);
         hashMap.put("status", true);
 
-
-//        userInfo.setUsername(username);
-//        userInfo.setPassword(passwrod);
-//        userInfo.setEmail(firebaseUser.getEmail());
-//        userInfo.setCountry(country);
-//        userInfo.setCity(city);
-//        userInfo.setPhone(phone);
-//        userInfo.setUserid(firebaseUser.getUid());
-//        userInfo.setImageUrl(imageUrl);
-//        userInfo.setStatus(true);
-        //  userInfo.setUserRole(spin);
-//                userInfo.setApprovement(false);
-
-
-        reference.document(firebaseUser.getUid()).set(userInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
+        FirebaseMessaging.getInstance().getToken().addOnSuccessListener(new OnSuccessListener<String>() {
           @Override
-          public void onComplete(@NonNull Task<Void> task) {
-            if (task.isSuccessful()) {
-              FirebaseUser user = auth.getCurrentUser();
-              user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                  Toast.makeText(sign_up.this, R.string.Email_Verfiy, Toast.LENGTH_SHORT).show();
-                }
-              }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                  Toast.makeText(sign_up.this, R.string.Email_not_Sent, Toast.LENGTH_SHORT).show();
-                }
-              });
+          public void onSuccess(String s) {
+            hashMap.put("token",s);
 
-              Toast.makeText(sign_up.this, R.string.SuccessfullMessage, Toast.LENGTH_LONG).show();
+            reference.document(authResult.getUser().getUid()).set(hashMap)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                      @Override
+                      public void onSuccess(Void aVoid) {
 
-            }
+                        authResult.getUser().sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
+                          @Override
+                          public void onSuccess(Void aVoid) {
+                            Toast.makeText(sign_up.this, R.string.Email_Verfiy,
+                                    Toast.LENGTH_SHORT).show();
+                          }
+                        }).addOnFailureListener(new OnFailureListener() {
+                          @Override
+                          public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(sign_up.this, R.string.Email_not_Sent,
+                                    Toast.LENGTH_SHORT).show();
+                          }
+                        });
+
+                        Toast.makeText(sign_up.this, R.string.SuccessfullMessage,
+                                Toast.LENGTH_LONG).show();
+
+
+                      }
+                    }).addOnFailureListener(new OnFailureListener() {
+              @Override
+              public void onFailure(@NonNull Exception e) {
+                Toast.makeText(sign_up.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+              }
+            });
+
+
           }
-        })
-                .addOnFailureListener(new OnFailureListener() {
-                  @Override
-                  public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(sign_up.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        });
 
-                  }
-                });
+
       }
-    });
-    task.addOnFailureListener(new OnFailureListener() {
+    }).addOnFailureListener(new OnFailureListener() {
       @Override
       public void onFailure(@NonNull Exception e) {
         Toast.makeText(sign_up.this, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -353,7 +350,7 @@ public class sign_up extends AppCompatActivity {
 
   private File createImageFile() throws IOException {
     // CREATE URL FOR CAMERA IMAGE
-    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
 
     String imageFileName = "JPEG_" + timeStamp + "_";
 

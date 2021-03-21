@@ -16,7 +16,6 @@
     <androidx.cardview.widget.CardView
         app:cardCornerRadius="30dp"
         app:cardElevation="20dp"
-
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:layout_marginLeft="20dp"
@@ -93,6 +92,7 @@
                 android:dropDownWidth="match_parent"
                 android:padding="10dp"
                 android:layout_width="match_parent"
+                android:entries="@array/persons_array"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="200dp"
                 />
