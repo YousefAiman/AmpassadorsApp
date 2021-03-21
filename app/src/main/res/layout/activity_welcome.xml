@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -17,6 +18,23 @@
         app:layout_constraintTop_toTopOf="@+id/guideline201" />
 
     <android.widget.Button
+        android:id="@+id/guestBtn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_bg"
+        android:fontFamily="@font/segoe_ui"
+        android:gravity="center"
+        android:text="@string/continue_guest"
+        android:paddingVertical="10dp"
+        android:textAllCaps="false"
+        android:layout_marginTop="20dp"
+        android:textColor="#ffffff"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline250"
+        app:layout_constraintStart_toStartOf="@+id/guideline251"
+        app:layout_constraintTop_toBottomOf="@+id/nextSlideBtn" />
+
+    <android.widget.Button
         android:id="@+id/signintoAccountBtn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -31,7 +49,9 @@
         android:textSize="15sp"
         app:layout_constraintEnd_toStartOf="@+id/guideline250"
         app:layout_constraintStart_toStartOf="@+id/guideline251"
-        app:layout_constraintTop_toBottomOf="@+id/nextSlideBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/guestBtn" />
+
+
 
     <android.widget.Button
         android:id="@+id/nextSlideBtn"
@@ -40,7 +60,7 @@
         android:background="@drawable/btn_bg"
         android:fontFamily="@font/segoe_ui"
         android:gravity="center"
-        android:text="Next"
+        android:text="@string/next"
         android:paddingVertical="10dp"
         android:textAllCaps="false"
         android:layout_marginTop="20dp"
@@ -72,7 +92,7 @@
         android:layout_marginTop="30dp"
         android:fontFamily="@font/segoe_ui"
         android:padding="5dp"
-        android:text="Skip"
+        android:text="@string/skip"
         android:textColor="#707070"
         android:textSize="20sp"
         app:layout_constraintEnd_toStartOf="@+id/guideline205"
@@ -93,7 +113,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.17236662" />
+        app:layout_constraintGuide_percent="0.17" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline202"
@@ -107,7 +127,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.93917274" />
+        app:layout_constraintGuide_percent="0.94" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline236"

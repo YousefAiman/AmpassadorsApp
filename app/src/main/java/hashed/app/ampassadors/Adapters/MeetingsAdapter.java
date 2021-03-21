@@ -1,6 +1,7 @@
 package hashed.app.ampassadors.Adapters;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,6 +87,12 @@ public class MeetingsAdapter extends RecyclerView.Adapter<MeetingsAdapter.Meetin
       }
 
       if (meetings.get(getAdapterPosition()).getStartTime() > System.currentTimeMillis()) {
+
+        Log.d("ttt","meeting start time: "+
+                meetings.get(getAdapterPosition()).getStartTime());
+
+        Log.d("ttt","System.currentTimeMillis(): "+
+                System.currentTimeMillis());
 
         Toast.makeText(itemView.getContext(),
                 "This Meeting hasn't started yet!", Toast.LENGTH_SHORT).show();

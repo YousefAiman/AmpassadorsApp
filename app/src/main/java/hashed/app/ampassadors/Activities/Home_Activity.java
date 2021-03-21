@@ -1,13 +1,5 @@
 package hashed.app.ampassadors.Activities;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -26,13 +18,9 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -46,29 +34,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import hashed.app.ampassadors.A_Fragment;
 import hashed.app.ampassadors.B_Fragment;
 import hashed.app.ampassadors.BroadcastReceivers.NotificationIndicatorReceiver;
 import hashed.app.ampassadors.BuildConfig;
 import hashed.app.ampassadors.Fragments.ChattingFragment;
-import hashed.app.ampassadors.Fragments.GroupsFragment;
 import hashed.app.ampassadors.Fragments.MeetingsFragment;
 import hashed.app.ampassadors.Fragments.PostsFragment;
 import hashed.app.ampassadors.Fragments.PostsProfileFragment;
-import hashed.app.ampassadors.Fragments.ProfileFragment;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Services.FirebaseMessagingService;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 
-public class
-Home_Activity extends AppCompatActivity implements
+public class Home_Activity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
 
-  String userid;
-  FirebaseAuth auth;
-  DocumentReference reference;
-  FirebaseFirestore firebaseFirestore;
+  private String userid;
+  private FirebaseAuth auth;
+  private DocumentReference reference;
+  private FirebaseFirestore firebaseFirestore;
   private BottomNavigationView nav_btom;
   private FrameLayout homeFrameLayout;
   private DrawerLayout drawer_layout;
@@ -88,42 +72,22 @@ Home_Activity extends AppCompatActivity implements
     userid = auth.getCurrentUser().getUid();
     firebaseFirestore = FirebaseFirestore.getInstance();
 
+    replaceFragment(new PostsFragment());
+
     if(FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
-      replaceFragment(new PostsFragment());
-
       navigationview.inflateMenu(R.menu.menu_nav);
-
     }else{
-      firebaseFirestore.collection("Users").document(userid).get().
-              addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-        @Override
-        public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-          GlobalVariables.setRole(documentSnapshot.getString("Role"));
-
-        }
-      }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-        @Override
-        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-          if(task.isSuccessful()){
-            replaceFragment(new PostsFragment());
-
-            if (GlobalVariables.getRole()!=null && GlobalVariables.getRole().equals("Admin")) {
-              navigationview.inflateMenu(R.menu.menu_admin);
-
-            } else {
-              navigationview.inflateMenu(R.menu.menu_nav);
-            }
-          }
-        }
-      });
+      if (GlobalVariables.getRole()!=null && GlobalVariables.getRole().equals("Admin")) {
+        navigationview.inflateMenu(R.menu.menu_admin);
+      } else {
+        navigationview.inflateMenu(R.menu.menu_nav);
+      }
     }
-
-
 
     OnClickButtons();
     createUserLikesListener();
     createNotificationListener();
+
   }
 
 
@@ -267,6 +231,7 @@ Home_Activity extends AppCompatActivity implements
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
         Log.d("ttt","navigation clicked");
+
       drawer_layout.closeDrawer(GravityCompat.START);
 
       if(item.getItemId() == R.id.log_out){
@@ -292,7 +257,6 @@ Home_Activity extends AppCompatActivity implements
                     startActivity(intent);
                     finish();
 //                }
-
             }else if (item.getItemId() == R.id.news){
 
               B_Fragment fragment = new B_Fragment();

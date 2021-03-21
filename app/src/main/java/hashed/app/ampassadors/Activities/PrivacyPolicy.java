@@ -24,6 +24,9 @@ public class PrivacyPolicy extends AppCompatActivity implements Toolbar.OnMenuIt
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
         toolbar.setOnMenuItemClickListener(this);
 
+        final Toolbar toolbar = findViewById(R.id.about_toolbar);
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+
     }
 
     @Override

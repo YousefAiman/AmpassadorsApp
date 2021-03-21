@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -52,6 +54,7 @@ public class MessagesFragment extends Fragment {
           FirebaseFirestore.getInstance().collection("PrivateMessages");
   //views
   private RecyclerView chatsRv;
+  private ProgressBar progressBar;
 //  private boolean isLoadingMessages = false;
 //  private static final int MESSAGE_PAGE = 10;
 //  private DocumentSnapshot lastDocumentSnapshot;
@@ -89,6 +92,7 @@ public class MessagesFragment extends Fragment {
     View view = inflater.inflate(R.layout.fragment_recycler_child, container, false);
     chatsRv = view.findViewById(R.id.childRv);
     noMessagesTv = view.findViewById(R.id.emptyTv);
+    progressBar = view.findViewById(R.id.progressBar);
     noMessagesTv.setText(R.string.no_current_messages);
 
     chatsRv.setLayoutManager(new LinearLayoutManager(getContext(),
@@ -184,6 +188,8 @@ public class MessagesFragment extends Fragment {
       @Override
       public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
+
+
         if (task.isSuccessful() && task.getResult() != null) {
 
           addNewMessagesListener();
@@ -212,6 +218,8 @@ public class MessagesFragment extends Fragment {
 
         }
 
+
+
 //        if(task.isSuccessful() && task.getResult()!=null){
 //
 //          if(isInitial){
@@ -224,6 +232,11 @@ public class MessagesFragment extends Fragment {
 //        }else if(scrollListener!=null){
 //        }
 
+      }
+    }).addOnFailureListener(new OnFailureListener() {
+      @Override
+      public void onFailure(@NonNull Exception e) {
+        progressBar.setVisibility(View.GONE);
       }
     });
 
@@ -440,10 +453,16 @@ public class MessagesFragment extends Fragment {
 
               adapter.notifyItemInserted(0);
 
+
             } else {
               chatItems.add(chatItem);
 
               adapter.notifyItemInserted(chatItems.size());
+            }
+
+
+            if(progressBar.getVisibility() == View.VISIBLE){
+              progressBar.setVisibility(View.GONE);
             }
 
           } else {
@@ -580,7 +599,8 @@ public class MessagesFragment extends Fragment {
 
                       for (int i = 0; i < chatItems.size(); i++) {
 
-                        if (chatItems.get(i).getMessagingDocId().equals(dc.getDocument().getString("databaseRefId"))) {
+                        if (chatItems.get(i).getMessagingDocId().equals(dc.getDocument()
+                                .getString("databaseRefId"))) {
                           return;
                         }
 
@@ -591,7 +611,8 @@ public class MessagesFragment extends Fragment {
                         }
                       }
 
-                      Log.d("ttt", "added a message after time: " + dc.getDocument().getId());
+                      Log.d("ttt", "added a message after time: " +
+                              dc.getDocument().getId());
 
 //              getMessageFromSnapshot(dc.getDocument());
 

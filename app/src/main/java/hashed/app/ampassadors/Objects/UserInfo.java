@@ -18,8 +18,8 @@ public class UserInfo {
   String phone;
   @PropertyName("imageUrl")
   String imageUrl;
-  @PropertyName("userid")
-  String userid;
+  @PropertyName("userId")
+  String userId;
   @PropertyName("status")
   boolean status;
   String userRole;
@@ -85,12 +85,12 @@ public class UserInfo {
     this.imageUrl = imageUrl;
   }
 
-  public String getUserid() {
-    return userid;
+  public String getUserId() {
+    return userId;
   }
 
-  public void setUserid(String userid) {
-    this.userid = userid;
+  public void setUserId(String userId) {
+    this.userId = userId;
   }
 
   //

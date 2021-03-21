@@ -57,7 +57,7 @@ public class ZoomMeetingCreationFragment extends Fragment implements View.OnClic
   private ImageView messagingPickerSendIv, settingsIv1, settingsIv2;
   private ZoomMeeting zoomMeeting;
   private int duration;
-  private int meetingType;
+  private int meetingType = 1;
   private long scheduleTime;
   private boolean timeWasSelected, dateWasSelected;
 
@@ -134,10 +134,11 @@ public class ZoomMeetingCreationFragment extends Fragment implements View.OnClic
     if (view.getId() == R.id.messagingPickerSendIv) {
       final String topic = topicEd.getText().toString();
       final String description = descriptionEd.getText().toString();
-
+      Log.d("ttt","meeting type: "+meetingType );
       if (!messagingPickerEd.getText().toString().isEmpty() &&
               !topic.isEmpty() && !description.isEmpty() && duration > 0
               && meetingType != 0) {
+
 
         if (meetingType == 2 && (!timeWasSelected || !dateWasSelected)) {
           Toast.makeText(requireContext(), "Please fill in the fields!",
@@ -145,7 +146,8 @@ public class ZoomMeetingCreationFragment extends Fragment implements View.OnClic
           return;
         }
 
-//          requestMeetingCreation(topic,description);
+        requestMeetingCreation(topic,description);
+
       } else {
 
         Toast.makeText(requireContext(), "Please fill in the fields!",

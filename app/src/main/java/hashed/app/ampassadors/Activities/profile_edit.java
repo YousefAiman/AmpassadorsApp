@@ -21,6 +21,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 
@@ -33,6 +34,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -42,6 +44,8 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import hashed.app.ampassadors.Objects.UserInfo;
@@ -70,9 +74,11 @@ public class profile_edit extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_profile_edit);
-
-    init();
     updatedata();
+    init();
+// toolbar
+    final Toolbar toolbar = findViewById(R.id.toolbar);
+    toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
 
     imageView.setOnClickListener(new View.OnClickListener() {
@@ -262,7 +268,7 @@ public class profile_edit extends AppCompatActivity {
   }
 
 
-  private void register(String username, String email, String country, String city, String phone) {
+  private void register(String username, String country, String city, String phone) {
 
     userInfo = new UserInfo();
     // Picasso.get().load(userInfo.getImageUrl()).fit().into(circleImageView);
@@ -274,7 +280,7 @@ public class profile_edit extends AppCompatActivity {
     userInfo.setCountry(country);
     userInfo.setCity(city);
     userInfo.setPhone(phone);
-    userInfo.setUserid(firebaseUser.getUid());
+    userInfo.setUserId(firebaseUser.getUid());
     userInfo.setStatus(true);
 
 
@@ -283,25 +289,24 @@ public class profile_edit extends AppCompatActivity {
 
   private void updatedata() {
 
-    reference = fStore.collection("Users");
 
     save.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
         String txt_username = username.getText().toString();
-        String txt_email = email.getText().toString();
+       // String txt_email = email.getText().toString();
         String txt_country = country.getText().toString();
         String txt_city = city.getText().toString();
         String txt_phone = phone.getText().toString();
 
 
-        if (TextUtils.isEmpty(txt_username) || TextUtils.isEmpty(txt_email)
+        if (TextUtils.isEmpty(txt_username)
                 || TextUtils.isEmpty(txt_country) || TextUtils.isEmpty(txt_city) || TextUtils.isEmpty(txt_phone)) {
           Toast.makeText(profile_edit.this, "All field are required", Toast.LENGTH_SHORT).show();
         } else {
-          register(txt_username, txt_email,
+          register(txt_username,
                   txt_country, txt_city, txt_phone);
-          Intent intent = new Intent(profile_edit.this, sign_in.class);
+          Intent intent = new Intent(profile_edit.this, Profile.class);
           startActivity(intent);
           finish();
 

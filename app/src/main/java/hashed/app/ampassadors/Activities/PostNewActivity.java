@@ -2,6 +2,7 @@ package hashed.app.ampassadors.Activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
@@ -453,6 +454,33 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     uploadTaskMap.put(uploadTask, onSuccessListener);
 
   }
+
+
+  @Override
+  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                         @NonNull int[] grantResults) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+      switch (requestCode) {
+        case Files.PICK_FILE:
+          Files.startDocumentFetchIntent(this);
+          break;
+        case Files.PICK_IMAGE:
+          Files.startImageFetchIntent(this);
+          break;
+        case Files.PICK_VIDEO:
+          Files.startVideoFetchIntent(this);
+          break;
+      }
+    } else {
+
+      //permission denied
+    }
+
+
+  }
+
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

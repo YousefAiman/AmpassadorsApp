@@ -1,4 +1,4 @@
-package hashed.app.ampassadors.Fragments;
+                                                       package hashed.app.ampassadors.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -42,9 +42,12 @@ import hashed.app.ampassadors.Activities.Home_Activity;
 import hashed.app.ampassadors.Activities.PostNewActivity;
 import hashed.app.ampassadors.Activities.Profile;
 import hashed.app.ampassadors.Activities.profile_edit;
+import hashed.app.ampassadors.Adapters.PostAdapter;
 import hashed.app.ampassadors.Adapters.UserPostAdapter;
+import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.Objects.UserPostData;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.Files;
 
 public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItemClickListener,
         SwipeRefreshLayout.OnRefreshListener {
@@ -52,8 +55,10 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
 
     FirebaseFirestore firebaseFirestore;
     Query query;
-    List<UserPostData> postData;
-    UserPostAdapter adapter;
+    List<PostData> postData;
+    //private UserPostData posda;
+
+    PostAdapter adapter;
     RecyclerView post_list;
     DocumentSnapshot lastDocSnap;
     boolean isLoadingMessages;
@@ -76,6 +81,7 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_posts_profile, container,
                 false);
+
         floatingButton = view.findViewById(R.id.floatingbtn);
         username = view.findViewById(R.id.textView6);
         imageView = view.findViewById(R.id.profile_picture);
@@ -92,6 +98,8 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
             }
         });
         toolbar = view.findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(v -> ((Home_Activity) requireActivity()).showDrawer());
+
         toolbar.setOnMenuItemClickListener(this);
         getUserNaImg();
         firebaseFirestore = FirebaseFirestore.getInstance();
@@ -102,7 +110,7 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
                         Query.Direction.DESCENDING).limit(10);
         postData = new ArrayList<>();
 
-        adapter = new UserPostAdapter(postData, getActivity());
+        adapter = new PostAdapter(postData, getActivity());
         post_list = view.findViewById(R.id.userpost_recycler);
 
         post_list.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL,
@@ -134,6 +142,7 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
                         toolbar.getMenu().findItem(R.id.action_online).setTitle("online");
                     }
                 });
+                
             }else{
                 reference.update("status", true).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -192,7 +201,7 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
                     lastDocSnap = queryDocumentSnapshots.getDocuments().get(
                             queryDocumentSnapshots.size()-1
                     );
-                    postData.addAll(queryDocumentSnapshots.toObjects(UserPostData.class));
+                    postData.addAll(queryDocumentSnapshots.toObjects(PostData.class));
                 }
             }
         }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -237,8 +246,6 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
                         String user_name = task.getResult().getString("username");
                         String imgUrl = task.getResult().getString("imageUrl");
 
-
-
                         task.getResult().getBoolean("status");
                         toolbar.setOnMenuItemClickListener(PostsProfileFragment.this);
 
@@ -252,12 +259,13 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         });
     }
     private void drawer(){
-        final DrawerLayout drawerLayout_b = getView().findViewById(R.id.drawer_layout_b);
-        getView().findViewById(R.id.profile_toolbar).setOnClickListener(new View.OnClickListener() {
+        final DrawerLayout drawerLayout_b = getView().findViewById(R.id.drawer_layout);
+        getView().findViewById(R.id.profile_toolbara).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 drawerLayout_b.openDrawer(GravityCompat.START);
             }
         });
     }
+
 }

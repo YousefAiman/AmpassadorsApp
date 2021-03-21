@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 
 import com.squareup.picasso.Picasso;
 
@@ -23,7 +24,7 @@ import java.util.Objects;
 
 import hashed.app.ampassadors.R;
 
-public class ImageFullScreenFragment extends DialogFragment {
+public class ImageFullScreenFragment extends Fragment {
 
   private static final boolean AUTO_HIDE = true;
 
@@ -77,7 +78,7 @@ public class ImageFullScreenFragment extends DialogFragment {
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialogTheme);
+//    setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialogTheme);
   }
 
   @Nullable
@@ -87,15 +88,15 @@ public class ImageFullScreenFragment extends DialogFragment {
                            @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_image_full_screen, container,
             false);
-
-    Objects.requireNonNull(getDialog()).getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT);
+//
+//    Objects.requireNonNull(getDialog()).getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,
+//            ViewGroup.LayoutParams.MATCH_PARENT);
 
 
     fullScreenIv = view.findViewById(R.id.fullScreenIv);
 
     final Toolbar fullScreenToolbar = view.findViewById(R.id.fullScreenToolbar);
-    fullScreenToolbar.setNavigationOnClickListener(v -> dismiss());
+    fullScreenToolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
 
     return view;
   }
@@ -108,7 +109,7 @@ public class ImageFullScreenFragment extends DialogFragment {
 
     fullScreenIv.setOnClickListener(v -> toggle());
 
-    Picasso.get().load(imageUrl).fit().into(fullScreenIv);
+    Picasso.get().load(imageUrl).fit().centerInside().into(fullScreenIv);
 
   }
 
@@ -186,7 +187,7 @@ public class ImageFullScreenFragment extends DialogFragment {
 
     }
 
-    delayedHide(100);
+    delayedHide(0);
 
   }
 

@@ -56,6 +56,7 @@
 
     <style name="searchViewStyle" parent="Widget.AppCompat.SearchView">
 
+        <item name="searchIcon">@drawable/search_icon</item>
         <item name="android:textSize">1sp</item>
         <item name="android:fontFamily">@font/segoe_ui_bold</item>
 

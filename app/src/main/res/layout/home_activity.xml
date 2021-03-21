@@ -28,9 +28,7 @@
             app:itemIconTint="@drawable/bottom_navigation_selector"
             android:background="@drawable/bottom_nav_back"
             app:menu="@menu/menu_iten_tab"/>
-
     </LinearLayout>
-
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigationview"
         android:layout_width="320dp"

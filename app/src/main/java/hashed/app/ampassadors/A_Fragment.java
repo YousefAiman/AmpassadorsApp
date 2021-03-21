@@ -146,7 +146,7 @@ public class A_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
         for (QueryDocumentSnapshot snapshot : queryDocumentSnapshots) {
 
           if (snapshot.getLong("type") == TYPE_POLL) {
-            Log.d("ggggg", snapshot.getLong("type") + "هههههههههههههههه");
+          //  Log.d("ggggg", snapshot.getLong("type") + "هههههههههههههههه");
 
 
             if (snapshot.getBoolean("pollEnded")) {

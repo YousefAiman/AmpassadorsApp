@@ -28,7 +28,6 @@
         android:textColor="@color/black"
         android:textColorHint="#4D000000"
         android:background="@drawable/poll_item_selected_editext_back"
-        android:hint="الخيار 2"
         android:paddingHorizontal="12dp"
         android:paddingVertical="3dp"/>
 
