@@ -81,7 +81,18 @@ public class profile_edit extends AppCompatActivity {
     init();
 // toolbar
     final Toolbar toolbar = findViewById(R.id.toolbar);
-    toolbar.setNavigationOnClickListener(v -> onBackPressed());
+    toolbar.setNavigationOnClickListener(v -> {
+
+      onBackPressed();
+//      final Bundle bundle = new Bundle();
+//      bundle.putString("username",username.getText().toString());
+//      bundle.putString("country",country.getText().toString());
+//      bundle.putString("city",city.getText().toString());
+//      bundle.putString("phone",phone.getText().toString());
+//      setResult(Profile.EDIT_CODE, new Intent().putExtra("editBundle",bundle));
+//      finish();
+
+    });
 
     updateImageIV = findViewById(R.id.updateImageIV);
 
@@ -163,6 +174,13 @@ public class profile_edit extends AppCompatActivity {
 //            }
 //        });
 //    }
+//  @Override
+//  public void onBackPressed() {
+//
+//
+////    super.onBackPressed();
+//  }
+
   private void init() {
     username = findViewById(R.id.input_username);
     email = findViewById(R.id.input_email);

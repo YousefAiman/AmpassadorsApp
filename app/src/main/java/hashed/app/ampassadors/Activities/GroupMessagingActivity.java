@@ -1552,7 +1552,6 @@ public class GroupMessagingActivity extends AppCompatActivity
   //notifications methods
   private void checkUserActivityAndSendNotifications(String message, int messageType) {
 
-
     String body;
     switch (messageType) {
 

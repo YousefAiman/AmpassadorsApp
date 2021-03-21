@@ -101,7 +101,8 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     }
 
     try {
-      if (remoteMessage.getData().get("type").equals("message")) {
+      if (remoteMessage.getData().get("type").equals("Group Messages")
+      || remoteMessage.getData().get("type").equals("Private Messages")) {
         if (sharedPreferences.contains("currentlyMessagingUid")) {
           final Map<String, String> data = remoteMessage.getData();
 

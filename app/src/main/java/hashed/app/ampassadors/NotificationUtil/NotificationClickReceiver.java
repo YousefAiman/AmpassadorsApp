@@ -51,14 +51,11 @@ public class NotificationClickReceiver extends BroadcastReceiver {
 
         }
 
-
         if (sourceType.equals("privateMessaging")){
           destinationIntent.putExtra("messagingUid", bundle.getString("sourceId"));
         }else{
           destinationIntent.putExtra("destinationBundle", bundle);
         }
-
-
 
         if (sourceType.equals("privateMessaging") || sourceType.equals("groupMessaging") ||
                 sourceType.equals("meetingStarted") || sourceType.equals("zoomMeeting")) {
