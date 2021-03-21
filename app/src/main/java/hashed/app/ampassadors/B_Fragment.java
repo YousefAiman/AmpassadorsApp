@@ -83,7 +83,8 @@ public class B_Fragment extends Fragment implements Toolbar.OnMenuItemClickListe
     View view = inflater.inflate(R.layout.fragment_b_, container, false);
     post_list = view.findViewById(R.id.home_listb);
     toolbarTv = view.findViewById(R.id.toolbarTv);
-    post_list.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
+    post_list.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL,
+            false));
 
     Toolbar toolbar = view.findViewById(R.id.toolbar);
     toolbar.setNavigationOnClickListener(v -> ((Home_Activity) requireActivity()).showDrawer());

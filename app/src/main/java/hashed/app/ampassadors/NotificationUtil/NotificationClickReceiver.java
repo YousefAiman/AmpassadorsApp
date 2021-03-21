@@ -16,20 +16,15 @@ import hashed.app.ampassadors.Utils.GlobalVariables;
 public class NotificationClickReceiver extends BroadcastReceiver {
 
 
-  private SharedPreferences sharedPreferences;
+
 
   @Override
   public void onReceive(Context context, Intent intent) {
 
 
-    if (intent.hasExtra("messagingBundle")) {
+    if (intent.hasExtra("destinationBundle")) {
 
       if (GlobalVariables.isAppIsRunning()) {
-
-        if (sharedPreferences == null) {
-          sharedPreferences = context.getSharedPreferences(
-                  context.getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
-        }
 
         Bundle bundle = intent.getBundleExtra("destinationBundle");
 
@@ -56,11 +51,22 @@ public class NotificationClickReceiver extends BroadcastReceiver {
 
         }
 
-        destinationIntent.putExtra("destinationBundle", bundle);
+
+        if (sourceType.equals("privateMessaging")){
+          destinationIntent.putExtra("messagingUid", bundle.getString("sourceId"));
+        }else{
+          destinationIntent.putExtra("destinationBundle", bundle);
+        }
+
+
 
         if (sourceType.equals("privateMessaging") || sourceType.equals("groupMessaging") ||
                 sourceType.equals("meetingStarted") || sourceType.equals("zoomMeeting")) {
 
+
+          final SharedPreferences sharedPreferences =
+                  context.getSharedPreferences(context.getResources().getString(R.string.app_name),
+                          Context.MODE_PRIVATE);
 
           if (sharedPreferences.contains("currentlyMessagingUid")) {
             if (bundle.getString("sourceId")

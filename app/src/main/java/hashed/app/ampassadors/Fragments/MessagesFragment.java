@@ -188,11 +188,14 @@ public class MessagesFragment extends Fragment {
       @Override
       public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-
-
         if (task.isSuccessful() && task.getResult() != null) {
 
-          addNewMessagesListener();
+
+          if(task.getResult().isEmpty()){
+            progressBar.setVisibility(View.GONE);
+          }else{
+            addNewMessagesListener();
+          }
 
 //          if(task.getResult().size() == MESSAGE_PAGE){
 //            chatsRv.addOnScrollListener(scrollListener = new ChatsScrollListener());
@@ -216,6 +219,8 @@ public class MessagesFragment extends Fragment {
 //          }
 
 
+        }else{
+          progressBar.setVisibility(View.GONE);
         }
 
 
