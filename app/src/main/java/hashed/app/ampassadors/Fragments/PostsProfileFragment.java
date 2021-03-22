@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -41,6 +42,7 @@ import java.util.List;
 
 import hashed.app.ampassadors.Activities.ComplaintsActivity;
 import hashed.app.ampassadors.Activities.Home_Activity;
+import hashed.app.ampassadors.Activities.NotificationsActivity;
 import hashed.app.ampassadors.Activities.PostNewActivity;
 import hashed.app.ampassadors.Activities.Profile;
 import hashed.app.ampassadors.Activities.profile_edit;
@@ -77,7 +79,7 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
     FloatingActionButton floatingButton;
     Toolbar toolbar;
     private NotificationIndicatorReceiver notificationIndicatorReceiver;
-
+    private TextView roleTv;
     public PostsProfileFragment() {
         // Required empty public constructor
     }
@@ -92,7 +94,17 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         username = view.findViewById(R.id.textView6);
         imageView = view.findViewById(R.id.profile_picture);
         swipeRefresh = view.findViewById(R.id.swipeRefreshLayout);
+        roleTv = view.findViewById(R.id.roleTv);
         swipeRefresh.setOnRefreshListener(this);
+
+        if(FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
+            roleTv.setText(getResources().getString(R.string.guest));
+        }else if(GlobalVariables.getRole()!=null){
+            roleTv.setText(GlobalVariables.getRole());
+        }
+
+        NestedScrollView nestedScrollView = view.findViewById(R.id.nestedScrollView);
+        nestedScrollView.setNestedScrollingEnabled(false);
 
         floatingButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,7 +187,11 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
 
             Intent mapIntent = new Intent(getActivity(), Profile.class);
             startActivity(mapIntent);
+        }else  if (item.getItemId() == R.id.action_notifications) {
+            startActivity(new Intent(getContext(), NotificationsActivity.class)
+                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         }
+
         return false;
     }
     @Override

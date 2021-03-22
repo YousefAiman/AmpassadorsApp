@@ -28,7 +28,8 @@ public class SigninUtil {
         FirebaseAuth.getInstance().signOut();
 
         dialog.dismiss();
-        context.startActivity(new Intent(context, sign_in.class));
+        context.startActivity(new Intent(context, sign_in.class)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 
         if (activity != null) {
           activity.finish();

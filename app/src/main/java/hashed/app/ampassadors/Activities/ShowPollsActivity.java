@@ -8,15 +8,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.AttributeSet;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -27,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import hashed.app.ampassadors.A_Fragment;
 import hashed.app.ampassadors.Adapters.PostAdapter;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;

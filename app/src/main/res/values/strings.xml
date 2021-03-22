@@ -313,4 +313,5 @@ Legal and human rights support program.
     <string name="sent_a_video">sent a video</string>
     <string name="sent_audio_message">sent an audio message</string>
     <string name="sent_an_attachment">sent an attachment</string>
+    <string name="guest">Guest</string>
 </resources>

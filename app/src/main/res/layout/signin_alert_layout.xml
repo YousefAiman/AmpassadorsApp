@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="300dp"
     android:layout_marginHorizontal="30dp"
     android:layoutDirection="ltr"
     android:layout_height="200dp"
@@ -18,29 +19,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline17"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.94" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline18"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.13" />
-
             <ImageView
+                android:id="@+id/imageView3"
                 android:layout_width="0dp"
-                app:layout_constraintWidth_percent="0.228"
                 android:layout_height="0dp"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/explanation_mark_icon"
                 app:layout_constraintDimensionRatio="1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/guideline288"
-                android:src="@drawable/explanation_mark_icon" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.228" />
 
             <TextView
                 android:id="@+id/textView45"
@@ -48,13 +37,13 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/segoe_ui"
                 android:gravity="center"
-                android:layout_marginTop="10dp"
                 android:text="@string/sign_in_man"
                 android:textColor="#3D3D3D"
                 android:textSize="16sp"
-                app:layout_constraintEnd_toStartOf="@+id/guideline17"
-                app:layout_constraintStart_toStartOf="@+id/guideline18"
-                app:layout_constraintTop_toTopOf="@+id/guideline287" />
+                app:layout_constraintBottom_toTopOf="@+id/alert_close"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView3" />
 
             <TextView
                 android:id="@+id/alert_signin"
@@ -64,9 +53,9 @@
                 android:text="@string/sign_in"
                 android:textColor="#3D3D3D"
                 android:textSize="17sp"
-                android:layout_marginEnd="8dp"
-                app:layout_constraintEnd_toStartOf="@+id/guideline17"
-                app:layout_constraintTop_toTopOf="@+id/guideline286" />
+                app:layout_constraintBottom_toBottomOf="@+id/alert_close"
+                app:layout_constraintEnd_toStartOf="@+id/imageView3"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/alert_close"
@@ -74,32 +63,12 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/segoe_ui"
                 android:text="@string/close"
+                android:layout_marginBottom="20dp"
                 android:textColor="@color/red"
                 android:textSize="17sp"
-                android:layout_marginStart="8dp"
-                app:layout_constraintStart_toStartOf="@+id/guideline18"
-                app:layout_constraintTop_toTopOf="@+id/guideline286" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline286"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.8" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline287"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.47" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline288"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.08" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageView3" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

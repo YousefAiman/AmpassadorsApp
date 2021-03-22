@@ -155,6 +155,7 @@ public class Home_Activity extends AppCompatActivity implements
 
               SigninUtil.getInstance(Home_Activity.this,
                       Home_Activity.this).show();
+            return false;
           }else{
               if (nav_btom.getSelectedItemId() != R.id.profile) {
                   replaceFragment(new PostsProfileFragment());
@@ -166,7 +167,7 @@ public class Home_Activity extends AppCompatActivity implements
           if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
               SigninUtil.getInstance(Home_Activity.this,
                       Home_Activity.this).show();
-
+            return false;
           }else{
               if (nav_btom.getSelectedItemId() != R.id.chat) {
                   replaceFragment(new ChattingFragment());
@@ -178,7 +179,7 @@ public class Home_Activity extends AppCompatActivity implements
           if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
               SigninUtil.getInstance(Home_Activity.this,
                       Home_Activity.this).show();
-
+            return false;
           }else{
               if (nav_btom.getSelectedItemId() != R.id.charity) {
                   replaceFragment(new MeetingsFragment());
