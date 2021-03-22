@@ -33,57 +33,8 @@
             layout="@layout/toolbar_prof"
 
             />
-        <LinearLayout
-            android:id="@+id/linearLayout2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            tools:ignore="MissingConstraints"
-            tools:layout_editor_absoluteX="20dp">
 
 
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/textView6"
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:background="@color/dark_green"
-            android:paddingTop="50dp"
-            android:paddingRight="30dp"
-            android:text="@string/username"
-            android:textAlignment="viewEnd"
-            android:textColor="#fff"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profile_picture"
-            android:layout_width="149dp"
-            android:layout_height="147dp"
-            android:layout_marginTop="36dp"
-            android:background="@drawable/profile_background"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
-
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/swipeRefreshLayout"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profile_picture"
-            >
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/userpost_recycler"
-                android:layout_width="0dp"
-                android:layout_height="0dp" />
-
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -101,6 +52,51 @@
             app:layout_constraintStart_toStartOf="parent"
             app:maxImageSize="40dp"
             app:tint="@color/white" />
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:background="@color/dark_green"
+            android:paddingTop="50dp"
+            android:paddingRight="30dp"
+            android:text="@string/username"
+            android:textAlignment="center"
+            android:textColor="#fff"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_picture"
+            android:layout_width="149dp"
+            android:layout_height="147dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/profile_background"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.061"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_picture">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/userpost_recycler"
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
+
+
+
+
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.drawerlayout.widget.DrawerLayout>
