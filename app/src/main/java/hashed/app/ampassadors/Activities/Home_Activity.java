@@ -305,9 +305,17 @@ public class Home_Activity extends AppCompatActivity implements
 
 
         } else if (item.getItemId() == R.id.complaints) {
-            Intent intent = new Intent(Home_Activity.this, ComplaintsActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+
+          if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
+
+              SigninUtil.getInstance(Home_Activity.this,
+                      Home_Activity.this).show();
+          }else{
+              Intent intent = new Intent(Home_Activity.this, ComplaintsActivity.class);
+              intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+              startActivity(intent);
+          }
+
         } else if (item.getItemId() == R.id.listComplaints && GlobalVariables.getRole().equals("Admin")) {
 
             Intent intent = new Intent(Home_Activity.this, ComplanitsListActivity.class);
@@ -320,9 +328,16 @@ public class Home_Activity extends AppCompatActivity implements
 
 
         } else if (item.getItemId() == R.id.proposals) {
-            Intent intent = new Intent(Home_Activity.this, SuggestionsActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+          if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
+
+              SigninUtil.getInstance(Home_Activity.this,
+                      Home_Activity.this).show();
+          }else{
+              Intent intent = new Intent(Home_Activity.this, SuggestionsActivity.class);
+              intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+              startActivity(intent);
+          }
+
 
         } else if (item.getItemId() == R.id.listSuggestion && GlobalVariables.getRole().equals("Admin")) {
             Intent intent = new Intent(Home_Activity.this, List_Sug_Activity.class);

@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -39,6 +40,9 @@ public class ComplaintsActivity extends AppCompatActivity {
     setContentView(R.layout.activity_complaints);
     setupCompontet();
     onClickButtons();
+
+    final Toolbar toolbar = findViewById(R.id.toolbar);
+    toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
   }
 
