@@ -15,18 +15,18 @@ public class UserPreview implements Serializable {
   public String imageUrl;
   @PropertyName("username")
   public String username;
-  @PropertyName("online")
-  public boolean online;
+  @PropertyName("status")
+  private boolean status;
 
   public UserPreview() {
   }
 
 
-  public UserPreview(String userId, String imageUrl, String username, boolean online) {
+  public UserPreview(String userId, String imageUrl, String username, boolean status) {
     this.userId = userId;
     this.imageUrl = imageUrl;
     this.username = username;
-    this.online = online;
+    this.setStatus(status);
   }
 
   public String getImageUrl() {
@@ -53,11 +53,12 @@ public class UserPreview implements Serializable {
     this.userId = userId;
   }
 
-  public boolean isOnline() {
-    return online;
+
+  public boolean isStatus() {
+    return status;
   }
 
-  public void setOnline(boolean online) {
-    this.online = online;
+  public void setStatus(boolean status) {
+    this.status = status;
   }
 }

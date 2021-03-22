@@ -71,6 +71,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.GroupMessagingActivity"
+            android:parentActivityName=".Activities.Home_Activity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.Home_Activity"
@@ -104,6 +105,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.PrivateMessagingActivity"
+            android:parentActivityName=".Activities.Home_Activity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"

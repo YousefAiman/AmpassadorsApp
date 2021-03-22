@@ -106,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
                       @Override
                       public void run() {
                         startActivity(finalIntent);
+                        finish();
                       }
                     }, 800);
 
@@ -114,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
                       @Override
                       public void run() {
                         startHomeActivity();
+                        finish();
                       }
                     }, 500);
                   }
@@ -174,7 +176,9 @@ public class MainActivity extends AppCompatActivity {
 
   private Intent startGroupMessagingActivity(String groupId) {
     return new Intent(MainActivity.this,
-            GroupMessagingActivity.class).putExtra("messagingUid", groupId);
+            GroupMessagingActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            .putExtra("messagingUid", groupId);
+
   }
 
 

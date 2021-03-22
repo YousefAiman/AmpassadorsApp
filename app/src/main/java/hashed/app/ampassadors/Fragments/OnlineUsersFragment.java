@@ -15,9 +15,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -39,6 +44,7 @@ public class OnlineUsersFragment extends Fragment implements
   private scrollListener scrollListener;
   private boolean isLoading;
   private SwipeRefreshLayout swipeRefreshLayout;
+  private ListenerRegistration listenerRegistration;
 
   public OnlineUsersFragment() {
   }
@@ -50,12 +56,42 @@ public class OnlineUsersFragment extends Fragment implements
     users = new ArrayList<>();
     usersAdapter = new UsersAdapter(users, R.layout.user_item_layout);
 
+
     query = FirebaseFirestore.getInstance().collection("Users")
-            .whereEqualTo("online", true)
-            .whereNotEqualTo("userId",
-                    Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
+            .whereEqualTo("status", true)
+//            .whereNotEqualTo("userId",
+//                    Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
             .orderBy("userId")
             .orderBy("username", Query.Direction.ASCENDING).limit(USERS_LIMIT);
+
+
+    listenerRegistration = FirebaseFirestore.getInstance().collection("Users")
+            .whereEqualTo("status", false)
+            .whereNotEqualTo("userId",
+                    Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).
+                    addSnapshotListener(new EventListener<QuerySnapshot>() {
+      @Override
+      public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+
+        if(value == null || value.getDocumentChanges().isEmpty() && users.isEmpty()){
+          return;
+        }
+
+        for(DocumentChange dc:value.getDocumentChanges()){
+          if(dc.getType() == DocumentChange.Type.ADDED){
+
+            for(UserPreview userPreview:users){
+              if(userPreview.getUserId().equals(dc.getDocument().getId())){
+                final int index = users.indexOf(userPreview);
+                users.remove(userPreview);
+                usersAdapter.notifyItemRemoved(index);
+                break;
+              }
+            }
+          }
+        }
+      }
+    });
 
   }
 
@@ -193,6 +229,10 @@ public class OnlineUsersFragment extends Fragment implements
 
     if (userRv != null && scrollListener != null) {
       userRv.removeOnScrollListener(scrollListener);
+    }
+
+    if(listenerRegistration!=null){
+      listenerRegistration.remove();
     }
   }
 

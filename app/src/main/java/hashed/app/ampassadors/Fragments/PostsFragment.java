@@ -187,6 +187,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     //post recycler
     posts.clear();
     adapter.notifyDataSetChanged();
+    adapter.loadingItems.clear();
     lastDocSnap = null;
     ReadPost(true);
 

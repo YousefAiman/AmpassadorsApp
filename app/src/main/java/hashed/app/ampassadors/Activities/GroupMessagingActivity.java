@@ -228,8 +228,9 @@ public class GroupMessagingActivity extends AppCompatActivity
 
     if (intent.hasExtra("destinationBundle")) {
 
-      final String sourceId = intent.getStringExtra("sourceId");
-      final String sourceType = intent.getStringExtra("sourceType");
+      final Bundle destinationBundle = intent.getBundleExtra("destinationBundle");
+      final String sourceId = destinationBundle.getString("sourceId");
+      final String sourceType = destinationBundle.getString("sourceType");
 
       if (sourceType.equals("zoomMeeting")) {
 
@@ -1293,6 +1294,10 @@ public class GroupMessagingActivity extends AppCompatActivity
     super.onDestroy();
     privateMessagingRv.removeOnLayoutChangeListener(this);
 
+    if (sharedPreferences != null) {
+      sharedPreferences.edit().remove("isPaused").remove("currentlyMessagingUid").apply();
+    }
+
     if (childEventListeners != null && !childEventListeners.isEmpty()) {
       for (DatabaseReference reference : childEventListeners.keySet()) {
         reference.removeEventListener(Objects.requireNonNull(childEventListeners.get(reference)));
@@ -1332,6 +1337,15 @@ public class GroupMessagingActivity extends AppCompatActivity
       stopAudioRecorder(null, 0, true);
       progressHandle.removeCallbacks(progressRunnable);
     }
+
+    if (currentUid != null) {
+      usersRef.document(currentUid).update("ActivelyMessaging", null);
+    }
+
+    if (sharedPreferences != null) {
+      sharedPreferences.edit().putBoolean("isPaused", true).apply();
+    }
+
 
   }
 
@@ -1536,7 +1550,7 @@ public class GroupMessagingActivity extends AppCompatActivity
               body,
               currentGroupName,
               currentGroupImage,
-              "message",
+              "Group Messages",
               "zoomMeeting",
               groupId + "-" + joinUrl
       );

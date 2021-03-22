@@ -15,12 +15,8 @@ import hashed.app.ampassadors.Utils.GlobalVariables;
 
 public class NotificationClickReceiver extends BroadcastReceiver {
 
-
-
-
   @Override
   public void onReceive(Context context, Intent intent) {
-
 
     if (intent.hasExtra("destinationBundle")) {
 
@@ -60,7 +56,6 @@ public class NotificationClickReceiver extends BroadcastReceiver {
         if (sourceType.equals("privateMessaging") || sourceType.equals("groupMessaging") ||
                 sourceType.equals("meetingStarted") || sourceType.equals("zoomMeeting")) {
 
-
           final SharedPreferences sharedPreferences =
                   context.getSharedPreferences(context.getResources().getString(R.string.app_name),
                           Context.MODE_PRIVATE);
@@ -87,6 +82,8 @@ public class NotificationClickReceiver extends BroadcastReceiver {
         } else if (sourceType.equals("meetingCreated")) {
 
 
+        }else{
+
         }
 
         context.startActivity(destinationIntent);
@@ -97,7 +94,6 @@ public class NotificationClickReceiver extends BroadcastReceiver {
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 .putExtra("destinationBundle",
                         intent.getBundleExtra("destinationBundle")));
-
 
         Log.d("ttt", "clicked notificaiton while app isn't running");
       }

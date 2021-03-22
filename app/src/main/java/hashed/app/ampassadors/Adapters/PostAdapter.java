@@ -17,6 +17,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
@@ -41,7 +42,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
   private final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
   Context context;
 
-//  private List<Integer> loadingItems = new ArrayList<>();
+  public List<Integer> loadingItems = new ArrayList<>();
 //    private final CommentsInterface commentsInterface;
 //    private final ImageInterface imageInterface;
 //
@@ -659,57 +660,74 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         postData.setPollOptions(new ArrayList<>());
       }
 
+
+
       final PollPostAdapter adapter = new PollPostAdapter(postData.getPollOptions()
               , postData.getPostId(), hasEnded, postData.getTotalVotes());
 
+      if(!postData.getPollOptions().isEmpty()){
+        for(PollOption pollOption:postData.getPollOptions()){
+          if(pollOption.isChosen()){
+            adapter.showProgress = true;
+            break;
+          }
+        }
+      }
       pollRv.setNestedScrollingEnabled(false);
       pollRv.setHasFixedSize(true);
       adapter.setHasStableIds(true);
       pollRv.setAdapter(adapter);
 
-//      if(!loadingItems.contains(getAdapterPosition())){
-//        loadingItems.add(getAdapterPosition());
-        final AtomicInteger chosenOption = new AtomicInteger(-1);
 
-        postsCollectionRef.document(postData.getPostId())
-                .collection("UserVotes").whereEqualTo("userId", currentUid)
-                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-          @Override
-          public void onSuccess(QuerySnapshot snapshots) {
-            if (!snapshots.isEmpty()) {
 
-              chosenOption.set(snapshots.getDocuments().get(0).get(
-                      "voteOption", Integer.class));
+      if(!loadingItems.contains(getAdapterPosition())){
+        loadingItems.add(getAdapterPosition());
 
-              postsCollectionRef.document(postData.getPostId())
-                      .collection("Options").get()
-                      .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                        @Override
-                        public void onSuccess(QuerySnapshot snapshots) {
-                          if (!snapshots.isEmpty()) {
-                            postData.getPollOptions().addAll(snapshots.toObjects(PollOption.class));
-                          }
-                        }
-                      }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+      postsCollectionRef.document(postData.getPostId())
+              .collection("Options").get()
+              .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                 @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                  if (task.isSuccessful() && !postData.getPollOptions().isEmpty()) {
-
-                    if (chosenOption.get() != -1) {
-                      postData.getPollOptions().get(chosenOption.get()).setChosen(true);
-                      adapter.showProgress = true;
-                    }
-
-                    adapter.notifyDataSetChanged();
+                public void onSuccess(QuerySnapshot snapshots) {
+                  if (!snapshots.isEmpty()) {
+                    postData.getPollOptions().addAll(snapshots.toObjects(PollOption.class));
                   }
                 }
-              });
-            }
+              }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        @Override
+        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+          if (task.isSuccessful() && !postData.getPollOptions().isEmpty()) {
+            adapter.notifyDataSetChanged();
+
+//            final AtomicInteger chosenOption = new AtomicInteger(-1);
+
+            postsCollectionRef.document(postData.getPostId())
+                    .collection("UserVotes").document(currentUid)
+                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+              @Override
+              public void onSuccess(DocumentSnapshot snapshot) {
+                if (snapshot.exists()) {
+                  final int option = snapshot.get("voteOption", Integer.class);
+
+//                  if (chosenOption.get() != -1) {
+                    postData.getPollOptions().get(option).setChosen(true);
+                    adapter.showProgress = true;
+                    adapter.notifyDataSetChanged();
+//                  }
+
+                }
+              }
+            });
+
+
+
           }
-        });
+        }
+      });
 
 
-//      }
+
+
+      }
 
 
 

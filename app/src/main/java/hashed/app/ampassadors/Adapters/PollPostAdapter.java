@@ -211,11 +211,7 @@ public class PollPostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
       optionTv.setText(pollOption.getOption());
 
-      if (!showProgress) {
-        optionTv.setOnClickListener(this);
-      } else {
-        optionTv.setOnClickListener(null);
-      }
+      optionTv.setOnClickListener(this);
 
 
     }
@@ -226,10 +222,12 @@ public class PollPostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
       if (view.getId() == R.id.optionTv) {
 
-        optionTv.setClickable(false);
+        if (!showProgress) {
+          optionTv.setClickable(false);
 
-        voteOnOption(optionTv, getAdapterPosition());
+          voteOnOption(optionTv, getAdapterPosition());
 
+        }
       }
     }
   }

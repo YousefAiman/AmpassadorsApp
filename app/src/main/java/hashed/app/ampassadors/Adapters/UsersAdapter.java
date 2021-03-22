@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
   private ArrayList<UserPreview> users;
 //  private ArrayList<UserPreview> filteredUsers;
   private UserAdapterClicker userAdapterClicker;
+  private String currentUid;
 
   public UsersAdapter(ArrayList<UserPreview> users, int itemLayout) {
     this.users = users;
@@ -43,6 +45,7 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 //    this.filteredUsers = users;
     this.userAdapterClicker = userAdapterClicker;
     this.itemLayout = itemLayout;
+    currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
   }
 
   @Override
@@ -172,7 +175,7 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private void bindChat(UserPreview user) {
 
-      if (user.getUserId() == null)
+      if (user.getUserId() == null || user.getUserId().equals(currentUid))
         return;
 
 
@@ -182,7 +185,7 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
       nameTv.setText(user.getUsername());
 
-      if (user.isOnline()) {
+      if (user.isStatus()) {
 
         DrawableCompat.setTint(
                 DrawableCompat.wrap(statusIv.getDrawable()),

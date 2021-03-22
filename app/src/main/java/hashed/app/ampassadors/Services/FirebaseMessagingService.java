@@ -81,7 +81,6 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
       return;
     }
 
-
     if (remoteMessage.getData().containsKey("senderUid")
             && remoteMessage.getData().get("senderUid").
             equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
@@ -191,7 +190,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
       newIntent.putExtra("destinationBundle", messagingBundle);
 
 
-      if (type.equals("message")) {
+      if (type.equals("Group Messages") || type.equals("Private Messages")) {
 
         Log.d("ttt", "type is message");
 
@@ -234,6 +233,13 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         notificationNum++;
 
         GlobalVariables.getMessagesNotificationMap().put(identifierTitle, notificationNum);
+
+
+        final PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
+                notificationNum, newIntent, PendingIntent.FLAG_ONE_SHOT);
+
+        builder.setContentIntent(pendingIntent);
+
 
         notificationManager.notify(notificationNum, builder.build());
 
