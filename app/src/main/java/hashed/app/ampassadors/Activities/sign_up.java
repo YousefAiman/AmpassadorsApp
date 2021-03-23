@@ -52,7 +52,7 @@ import java.util.UUID;
 import hashed.app.ampassadors.Objects.UserInfo;
 import hashed.app.ampassadors.R;
 
-public class sign_up extends AppCompatActivity {
+public class sign_up extends AppCompatActivity implements View.OnClickListener {
 
     private final static int CAMERA_REQUEST_CODE = 1;
     EditText username, password, confirm_pass, email, country, city, phone;
@@ -71,7 +71,7 @@ public class sign_up extends AppCompatActivity {
     FirebaseStorage storage;
     Spinner spinner;
     private Uri filePath;
-
+    private ImageView locationIv;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -254,6 +254,7 @@ public class sign_up extends AppCompatActivity {
     }
 
     public void init() {
+
         auth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
         already_account = findViewById(R.id.back_sign_in);
@@ -271,6 +272,8 @@ public class sign_up extends AppCompatActivity {
         mProgressDialog = new ProgressDialog(this);
         userid = auth.getUid();
         spinner = findViewById(R.id.options);
+        locationIv = findViewById(R.id.locationIv);
+        locationIv.setOnClickListener(this);
 
     }
 
@@ -391,5 +394,16 @@ public class sign_up extends AppCompatActivity {
         // Save a file: path for use with ACTION_VIEW intents
         cameraImageFilePath = image.getAbsolutePath();
         return image;
+    }
+
+    @Override
+    public void onClick(View view) {
+
+        if(view.getId() == locationIv.getId()){
+
+
+
+        }
+
     }
 }

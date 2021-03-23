@@ -74,6 +74,10 @@ public class UserSearchActivity extends AppCompatActivity implements
               = getIntent().getStringArrayListExtra("selectedUserIds");
     }
 
+    pickerAdapter = new UsersPickerAdapter(users, previousSelectedUserIdsList,
+            true);
+    userRv.setAdapter(pickerAdapter);
+
     users = new ArrayList<>();
 
     usersRef.orderBy("username")
@@ -88,12 +92,11 @@ public class UserSearchActivity extends AppCompatActivity implements
       @Override
       public void onComplete(@NonNull Task<QuerySnapshot> task) {
         if(task.isSuccessful()){
-          pickerAdapter = new UsersPickerAdapter(users, previousSelectedUserIdsList,
-                  true);
-          userRv.setAdapter(pickerAdapter);
+          pickerAdapter.notifyDataSetChanged();
         }
       }
     });
+
   }
   @Override
   public boolean onQueryTextSubmit(String query) {

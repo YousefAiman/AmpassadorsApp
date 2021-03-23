@@ -228,6 +228,7 @@ public class OnlineUsersFragment extends Fragment implements
   @Override
   public void onRefresh() {
 
+    wasFound = false;
     users.clear();
     usersAdapter.notifyDataSetChanged();
     lastDocSnap = null;

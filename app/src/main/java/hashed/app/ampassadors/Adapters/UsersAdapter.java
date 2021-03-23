@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
@@ -22,12 +25,11 @@ import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
 
 public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
-//        implements Filterable
+        implements Filterable
 {
 
   private final int itemLayout;
   private ArrayList<UserPreview> users;
-//  private ArrayList<UserPreview> filteredUsers;
   private UserAdapterClicker userAdapterClicker;
   private String currentUid;
 
@@ -36,10 +38,9 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     this.itemLayout = itemLayout;
   }
 
-  public UsersAdapter(ArrayList<UserPreview> users, int itemLayout,
+  public UsersAdapter(ArrayList<UserPreview> filteredUsers, int itemLayout,
                       UserAdapterClicker userAdapterClicker) {
     this.users = users;
-//    this.filteredUsers = users;
     this.userAdapterClicker = userAdapterClicker;
     this.itemLayout = itemLayout;
     currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -47,7 +48,7 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
   @Override
   public int getItemCount() {
-    return users.size();
+      return users.size();
   }
 
   @NonNull
@@ -57,7 +58,6 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     if (itemLayout == R.layout.user_item_layout) {
       return new UsersVh(LayoutInflater.from(parent.getContext())
               .inflate(itemLayout, parent, false));
-
     } else {
       return new UsersPickedVh(LayoutInflater.from(parent.getContext())
               .inflate(itemLayout, parent, false));
@@ -69,55 +69,55 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
   public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
     if (itemLayout == R.layout.user_item_layout) {
-      ((UsersVh) holder).bindChat(users.get(position));
+        ((UsersVh) holder).bindChat(users.get(position));
     } else if (itemLayout == R.layout.user_picked_preview_item_layout) {
-      ((UsersPickedVh) holder).bindChat(users.get(position));
+        ((UsersPickedVh) holder).bindChat(users.get(position));
     }
 
   }
 
-//  @Override
-//  public Filter getFilter() {
-//    return new Filter() {
-//      @Override
-//      protected FilterResults performFiltering(CharSequence constraint) {
-//        String filterString = constraint.toString().toLowerCase();
-//        FilterResults results = new FilterResults();
-//
-//        final List<UserPreview> list = users;
-//
-//        int count = list.size();
-//        final ArrayList<UserPreview> nlist = new ArrayList<>(count);
-//
-//        UserPreview filteredUser;
-//
-//        for (int i = 0; i < count; i++) {
-//          filteredUser = list.get(i);
-//          if (list.get(i).getUsername().toLowerCase().contains(filterString)) {
-//            nlist.add(filteredUser);
-//          }
-//        }
-//        results.values = nlist;
-//        results.count = nlist.size();
-//
-//        return results;
-//      }
-//
-//      @Override
-//      protected void publishResults(CharSequence constraint, FilterResults results) {
-//
-//        filteredUsers = (ArrayList<UserPreview>) results.values;
-//        users = filteredUsers;
-//        notifyDataSetChanged();
-//      }
-//    };
-//  }
+  @Override
+  public Filter getFilter() {
+    return new Filter() {
+      @Override
+      protected FilterResults performFiltering(CharSequence constraint) {
+        String filterString = constraint.toString().toLowerCase();
+        FilterResults results = new FilterResults();
+
+        final List<UserPreview> list = users;
+
+        int count = list.size();
+        final ArrayList<UserPreview> nlist = new ArrayList<>(count);
+
+        UserPreview filteredUser;
+
+        for (int i = 0; i < count; i++) {
+          filteredUser = list.get(i);
+          if (list.get(i).getUsername().toLowerCase().contains(filterString)) {
+            nlist.add(filteredUser);
+          }
+        }
+        results.values = nlist;
+        results.count = nlist.size();
+
+        return results;
+      }
+
+      @Override
+      protected void publishResults(CharSequence constraint, FilterResults results) {
+        users = (ArrayList<UserPreview>) results.values;
+        notifyDataSetChanged();
+      }
+    };
+  }
+
 
   public interface UserAdapterClicker {
     void clickUser(String userId);
   }
 
-  public class UsersPickedVh extends RecyclerView.ViewHolder implements View.OnClickListener {
+  public static class UsersPickedVh extends RecyclerView.ViewHolder
+          implements View.OnClickListener {
 
     private final CircleImageView userIv;
     private final TextView usernameTv;
@@ -134,19 +134,15 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
       if (user.getUserId() == null)
         return;
 
-
       if (user.getImageUrl() != null) {
         picasso.load(user.getImageUrl()).fit().into(userIv);
       }
 
       usernameTv.setText(user.getUsername());
-
     }
 
     @Override
     public void onClick(View view) {
-
-
 //      itemView.getContext().startActivity(new Intent(itemView.getContext(),
 //              PrivateMessagingActivity.class).putExtra("messagingUid",
 //              users.get(getAdapterPosition()).getUserId()));
@@ -157,7 +153,7 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
   public class UsersVh extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-    private final CircleImageView imageIv;
+    private final ImageView imageIv;
     private final ImageView statusIv;
     private final TextView nameTv, statusTv;
     private final Picasso picasso = Picasso.get();
@@ -178,6 +174,8 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
       if (user.getImageUrl() != null) {
         picasso.load(user.getImageUrl()).fit().into(imageIv);
+      }else{
+        imageIv.setImageResource(R.color.white);
       }
 
       nameTv.setText(user.getUsername());
