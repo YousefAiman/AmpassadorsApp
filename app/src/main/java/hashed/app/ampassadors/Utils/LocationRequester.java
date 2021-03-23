@@ -11,7 +11,9 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -52,22 +54,25 @@ public class LocationRequester {
   private int retries = 0;
   private EditText countryEd;
   private EditText cityEd;
+  private ImageView locationIv;
   public String countryCode;
+
   public LocationRequester(Context context, Activity activity) {
     this.activity = activity;
     this.context = context;
   }
 
   public LocationRequester(Context context, Activity activity, EditText countryEd,
-                           EditText cityEd) {
+                           EditText cityEd,ImageView locationIv) {
 
     this.activity = activity;
     this.context = context;
     this.countryEd = countryEd;
     this.cityEd = cityEd;
-
+    this.locationIv = locationIv;
 
     progressDialog = new ProgressDialog(context);
+    progressDialog.setMessage("Fetching location info!");
     progressDialog.setCancelable(false);
     progressDialog.show();
 
@@ -75,7 +80,7 @@ public class LocationRequester {
 
 
   @SuppressLint("MissingPermission")
-  void geCountryFromLocation(){
+  public void geCountryFromLocation(){
 
     Log.d("ttt","getting last known location");
 
@@ -118,7 +123,7 @@ public class LocationRequester {
   }
 
   @SuppressLint("MissingPermission")
-  void getLastKnownLocation(){
+  public void getLastKnownLocation(){
 
     Log.d("ttt","getting last known location");
     fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
@@ -161,7 +166,7 @@ public class LocationRequester {
   }
 
   @SuppressLint("MissingPermission")
-  void resumeLocationUpdates(){
+  public void resumeLocationUpdates(){
 
     if (mRequestingLocationUpdates != null && !mRequestingLocationUpdates
     && locationCallback != null && fusedLocationClient!=null) {
@@ -174,7 +179,7 @@ public class LocationRequester {
 
   }
 
-  void stopLocationUpdates() {
+  public void stopLocationUpdates() {
     Log.d("ttt", "stopping location updates");
     if (mRequestingLocationUpdates != null && mRequestingLocationUpdates) {
       if (locationCallback != null && fusedLocationClient!=null) {
@@ -230,21 +235,24 @@ public class LocationRequester {
               location.getLongitude(), 1);
 
       if (!addresses.isEmpty() && addresses.get(0).getCountryName() != null) {
+
         final Address a = addresses.get(0);
 
-       final String country = a.getCountryName();
-       countryCode= a.getCountryCode();
-       final String city = a.getLocality();
+        final String country = a.getCountryName();
+        countryCode= a.getCountryCode();
+        final String city = a.getLocality();
 
-       countryEd.setText(country);
-       cityEd.setText(city);
+        countryEd.setText(country);
+        cityEd.setText(city);
+        locationIv.setVisibility(View.GONE);
 
-
+        dismissProgressDialog();
       } else {
         fetchFromApi(location.getLatitude(), location.getLongitude());
       }
     } catch (IOException e) {
       stopLocationUpdates();
+
       fetchFromApi(location.getLatitude(), location.getLongitude());
       Log.d("ttt", "geocoder error:" + e.getLocalizedMessage());
     }
@@ -272,12 +280,15 @@ public class LocationRequester {
 
           countryEd.setText(country);
           cityEd.setText(city);
-
+          locationIv.setVisibility(View.GONE);
+          dismissProgressDialog();
         } else {
+          failedInfo();
           Log.d("ttt", "error here man 3: "+
                   response.getJSONObject("status").getString("message"));
         }
       } catch (JSONException e) {
+        failedInfo();
         Log.d("ttt", "error here man 1: "+e.getMessage());
         e.printStackTrace();
       }
@@ -287,6 +298,8 @@ public class LocationRequester {
         retries++;
 
         fetchFromApi(latitude,longitude);
+      }else{
+        failedInfo();
       }
 //      else{
 //        Toast.makeText(context, "حصلت مشكلة! حاول اعادة تشغيل التطبيق"
@@ -299,6 +312,12 @@ public class LocationRequester {
     queue.start();
   }
 
+  private void failedInfo(){
+    Toast.makeText(context, "Failed while trying to fetch location info!" +
+                    "Please try again",
+            Toast.LENGTH_SHORT).show();
+    locationIv.setClickable(true);
+  }
 
 }
 

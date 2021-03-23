@@ -1,12 +1,15 @@
 package hashed.app.ampassadors.Activities;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -51,6 +54,7 @@ import java.util.UUID;
 
 import hashed.app.ampassadors.Objects.UserInfo;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.LocationRequester;
 
 public class sign_up extends AppCompatActivity implements View.OnClickListener {
 
@@ -72,6 +76,15 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
     Spinner spinner;
     private Uri filePath;
     private ImageView locationIv;
+
+
+    private static final int
+            REQUEST_CHECK_SETTINGS = 100,
+            REQUEST_LOCATION_PERMISSION = 10;
+
+    private LocationRequester locationRequester;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,9 +119,8 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                 String txt_country = country.getText().toString();
                 String txt_city = city.getText().toString();
                 String txt_phone = phone.getText().toString();
-                //  String spin = spinner.getSelectedItem().toString();
 
-
+//  String spin = spinner.getSelectedItem().toString();
 //                List<String> persons = new ArrayList<>();
 //                ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, persons);
 //                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -179,6 +191,12 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                 hashMap.put("userId", authResult.getUser().getUid());
                 hashMap.put("imageUrl", imageUrl);
                 hashMap.put("status", true);
+
+                if(locationRequester!=null && locationRequester.countryCode!=null &&
+                !locationRequester.countryCode.isEmpty()){
+                    hashMap.put("countryCode",locationRequester.countryCode);
+                }
+
 
                 FirebaseMessaging.getInstance().getToken().addOnSuccessListener(new OnSuccessListener<String>() {
                     @Override
@@ -336,6 +354,10 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                     Toast.makeText(sign_up.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
+        }else if (requestCode == REQUEST_CHECK_SETTINGS) {
+            if (resultCode != Activity.RESULT_CANCELED) {
+                locationRequester.getLastKnownLocation();
+            }
         }
 
     }
@@ -381,7 +403,8 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
 
     private File createImageFile() throws IOException {
         // CREATE URL FOR CAMERA IMAGE
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
+                Locale.getDefault()).format(new Date());
 
         String imageFileName = "JPEG_" + timeStamp + "_";
 
@@ -401,9 +424,57 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
 
         if(view.getId() == locationIv.getId()){
 
+            final String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                    checkSelfPermission(permissions[0]) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(permissions, REQUEST_LOCATION_PERMISSION);
+            }else{
+                intilizeLocationRequester();
+                locationIv.setClickable(false);
+            }
 
         }
 
     }
+
+    void intilizeLocationRequester() {
+        locationRequester = new LocationRequester(this,this,
+                country,city,locationIv);
+
+        locationRequester.geCountryFromLocation();
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                intilizeLocationRequester();
+                locationIv.setClickable(false);
+            }
+        }
+
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (locationRequester != null) {
+            locationRequester.resumeLocationUpdates();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (locationRequester != null) {
+            locationRequester.stopLocationUpdates();
+        }
+    }
+
+
 }
