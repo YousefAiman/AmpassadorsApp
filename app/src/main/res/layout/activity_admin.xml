@@ -5,9 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Activities.Admin">
-
     <include
-        android:id="@+id/toolbar"
+        android:id="@+id/admin_toolbar"
         layout="@layout/admintolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -15,8 +14,8 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/users_list"
-        android:layout_width="386dp"
-        android:layout_height="655dp"
+        android:layout_width="398dp"
+        android:layout_height="726dp"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

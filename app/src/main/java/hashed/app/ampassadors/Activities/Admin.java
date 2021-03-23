@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -56,6 +57,11 @@ public class Admin extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_admin);
+
+    final Toolbar toolbar = findViewById(R.id.admin_toolbar);
+    toolbar.setNavigationOnClickListener(v -> {
+      onBackPressed();
+    });
 
     fAuth = FirebaseAuth.getInstance();
     userid = fAuth.getCurrentUser().getUid();

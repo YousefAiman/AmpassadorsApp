@@ -1,12 +1,15 @@
 package hashed.app.ampassadors.Activities;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -20,7 +23,6 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -83,20 +85,19 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
     private Uri filePath;
     private ImageView locationIv;
 
-
     private static final int
             REQUEST_CHECK_SETTINGS = 100,
             REQUEST_LOCATION_PERMISSION = 10;
 
     private LocationRequester locationRequester;
 
-
     PhoneNumberUtil phoneNumberUtil;
     List<String> supportedCountryCodes;
     List<String> spinnerArray;
     String defaultCode;
-     String defaultSpinnerChoice;
+    String defaultSpinnerChoice;
     String Role = "Ambassador";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,10 +107,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
         signUp();
         backSignIn();
 
-
             new Thread(() -> {
-
-
             final String defaultSpinnerChoice = EmojiUtil.countryCodeToEmoji(defaultCode)
                     +" +"+phoneNumberUtil.getCountryCodeForRegion(defaultCode);
 
@@ -240,9 +238,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                 }
             }
         });
-
     }
-
     private void register(String username, String passwrod, String email, String country, String city, String phone, String dob) {
         final Task<AuthResult> task = auth.createUserWithEmailAndPassword(email, passwrod);
         task.addOnSuccessListener(new OnSuccessListener<AuthResult>() {
@@ -565,9 +561,6 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
     }
 
 }
-
-
-
 
 //
 //
