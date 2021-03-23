@@ -34,7 +34,6 @@ import hashed.app.ampassadors.R;
 public class OnlineUsersFragment extends Fragment implements
         SwipeRefreshLayout.OnRefreshListener {
 
-
   private static final int USERS_LIMIT = 15;
   private Query query;
   private DocumentSnapshot lastDocSnap;
@@ -45,7 +44,8 @@ public class OnlineUsersFragment extends Fragment implements
   private boolean isLoading;
   private SwipeRefreshLayout swipeRefreshLayout;
   private ListenerRegistration listenerRegistration;
-
+  private String currentUid;
+  private boolean wasFound = false;
   public OnlineUsersFragment() {
   }
 
@@ -56,12 +56,13 @@ public class OnlineUsersFragment extends Fragment implements
     users = new ArrayList<>();
     usersAdapter = new UsersAdapter(users, R.layout.user_item_layout);
 
+    currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     query = FirebaseFirestore.getInstance().collection("Users")
             .whereEqualTo("status", true)
 //            .whereNotEqualTo("userId",
 //                    Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
-            .orderBy("userId")
+//            .orderBy("userId")
             .orderBy("username", Query.Direction.ASCENDING).limit(USERS_LIMIT);
 
 
@@ -79,7 +80,6 @@ public class OnlineUsersFragment extends Fragment implements
 
         for(DocumentChange dc:value.getDocumentChanges()){
           if(dc.getType() == DocumentChange.Type.ADDED){
-
             for(UserPreview userPreview:users){
               if(userPreview.getUserId().equals(dc.getDocument().getId())){
                 final int index = users.indexOf(userPreview);
@@ -180,6 +180,17 @@ public class OnlineUsersFragment extends Fragment implements
 
       if (task.isSuccessful() && task.getResult() != null) {
 
+        if(!wasFound){
+          for(int i=0;i<users.size();i++){
+            if(users.get(i).getUserId().equals(currentUid)){
+              wasFound = true;
+              users.remove(i);
+              break;
+            }
+          }
+        }
+
+
         if (isInitial) {
 
           if (!users.isEmpty()) {
@@ -196,7 +207,8 @@ public class OnlineUsersFragment extends Fragment implements
           if (!task.getResult().isEmpty()) {
 
             usersAdapter.notifyItemRangeInserted(
-                    (users.size() - task.getResult().size()) - 1, task.getResult().size());
+                    (users.size() - task.getResult().size()) - 1,
+                    task.getResult().size());
 
 
             if (task.getResult().size() < USERS_LIMIT && scrollListener != null) {

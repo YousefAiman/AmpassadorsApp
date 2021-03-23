@@ -38,121 +38,7 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.activity_main);
 
     if (WifiUtil.isConnectedToInternet(this)) {
-
-      SharedPreferences sharedPreferences =
-              getSharedPreferences(getResources().getString(R.string.app_name),
-                      Context.MODE_PRIVATE);
-
-
-      if(!sharedPreferences.contains("firstTime")){
-
-        startActivity(new Intent(this, WelcomeActivity.class)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-
-        sharedPreferences.edit().putBoolean("firstTime",false).apply();
-
-      }else{
-
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-
-        if (user != null) {
-
-          if (!user.isAnonymous()) {
-
-            FirebaseMessagingService.startMessagingService(this);
-
-            FirebaseFirestore.getInstance().collection("Users")
-                    .document(user.getUid()).get().
-                    addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                      @Override
-                      public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        GlobalVariables.setRole(documentSnapshot.getString("Role"));
-                        if(documentSnapshot.contains("token")){
-                          GlobalVariables.setCurrentToken(documentSnapshot.getString("token"));
-                        }
-                      }
-                    }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-              @Override
-              public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                  if (getIntent().hasExtra("destinationBundle")) {
-
-                    final Bundle destinationBundle = getIntent().getBundleExtra("destinationBundle");
-
-                    final String sourceType = destinationBundle.getString("sourceType");
-                    final String sourceId = destinationBundle.getString("sourceId");
-
-                    Intent intent = null;
-
-                    switch (sourceType) {
-                      case "privateMessaging":
-                        intent = startPrivateMessagingActivity(sourceId);
-                        break;
-                      case "groupMessaging":
-                        intent = startGroupMessagingActivity(sourceId);
-                        break;
-                      case "meetingStarted":
-                        intent = startMeetingsHomeActivity();
-                        break;
-                      default:
-                        startHomeActivity();
-                        break;
-                    }
-
-
-                    Intent finalIntent = intent;
-                    new Handler().postDelayed(new Runnable() {
-                      @Override
-                      public void run() {
-                        startActivity(finalIntent);
-                        finish();
-                      }
-                    }, 800);
-
-                  } else {
-                    new Handler().postDelayed(new Runnable() {
-                      @Override
-                      public void run() {
-                        startHomeActivity();
-                        finish();
-                      }
-                    }, 500);
-                  }
-                }
-              }
-            });
-          } else {
-            new Handler().postDelayed(new Runnable() {
-              @Override
-              public void run() {
-                startHomeActivity();
-              }
-            }, 1000);
-          }
-
-
-        } else {
-
-          FirebaseAuth.getInstance().signInAnonymously()
-                  .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-            @Override
-            public void onSuccess(AuthResult authResult) {
-
-              startHomeActivity();
-
-            }
-          }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-              finish();
-            }
-          });
-        }
-
-      }
-
-
+      checkUserCredentials();
 
     } else {
 
@@ -162,10 +48,129 @@ public class MainActivity extends AppCompatActivity {
 
   }
 
+  private void checkUserCredentials(){
+    SharedPreferences sharedPreferences =
+            getSharedPreferences(getResources().getString(R.string.app_name),
+                    Context.MODE_PRIVATE);
+
+
+    if(!sharedPreferences.contains("firstTime")){
+
+      startActivity(new Intent(this, WelcomeActivity.class)
+              .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+
+      sharedPreferences.edit().putBoolean("firstTime",false).apply();
+
+    }else{
+
+      final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+
+      if (user != null) {
+
+        if (!user.isAnonymous()) {
+
+          FirebaseMessagingService.startMessagingService(this);
+
+          FirebaseFirestore.getInstance().collection("Users")
+                  .document(user.getUid()).get().
+                  addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                      GlobalVariables.setRole(documentSnapshot.getString("Role"));
+                      if(documentSnapshot.contains("token")){
+                        GlobalVariables.setCurrentToken(documentSnapshot.getString("token"));
+                      }
+                    }
+                  }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+              if(task.isSuccessful()){
+                if (getIntent().hasExtra("destinationBundle")) {
+
+                  final Bundle destinationBundle = getIntent().getBundleExtra("destinationBundle");
+
+                  final String sourceType = destinationBundle.getString("sourceType");
+                  final String sourceId = destinationBundle.getString("sourceId");
+
+                  Intent intent = null;
+
+                  switch (sourceType) {
+                    case "privateMessaging":
+                      intent = startPrivateMessagingActivity(sourceId);
+                      break;
+                    case "groupMessaging":
+                      intent = startGroupMessagingActivity(sourceId);
+                      break;
+                    case "meetingStarted":
+                      intent = startMeetingsHomeActivity();
+                      break;
+                    default:
+                      startHomeActivity();
+                      break;
+                  }
+
+
+                  Intent finalIntent = intent;
+                  new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                      startActivity(finalIntent);
+                      finish();
+                    }
+                  }, 800);
+
+                } else {
+                  new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                      startHomeActivity();
+                      finish();
+                    }
+                  }, 500);
+                }
+              }
+            }
+          });
+        } else {
+          new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+              startHomeActivity();
+            }
+          }, 1000);
+        }
+
+
+      } else {
+
+        FirebaseAuth.getInstance().signInAnonymously()
+                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                  @Override
+                  public void onSuccess(AuthResult authResult) {
+
+                    startHomeActivity();
+
+                  }
+                }).addOnFailureListener(new OnFailureListener() {
+          @Override
+          public void onFailure(@NonNull Exception e) {
+            finish();
+          }
+        });
+      }
+
+    }
+
+
+  }
+
   private void startConnectionActivity() {
     new Handler().postDelayed(() -> {
-      startActivityForResult(new Intent(MainActivity.this, ConnectionActivity.class),
+      startActivityForResult(new Intent(MainActivity.this, ConnectionActivity.class)
+              .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
               ConnectionActivity.CONNECTION_RESULT);
+      finish();
     }, 800);
   }
 
@@ -199,13 +204,7 @@ public class MainActivity extends AppCompatActivity {
     super.onActivityResult(requestCode, resultCode, data);
 
     if (resultCode == ConnectionActivity.CONNECTION_RESULT) {
-
-      if (getIntent().hasExtra("destinationBundle")) {
-//        startMessagingActivity();
-      } else {
-        startHomeActivity();
-      }
-
+      checkUserCredentials();
     }
 
   }

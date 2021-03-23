@@ -361,10 +361,13 @@ public class GroupMessagingActivity extends AppCompatActivity
               public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 for (DataSnapshot child : snapshot.getChildren()) {
+                  if (firstKeyRef == null) {
+                    firstKeyRef = child.getKey();
+                  }
                   privateMessages.add(child.getValue(PrivateMessage.class));
                 }
 
-                firstKeyRef = Iterables.get(snapshot.getChildren(), 0).getKey();
+//                firstKeyRef = Iterables.get(snapshot.getChildren(), 0).getKey();
                 lastKeyRef = Iterables.getLast(snapshot.getChildren()).getKey();
 
                 adapter.notifyDataSetChanged();
@@ -374,10 +377,12 @@ public class GroupMessagingActivity extends AppCompatActivity
                 messageSendIv.setOnClickListener(new TextMessageSenderClickListener());
                 addListenerForNewMessages();
 
-                if (Integer.parseInt(lastKeyRef) + 1 > MESSAGES_PAGE_SIZE) {
+                if (snapshot.getChildrenCount() == MESSAGES_PAGE_SIZE) {
                   privateMessagingRv.addOnScrollListener(
                           currentScrollListener = new toTopScrollListener());
                 }
+
+
                 addDeleteFieldListener();
                 messagesProgressBar.setVisibility(View.GONE);
               }
@@ -403,8 +408,8 @@ public class GroupMessagingActivity extends AppCompatActivity
               @Override
               public void onSuccess(Void aVoid) {
 
-                firstKeyRef = "0";
-                lastKeyRef = "0";
+//                firstKeyRef = "0";
+//                lastKeyRef = "0";
 
                 createMessagesListener();
 
@@ -431,7 +436,7 @@ public class GroupMessagingActivity extends AppCompatActivity
     ChildEventListener childEventListener;
 
     final Query query = currentMessagingRef.child("Messages").orderByKey()
-            .startAt(String.valueOf(Integer.parseInt(lastKeyRef) + 1));
+            .startAt(String.valueOf(System.currentTimeMillis()));
 
     query.addChildEventListener(childEventListener = new ChildEventListener() {
       @Override
@@ -494,6 +499,7 @@ public class GroupMessagingActivity extends AppCompatActivity
 
   private void addDeleteFieldListener() {
 
+
     valueEventListeners = new HashMap<>();
 
     ValueEventListener valueEventListener;
@@ -505,34 +511,19 @@ public class GroupMessagingActivity extends AppCompatActivity
 
                 if (snapshot.exists()) {
 
-                  final String id = snapshot.getValue(String.class);
+                  final long deletedTime = snapshot.getValue(Long.class);
 
-                  if (id != null) {
-
-                    final int deletedIndex =
-                            Math.abs(Integer.parseInt(firstKeyRef) - Integer.parseInt(id));
-
-                    if (deletedIndex < privateMessages.size() &&
-                            !privateMessages.get(deletedIndex).getDeleted()) {
-                      privateMessages.get(deletedIndex).setDeleted(true);
-                      adapter.notifyItemChanged(deletedIndex);
+                  if(deletedTime >= privateMessages.get(0).getTime()){
+                    for(PrivateMessage privateMessage:privateMessages){
+                      if(privateMessage.getTime() == deletedTime
+                              && !privateMessage.getDeleted()){
+                        int index = privateMessages.indexOf(privateMessage);
+                        privateMessage.setDeleted(true);
+                        adapter.notifyItemChanged(index);
+                        break;
+                      }
                     }
-
                   }
-
-//                  final PrivateMessage message = snapshot.getValue(PrivateMessage.class);
-//
-//                  for(int i=0;i<privateMessages.size();i++){
-//                    final PrivateMessage privateMessage = privateMessages.get(i);
-//                    if(privateMessage.getContent().equals(message.getContent())
-//                            && privateMessage.getTime() == message.getTime()){
-////                      if(!privateMessages.get(i).getDeleted()){
-//                        privateMessages.get(i).setDeleted(true);
-//                        adapter.notifyItemChanged(i);
-////                      }
-//                      break;
-//                    }
-//                  }
                 }
               }
 
@@ -556,8 +547,10 @@ public class GroupMessagingActivity extends AppCompatActivity
       return;
     }
 
-    final DatabaseReference childRef = currentMessagingRef.child("Messages")
-            .child(String.valueOf(Integer.parseInt(lastKeyRef) + 1));
+
+    final DatabaseReference childRef = currentMessagingRef.child("Messages").
+            child(String.valueOf(System.currentTimeMillis()));
+
 
     childRef.setValue(privateMessage).addOnSuccessListener(v -> {
 
@@ -1115,24 +1108,27 @@ public class GroupMessagingActivity extends AppCompatActivity
             .child("Messages")
             .orderByKey()
             .limitToLast(MESSAGES_PAGE_SIZE)
-            .endAt(String.valueOf(Integer.parseInt(firstKeyRef) - 1))
+            .endAt(String.valueOf(Long.parseLong(firstKeyRef)-1))
             .addListenerForSingleValueEvent(new ValueEventListener() {
               @Override
               public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 final List<PrivateMessage> newMessages = new ArrayList<>();
 
+                boolean gottenFirstKey = false;
                 for (DataSnapshot child : snapshot.getChildren()) {
+                  if(!gottenFirstKey){
+                    firstKeyRef = child.getKey();
+                    gottenFirstKey = true;
+                  }
                   newMessages.add(child.getValue(PrivateMessage.class));
-
                 }
 
                 privateMessages.addAll(0, newMessages);
                 adapter.notifyItemRangeInserted(0, newMessages.size());
 
-
-                firstKeyRef = String.valueOf(Integer.parseInt(lastKeyRef)
-                        - privateMessages.size());
+//                firstKeyRef = String.valueOf(Integer.parseInt(lastKeyRef)
+//                        - privateMessages.size());
 
                 messagesProgressBar.setVisibility(View.GONE);
 
@@ -1178,19 +1174,49 @@ public class GroupMessagingActivity extends AppCompatActivity
   @Override
   public void deleteMessage(PrivateMessage message, DialogInterface dialog) {
 
-    final String id =
-            String.valueOf(Integer.parseInt(firstKeyRef) + privateMessages.indexOf(message));
+    currentMessagingRef.child("messages")
+            .orderByChild("time").equalTo(message.getTime()).limitToFirst(1)
+            .addListenerForSingleValueEvent(new ValueEventListener() {
+              @Override
+              public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-    currentMessagingRef.child("Messages").child(id).child("deleted").setValue(true).
-            addOnSuccessListener(v -> currentMessagingRef.child("lastDeleted").setValue(id)
-                    .addOnSuccessListener(vo -> dialog.dismiss()).addOnFailureListener(e ->
-                            dialog.dismiss())).addOnFailureListener(e -> {
-      dialog.dismiss();
+                if(snapshot.exists()){
 
-      Toast.makeText(this, R.string.Error_Delete_Message, Toast.LENGTH_SHORT).show();
+                  snapshot.getChildren().iterator().next().getRef().child("deleted")
+                          .setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                      currentMessagingRef.child("lastDeleted").setValue(message.getTime())
+                              .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                  if (privateMessages.indexOf(message) ==
+                                          privateMessages.size() - 1) {
+                                    firebaseMessageDocRef.update("lastMessageDeleted",
+                                            message.getTime());
+                                  }
 
-      Log.d("ttt", "failed: " + e.getMessage());
-    });
+                                  dialog.dismiss();
+                                }
+                              }).addOnFailureListener(e -> {
+                        dialog.dismiss();
+
+                        Toast.makeText(GroupMessagingActivity.this,
+                                "لقد فشل حذف الرسالة", Toast.LENGTH_SHORT).show();
+
+                        Log.d("ttt", "failed: " + e.getMessage());
+                      });;
+                      ;
+                    }
+                  }).addOnFailureListener(e -> dialog.dismiss());
+                }
+              }
+
+              @Override
+              public void onCancelled(@NonNull DatabaseError error) {
+
+              }
+            });
 
   }
 
@@ -1728,7 +1754,7 @@ public class GroupMessagingActivity extends AppCompatActivity
         Log.d(TAG, "is at top man");
 
         isLoadingMessages = true;
-        messagesProgressBar.setVisibility(View.GONE);
+        messagesProgressBar.setVisibility(View.VISIBLE);
         getMoreTopMessages();
 
       }
