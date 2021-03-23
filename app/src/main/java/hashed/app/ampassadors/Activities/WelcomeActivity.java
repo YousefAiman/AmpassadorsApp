@@ -55,7 +55,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
 
     signintoAccountBtn = findViewById(R.id.signintoAccountBtn);
     signintoAccountBtn.setVisibility(View.INVISIBLE);
-
+    nextSlideBtn = findViewById(R.id.nextSlideBtn);
     guestBtn.setOnClickListener(this);
     signinTv.setOnClickListener(this);
     signintoAccountBtn.setOnClickListener(this);
@@ -64,7 +64,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     final LinearLayout sliderLayout = findViewById(R.id.dotsSlider);
     dotsCount = viewPagerAdapter.getCount();
     dots = new ImageView[dotsCount];
-    nextSlideBtn = findViewById(R.id.nextSlideBtn);
+
 
     int nonActive = R.drawable.indicator_inactive_icon;
     int FullDot = R.drawable.indicator_active_icon;
