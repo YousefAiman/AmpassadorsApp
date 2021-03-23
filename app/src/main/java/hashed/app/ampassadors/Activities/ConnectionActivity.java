@@ -18,7 +18,6 @@ public class ConnectionActivity extends AppCompatActivity {
     setContentView(R.layout.activity_connection);
 
     findViewById(R.id.retryBtn).setOnClickListener(v -> {
-
       if (WifiUtil.isConnectedToInternet(this)) {
         setResult(CONNECTION_RESULT);
         finish();

@@ -19,7 +19,7 @@
         android:layout_marginTop="1dp"
         app:tabIndicatorHeight="5dp"
         app:tabIndicatorColor="@color/white"
-        android:paddingBottom="1dp"
+
         app:tabTextColor="@color/white"
         app:tabTextAppearance="@style/TabTextAppearance"
         app:tabRippleColor="@color/white"
@@ -28,5 +28,6 @@
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/chattingViewPager"
         android:layout_width="match_parent"
+
         android:layout_height="match_parent"/>
 </LinearLayout>

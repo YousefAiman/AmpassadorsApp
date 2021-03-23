@@ -119,61 +119,60 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsVh> {
 
         if (message.getDeleted()) {
           text = "You deleted a message";
-        }
+        }else{
+          switch (message.getType()) {
 
-        switch (message.getType()) {
+            case Files.TEXT:
+              text = message.getContent();
+              break;
 
-          case Files.TEXT:
-            text = message.getContent();
-            break;
+            case Files.IMAGE:
+              text = "You sent an image";
+              break;
 
-          case Files.IMAGE:
-            text = "You sent an image";
-            break;
+            case Files.VIDEO:
+              text = "You sent a video";
+              break;
 
-          case Files.VIDEO:
-            text = "You sent a video";
-            break;
+            case Files.DOCUMENT:
+              text = "You sent an attachment";
+              break;
 
-          case Files.DOCUMENT:
-            text = "You sent an attachment";
-            break;
+            case Files.AUDIO:
+              text = "You sent an audio message";
+              break;
 
-          case Files.AUDIO:
-            text = "You sent an audio message";
-            break;
-
+          }
         }
       } else {
 
         if (message.getDeleted()) {
           text = "Deleted message";
+        }else{
+          switch (message.getType()) {
+
+            case Files.TEXT:
+              text = message.getContent();
+              break;
+
+            case Files.IMAGE:
+              text = "Sent an image";
+              break;
+
+            case Files.VIDEO:
+              text = "Sent a video";
+              break;
+
+            case Files.DOCUMENT:
+              text = "Sent an attachment";
+              break;
+
+            case Files.AUDIO:
+              text = "Sent an audio message";
+              break;
+
+          }
         }
-
-        switch (message.getType()) {
-
-          case Files.TEXT:
-            text = message.getContent();
-            break;
-
-          case Files.IMAGE:
-            text = "Sent an image";
-            break;
-
-          case Files.VIDEO:
-            text = "Sent a video";
-            break;
-
-          case Files.DOCUMENT:
-            text = "Sent an attachment";
-            break;
-
-          case Files.AUDIO:
-            text = "Sent an audio message";
-            break;
-
-        }
-
       }
 
 
