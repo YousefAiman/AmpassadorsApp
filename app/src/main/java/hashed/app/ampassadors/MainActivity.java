@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
               getSharedPreferences(getResources().getString(R.string.app_name),
                       Context.MODE_PRIVATE);
 
-
       if(!sharedPreferences.contains("firstTime")){
 
         startActivity(new Intent(this, WelcomeActivity.class)
