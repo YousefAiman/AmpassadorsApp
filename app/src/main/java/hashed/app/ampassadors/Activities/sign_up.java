@@ -1,7 +1,6 @@
 package hashed.app.ampassadors.Activities;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -16,6 +15,7 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -42,24 +42,31 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
 import hashed.app.ampassadors.Objects.UserInfo;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.LocationRequester;
+import hashed.app.ampassadors.Utils.EmojiUtil;
 
 public class sign_up extends AppCompatActivity implements View.OnClickListener {
 
     private final static int CAMERA_REQUEST_CODE = 1;
-    EditText username, password, confirm_pass, email, country, city, phone;
+    EditText username, password, confirm_pass, email, country, city, phone, Dob;
     TextView already_account;
     Button btn_register;
     FirebaseAuth auth;
@@ -67,6 +74,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
     CollectionReference reference;
     String imageUrl;
     String userid;
+    Spinner counteryCode;
     ImageView iamge;
     ProgressDialog mProgressDialog;
     StorageReference sreference;
@@ -85,6 +93,11 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
     private LocationRequester locationRequester;
 
 
+    PhoneNumberUtil phoneNumberUtil;
+    List<String> supportedCountryCodes;
+    List<String> spinnerArray;
+    String defaultCode;
+     String defaultSpinnerChoice;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,16 +106,63 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
         signUp();
         backSignIn();
 
-        iamge.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                ActivityCompat.requestPermissions(sign_up.this, new String[]{Manifest.permission.CAMERA,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
-                SelectImage(sign_up.this);
 
+            new Thread(() -> {
+
+
+            final String defaultSpinnerChoice = EmojiUtil.countryCodeToEmoji(defaultCode)
+                    +" +"+phoneNumberUtil.getCountryCodeForRegion(defaultCode);
+
+                spinnerArray =  new ArrayList<>(supportedCountryCodes.size());
+
+            for(String code:supportedCountryCodes){
+
+                spinnerArray.add(EmojiUtil.countryCodeToEmoji(code)
+                        +" +"+phoneNumberUtil.getCountryCodeForRegion(code));
             }
-        });
+
+            supportedCountryCodes = null;
+
+            Collections.sort(spinnerArray, new Comparator<String>() {
+                @Override
+                public int compare(String s, String t1) {
+                    return extractCode(s) - extractCode(t1);
+                }
+                int extractCode(String s){
+                    return Integer.parseInt(s.split("\\+")[1]);
+                }
+            });
+                defaultCode = defaultCode.toUpperCase();
+
+            Log.d("ttt","list size: "+spinnerArray.size());
+            if(this!=null){
+
+                final ArrayAdapter<String> ad
+                        = new ArrayAdapter<>(
+                        sign_up.this,
+                        R.layout.spinner_item_layout,
+                        spinnerArray);
+
+                ad.setDropDownViewResource(R.layout.spinner_item_layout);
+
+                spinner.post(() -> {
+                    spinner.setAdapter(ad);
+
+                    spinner.setSelection(spinnerArray.indexOf(defaultSpinnerChoice));
+                });
+            }
+        }).start();
+            iamge.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    ActivityCompat.requestPermissions(sign_up.this, new String[]{Manifest.permission.CAMERA,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+                    SelectImage(sign_up.this);
+
+                }
+            });
+
     }
 
     private void signUp() {
@@ -121,6 +181,12 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                 String txt_phone = phone.getText().toString();
 
 //  String spin = spinner.getSelectedItem().toString();
+//                supportedCountryCodes = new ArrayList<>(phoneNumberUtil.getSupportedRegions());
+             //   defaultCode = defaultCode.toUpperCase();
+                String txt_dob = Dob.getText().toString();
+                //  String spin = spinner.getSelectedItem().toString();
+
+
 //                List<String> persons = new ArrayList<>();
 //                ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, persons);
 //                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -156,9 +222,17 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
 
                 } else if (TextUtils.isEmpty(txt_phone)) {
                     Toast.makeText(sign_up.this, R.string.Error_Message_Phone, Toast.LENGTH_LONG).show();
+
+                } else if ((!checkPhoneNumber(txt_phone, counteryCode.getSelectedItem().toString().split("\\+")[1]))) {
+                    Toast.makeText(sign_up.this, R.string.Invalied_Number_Message +
+                            R.string.Auth_number_Message, Toast.LENGTH_LONG).show();
+
+                    return;
+                } else if (TextUtils.isEmpty(txt_dob)) {
+
                 } else {
                     register(txt_username, txt_password, txt_email,
-                            txt_country, txt_city, txt_phone);
+                            txt_country, txt_city, txt_phone, txt_dob);
 //          Intent intent = new Intent(sign_up.this, sign_in.class);
 //          startActivity(intent);
 //          finish();
@@ -169,7 +243,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
 
     }
 
-    private void register(String username, String passwrod, String email, String country, String city, String phone) {
+    private void register(String username, String passwrod, String email, String country, String city, String phone, String dob) {
         final Task<AuthResult> task = auth.createUserWithEmailAndPassword(email, passwrod);
         task.addOnSuccessListener(new OnSuccessListener<AuthResult>() {
             @Override
@@ -178,7 +252,6 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                 if (authResult == null || authResult.getUser() == null) {
                     return;
                 }
-
                 HashMap<String, Object> hashMap = new HashMap<>();
                 hashMap.put("username", username);
                 hashMap.put("password", passwrod);
@@ -191,6 +264,8 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                 hashMap.put("userId", authResult.getUser().getUid());
                 hashMap.put("imageUrl", imageUrl);
                 hashMap.put("status", true);
+                hashMap.put("dob", dob);
+                hashMap.put("phoneCode", counteryCode.getSelectedItem());
 
                 if(locationRequester!=null && locationRequester.countryCode!=null &&
                 !locationRequester.countryCode.isEmpty()){
@@ -202,7 +277,6 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                     @Override
                     public void onSuccess(String s) {
                         hashMap.put("token", s);
-
                         reference.document(authResult.getUser().getUid()).set(hashMap)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
@@ -217,8 +291,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                                                 startActivity(intent);
                                                 finish();
 
-                                                Toast.makeText(sign_up.this, R.string.Email_Verfiy,
-                                                        Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(sign_up.this, R.string.Email_Verfiy, Toast.LENGTH_SHORT).show();
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
                                             @Override
@@ -227,10 +300,8 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                                                         Toast.LENGTH_SHORT).show();
                                             }
                                         });
-
 //                        Toast.makeText(sign_up.this, R.string.SuccessfullMessage,
 //                                Toast.LENGTH_LONG).show();
-
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -238,12 +309,8 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                                 Toast.makeText(sign_up.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
-
-
                     }
                 });
-
-
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -253,7 +320,6 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
         });
 
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -265,7 +331,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(sign_up.this, sign_in.class);
-                startActivity(intent);
+                 spinnerArray =  new ArrayList<>(supportedCountryCodes.size());       startActivity(intent);
 
             }
         });
@@ -292,7 +358,14 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
         spinner = findViewById(R.id.options);
         locationIv = findViewById(R.id.locationIv);
         locationIv.setOnClickListener(this);
+        Dob = findViewById(R.id.birthday);
+        phoneNumberUtil = PhoneNumberUtil.getInstance();
+        counteryCode = findViewById(R.id.phone_country);
 
+
+//        supportedCountryCodes = new ArrayList<>(phoneNumberUtil.getSupportedRegions());
+//        defaultCode = defaultCode.toUpperCase();
+//
     }
 
     @Override
@@ -477,4 +550,62 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
     }
 
 
+
+    boolean checkPhoneNumber(String number, String code) {
+
+        final Phonenumber.PhoneNumber newNum = new Phonenumber.PhoneNumber();
+
+        newNum.setCountryCode(Integer.parseInt(code)).setNationalNumber(Long.parseLong(number));
+
+        return phoneNumberUtil.isValidNumber(newNum);
+    }
+
 }
+
+
+
+
+//
+//
+//   defaultSpinnerChoice = EmojiUtil.countryCodeToEmoji(defaultCode)
+//           + " +" + phoneNumberUtil.getCountryCodeForRegion(defaultCode);
+//
+//           new Thread(() -> {
+//           for (String code : supportedCountryCodes) {
+//
+//           spinnerArray.add(EmojiUtil.countryCodeToEmoji(code)
+//           + " +" + phoneNumberUtil.getCountryCodeForRegion(code));
+//           }
+//
+//           supportedCountryCodes = null;
+//
+//           Collections.sort(spinnerArray, new Comparator<String>() {
+//@Override
+//public int compare(String s, String t1) {
+//        return extractCode(s) - extractCode(t1);
+//        }
+//
+//        int extractCode(String s) {
+//        return Integer.parseInt(s.split("\\+")[1]);
+//        }
+//        });
+//
+//
+//        Log.d("ttt", "list size: " + spinnerArray.size());
+//        if (this != null) {
+//
+//final ArrayAdapter<String> ad
+//        = new ArrayAdapter<>(
+//        sign_up.this,
+//        R.layout.spinner_item_layout,
+//        spinnerArray);
+//
+//        ad.setDropDownViewResource(R.layout.spinner_item_layout);
+//
+//        spinner.post(() -> {
+//        spinner.setAdapter(ad);
+//
+//        spinner.setSelection(spinnerArray.indexOf(defaultSpinnerChoice));
+//        });
+//        }
+//        }).start();
