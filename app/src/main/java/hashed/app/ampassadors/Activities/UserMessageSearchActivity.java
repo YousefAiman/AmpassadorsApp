@@ -23,6 +23,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 
 import hashed.app.ampassadors.Adapters.UsersAdapter;
+import hashed.app.ampassadors.Adapters.UsersPickerAdapter;
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
 
@@ -62,17 +63,34 @@ public class UserMessageSearchActivity extends AppCompatActivity implements
     usersAdapter = new UsersAdapter(users, R.layout.user_item_layout, this);
     userRv.setAdapter(usersAdapter);
 
-
-    searchUserSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+    usersRef.orderBy("username")
+            .limit(100).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
       @Override
-      public boolean onClose() {
-        if(!users.isEmpty()){
-          users.clear();
+      public void onSuccess(QuerySnapshot snapshots) {
+        if(!snapshots.isEmpty()){
+          users.addAll(snapshots.toObjects(UserPreview.class));
+        }
+      }
+    }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+      @Override
+      public void onComplete(@NonNull Task<QuerySnapshot> task) {
+        if(task.isSuccessful()){
           usersAdapter.notifyDataSetChanged();
         }
-        return false;
       }
     });
+
+
+//    searchUserSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+//      @Override
+//      public boolean onClose() {
+//        if(!users.isEmpty()){
+//          users.clear();
+//          usersAdapter.notifyDataSetChanged();
+//        }
+//        return false;
+//      }
+//    });
   }
 
   @Override
@@ -129,7 +147,7 @@ public class UserMessageSearchActivity extends AppCompatActivity implements
   @Override
   public boolean onQueryTextChange(String newText) {
 
-//    usersAdapter.getFilter().filter(newText);
+    usersAdapter.getFilter().filter(newText);
 
     return true;
   }

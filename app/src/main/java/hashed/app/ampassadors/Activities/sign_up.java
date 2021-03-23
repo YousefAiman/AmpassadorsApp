@@ -13,6 +13,7 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -57,9 +58,10 @@ import java.util.UUID;
 
 import hashed.app.ampassadors.Objects.UserInfo;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.LocationRequester;
 import hashed.app.ampassadors.Utils.EmojiUtil;
 
-public class sign_up extends AppCompatActivity {
+public class sign_up extends AppCompatActivity implements View.OnClickListener {
 
     private final static int CAMERA_REQUEST_CODE = 1;
     EditText username, password, confirm_pass, email, country, city, phone, Dob;
@@ -79,6 +81,16 @@ public class sign_up extends AppCompatActivity {
     FirebaseStorage storage;
     Spinner spinner;
     private Uri filePath;
+    private ImageView locationIv;
+
+
+    private static final int
+            REQUEST_CHECK_SETTINGS = 100,
+            REQUEST_LOCATION_PERMISSION = 10;
+
+    private LocationRequester locationRequester;
+
+
     PhoneNumberUtil phoneNumberUtil;
     List<String> supportedCountryCodes;
     List<String> spinnerArray;
@@ -167,6 +179,8 @@ public class sign_up extends AppCompatActivity {
                 String txt_country = country.getText().toString();
                 String txt_city = city.getText().toString();
                 String txt_phone = phone.getText().toString();
+
+//  String spin = spinner.getSelectedItem().toString();
 //                supportedCountryCodes = new ArrayList<>(phoneNumberUtil.getSupportedRegions());
              //   defaultCode = defaultCode.toUpperCase();
                 String txt_dob = Dob.getText().toString();
@@ -255,6 +269,14 @@ public class sign_up extends AppCompatActivity {
                 hashMap.put("Country Code", counteryCode.getSelectedItem());
                 hashMap.put("Role", Role);
 
+                hashMap.put("phoneCode", counteryCode.getSelectedItem());
+
+                if(locationRequester!=null && locationRequester.countryCode!=null &&
+                !locationRequester.countryCode.isEmpty()){
+                    hashMap.put("countryCode",locationRequester.countryCode);
+                }
+
+
                 FirebaseMessaging.getInstance().getToken().addOnSuccessListener(new OnSuccessListener<String>() {
                     @Override
                     public void onSuccess(String s) {
@@ -283,10 +305,8 @@ public class sign_up extends AppCompatActivity {
                                                         Toast.LENGTH_SHORT).show();
                                             }
                                         });
-
 //                        Toast.makeText(sign_up.this, R.string.SuccessfullMessage,
 //                                Toast.LENGTH_LONG).show();
-
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -294,12 +314,8 @@ public class sign_up extends AppCompatActivity {
                                 Toast.makeText(sign_up.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
-
-
                     }
                 });
-
-
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -309,7 +325,6 @@ public class sign_up extends AppCompatActivity {
         });
 
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -345,6 +360,8 @@ public class sign_up extends AppCompatActivity {
         mProgressDialog = new ProgressDialog(this);
         userid = auth.getUid();
         spinner = findViewById(R.id.options);
+        locationIv = findViewById(R.id.locationIv);
+        locationIv.setOnClickListener(this);
         Dob = findViewById(R.id.birthday);
         phoneNumberUtil = PhoneNumberUtil.getInstance();
         counteryCode = findViewById(R.id.phone_country);
@@ -414,6 +431,10 @@ public class sign_up extends AppCompatActivity {
                     Toast.makeText(sign_up.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
+        }else if (requestCode == REQUEST_CHECK_SETTINGS) {
+            if (resultCode != Activity.RESULT_CANCELED) {
+                locationRequester.getLastKnownLocation();
+            }
         }
 
     }
@@ -459,7 +480,8 @@ public class sign_up extends AppCompatActivity {
 
     private File createImageFile() throws IOException {
         // CREATE URL FOR CAMERA IMAGE
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
+                Locale.getDefault()).format(new Date());
 
         String imageFileName = "JPEG_" + timeStamp + "_";
 
@@ -473,6 +495,65 @@ public class sign_up extends AppCompatActivity {
         cameraImageFilePath = image.getAbsolutePath();
         return image;
     }
+
+    @Override
+    public void onClick(View view) {
+
+        if(view.getId() == locationIv.getId()){
+
+            final String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                    checkSelfPermission(permissions[0]) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(permissions, REQUEST_LOCATION_PERMISSION);
+            }else{
+                intilizeLocationRequester();
+                locationIv.setClickable(false);
+            }
+
+        }
+
+    }
+
+    void intilizeLocationRequester() {
+        locationRequester = new LocationRequester(this,this,
+                country,city,locationIv);
+
+        locationRequester.geCountryFromLocation();
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                intilizeLocationRequester();
+                locationIv.setClickable(false);
+            }
+        }
+
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (locationRequester != null) {
+            locationRequester.resumeLocationUpdates();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (locationRequester != null) {
+            locationRequester.stopLocationUpdates();
+        }
+    }
+
+
 
     boolean checkPhoneNumber(String number, String code) {
 

@@ -60,9 +60,6 @@ public class UsersPickerActivity extends AppCompatActivity implements
       previousSelectedUserIdsList = new ArrayList<>();
     }
 
-
-
-
     updateSubtitle();
 
     users = new ArrayList<>();

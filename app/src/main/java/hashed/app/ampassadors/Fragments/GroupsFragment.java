@@ -59,9 +59,6 @@ public class GroupsFragment extends Fragment implements View.OnClickListener {
     tabAdapterTitle = new TabAdapterTitle(getChildFragmentManager(),
             FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, fragments, titles);
 
-
-
-
   }
 
   @Override

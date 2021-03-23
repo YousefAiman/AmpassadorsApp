@@ -85,7 +85,7 @@ public class NotificationClickReceiver extends BroadcastReceiver {
         }else{
 
         }
-
+        destinationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(destinationIntent);
         Log.d("ttt", "clicked notificaiton while app is running");
       } else {
