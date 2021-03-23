@@ -170,31 +170,41 @@ public class sign_in extends AppCompatActivity {
              public void onSuccess(DocumentSnapshot snapshot) {
                  if (!snapshot.exists()) {
                      auth.signOut();
-                     return;
+                    return;
                  }
+
+                 GlobalVariables.setRole(snapshot.getString("Role"));
+                 FirebaseMessaging.getInstance()
+                         .getToken().addOnSuccessListener(new OnSuccessListener<String>() {
+                     @Override
+                     public void onSuccess(String s) {
+                         GlobalVariables.setCurrentToken(s);
+                         snapshot.getReference().update("token", s);
+                     }
+                     });
                  if (snapshot.contains("rejected")
                          && snapshot.getBoolean("rejected")) {
 
                      auth.signOut();
-
                      Toast.makeText(sign_in.this,
                              R.string.Rejcetet_Message,
                              Toast.LENGTH_SHORT).show();
                      dialog.dismiss();
-
-                 } else {
-                     if (snapshot.getBoolean("approvement")) {
-
-                         GlobalVariables.setRole(snapshot.getString("Role"));
-
-
-                         FirebaseMessaging.getInstance()
-                                 .getToken().addOnSuccessListener(new OnSuccessListener<String>() {
-               @Override
-               public void onSuccess(String s) {
-                   GlobalVariables.setCurrentToken(s);
-                   snapshot.getReference().update("token", s);
-               }
+                 }
+//
+//                 } else {
+//                     if (snapshot.getBoolean("approvement")) {
+//
+//                         GlobalVariables.setRole(snapshot.getString("Role"));
+//                         FirebaseMessaging.getInstance()
+//                                 .getToken().addOnSuccessListener(new OnSuccessListener<String>() {
+//               @Override
+//               public void onSuccess(String s) {
+//                   GlobalVariables.setCurrentToken(s);
+//                   snapshot.getReference().update("token", s);
+//
+//               }
+             }
            });
 
            FirebaseMessagingService.startMessagingService(sign_in.this);
@@ -206,48 +216,46 @@ public class sign_in extends AppCompatActivity {
            dialog.dismiss();
            startActivity(intent);
            finish();
-
-       } else {
-
-           auth.signOut();
-                                                    dialog.dismiss();
-
-                                                    Toast.makeText(sign_in.this,
-                                                            R.string.Appromvent_Message,
-                                                            Toast.LENGTH_SHORT).show();
-                                                }
-
-                                            }
-
-                                        }
-                                    }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-
-                                            if (!task.isSuccessful()) {
-
-                                                auth.signOut();
-
-                                                Toast.makeText(sign_in.this,
-                                                        R.string.Rejcetet_Message,
-                                                        Toast.LENGTH_SHORT).show();
-                                                dialog.dismiss();
-
-                                            }
-
-                                        }
-                                    }).addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            auth.signOut();
-                                            dialog.dismiss();
-                                        }
-                                    });
-
+//       } else {
+//
+//           auth.signOut();
+//           dialog.dismiss();
+//
+//           Toast.makeText(sign_in.this,
+//                   R.string.Appromvent_Message,
+//                   Toast.LENGTH_SHORT).show();
+//                     }
+//
+//                 }
+//
+//             }
+//         });
+//                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                     @Override
+//                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//
+//                         if (!task.isSuccessful()) {
+//
+//                             auth.signOut();
+//
+//                             Toast.makeText(sign_in.this,
+//                                     R.string.Rejcetet_Message,
+//                                     Toast.LENGTH_SHORT).show();
+//                             dialog.dismiss();
+//
+//                         }
+//
+//                     }
+//                 }).addOnFailureListener(new OnFailureListener() {
+//                     @Override
+//                     public void onFailure(@NonNull Exception e) {
+//                         auth.signOut();
+//                         dialog.dismiss();
+//                     }
+//                 });
 
                                 }
-
-                            }).addOnFailureListener(new OnFailureListener() {
+                    }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             dialog.dismiss();
@@ -257,13 +265,10 @@ public class sign_in extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                         }
                     });
-
-
                 }
             }
         });
     }
-
     private void CreateAccount() {
         create_account_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -273,6 +278,4 @@ public class sign_in extends AppCompatActivity {
             }
         });
     }
-
-
 }

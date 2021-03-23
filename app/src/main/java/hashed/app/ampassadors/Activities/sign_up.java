@@ -71,6 +71,7 @@ public class sign_up extends AppCompatActivity {
     FirebaseStorage storage;
     Spinner spinner;
     private Uri filePath;
+    String Role = "Ambassador";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,6 +180,7 @@ public class sign_up extends AppCompatActivity {
                 hashMap.put("userId", authResult.getUser().getUid());
                 hashMap.put("imageUrl", imageUrl);
                 hashMap.put("status", true);
+                hashMap.put("Role", Role);
 
                 FirebaseMessaging.getInstance().getToken().addOnSuccessListener(new OnSuccessListener<String>() {
                     @Override

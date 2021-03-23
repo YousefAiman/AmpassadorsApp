@@ -218,8 +218,6 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         public void onClick(View view) {
           imageIv.getContext().startActivity(new Intent(imageIv.getContext(),
                   ProfileActiv.class));
-
-
         }
       });
     }

@@ -236,7 +236,6 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         lastDocSnap = queryDocumentSnapshots.getDocuments().get(
                 queryDocumentSnapshots.size() - 1
         );
-
         for (QueryDocumentSnapshot snapshot : queryDocumentSnapshots) {
 
           if (snapshot.getLong("type") == PostData.TYPE_POLL) {
@@ -279,7 +278,6 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
 
         }
-//          postData.addAll(queryDocumentSnapshots.toObjects(PostData.class));
 
       }
 

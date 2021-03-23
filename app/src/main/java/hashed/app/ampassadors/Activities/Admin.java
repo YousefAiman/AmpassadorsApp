@@ -71,21 +71,16 @@ public class Admin extends AppCompatActivity {
     list_users.setAdapter(adapter);
 
      query = firebaseFirestore.collection("Users")
-            .whereEqualTo("approvement",false)
             .whereEqualTo("rejected",false)
             .limit(USER_LIMIT);
 
     getUsers(true);
-
   }
-
   private void getUsers(boolean isInitial) {
-
     isLoadingUsers = true;
     final AtomicInteger addedCount = new AtomicInteger();
     Query updatedQuery = query;
     if (lastDocSnap != null) {
-
       updatedQuery = query.startAfter(lastDocSnap);
     }
 
@@ -99,7 +94,6 @@ public class Admin extends AppCompatActivity {
         data.addAll(queryDocumentSnapshots.toObjects(UserApprovment.class));
       }
     }).addOnCompleteListener(task -> {
-
       if (isInitial) {
         adapter.notifyDataSetChanged();
 
@@ -107,7 +101,6 @@ public class Admin extends AppCompatActivity {
           list_users.addOnScrollListener(scrollListener =
                   new ScrollListener());
         }
-
       } else {
         Log.d("ttt","Added count: "+addedCount.get());
 
@@ -118,11 +111,9 @@ public class Admin extends AppCompatActivity {
           list_users.removeOnScrollListener(scrollListener);
         }
       }
-
       isLoadingUsers = false;
     });
   }
-
   @Override
   public void onDestroy() {
     super.onDestroy();
@@ -130,7 +121,6 @@ public class Admin extends AppCompatActivity {
       list_users.removeOnScrollListener(scrollListener);
     }
   }
-
   private class ScrollListener extends RecyclerView.OnScrollListener {
     @Override
     public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -140,10 +130,7 @@ public class Admin extends AppCompatActivity {
               newState == RecyclerView.SCROLL_STATE_IDLE) {
 
         getUsers(false);
-
-
       }
     }
   }
-
 }

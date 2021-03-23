@@ -41,11 +41,8 @@ public class MainActivity extends AppCompatActivity {
       checkUserCredentials();
 
     } else {
-
       startConnectionActivity();
-
     }
-
   }
 
   private void checkUserCredentials(){
@@ -198,14 +195,11 @@ public class MainActivity extends AppCompatActivity {
     .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     finish();
   }
-
   @Override
   protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
-
     if (resultCode == ConnectionActivity.CONNECTION_RESULT) {
       checkUserCredentials();
     }
-
   }
 }

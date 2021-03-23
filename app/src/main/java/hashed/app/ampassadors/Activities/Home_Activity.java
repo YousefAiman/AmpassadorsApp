@@ -260,7 +260,6 @@ public class Home_Activity extends AppCompatActivity implements
       if(item.getItemId() == R.id.log_out){
                 Log.d("ttt","log_out clicked");
 //                if(WifiUtil.checkWifiConnection(this)){
-
                     Log.d("ttt","internet exists");
 
                     NotificationManagerCompat.from(this).cancelAll();
@@ -282,13 +281,19 @@ public class Home_Activity extends AppCompatActivity implements
 //                }
             }else if (item.getItemId() == R.id.news){
 
-              B_Fragment fragment = new B_Fragment();
-              Bundle bundle = new Bundle();
-              bundle.putInt("postType",PostData.TYPE_NEWS);
-              fragment.setArguments(bundle);
-             replaceFragment(fragment);
+//              B_Fragment fragment = new B_Fragment();
+//              Bundle bundle = new Bundle();
+//              bundle.putInt("postType",PostData.TYPE_NEWS);
+//              fragment.setArguments(bundle);
+//             replaceFragment(fragment);
 
-            }else if (item.getItemId() == R.id.polls) {
+          Intent intent = new Intent(Home_Activity.this, ShowNewsActivity.class);
+          Bundle bundle = new Bundle();
+          bundle.putInt("postType", PostData.TYPE_NEWS);
+          intent.putExtras(bundle);
+          intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+          startActivity(intent);
+      }else if (item.getItemId() == R.id.polls) {
 
             Intent intent = new Intent(Home_Activity.this, ShowPollsActivity.class);
             Bundle bundle = new Bundle();
