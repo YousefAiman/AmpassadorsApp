@@ -11,6 +11,8 @@
         android:layout_width="match_parent"
         android:visibility="invisible"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="30dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         />
 

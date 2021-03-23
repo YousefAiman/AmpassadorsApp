@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,7 +15,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
@@ -177,7 +174,7 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private void bindChat(UserPreview user) {
 
-      if (user.getUserId() == null || user.getUserId().equals(currentUid))
+      if (user.getUserId() == null)
         return;
       if (user.getImageUrl() != null) {
         picasso.load(user.getImageUrl()).fit().into(imageIv);

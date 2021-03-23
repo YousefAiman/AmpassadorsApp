@@ -55,7 +55,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
@@ -142,7 +141,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
   private MediaRecorder mediaRecorder;
   private Handler progressHandle;
   private Runnable progressRunnable;
-//  int lastVisiblePosition;
+  //  int lastVisiblePosition;
   private int previousSelected = -1;
 
   //notifications
@@ -197,9 +196,9 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
     privateMessagingRv.addOnLayoutChangeListener(this);
 
-    messageAttachIv.setOnClickListener(PrivateMessagingActivity.this);
+    messageAttachIv.setOnClickListener(this);
     messageAttachIv.setClickable(false);
-    micIv.setOnClickListener(PrivateMessagingActivity.this);
+    micIv.setOnClickListener(this);
     micIv.setClickable(false);
   }
 
@@ -349,6 +348,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
             message, currentUserName, messagingUid);
 
     sendCloudNotification(message);
+
   }
 
   private void sendCloudNotification(String message) {
@@ -408,7 +408,8 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
                               } else {
 
-                                currentMessagingRef = databaseReference.child(currentUid + "-" + messagingUid);
+                                currentMessagingRef = databaseReference.child(currentUid + "-" +
+                                        messagingUid);
                                 firebaseMessageDocRef = FirebaseFirestore.getInstance()
                                         .collection("PrivateMessages")
                                         .document(currentMessagingRef.getKey());
@@ -485,12 +486,12 @@ public class PrivateMessagingActivity extends AppCompatActivity
                 messageSendIv.setOnClickListener(new TextMessageSenderClickListener());
                 addListenerForNewMessages();
 
-                if (Integer.parseInt(lastKeyRef) + 1 > MESSAGES_PAGE_SIZE) {
+                if (snapshot.getChildrenCount() == MESSAGES_PAGE_SIZE) {
                   privateMessagingRv.addOnScrollListener(
                           currentScrollListener = new toTopScrollListener());
                 }
 
-                currentMessagingRef.child("LastSeenMessage:" + currentUid).setValue(lastKeyRef);
+//                currentMessagingRef.child("LastSeenMessage:" + currentUid).setValue(lastKeyRef);
 
                 addDeleteFieldListener();
 
@@ -512,22 +513,25 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
     ChildEventListener childEventListener;
 
-    final Query query = currentMessagingRef.child("messages").orderByKey()
-            .startAt(String.valueOf(Integer.parseInt(lastKeyRef) + 1));
+    final Query query = currentMessagingRef
+            .child("messages").orderByKey()
+            .startAt(String.valueOf(System.currentTimeMillis()));
 
     query.addChildEventListener(childEventListener = new ChildEventListener() {
       @Override
       public void onChildAdded(@NonNull DataSnapshot snapshot,
                                @Nullable String previousChildName) {
 
-
+        Log.d("ttt","new key: "+snapshot.getKey());
         lastKeyRef = snapshot.getKey();
+
         final PrivateMessage message = snapshot.getValue(PrivateMessage.class);
 
 //        if(message.getType() == Files.IMAGE && message.getAttachmentUrl() == null) {
 //          addFileMessageUploadListener(snapshot.child("attachmentUrl").getRef()
 //                  ,privateMessages.size());
 //        }
+
         if (messageAttachmentUploadedIndex != -1 &&
                 message.getSender().equals(currentUid) &&
                 message.getType()!= Files.TEXT) {
@@ -589,34 +593,19 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
                 if (snapshot.exists()) {
 
-                  final String id = snapshot.getValue(String.class);
+                  final long deletedTime = snapshot.getValue(Long.class);
 
-                  if (id != null) {
-
-                    final int deletedIndex =
-                            Math.abs(Integer.parseInt(firstKeyRef) - Integer.parseInt(id));
-
-                    if (deletedIndex < privateMessages.size() &&
-                            !privateMessages.get(deletedIndex).getDeleted()) {
-                      privateMessages.get(deletedIndex).setDeleted(true);
-                      adapter.notifyItemChanged(deletedIndex);
+                  if(deletedTime >= privateMessages.get(0).getTime()){
+                    for(PrivateMessage privateMessage:privateMessages){
+                      if(privateMessage.getTime() == deletedTime
+                              && !privateMessage.getDeleted()){
+                        int index = privateMessages.indexOf(privateMessage);
+                        privateMessage.setDeleted(true);
+                        adapter.notifyItemChanged(index);
+                        break;
+                      }
                     }
-
                   }
-
-//                  final PrivateMessage message = snapshot.getValue(PrivateMessage.class);
-//
-//                  for(int i=0;i<privateMessages.size();i++){
-//                    final PrivateMessage privateMessage = privateMessages.get(i);
-//                    if(privateMessage.getContent().equals(message.getContent())
-//                            && privateMessage.getTime() == message.getTime()){
-////                      if(!privateMessages.get(i).getDeleted()){
-//                        privateMessages.get(i).setDeleted(true);
-//                        adapter.notifyItemChanged(i);
-////                      }
-//                      break;
-//                    }
-//                  }
                 }
               }
 
@@ -647,7 +636,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
 
     final Map<String, PrivateMessage> messages = new HashMap<>();
-    messages.put("0", privateMessage);
+    messages.put(String.valueOf(System.currentTimeMillis()), privateMessage);
 
     messagingDocumentMap.put("messages", messages);
 
@@ -672,16 +661,13 @@ public class PrivateMessagingActivity extends AppCompatActivity
 //      privateMessages.add(privateMessage);
 //      adapter.notifyDataSetChanged();
 
-      firstKeyRef = "0";
-      lastKeyRef = "0";
+//      firstKeyRef = "0";
+//      lastKeyRef = "0";
 
 
       createMessagesListener();
 
       messageSendIv.setOnClickListener(new TextMessageSenderClickListener());
-
-
-
       messageSendIv.setClickable(true);
 
     }).addOnFailureListener(e -> {
@@ -705,20 +691,22 @@ public class PrivateMessagingActivity extends AppCompatActivity
       return;
     }
 
-    Log.d("PrivateMessaging", "added message at: " + (Integer.parseInt(lastKeyRef) + 1));
-    final DatabaseReference childRef = currentMessagingRef.child("messages")
-            .child(String.valueOf((Integer.parseInt(lastKeyRef) + 1)));
+    final DatabaseReference childRef = currentMessagingRef.child("messages").
+            child(String.valueOf(System.currentTimeMillis()));
 
-    childRef.setValue(privateMessage).addOnSuccessListener(v -> {
+    childRef.setValue(privateMessage)
+            .addOnSuccessListener(v -> {
 
-      checkUserActivityAndSendNotifications(privateMessage.getContent(), privateMessage.getType());
+              checkUserActivityAndSendNotifications(privateMessage.getContent(),
+                      privateMessage.getType());
 
 //            checkUserActivityAndSendNotifications(messageMap.getContent());
-      messageSendIv.setClickable(true);
+              messageSendIv.setClickable(true);
 
-    }).addOnFailureListener(e -> {
+            }).addOnFailureListener(e -> {
 
-      Toast.makeText(this, R.string.message_send_failed, Toast.LENGTH_SHORT).show();
+      Toast.makeText(PrivateMessagingActivity.this, R.string.message_send_failed,
+              Toast.LENGTH_SHORT).show();
 
       messageSendIv.setClickable(true);
 
@@ -791,9 +779,9 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
   private void startAudioRecording() {
 
-      if (checkIsUploading()) {
-        return;
-      }
+    if (checkIsUploading()) {
+      return;
+    }
 
     if (ActivityCompat.checkSelfPermission(this,
             Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
@@ -978,8 +966,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
                 PrivateMessage privateMessage = null;
 
-                HashMap<String, Object> messageMap = new HashMap<>();
-
+                //HashMap<String, Object> messageMap = new HashMap<>();
 
                 if (fileType == Files.AUDIO) {
 
@@ -1173,24 +1160,24 @@ public class PrivateMessagingActivity extends AppCompatActivity
             .child("messages")
             .orderByKey()
             .limitToLast(MESSAGES_PAGE_SIZE)
-            .endAt(String.valueOf(Integer.parseInt(firstKeyRef) - 1))
+            .endAt(String.valueOf(Long.parseLong(firstKeyRef)-1))
             .addListenerForSingleValueEvent(new ValueEventListener() {
               @Override
               public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 final List<PrivateMessage> newMessages = new ArrayList<>();
 
+                boolean gottenFirstKey = false;
                 for (DataSnapshot child : snapshot.getChildren()) {
+                  if(!gottenFirstKey){
+                    firstKeyRef = child.getKey();
+                    gottenFirstKey = true;
+                  }
                   newMessages.add(child.getValue(PrivateMessage.class));
-
                 }
 
                 privateMessages.addAll(0, newMessages);
                 adapter.notifyItemRangeInserted(0, newMessages.size());
-
-
-                firstKeyRef = String.valueOf(Integer.parseInt(lastKeyRef)
-                        - privateMessages.size());
 
                 messagesProgressBar.setVisibility(View.GONE);
 
@@ -1237,27 +1224,50 @@ public class PrivateMessagingActivity extends AppCompatActivity
   @Override
   public void deleteMessage(PrivateMessage message, DialogInterface dialog) {
 
-    final String id =
-            String.valueOf(Integer.parseInt(firstKeyRef) + privateMessages.indexOf(message));
+    currentMessagingRef.child("messages")
+            .orderByChild("time").equalTo(message.getTime()).limitToFirst(1)
+            .addListenerForSingleValueEvent(new ValueEventListener() {
+              @Override
+              public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-    currentMessagingRef.child("messages").child(id).child("deleted").setValue(true).
-            addOnSuccessListener(v -> currentMessagingRef.child("lastDeleted").setValue(id)
-                    .addOnSuccessListener(Void -> {
 
-                      if (privateMessages.indexOf(message) == privateMessages.size() - 1) {
-                        firebaseMessageDocRef.update("lastMessageDeleted",
-                                Integer.valueOf(id));
-                      }
+                if(snapshot.exists()){
 
-                      dialog.dismiss();
+                  snapshot.getChildren().iterator().next().getRef().child("deleted")
+                          .setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                      currentMessagingRef.child("lastDeleted").setValue(message.getTime())
+                              .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                  if (privateMessages.indexOf(message) ==
+                                          privateMessages.size() - 1) {
+                                    firebaseMessageDocRef.update("lastMessageDeleted",
+                                            message.getTime());
+                                  }
 
-                    }).addOnFailureListener(e -> dialog.dismiss())).addOnFailureListener(e -> {
-      dialog.dismiss();
+                                  dialog.dismiss();
+                                }
+                              }).addOnFailureListener(e -> {
+                        dialog.dismiss();
 
-      Toast.makeText(this, "لقد فشل حذف الرسالة", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PrivateMessagingActivity.this,
+                                "لقد فشل حذف الرسالة", Toast.LENGTH_SHORT).show();
 
-      Log.d("ttt", "failed: " + e.getMessage());
-    });
+                        Log.d("ttt", "failed: " + e.getMessage());
+                      });;
+                      ;
+                    }
+                  }).addOnFailureListener(e -> dialog.dismiss());
+                }
+              }
+
+              @Override
+              public void onCancelled(@NonNull DatabaseError error) {
+
+              }
+            });
 
   }
 
@@ -1445,9 +1455,9 @@ public class PrivateMessagingActivity extends AppCompatActivity
       progressHandle.removeCallbacks(progressRunnable);
     }
 
-    if (currentMessagingRef != null && lastKeyRef != null) {
-      currentMessagingRef.child("LastSeenMessage:" + currentUid).setValue(lastKeyRef);
-    }
+//    if (currentMessagingRef != null && lastKeyRef != null) {
+//      currentMessagingRef.child("LastSeenMessage:" + currentUid).setValue(lastKeyRef);
+//    }
 
     if (currentUid != null) {
       usersRef.document(currentUid).update("ActivelyMessaging", null);
