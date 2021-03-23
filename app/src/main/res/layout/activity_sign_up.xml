@@ -118,46 +118,49 @@
 
     <EditText
         android:id="@+id/input_phone"
-        android:layout_width="0dp"
+        android:layout_width="166dp"
         android:layout_height="39dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/input_bg"
         android:drawableLeft="@drawable/ic_baseline_phone"
         android:ems="10"
         android:hint="@string/phone"
         android:inputType="number"
         android:padding="10dp"
-        app:layout_constraintEnd_toEndOf="@+id/input_city"
-        app:layout_constraintStart_toStartOf="@+id/input_city"
-        app:layout_constraintTop_toBottomOf="@+id/input_city" />
+        app:layout_constraintEnd_toEndOf="@+id/birthday"
+        app:layout_constraintStart_toEndOf="@+id/phone_country"
+        app:layout_constraintTop_toBottomOf="@+id/birthday" />
 
     <Button
         android:id="@+id/sign_up_btn"
         android:layout_width="147dp"
         android:layout_height="47dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/btn_bg"
         android:text="@string/sign_up"
         app:backgroundTint="@color/dark_green"
-        app:layout_constraintEnd_toEndOf="@+id/editTextTextPersonName"
-        app:layout_constraintStart_toStartOf="@+id/editTextTextPersonName"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName"
+        app:layout_constraintEnd_toEndOf="@+id/input_phone"
+        app:layout_constraintStart_toStartOf="@+id/phone_country"
+        app:layout_constraintTop_toBottomOf="@+id/input_phone"
         tools:ignore="MissingConstraints" />
 
     <EditText
-        android:id="@+id/editTextTextPersonName"
+        android:id="@+id/birthday"
         android:layout_width="0dp"
         android:layout_height="39dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/input_bg"
+        android:drawableLeft="@drawable/ic_birthday_cake"
         android:ems="10"
+
+        android:hint="@string/BirthDay"
         android:inputType="textPersonName"
         android:padding="10dp"
-        android:drawableLeft="@drawable/ic_birthday_cake"
-        android:hint="@string/BirthDay"
-        app:layout_constraintEnd_toEndOf="@+id/input_phone"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/input_phone"
-        app:layout_constraintTop_toBottomOf="@+id/input_phone" />
+        app:layout_constraintEnd_toEndOf="@+id/input_city"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/input_city"
+        app:layout_constraintTop_toBottomOf="@+id/input_city" />
 
     <TextView
         android:id="@+id/back_sign_in"
@@ -171,10 +174,19 @@
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.516"
+        app:layout_constraintHorizontal_bias="0.483"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sign_up_btn"
         app:layout_constraintVertical_bias="0.0" />
+
+    <Spinner
+        android:id="@+id/phone_country"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/input_phone"
+        app:layout_constraintEnd_toStartOf="@+id/input_phone"
+        app:layout_constraintStart_toStartOf="@+id/birthday"
+        app:layout_constraintTop_toTopOf="@+id/input_phone" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
