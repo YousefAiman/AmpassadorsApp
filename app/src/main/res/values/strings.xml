@@ -307,6 +307,7 @@ Legal and human rights support program.
     <string name="Warring_Group_Message">You need to add at least two people to this group!</string>
 
 
+
     <string name="privacyPolicy">Privacy Policy</string>
     <string name="sent_an_image">sent an image</string>
     <string name="sent_a_video">sent a video</string>
@@ -315,4 +316,7 @@ Legal and human rights support program.
     <string name="guest">Guest</string>
     <string name="Admin">Admin</string>
     <string name="Validityconfirmation">Validity confirmation</string>
+    <string name="BirthDay">"Birth Day "</string>
+    <string name="Invalied_Number_Message">Invalied Number !</string>
+    <string name="Auth_number_Message">Pleas Check your number</string>
 </resources>
