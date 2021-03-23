@@ -98,8 +98,6 @@ public class MainActivity extends AppCompatActivity {
                         startHomeActivity();
                         break;
                     }
-
-
                     Intent finalIntent = intent;
                     new Handler().postDelayed(new Runnable() {
                       @Override
@@ -129,8 +127,6 @@ public class MainActivity extends AppCompatActivity {
               }
             }, 1000);
           }
-
-
         } else {
 
           FirebaseAuth.getInstance().signInAnonymously()
@@ -150,9 +146,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
       }
-
-
-
     } else {
 
       startConnectionActivity();
@@ -179,24 +172,18 @@ public class MainActivity extends AppCompatActivity {
             .putExtra("messagingUid", groupId);
 
   }
-
-
   private Intent startMeetingsHomeActivity() {
     return new Intent(MainActivity.this,
             Home_Activity.class).putExtra("showMeetings", true);
   }
-
-
   private void startHomeActivity() {
     startActivity(new Intent(MainActivity.this, Home_Activity.class)
     .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     finish();
   }
-
   @Override
   protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
-
     if (resultCode == ConnectionActivity.CONNECTION_RESULT) {
 
       if (getIntent().hasExtra("destinationBundle")) {
@@ -204,8 +191,6 @@ public class MainActivity extends AppCompatActivity {
       } else {
         startHomeActivity();
       }
-
     }
-
   }
 }
