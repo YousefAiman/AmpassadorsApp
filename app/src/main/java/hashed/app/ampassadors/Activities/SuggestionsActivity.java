@@ -39,9 +39,10 @@ public class SuggestionsActivity extends AppCompatActivity implements Toolbar.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_suggestions);
 
-            setupCompontet();
-            OnClick();
-            setUpToolBarAndActions();
+        setupCompontet();
+        OnClick();
+        setUpToolBarAndActions();
+
 
 
     }

@@ -2,26 +2,30 @@
 <androidx.appcompat.widget.Toolbar
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mainToolbar"
+    android:id="@+id/toolbar_sugg"
     android:layout_width="match_parent"
     app:navigationIcon="@drawable/back_arrow_icon"
-    app:navigationContentDescription="navigate back"
+    app:navigationContentDescription="Side menu"
     android:layout_height="?actionBarSize"
     android:elevation="4dp"
-    app:titleTextColor="#fff"
     android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
     android:fitsSystemWindows="true"
     android:background="@color/dark_green">
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/Complaints"
-        android:textColor="#fff"
-        android:paddingStart="80dp"
-        android:paddingTop="15dp"
-        android:fontFamily="@font/segoe_ui_bold"
-        android:textSize="24sp"
-        />
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/messagingTbNameTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:fontFamily="@font/segoe_ui_bold"
+            android:layout_marginLeft="70dp"
+            android:layout_gravity="center"
+            android:text="@string/Suggestion"
+            android:textSize="24sp" />
+    </LinearLayout>
 </androidx.appcompat.widget.Toolbar>

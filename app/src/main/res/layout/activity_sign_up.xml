@@ -191,10 +191,11 @@
 
     <Spinner
         android:id="@+id/phoneSpinner"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="@+id/input_phone"
         app:layout_constraintEnd_toStartOf="@+id/input_phone"
+        app:layout_constraintStart_toStartOf="@+id/birthday"
         app:layout_constraintTop_toTopOf="@+id/input_phone" />
 
 

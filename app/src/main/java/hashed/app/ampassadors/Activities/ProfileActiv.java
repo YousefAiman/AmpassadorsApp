@@ -46,7 +46,7 @@ import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 
-public class ProfileActiv extends AppCompatActivity implements
+    public class ProfileActiv extends AppCompatActivity implements
         SwipeRefreshLayout.OnRefreshListener {
 
     FirebaseFirestore firebaseFirestore;
