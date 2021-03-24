@@ -33,8 +33,9 @@
         android:id="@+id/navigationview"
         android:layout_width="320dp"
         android:layout_height="match_parent"
-        android:background="@color/black"
-        app:itemTextColor="@color/white"
+        android:background="@color/white"
+        app:itemTextColor="@color/black"
+        app:menu="@menu/navigation_menu"
         app:headerLayout="@layout/layout_navegation_header"
         android:layout_gravity="start"/>
 

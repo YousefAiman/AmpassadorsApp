@@ -142,7 +142,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
       Log.d("ttt", "before builder createiong");
       builder = new NotificationCompat.Builder(this, type)
-              .setSmallIcon(R.drawable.icon_vector)
+              .setSmallIcon(R.drawable.app_icon_small)
               .setContentTitle(data.get("title"))
               .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
               .setContentText(data.get("body"))
@@ -163,7 +163,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                         .submit()
                         .get());
       } else {
-        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.icon_vector));
+        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.app_icon_small));
       }
 
       Log.d("ttt", "after imageUrl");
