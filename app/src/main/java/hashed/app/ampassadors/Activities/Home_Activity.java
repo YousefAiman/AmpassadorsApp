@@ -68,7 +68,6 @@ public class Home_Activity extends AppCompatActivity implements
     SetUpCompetent();
     GlobalVariables.setAppIsRunning(true);
 
-
     auth = FirebaseAuth.getInstance();
     userid = auth.getCurrentUser().getUid();
     firebaseFirestore = FirebaseFirestore.getInstance();
@@ -141,9 +140,7 @@ public class Home_Activity extends AppCompatActivity implements
   // Buttons Click
   public void OnClickButtons() {
 
-
     navigationview.setNavigationItemSelectedListener(this);
-
 
     nav_btom.setOnNavigationItemSelectedListener(item -> {
       if (item.getItemId() == R.id.home) {

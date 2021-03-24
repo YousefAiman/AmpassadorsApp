@@ -68,6 +68,7 @@ public class ProfileActiv extends AppCompatActivity implements
     FloatingActionButton floatingButton;
     Toolbar toolbar;
     private NotificationIndicatorReceiver notificationIndicatorReceiver;
+
     public ProfileActiv() {
         // Required empty public constructor
     }

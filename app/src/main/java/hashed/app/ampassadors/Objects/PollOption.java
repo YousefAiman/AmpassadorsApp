@@ -7,6 +7,8 @@ import java.io.Serializable;
 
 public class PollOption implements Serializable {
 
+  @PropertyName("id")
+  private int id;
   @PropertyName("option")
   public String option;
   @PropertyName("votes")
@@ -41,4 +43,12 @@ public class PollOption implements Serializable {
     isChosen = chosen;
   }
 
+
+  public int getId() {
+    return id;
+  }
+
+  public void setId(int id) {
+    this.id = id;
+  }
 }

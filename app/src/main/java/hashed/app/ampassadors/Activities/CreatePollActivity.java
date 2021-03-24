@@ -34,7 +34,7 @@ import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 
 public class CreatePollActivity extends AppCompatActivity implements View.OnClickListener,
-        NumberPickerDialogFragment.OnTimePass {
+        NumberPickerDialogFragment.OnTimePass ,PollItemsRecyclerAdapter.ScrollToBottomListener{
 
 
   private ImageView userIv;
@@ -99,7 +99,7 @@ public class CreatePollActivity extends AppCompatActivity implements View.OnClic
     final String option = getResources().getString(R.string.option);
     pollItems.add(option+"1 ");
     pollItems.add(option+"2 ");
-    PollItemsRecyclerAdapter adapter = new PollItemsRecyclerAdapter(pollItems,this);
+    PollItemsRecyclerAdapter adapter = new PollItemsRecyclerAdapter(pollItems,this,this);
     pollRv.setAdapter(adapter);
 
   }
@@ -128,6 +128,8 @@ public class CreatePollActivity extends AppCompatActivity implements View.OnClic
           final HashMap<String, Object> map = new HashMap<>();
           map.put("option", editText.getText().toString().trim());
           map.put("votes", 0);
+          map.put("id", i);
+
           optionsMaps.add(map);
 
         }
@@ -219,5 +221,10 @@ public class CreatePollActivity extends AppCompatActivity implements View.OnClic
 
     timeTv.setText(durationText);
 
+  }
+
+  @Override
+  public void scrollToBottom() {
+    pollRv.smoothScrollToPosition(pollItems.size()-1);
   }
 }

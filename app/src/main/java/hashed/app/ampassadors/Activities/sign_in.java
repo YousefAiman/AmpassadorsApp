@@ -159,49 +159,51 @@ public class sign_in extends AppCompatActivity {
                     @Override
                     public void onSuccess(AuthResult authResult) {
 
-                      FirebaseFirestore.getInstance().collection("Users")
-                              .document(authResult.getUser().getUid())
-                              .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot snapshot) {
-                          if (!snapshot.exists()) {
-                            auth.signOut();
-                            return;
-                          }
+//                      if(auth.getCurrentUser().isEmailVerified()){
 
-                          if (snapshot.contains("rejected")
-                                  && snapshot.getBoolean("rejected")) {
+                        FirebaseFirestore.getInstance().collection("Users")
+                                .document(authResult.getUser().getUid())
+                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                          @Override
+                          public void onSuccess(DocumentSnapshot snapshot) {
+                            if (!snapshot.exists()) {
+                              auth.signOut();
+                              return;
+                            }
 
-                            auth.signOut();
+                            if (snapshot.contains("rejected")
+                                    && snapshot.getBoolean("rejected")) {
 
-                            Toast.makeText(sign_in.this,
-                                    R.string.Rejcetet_Message,
-                                    Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();
+                              auth.signOut();
 
-                          } else {
+                              Toast.makeText(sign_in.this,
+                                      R.string.Rejcetet_Message,
+                                      Toast.LENGTH_SHORT).show();
+                              dialog.dismiss();
+
+                            } else {
 //                     if (snapshot.getBoolean("approvement")) {
 
-                            GlobalVariables.setRole(snapshot.getString("Role"));
+                              GlobalVariables.setRole(snapshot.getString("Role"));
 
-                            FirebaseMessaging.getInstance()
-                                    .getToken().addOnSuccessListener(new OnSuccessListener<String>() {
-                              @Override
-                              public void onSuccess(String s) {
-                                GlobalVariables.setCurrentToken(s);
-                                snapshot.getReference().update("token", s);
-                              }
-                            });
+                              FirebaseMessaging.getInstance()
+                                      .getToken().addOnSuccessListener(new OnSuccessListener<String>() {
+                                @Override
+                                public void onSuccess(String s) {
+                                  GlobalVariables.setCurrentToken(s);
+                                  snapshot.getReference().update("token", s);
+                                }
+                              });
 
-                            FirebaseMessagingService.startMessagingService(sign_in.this);
+                              FirebaseMessagingService.startMessagingService(sign_in.this);
 
-                            Intent intent = new Intent(sign_in.this,
-                                    Home_Activity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK |
-                                    Intent.FLAG_ACTIVITY_NEW_TASK);
-                            dialog.dismiss();
-                            startActivity(intent);
-                            finish();
+                              Intent intent = new Intent(sign_in.this,
+                                      Home_Activity.class);
+                              intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                                      Intent.FLAG_ACTIVITY_NEW_TASK);
+                              dialog.dismiss();
+                              startActivity(intent);
+                              finish();
 
 //       } else {
 //
@@ -213,32 +215,42 @@ public class sign_in extends AppCompatActivity {
 //                                                            Toast.LENGTH_SHORT).show();
 //                                                }
 
+                            }
+
                           }
+                        }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                          @Override
+                          public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                        }
-                      }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (!task.isSuccessful()) {
 
-                          if (!task.isSuccessful()) {
+                              auth.signOut();
 
+                              Toast.makeText(sign_in.this,
+                                      R.string.Rejcetet_Message,
+                                      Toast.LENGTH_SHORT).show();
+                              dialog.dismiss();
+
+                            }
+
+                          }
+                        }).addOnFailureListener(new OnFailureListener() {
+                          @Override
+                          public void onFailure(@NonNull Exception e) {
                             auth.signOut();
-
-                            Toast.makeText(sign_in.this,
-                                    R.string.Rejcetet_Message,
-                                    Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
-
                           }
+                        });
 
-                        }
-                      }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                          auth.signOut();
-                          dialog.dismiss();
-                        }
-                      });
+//                      }else{
+//                        auth.signOut();
+//                        dialog.dismiss();
+//
+//                        Toast.makeText(sign_in.this,
+//                                "You need to verify your email in order to Sign in!",
+//                                Toast.LENGTH_SHORT).show();
+//
+//                      }
 
 
                     }

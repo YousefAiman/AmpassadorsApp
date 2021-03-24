@@ -1,6 +1,7 @@
 package hashed.app.ampassadors.Activities;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -16,7 +17,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
@@ -24,6 +27,7 @@ import java.util.ArrayList;
 
 import hashed.app.ampassadors.Adapters.PollPostAdapter;
 import hashed.app.ampassadors.Fragments.CommentsFragment;
+import hashed.app.ampassadors.Fragments.PostsFragment;
 import hashed.app.ampassadors.Objects.PollOption;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
@@ -34,6 +38,7 @@ import hashed.app.ampassadors.Utils.TimeFormatter;
 public class PostPollActivity extends AppCompatActivity implements View.OnClickListener,
         Toolbar.OnMenuItemClickListener {
 
+  private static final int POLL_LIMIT = 15;
   //views
   private TextView usernameTv, dateTv, titleTv, likesTv, commentsTv, likeTv, commentTv, votesTv;
   private RecyclerView pollRv;
@@ -41,6 +46,12 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
 
   //data
   private PostData postData;
+  private ScrollListener scrollListener;
+  private boolean isLoadingOptions;
+  private DocumentReference postRef;
+  private ArrayList<PollOption> pollOptions;
+  private PollPostAdapter adapter;
+  private int chosenOption = -1;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -181,65 +192,123 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
 
   private void getPollRecycler() {
 
-    final DocumentReference postRef =
-            FirebaseFirestore.getInstance().collection("Posts")
-                    .document(postData.getPostId());
-
-    boolean hasEnded;
-    if (System.currentTimeMillis() >
-            postData.getPublishTime() + postData.getPollDuration()) {
-      postRef.update("pollEnded", true);
-      hasEnded = true;
-    } else {
-      hasEnded = false;
-    }
-
-    final ArrayList<PollOption> pollOptions = new ArrayList<>();
-
-    final PollPostAdapter adapter = new PollPostAdapter(pollOptions
-            , postData.getPostId(), hasEnded, postData.getTotalVotes());
 
     pollRv.setNestedScrollingEnabled(false);
     pollRv.setHasFixedSize(true);
-    adapter.setHasStableIds(true);
-    pollRv.setAdapter(adapter);
+
+    postRef = FirebaseFirestore.getInstance().collection("Posts")
+                    .document(postData.getPostId());
 
     postRef.collection("UserVotes")
-            .whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
-            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-      int chosenOption = -1;
-
+            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
       @Override
-      public void onSuccess(QuerySnapshot snapshots) {
+      public void onSuccess(DocumentSnapshot snapshot) {
 
-        if (!snapshots.isEmpty()) {
-          chosenOption = snapshots.getDocuments().get(0).get("voteOption", Integer.class);
+        if (snapshot.exists()) {
+          chosenOption = snapshot.get("voteOption", Integer.class);
+          postData.setChosenPollOption(chosenOption);
         }
 
-        postRef.collection("Options").get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                  @Override
-                  public void onSuccess(QuerySnapshot snapshots) {
-                    if (!snapshots.isEmpty()) {
-                      pollOptions.addAll(snapshots.toObjects(PollOption.class));
-                    }
-                  }
-                }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-          @Override
-          public void onComplete(@NonNull Task<QuerySnapshot> task) {
-            if (task.isSuccessful() && !postData.getPollOptions().isEmpty()) {
 
-              if (chosenOption != -1) {
-                pollOptions.get(chosenOption).setChosen(true);
-                adapter.showProgress = true;
-              }
-              adapter.notifyDataSetChanged();
-            }
+        boolean hasEnded;
+
+        if (postData.isPollEnded()) {
+          hasEnded = true;
+        } else {
+
+          if (System.currentTimeMillis() >
+                  postData.getPublishTime() + postData.getPollDuration()) {
+
+            postRef.update("pollEnded", true);
+            hasEnded = true;
+
+          } else {
+            hasEnded = false;
           }
-        });
+        }
+
+        pollOptions = new ArrayList<>();
+
+        adapter = new PollPostAdapter(pollOptions
+                , postData.getPostId(), hasEnded, postData.getTotalVotes());
+
+
+        if(postData.getChosenPollOption()!=-1){
+          adapter.setChosenOption(postData.getChosenPollOption());
+          adapter.showProgress = true;
+        }else{
+          adapter.showProgress = hasEnded;
+        }
+
+        adapter.setHasStableIds(true);
+        pollRv.setAdapter(adapter);
+
+        getPollOptions(true);
+
       }
     });
 
+  }
+
+  private void getPollOptions(boolean initial){
+
+    isLoadingOptions = true;
+
+    postRef.collection("Options").orderBy("votes", Query.Direction.DESCENDING)
+            .limit(POLL_LIMIT).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+      @Override
+      public void onSuccess(QuerySnapshot snapshots) {
+        if (!snapshots.isEmpty()) {
+          if(initial){
+            pollOptions.addAll(snapshots.toObjects(PollOption.class));
+          }else{
+            pollOptions.addAll(pollOptions.size(),snapshots.toObjects(PollOption.class));
+          }
+        }
+      }
+    }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+      @Override
+      public void onComplete(@NonNull Task<QuerySnapshot> task) {
+        if (task.isSuccessful() && !postData.getPollOptions().isEmpty()) {
+
+          if (initial) {
+            adapter.notifyDataSetChanged();
+
+            if (pollOptions.size() == POLL_LIMIT) {
+              pollRv.addOnScrollListener(scrollListener = new ScrollListener());
+            }
+
+          } else {
+
+            final int addedSize =  task.getResult().size();
+
+            adapter.notifyItemRangeInserted(pollOptions.size() - addedSize,addedSize);
+
+            if (addedSize < POLL_LIMIT && scrollListener != null) {
+              pollRv.removeOnScrollListener(scrollListener);
+            }
+          }
+
+          isLoadingOptions = false;
+        }
+      }
+    });
+
+
+  }
+
+  private class ScrollListener extends RecyclerView.OnScrollListener {
+    @Override
+    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+      super.onScrollStateChanged(recyclerView, newState);
+      if (!isLoadingOptions &&
+              !recyclerView.canScrollVertically(1) &&
+              newState == RecyclerView.SCROLL_STATE_IDLE) {
+
+        getPollOptions(false);
+      }
+    }
   }
 
 

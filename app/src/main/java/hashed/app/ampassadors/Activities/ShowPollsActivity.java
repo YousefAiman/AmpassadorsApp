@@ -32,8 +32,6 @@ import static hashed.app.ampassadors.Objects.PostData.TYPE_POLL;
 public class ShowPollsActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener,
         SwipeRefreshLayout.OnRefreshListener, View.OnClickListener  {
 
-
-
     private static final int POSTS_LIMIT = 10;
     private Query query;
     private List<PostData> postData;
@@ -42,12 +40,6 @@ public class ShowPollsActivity extends AppCompatActivity implements Toolbar.OnMe
     private DocumentSnapshot lastDocSnap;
     private boolean isLoadingMessages;
     private ShowPollsActivity.PostsBottomScrollListener scrollListener;
-
-
-    //header Pager
-    private Handler handler;
-    private Runnable pagerRunnable;
-    private ArrayList<String> titles;
 
     public ShowPollsActivity() {
         // Required empty public constructor
@@ -59,9 +51,6 @@ public class ShowPollsActivity extends AppCompatActivity implements Toolbar.OnMe
         setContentView(R.layout.activity_show_polls);
 
 
-
-
-        titles = new ArrayList<>(5);
         query = FirebaseFirestore.getInstance().collection("Posts")
                 .orderBy("publishTime", Query.Direction.DESCENDING).whereEqualTo("type",
                         TYPE_POLL).limit(POSTS_LIMIT);
@@ -86,10 +75,6 @@ public class ShowPollsActivity extends AppCompatActivity implements Toolbar.OnMe
 
     @Override
     public void onRefresh() {
-
-        //header pager
-        titles.clear();
-        handler.removeCallbacks(pagerRunnable);
 
         //post recycler
         postData.clear();
@@ -204,24 +189,6 @@ public class ShowPollsActivity extends AppCompatActivity implements Toolbar.OnMe
         });
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        if (handler != null && pagerRunnable != null) {
-            handler.removeCallbacks(pagerRunnable);
-        }
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        if (handler != null && pagerRunnable != null) {
-            handler.postDelayed(pagerRunnable, 3000);
-        }
-    }
 
     private class PostsBottomScrollListener extends RecyclerView.OnScrollListener {
         @Override

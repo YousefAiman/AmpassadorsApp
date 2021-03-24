@@ -34,6 +34,11 @@ public class PollPostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
   private final boolean hasEnded;
   public boolean showProgress;
   public long totalVotes;
+  private int chosenOption = -1;
+
+  public void setChosenOption(int chosenOption){
+    this.chosenOption = chosenOption;
+  }
 
   public PollPostAdapter(ArrayList<PollOption> pollOptions, String pollPostId, boolean hasEnded,
                          long totalVotes) {
@@ -93,14 +98,17 @@ public class PollPostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     Map<String, Object> voteMap = new HashMap<>();
     voteMap.put("userId", currentUid);
     voteMap.put("voteTime", System.currentTimeMillis());
-    voteMap.put("voteOption", position);
+    voteMap.put("voteOption", pollOptions.get(position).getId());
 
     final DocumentReference postRef = FirebaseFirestore.getInstance()
             .collection("Posts").document(pollPostId);
-    final DocumentReference voteOptionRef = postRef
-            .collection("Options").document(String.valueOf(position));
 
-    postRef.collection("UserVotes").document(currentUid)
+    final DocumentReference voteOptionRef = postRef
+            .collection("Options").document(String.valueOf(
+                    pollOptions.get(position).getId()));
+
+    postRef.collection("UserVotes")
+            .document(currentUid)
             .set(voteMap).addOnSuccessListener(new OnSuccessListener<Void>() {
       @Override
       public void onSuccess(Void aVoid) {
@@ -114,17 +122,13 @@ public class PollPostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                     optionTv.setOnClickListener(null);
 
+                    chosenOption = pollOptions.get(position).getId();
 
-                    pollOptions.get(position).setChosen(true);
                     pollOptions.get(position).setVotes(
                             pollOptions.get(position).getVotes() + 1
                     );
 
                     showProgress = true;
-//                                        for(PollOption pollOption:pollOptions){
-//                                            pollOption.setShowProgress(true);
-//                                        }
-
                     notifyItemRangeChanged(0, pollOptions.size());
 
                     postRef.update("totalVotes", FieldValue.increment(1));
@@ -192,30 +196,12 @@ public class PollPostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 optionProgress.setProgress(progress));
       }
 
-      if (pollOption.isChosen()) {
-
-        checkIv.setVisibility(View.VISIBLE);
-//                optionTv.setCompoundDrawablesRelativeWithIntrinsicBounds(
-//                        ResourcesCompat.getDrawable(
-//                                itemView.getResources(),
-//                                R.drawable.check_icon_round,null
-//                        ),
-//                        null,
-//                        null,
-//                        null
-//                );
-
-      } else {
-        checkIv.setVisibility(View.GONE);
-      }
+      checkIv.setVisibility(pollOption.getId() == chosenOption ? View.VISIBLE:View.GONE);
 
       optionTv.setText(pollOption.getOption());
 
       optionTv.setOnClickListener(this);
-
-
     }
-
 
     @Override
     public void onClick(View view) {
@@ -263,25 +249,9 @@ public class PollPostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         Log.d("ttt", "percentage for: " + pollOption.getOption()
                 + " - " + percentage);
-//                optionProgress.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//
-//
-//                    }
-//                });
       }
 
-      if (pollOption.isChosen()) {
-        checkIv.setVisibility(View.VISIBLE);
-//                optionTv.setCompoundDrawablesWithIntrinsicBounds(
-//                        ResourcesCompat.getDrawable(
-//                                itemView.getResources(),
-//                                R.drawable.check_icon_round,null)
-//                        ,null,null,null);
-      } else {
-        checkIv.setVisibility(View.GONE);
-      }
+      checkIv.setVisibility(pollOption.getId() == chosenOption ? View.VISIBLE:View.GONE);
 
 
     }

@@ -18,11 +18,17 @@ public class PollItemsRecyclerAdapter extends RecyclerView.Adapter<PollItemsRecy
 
   private final static int POLL_LIMIT = 100;
   private final ArrayList<String> pollOptions;
-  private final Context context;
+  private final String option;
+  private final ScrollToBottomListener scrollToBottomListener;
+  public interface ScrollToBottomListener{
+    void scrollToBottom();
+  }
 
-  public PollItemsRecyclerAdapter(ArrayList<String> pollOptions, Context context) {
+  public PollItemsRecyclerAdapter(ArrayList<String> pollOptions, Context context,
+                                  ScrollToBottomListener scrollToBottomListener) {
     this.pollOptions = pollOptions;
-    this.context = context;
+    this.scrollToBottomListener = scrollToBottomListener;
+    option = context.getResources().getString(R.string.option);
   }
 
   @NonNull
@@ -35,33 +41,21 @@ public class PollItemsRecyclerAdapter extends RecyclerView.Adapter<PollItemsRecy
 
   @Override
   public void onBindViewHolder(@NonNull PollVh holder, int position) {
-
-    holder.pollEd.setHint(pollOptions.get(position));
-
-    if (position == getItemCount() - 1 && position != POLL_LIMIT) {
-      holder.pollAddIv.setVisibility(View.VISIBLE);
-      holder.pollAddIv.setOnClickListener(v -> {
-        holder.pollAddIv.setVisibility(View.INVISIBLE);
-        addPollItem(position + 1);
-      });
-    } else {
-      holder.pollAddIv.setVisibility(View.INVISIBLE);
-      holder.pollAddIv.setOnClickListener(null);
-    }
-
+    holder.bind(position);
   }
 
   private void addPollItem(int position) {
-
-    pollOptions.add(context.getResources().getString(R.string.option)+" "+ (position + 1));
+    pollOptions.add(option+" "+ (position + 1));
     notifyItemInserted(pollOptions.size());
+    scrollToBottomListener.scrollToBottom();
   }
+
   @Override
   public int getItemCount() {
     return pollOptions.size();
   }
 
-  public static class PollVh extends RecyclerView.ViewHolder {
+  public class PollVh extends RecyclerView.ViewHolder {
     private final EditText pollEd;
     private final ImageView pollAddIv;
 
@@ -70,5 +64,22 @@ public class PollItemsRecyclerAdapter extends RecyclerView.Adapter<PollItemsRecy
       pollEd = itemView.findViewById(R.id.pollEd);
       pollAddIv = itemView.findViewById(R.id.pollAddIv);
     }
+
+    private void bind(int position){
+      pollEd.setHint(pollOptions.get(position));
+
+      if (position == getItemCount() - 1 && position != POLL_LIMIT) {
+        pollAddIv.setVisibility(View.VISIBLE);
+        pollAddIv.setOnClickListener(v -> {
+          pollAddIv.setVisibility(View.INVISIBLE);
+          addPollItem(position + 1);
+        });
+      } else {
+        pollAddIv.setVisibility(View.INVISIBLE);
+        pollAddIv.setOnClickListener(null);
+      }
+
+    }
+
   }
 }

@@ -239,7 +239,6 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
   private void likeOrDislike() {
 
-
     if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
 
       SigninUtil.getInstance(PostNewsActivity.this,
@@ -266,13 +265,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
         PostData.likePost(postData.getPostId(), 1, postData.getPublisherId(), this);
 
       }
-
-
-
-
     }
-
-
   }
 
   @Override

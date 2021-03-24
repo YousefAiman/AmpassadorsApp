@@ -63,7 +63,7 @@
             android:layout_marginRight="20dp"
 
             android:backgroundTint="@color/dark_green"
-            android:text="@string/Validityconfirmation"
+            android:text="validity confirmation"
             />
             <Button
                 android:id="@+id/delete_account"

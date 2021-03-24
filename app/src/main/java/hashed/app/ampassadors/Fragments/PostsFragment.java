@@ -104,9 +104,9 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     meetingPreviews = new ArrayList<>(5);
     pagerAdapter = new HomeNewsHeaderViewPagerAdapter(meetingPreviews);
 
-
     query = FirebaseFirestore.getInstance().collection("Posts")
             .orderBy("publishTime", Query.Direction.DESCENDING).limit(POSTS_LIMIT);
+
     posts = new ArrayList<>();
     adapter = new PostAdapter(posts, getContext());
 
@@ -275,7 +275,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
       if (isInitial) {
         adapter.notifyDataSetChanged();
 
-        if (posts.size() == POSTS_LIMIT) {
+        if (task.getResult().size() == POSTS_LIMIT) {
           post_list.addOnScrollListener(scrollListener = new PostsBottomScrollListener());
         }
 
@@ -395,7 +395,6 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
             pagerRunnable = new Runnable() {
               int scrollPosition;
-
               @Override
               public void run() {
 
