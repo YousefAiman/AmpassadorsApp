@@ -5,6 +5,7 @@
     android:layout_height="300dp"
     android:id="@+id/item_recycle"
     android:orientation="vertical"
+
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <androidx.cardview.widget.CardView
         android:padding="20dp"

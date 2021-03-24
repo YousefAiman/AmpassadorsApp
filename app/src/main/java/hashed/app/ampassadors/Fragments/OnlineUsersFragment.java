@@ -77,7 +77,6 @@ public class OnlineUsersFragment extends Fragment implements
         if(value == null || value.getDocumentChanges().isEmpty() && users.isEmpty()){
           return;
         }
-
         for(DocumentChange dc:value.getDocumentChanges()){
           if(dc.getType() == DocumentChange.Type.ADDED){
             for(UserPreview userPreview:users){
@@ -92,9 +91,7 @@ public class OnlineUsersFragment extends Fragment implements
         }
       }
     });
-
   }
-
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
@@ -123,7 +120,6 @@ public class OnlineUsersFragment extends Fragment implements
           userRv.setVisibility(View.INVISIBLE);
         }
       }
-
       @Override
       public void onItemsAdded(@NonNull RecyclerView recyclerView,
                                int positionStart, int itemCount) {

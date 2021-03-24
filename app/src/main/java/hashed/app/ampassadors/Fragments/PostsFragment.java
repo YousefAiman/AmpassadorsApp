@@ -145,7 +145,6 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     if(!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
       if (GlobalVariables.getRole().equals("Admin") ||
               GlobalVariables.getRole().equals("Publisher")){
-
         floatingButton.setVisibility(View.VISIBLE);
       }
     }
@@ -154,13 +153,10 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
     headerViewPager.setAdapter(pagerAdapter);
     createHeaderPager();
-
-
     post_list.setAdapter(adapter);
     ReadPost(true);
 
   }
-
   @Override
   public boolean onMenuItemClick(MenuItem item) {
 

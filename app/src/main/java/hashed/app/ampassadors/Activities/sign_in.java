@@ -55,28 +55,40 @@ public class sign_in extends AppCompatActivity {
       @Override
       public void onClick(View view) {
         EditText resetMail = new EditText(view.getContext());
+
         AlertDialog.Builder passwordResetDaialog = new AlertDialog.Builder(view.getContext());
 
         passwordResetDaialog.setTitle(getString(R.string.Rest_Password));
         passwordResetDaialog.setMessage(getString(R.string.Email_Rest_Password));
         passwordResetDaialog.setView(resetMail);
 
+
+
         passwordResetDaialog.setPositiveButton(getString(R.string.YES), new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialogInterface, int i) {
-            String mail = resetMail.getText().toString();
-            auth.sendPasswordResetEmail(mail).addOnSuccessListener(new OnSuccessListener<Void>() {
-              @Override
-              public void onSuccess(Void aVoid) {
-                Toast.makeText(sign_in.this, R.string.Link_rest_password_sent, Toast.LENGTH_SHORT).show();
-              }
-            }).addOnFailureListener(new OnFailureListener() {
-              @Override
-              public void onFailure(@NonNull Exception e) {
-                Toast.makeText(sign_in.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-              }
-            });
-          }
+            String mail = resetMail.getText().toString().trim();
+
+
+            if(TextUtils.isEmpty(mail)){
+              Toast.makeText(sign_in.this,"Fields are empty",Toast.LENGTH_LONG).show();
+            }
+            else {
+              auth.sendPasswordResetEmail(mail).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                  Toast.makeText(sign_in.this, R.string.Link_rest_password_sent, Toast.LENGTH_SHORT).show();
+                }
+              }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                  Toast.makeText(sign_in.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+              });
+            }
+            }
+
+
         });
         passwordResetDaialog.setNegativeButton(R.string.No, new DialogInterface.OnClickListener() {
           @Override

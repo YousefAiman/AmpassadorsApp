@@ -106,7 +106,6 @@ public class ProfileActiv extends AppCompatActivity implements
 
         post_list.setAdapter(adapter);
         ReadPost(true);
-
     }
     @Override
     public void onRefresh() {
@@ -179,9 +178,7 @@ public class ProfileActiv extends AppCompatActivity implements
 
         ProfileActiv.this.registerReceiver(notificationIndicatorReceiver,
                 new IntentFilter(BuildConfig.APPLICATION_ID + ".notificationIndicator"));
-
     }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -201,7 +198,6 @@ public class ProfileActiv extends AppCompatActivity implements
             }
         });
     }
-
     private void getUserNaImg(){
         fAuth = FirebaseAuth.getInstance();
         userid = fAuth.getCurrentUser().getUid();
@@ -226,6 +222,4 @@ public class ProfileActiv extends AppCompatActivity implements
             }
         });
     }
-
-
 }
