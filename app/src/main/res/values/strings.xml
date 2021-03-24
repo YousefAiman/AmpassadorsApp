@@ -245,7 +245,7 @@ Legal and human rights support program.
     <string name="SuccessfullMessage">Add Successfully</string>
     <string name="Delete_success">Item Delete Successfully</string>
     <string name="Download">Downloading…</string>
-    <string name="AuthMessage">Pleas Check your Intetnet Connection</string>
+    <string name="AuthMessage">Pleas Check your Internet Connection</string>
     <string name="Meetings_Message_cant_Slected_item">Meeting time can\'t be at selected time!</string>
     <string name="meeting_title">Select Meeting Time</string>
     <string name="Auth_from_sending_message">Do you want to leave message is sending?</string>
@@ -266,15 +266,15 @@ Legal and human rights support program.
     <string name="DownLoad_Asking">Do you want to download ?</string>
     <string name="Download_btn">Download</string>
     <string name="Cansle">Cansle</string>
-    <string name="Start_zoom_Meeting">"Zoom meeting started! "</string>
+    <string name="Start_zoom_Meeting">Zoom meeting started!</string>
     <string name="send_An_Message">send an image</string>
     <string name="sen_Attachment">send an attachment</string>
-    <string name="send_video">" send an video"</string>
+    <string name="send_video">send an video</string>
     <string name="Succes_Login">Logged out successfully</string>
     <string name="Message_Fill_title">Please fill in the title!</string>
     <string name="Message_Fill_descr">Please fill in the description!</string>
     <string name="Message_Attchent_post">Please choose an attachment!</string>
-    <string name="Error_message_Details">Plaes Enter Your Details</string>
+    <string name="Error_message_Details">Please Enter Your Details</string>
     <string name="Finish_message">Download Finish</string>
     <string name="Title_AlretDialoge">Choose you profile photo</string>
     <string name="CaptuerPhoto">Take photo</string>
@@ -289,8 +289,8 @@ Legal and human rights support program.
     <string name="continue_guest">Continue As Guest</string>
     <string name="next">Next</string>
     <string name="skip">Skip</string>
-    <string name="Error_Message_SignUp_username">Your name is Requered</string>
-    <string name="Error_Message_password">Your Password is Reqired</string>
+    <string name="Error_Message_SignUp_username">Your name is Required</string>
+    <string name="Error_Message_password">Your Password is Required</string>
     <string name="Error_Message_Confrim_password">Confirm password is required</string>
     <string name="Error_Message_Match_password">Your password must be matched</string>
     <string name="Error_Message_Email">Your Email is Required</string>
@@ -305,9 +305,6 @@ Legal and human rights support program.
     <string name="Update_Error_Message">Info update error</string>
     <string name="Error">"Error.....   "</string>
     <string name="Warring_Group_Message">You need to add at least two people to this group!</string>
-
-
-    <string name="privacyPolicy">Privacy Policy</string>
     <string name="sent_an_image">sent an image</string>
     <string name="sent_a_video">sent a video</string>
     <string name="sent_audio_message">sent an audio message</string>
@@ -315,10 +312,8 @@ Legal and human rights support program.
     <string name="guest">Guest</string>
     <string name="Admin">Admin</string>
     <string name="Validityconfirmation">Validity confirmation</string>
-    <string name="BirthDay">"Birth Day "</string>
-    <string name="Invalied_Number_Message">Invalied Number !</string>
+    <string name="Invalied_Number_Message">Invalid Number !</string>
     <string name="Auth_number_Message">Pleas Check your number</string>
     <string name="BirthDay">Date of birth</string>
-    <string name="Invalied_Number_Message">Invalid Number!</string>
-    <string name="Auth_number_Message">Please Check your phone number</string>
+
 </resources>

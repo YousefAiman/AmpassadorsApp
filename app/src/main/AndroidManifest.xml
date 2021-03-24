@@ -40,7 +40,9 @@
         <activity android:name=".Activities.ShowPollsActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".Activities.ProfileActive"></activity>
+        <activity android:name=".Activities.ProfileActiv"
+            android:screenOrientation="portrait"/>
+
 
         <activity
             android:name=".Activities.WelcomeActivity"
