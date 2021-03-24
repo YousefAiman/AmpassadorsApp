@@ -17,7 +17,8 @@ import java.io.File;
 import hashed.app.ampassadors.R;
 
 public class VideoDataSourceFactory implements DataSource.Factory {
-  private static final long maxFileSize = 5 * 1024 * 1024, maxCacheSize = 15 * 1024 * 1024;
+  private static final long maxFileSize = 5 * 1024 * 1024,
+          maxCacheSize = 15 * 1024 * 1024;
   private final Context context;
   private final DefaultDataSourceFactory defaultDatasourceFactory;
 

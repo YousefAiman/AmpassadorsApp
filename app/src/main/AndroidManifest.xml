@@ -22,8 +22,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AmpassadorsApp">
-        <activity android:name=".Activities.ShowNewsActivity"></activity>
-        <activity android:name=".Activities.ShowPollsActivity" />
+
+
+        <activity android:name=".Activities.VideoWelcomeActivity"
+            android:screenOrientation="portrait">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+
+        <activity android:name=".Activities.ShowNewsActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.ShowPollsActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Activities.WelcomeActivity"
             android:screenOrientation="portrait" />
@@ -108,15 +123,10 @@
             android:name=".Activities.PrivateMessagingActivity"
             android:parentActivityName=".Activities.Home_Activity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <provider

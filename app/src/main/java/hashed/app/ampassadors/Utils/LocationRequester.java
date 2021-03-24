@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -31,15 +32,20 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import hashed.app.ampassadors.Activities.sign_up;
 
 public class LocationRequester {
 
@@ -63,7 +69,7 @@ public class LocationRequester {
   }
 
   public LocationRequester(Context context, Activity activity, EditText countryEd,
-                           EditText cityEd,ImageView locationIv) {
+                           EditText cityEd, ImageView locationIv) {
 
     this.activity = activity;
     this.context = context;
@@ -201,7 +207,7 @@ public class LocationRequester {
 
    return new LocationCallback() {
       @Override
-      public void onLocationResult(LocationResult locationResult) {
+      public void onLocationResult(@NotNull LocationResult locationResult) {
 
         if (locationResult == null) {
           return;
@@ -242,9 +248,12 @@ public class LocationRequester {
         countryCode= a.getCountryCode();
         final String city = a.getLocality();
 
+        Log.d("ttt",a.toString());
         countryEd.setText(country);
         cityEd.setText(city);
         locationIv.setVisibility(View.GONE);
+
+        ((sign_up)activity).selectDefaultPhoneCode(countryCode);
 
         dismissProgressDialog();
       } else {
@@ -258,6 +267,9 @@ public class LocationRequester {
     }
 
   }
+
+
+
 
   private void fetchFromApi(double latitude, double longitude) {
 
@@ -281,7 +293,11 @@ public class LocationRequester {
           countryEd.setText(country);
           cityEd.setText(city);
           locationIv.setVisibility(View.GONE);
+
+          ((sign_up)activity).selectDefaultPhoneCode(countryCode);
+
           dismissProgressDialog();
+
         } else {
           failedInfo();
           Log.d("ttt", "error here man 3: "+
