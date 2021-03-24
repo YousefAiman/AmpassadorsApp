@@ -111,8 +111,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
             final String defaultSpinnerChoice = EmojiUtil.countryCodeToEmoji(defaultCode)
                     +" +"+phoneNumberUtil.getCountryCodeForRegion(defaultCode);
 
-                spinnerArray =  new ArrayList<>(supportedCountryCodes.size());
-
+                //spinnerArray =  new ArrayList<>(supportedCountryCodes.size());
             for(String code:supportedCountryCodes){
 
                 spinnerArray.add(EmojiUtil.countryCodeToEmoji(code)
@@ -120,7 +119,6 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
             }
 
             supportedCountryCodes = null;
-
             Collections.sort(spinnerArray, new Comparator<String>() {
                 @Override
                 public int compare(String s, String t1) {
@@ -382,8 +380,6 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     mProgressDialog.dismiss();
-
-
                     //   Uri download = taskSnapshot.getMetadata().getReference().getDownloadUrl().getResult();
 
                     Task<Uri> result = taskSnapshot.getStorage().getDownloadUrl();

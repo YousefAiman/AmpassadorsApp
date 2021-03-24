@@ -5,9 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Activities.Admin">
+
     <include
         android:id="@+id/admin_toolbar"
         layout="@layout/admintolbar"
+        app:layout_constraintBottom_toTopOf="@+id/users_list"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

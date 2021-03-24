@@ -309,7 +309,6 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
       startActivity(intent);
 
     });
-
     parentView.findViewById(R.id.new_poll).setOnClickListener(view -> {
       bsd.dismiss();
       Intent intent = new Intent(getContext(), CreatePollActivity.class);
@@ -319,10 +318,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
     bsd.setContentView(parentView);
     bsd.show();
-
   }
-
-
   private void createHeaderPager() {
 
     FirebaseFirestore.getInstance().collection("Meetings")
