@@ -24,6 +24,7 @@ import hashed.app.ampassadors.Activities.ConnectionActivity;
 import hashed.app.ampassadors.Activities.GroupMessagingActivity;
 import hashed.app.ampassadors.Activities.Home_Activity;
 import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
+import hashed.app.ampassadors.Activities.VideoWelcomeActivity;
 import hashed.app.ampassadors.Activities.WelcomeActivity;
 import hashed.app.ampassadors.Fragments.PostsFragment;
 import hashed.app.ampassadors.Services.FirebaseMessagingService;
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void checkUserCredentials(){
+
     SharedPreferences sharedPreferences =
             getSharedPreferences(getResources().getString(R.string.app_name),
                     Context.MODE_PRIVATE);
@@ -53,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
     if(!sharedPreferences.contains("firstTime")){
 
-      startActivity(new Intent(this, WelcomeActivity.class)
+      startActivity(new Intent(this, VideoWelcomeActivity.class)
               .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 
       sharedPreferences.edit().putBoolean("firstTime",false).apply();

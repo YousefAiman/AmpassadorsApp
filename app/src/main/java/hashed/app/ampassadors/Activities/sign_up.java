@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -85,6 +86,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
     private Uri filePath;
     private ImageView locationIv;
 
+
     private static final int
             REQUEST_CHECK_SETTINGS = 100,
             REQUEST_LOCATION_PERMISSION = 10;
@@ -92,7 +94,6 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
     private LocationRequester locationRequester;
 
     PhoneNumberUtil phoneNumberUtil;
-    List<String> supportedCountryCodes;
     List<String> spinnerArray;
     String defaultCode;
     String defaultSpinnerChoice;
@@ -103,15 +104,24 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
         init();
         signUp();
         backSignIn();
 
-            new Thread(() -> {
-            final String defaultSpinnerChoice = EmojiUtil.countryCodeToEmoji(defaultCode)
-                    +" +"+phoneNumberUtil.getCountryCodeForRegion(defaultCode);
 
-                //spinnerArray =  new ArrayList<>(supportedCountryCodes.size());
+            new Thread(() -> {
+
+            phoneNumberUtil = PhoneNumberUtil.getInstance();
+
+            List<String> supportedCountryCodes =
+                        new ArrayList<>(phoneNumberUtil.getSupportedRegions());
+
+                spinnerArray =  new ArrayList<>(supportedCountryCodes.size());
+            spinnerArray =  new ArrayList<>(supportedCountryCodes.size());
+
+
+
             for(String code:supportedCountryCodes){
 
                 spinnerArray.add(EmojiUtil.countryCodeToEmoji(code)
@@ -119,6 +129,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
             }
 
             supportedCountryCodes = null;
+
             Collections.sort(spinnerArray, new Comparator<String>() {
                 @Override
                 public int compare(String s, String t1) {
@@ -128,7 +139,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                     return Integer.parseInt(s.split("\\+")[1]);
                 }
             });
-                defaultCode = defaultCode.toUpperCase();
+
 
             Log.d("ttt","list size: "+spinnerArray.size());
             if(this!=null){
@@ -142,13 +153,19 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                 ad.setDropDownViewResource(R.layout.spinner_item_layout);
 
                 spinner.post(() -> {
+
                     spinner.setAdapter(ad);
 
-                    spinner.setSelection(spinnerArray.indexOf(defaultSpinnerChoice));
+                    selectDefaultPhoneCode(Locale.getDefault().getCountry().toUpperCase());
+
                 });
             }
         }).start();
-            iamge.setOnClickListener(new View.OnClickListener() {
+
+
+
+
+        iamge.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -219,9 +236,14 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                 } else if (TextUtils.isEmpty(txt_phone)) {
                     Toast.makeText(sign_up.this, R.string.Error_Message_Phone, Toast.LENGTH_LONG).show();
 
-                } else if ((!checkPhoneNumber(txt_phone, counteryCode.getSelectedItem().toString().split("\\+")[1]))) {
-                    Toast.makeText(sign_up.this, R.string.Invalied_Number_Message +
-                            R.string.Auth_number_Message, Toast.LENGTH_LONG).show();
+                } else if ((!checkPhoneNumber(txt_phone,
+                        spinner.getSelectedItem().toString().split("\\+")[1]))) {
+
+                    String phoneError =
+                            getResources().getString(R.string.Invalied_Number_Message)
+                            +" "+ getResources().getString(R.string.Auth_number_Message);
+
+                    Toast.makeText(sign_up.this, phoneError, Toast.LENGTH_LONG).show();
 
                     return;
                 } else if (TextUtils.isEmpty(txt_dob)) {
@@ -236,8 +258,17 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                 }
             }
         });
+
     }
-    private void register(String username, String passwrod, String email, String country, String city, String phone, String dob) {
+
+    private void register(String username, String passwrod, String email,
+                          String country, String city, String phone, String dob) {
+
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Creating your account!");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
         final Task<AuthResult> task = auth.createUserWithEmailAndPassword(email, passwrod);
         task.addOnSuccessListener(new OnSuccessListener<AuthResult>() {
             @Override
@@ -260,10 +291,8 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                 hashMap.put("imageUrl", imageUrl);
                 hashMap.put("status", true);
                 hashMap.put("dob", dob);
-                hashMap.put("Country Code", counteryCode.getSelectedItem());
-                hashMap.put("Role", Role);
-
-                hashMap.put("phoneCode", counteryCode.getSelectedItem());
+                hashMap.put("Role", "Ambassador");
+                hashMap.put("phoneCode", spinner.getSelectedItem());
 
                 if(locationRequester!=null && locationRequester.countryCode!=null &&
                 !locationRequester.countryCode.isEmpty()){
@@ -285,6 +314,8 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                                             @Override
                                             public void onSuccess(Void aVoid) {
 
+                                                progressDialog.dismiss();
+
                                                 Intent intent = new Intent(sign_up.this, sign_in.class);
                                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                                 startActivity(intent);
@@ -295,6 +326,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                                         }).addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
+                                                progressDialog.dismiss();
                                                 Toast.makeText(sign_up.this, R.string.Email_not_Sent,
                                                         Toast.LENGTH_SHORT).show();
                                             }
@@ -305,6 +337,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                                 }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
+                                progressDialog.dismiss();
                                 Toast.makeText(sign_up.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -314,6 +347,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                progressDialog.dismiss();
                 Toast.makeText(sign_up.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -330,13 +364,14 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(sign_up.this, sign_in.class);
-                 spinnerArray =  new ArrayList<>(supportedCountryCodes.size());       startActivity(intent);
 
+                 startActivity(intent);
             }
         });
     }
 
     public void init() {
+
         auth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
         already_account = findViewById(R.id.back_sign_in);
@@ -357,9 +392,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
         locationIv = findViewById(R.id.locationIv);
         locationIv.setOnClickListener(this);
         Dob = findViewById(R.id.birthday);
-        phoneNumberUtil = PhoneNumberUtil.getInstance();
-        counteryCode = findViewById(R.id.phone_country);
-
+        spinner = findViewById(R.id.phoneSpinner);
 
 //        supportedCountryCodes = new ArrayList<>(phoneNumberUtil.getSupportedRegions());
 //        defaultCode = defaultCode.toUpperCase();
@@ -380,6 +413,8 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     mProgressDialog.dismiss();
+
+
                     //   Uri download = taskSnapshot.getMetadata().getReference().getDownloadUrl().getResult();
 
                     Task<Uri> result = taskSnapshot.getStorage().getDownloadUrl();
@@ -556,7 +591,20 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
         return phoneNumberUtil.isValidNumber(newNum);
     }
 
+    public void selectDefaultPhoneCode(String countryCode){
+        final String defaultSpinnerChoice = EmojiUtil.countryCodeToEmoji(countryCode)
+                +" +"+ PhoneNumberUtil.getInstance().getCountryCodeForRegion(countryCode);
+
+        spinner.setSelection(spinnerArray.indexOf(defaultSpinnerChoice));
+    }
+
+
 }
+
+
+
+
+
 
 //
 //

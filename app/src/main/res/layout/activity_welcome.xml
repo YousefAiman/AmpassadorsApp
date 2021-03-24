@@ -51,8 +51,6 @@
         app:layout_constraintStart_toStartOf="@+id/guideline251"
         app:layout_constraintTop_toBottomOf="@+id/guestBtn" />
 
-
-
     <android.widget.Button
         android:id="@+id/nextSlideBtn"
         android:layout_width="0dp"

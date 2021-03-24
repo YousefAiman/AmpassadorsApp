@@ -286,7 +286,7 @@ Legal and human rights support program.
     <string name="Email_not_Sent">Email not Sent</string>
     <string name="Password_verfiy">Password must match and confirm password</string>
     <string name="question">Question</string>
-    <string name="continue_guest">Continue Guest</string>
+    <string name="continue_guest">Continue As Guest</string>
     <string name="next">Next</string>
     <string name="skip">Skip</string>
     <string name="Error_Message_SignUp_username">Your name is Requered</string>
@@ -307,7 +307,6 @@ Legal and human rights support program.
     <string name="Warring_Group_Message">You need to add at least two people to this group!</string>
 
 
-
     <string name="privacyPolicy">Privacy Policy</string>
     <string name="sent_an_image">sent an image</string>
     <string name="sent_a_video">sent a video</string>
@@ -319,4 +318,7 @@ Legal and human rights support program.
     <string name="BirthDay">"Birth Day "</string>
     <string name="Invalied_Number_Message">Invalied Number !</string>
     <string name="Auth_number_Message">Pleas Check your number</string>
+    <string name="BirthDay">Date of birth</string>
+    <string name="Invalied_Number_Message">Invalid Number!</string>
+    <string name="Auth_number_Message">Please Check your phone number</string>
 </resources>
