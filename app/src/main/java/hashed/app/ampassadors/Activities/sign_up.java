@@ -75,6 +75,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
     CollectionReference reference;
     String imageUrl;
     String userid;
+    Spinner counteryCode;
     ImageView iamge;
     ProgressDialog mProgressDialog;
     StorageReference sreference;
@@ -94,6 +95,10 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
 
     PhoneNumberUtil phoneNumberUtil;
     List<String> spinnerArray;
+    String defaultCode;
+    String defaultSpinnerChoice;
+    String Role = "Ambassador";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +117,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
             List<String> supportedCountryCodes =
                         new ArrayList<>(phoneNumberUtil.getSupportedRegions());
 
+                spinnerArray =  new ArrayList<>(supportedCountryCodes.size());
             spinnerArray =  new ArrayList<>(supportedCountryCodes.size());
 
 
@@ -271,6 +277,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                 if (authResult == null || authResult.getUser() == null) {
                     return;
                 }
+
                 HashMap<String, Object> hashMap = new HashMap<>();
                 hashMap.put("username", username);
                 hashMap.put("password", passwrod);
@@ -297,6 +304,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                     @Override
                     public void onSuccess(String s) {
                         hashMap.put("token", s);
+
                         reference.document(authResult.getUser().getUid()).set(hashMap)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override

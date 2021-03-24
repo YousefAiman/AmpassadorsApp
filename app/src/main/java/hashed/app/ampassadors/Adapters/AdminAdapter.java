@@ -86,8 +86,8 @@ public class AdminAdapter extends RecyclerView.Adapter<AdminAdapter.AdminHolder>
                   .update("rejected",true).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-          //    data.remove(userApprovment);
-             // notifyItemRemoved(getAdapterPosition());
+              data.remove(userApprovment);
+              notifyItemRemoved(getAdapterPosition());
             }
           });
         }

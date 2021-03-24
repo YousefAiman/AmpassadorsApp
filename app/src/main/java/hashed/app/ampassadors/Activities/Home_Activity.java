@@ -90,8 +90,6 @@ public class Home_Activity extends AppCompatActivity implements
 
   }
 
-
-
   private void createUserLikesListener() {
 
     listenerRegistrations = new ArrayList<>();
@@ -237,7 +235,6 @@ public class Home_Activity extends AppCompatActivity implements
     public void showDrawer() {
         drawer_layout.openDrawer(GravityCompat.START);
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();

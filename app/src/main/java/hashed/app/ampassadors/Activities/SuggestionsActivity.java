@@ -38,15 +38,12 @@ public class SuggestionsActivity extends AppCompatActivity implements Toolbar.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_suggestions);
-        if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
 
-            SigninUtil.getInstance(SuggestionsActivity.this,
-                    SuggestionsActivity.this).show();
+        setupCompontet();
+        OnClick();
+        setUpToolBarAndActions();
 
-            setupCompontet();
-            OnClick();
-            setUpToolBarAndActions();
-        }
+
 
     }
 
