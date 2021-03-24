@@ -1,26 +1,23 @@
-package hashed.app.ampassadors.Fragments;
+package hashed.app.ampassadors.Activities;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.core.widget.NestedScrollView;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,30 +37,23 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-import hashed.app.ampassadors.Activities.ComplaintsActivity;
-import hashed.app.ampassadors.Activities.Home_Activity;
-import hashed.app.ampassadors.Activities.NotificationsActivity;
-import hashed.app.ampassadors.Activities.PostNewActivity;
-import hashed.app.ampassadors.Activities.Profile;
-import hashed.app.ampassadors.Activities.profile_edit;
 import hashed.app.ampassadors.Adapters.PostAdapter;
-import hashed.app.ampassadors.Adapters.UserPostAdapter;
 import hashed.app.ampassadors.BroadcastReceivers.NotificationIndicatorReceiver;
 import hashed.app.ampassadors.BuildConfig;
+import hashed.app.ampassadors.Fragments.PostsProfileFragment;
+import hashed.app.ampassadors.Fragments.ProfileFragment;
 import hashed.app.ampassadors.Objects.PostData;
-import hashed.app.ampassadors.Objects.UserPostData;
 import hashed.app.ampassadors.R;
-import hashed.app.ampassadors.Utils.Files;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 
-public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItemClickListener,
+public class ProfileActiv extends AppCompatActivity implements
         SwipeRefreshLayout.OnRefreshListener {
-
 
     FirebaseFirestore firebaseFirestore;
     Query query;
     List<PostData> postData;
-    //private UserPostData posda;
+
+
     PostAdapter adapter;
     RecyclerView post_list;
     DocumentSnapshot lastDocSnap;
@@ -78,55 +68,26 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
     FloatingActionButton floatingButton;
     Toolbar toolbar;
     private NotificationIndicatorReceiver notificationIndicatorReceiver;
-    private TextView roleTv;
-    public PostsProfileFragment() {
+    public ProfileActiv() {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_posts_profile, container,
-                false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_profile2);
 
-        floatingButton = view.findViewById(R.id.floatingbtn);
-        username = view.findViewById(R.id.textView6);
-        imageView = view.findViewById(R.id.profile_picture);
-        swipeRefresh = view.findViewById(R.id.swipeRefreshLayout);
-        roleTv = view.findViewById(R.id.roleTv);
+        username = findViewById(R.id.textView6);
+        imageView = findViewById(R.id.profile_picture);
+        swipeRefresh = findViewById(R.id.swipeRefreshLayout);
         swipeRefresh.setOnRefreshListener(this);
 
-        if(FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
-            roleTv.setText(getResources().getString(R.string.guest));
-        }else if(GlobalVariables.getRole()!=null){
-            roleTv.setText(GlobalVariables.getRole());
-        }
 
-        NestedScrollView nestedScrollView = view.findViewById(R.id.nestedScrollView);
+        NestedScrollView nestedScrollView = findViewById(R.id.nestedScrollView);
         nestedScrollView.setNestedScrollingEnabled(false);
 
-        floatingButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent dsfs = new Intent(requireContext(), PostNewActivity.class);
-                dsfs.putExtra("justForUser",true);
-                startActivity(dsfs);
-
-            }
-        });
-        toolbar = view.findViewById(R.id.toolbar);
-        toolbar.setNavigationOnClickListener(v -> ((Home_Activity) requireActivity()).showDrawer());
-
-        toolbar.setOnMenuItemClickListener(this);
-
-        toolbar.getMenu().findItem(R.id.action_notifications)
-                .setIcon(GlobalVariables.getNotificationsCount() > 0 ?
-                        R.drawable.notification_indicator_icon :
-                        R.drawable.notification_icon);
-
-        setupNotificationReceiver();
-
+        toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(v -> {onBackPressed();});
 
         getUserNaImg();
         firebaseFirestore = FirebaseFirestore.getInstance();
@@ -137,71 +98,23 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
                         Query.Direction.DESCENDING).limit(10);
         postData = new ArrayList<>();
 
-        adapter = new PostAdapter(postData, getActivity());
-        post_list = view.findViewById(R.id.userpost_recycler);
+        adapter = new PostAdapter(postData, ProfileActiv.this);
+        post_list = findViewById(R.id.userpost_recycler);
 
-        post_list.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL,
+        post_list.setLayoutManager(new LinearLayoutManager(ProfileActiv.this, RecyclerView.VERTICAL,
                 false));
 
         post_list.setAdapter(adapter);
-
-        return view;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
         ReadPost(true);
-    }
 
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-
-        if(item.getItemId() == R.id.action_online){
-
-            DocumentReference reference = fStore.collection("Users").document(userid);
-
-            if (status){
-                reference.update("status", false).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        status = false;
-                        toolbar.getMenu().findItem(R.id.action_online).setTitle("online");
-                    }
-                });
-                
-            }else{
-                reference.update("status", true).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        status = true;
-                        toolbar.getMenu().findItem(R.id.action_online).setTitle("away");
-                    }
-                });
-            }
-        }else if(item.getItemId() == R.id.action_online){
-            ((Home_Activity)requireActivity()).replaceFragment(new ProfileFragment());
-
-        }else if(item.getItemId() == R.id.action_about){
-
-            Intent mapIntent = new Intent(getActivity(), Profile.class);
-            startActivity(mapIntent);
-        }else  if (item.getItemId() == R.id.action_notifications) {
-            startActivity(new Intent(getContext(), NotificationsActivity.class)
-                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-        }
-
-        return false;
     }
     @Override
     public void onRefresh() {
-
         postData.clear();
         adapter.notifyDataSetChanged();
         lastDocSnap = null;
         ReadPost(true);
     }
-
     private class ChatsScrollListener extends RecyclerView.OnScrollListener {
         @Override
         public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -211,13 +124,10 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
                     newState == RecyclerView.SCROLL_STATE_IDLE) {
 
                 Log.d("ttt","is at bottom man");
-
                 ReadPost(false);
-
             }
         }
     }
-
     private void ReadPost(boolean isInitial) {
         swipeRefresh.setRefreshing(true);
         isLoadingMessages = true;
@@ -267,7 +177,7 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
                     }
                 };
 
-        getContext().registerReceiver(notificationIndicatorReceiver,
+        ProfileActiv.this.registerReceiver(notificationIndicatorReceiver,
                 new IntentFilter(BuildConfig.APPLICATION_ID + ".notificationIndicator"));
 
     }
@@ -276,21 +186,20 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
     public void onDestroy() {
         super.onDestroy();
         if (notificationIndicatorReceiver != null) {
-            requireContext().unregisterReceiver(notificationIndicatorReceiver);
+            ProfileActiv.this.unregisterReceiver(notificationIndicatorReceiver);
         }
     }
 
     private void setUpToolBarAndActions() {
 
-        final Toolbar toolbar = getView().findViewById(R.id.toolbar);
+        final Toolbar toolbar = findViewById(R.id.toolbar);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "tool", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProfileActiv.this, "tool", Toast.LENGTH_SHORT).show();
             }
         });
-        toolbar.setOnMenuItemClickListener(this);
     }
 
     private void getUserNaImg(){
@@ -307,25 +216,16 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
                         String imgUrl = task.getResult().getString("imageUrl");
 
                         task.getResult().getBoolean("status");
-                        toolbar.setOnMenuItemClickListener(PostsProfileFragment.this);
 
                         username.setText(user_name);
                         Picasso.get().load(imgUrl).fit().into(imageView);
                     }
                 }else {
-                    Toast.makeText(getActivity(), "Error"+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ProfileActiv.this, "Error"+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
-    private void drawer(){
-        final DrawerLayout drawerLayout_b = getView().findViewById(R.id.drawer_layout);
-        getView().findViewById(R.id.profile_toolbara).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                drawerLayout_b.openDrawer(GravityCompat.START);
-            }
-        });
-    }
+
 
 }

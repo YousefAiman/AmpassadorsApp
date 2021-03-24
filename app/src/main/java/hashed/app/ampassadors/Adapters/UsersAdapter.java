@@ -21,6 +21,8 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
+import hashed.app.ampassadors.Activities.ProfileActiv;
+import hashed.app.ampassadors.Fragments.PostsProfileFragment;
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
 
@@ -170,8 +172,6 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
       if (user.getUserId() == null)
         return;
-
-
       if (user.getImageUrl() != null) {
         picasso.load(user.getImageUrl()).fit().into(imageIv);
       }else{
@@ -200,12 +200,9 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
       itemView.setOnClickListener(this);
 //         itemView.setOnClickListener(v->
 //                 userClickListener.clickUser(user.getUserId(),getAdapterPosition()));
-
     }
-
     @Override
     public void onClick(View view) {
-
       if (userAdapterClicker != null) {
         userAdapterClicker.clickUser(users.get(getAdapterPosition()).getUserId());
       } else {
@@ -214,11 +211,13 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 users.get(getAdapterPosition()).getUserId())
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
       }
-
-
+      imageIv.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          imageIv.getContext().startActivity(new Intent(imageIv.getContext(),
+                  ProfileActiv.class));
+        }
+      });
     }
-
   }
-
-
 }

@@ -75,10 +75,8 @@ public class AdminAdapter extends RecyclerView.Adapter<AdminAdapter.AdminHolder>
     }
 
     private void bind(UserApprovment userApprovment){
-
-      email.setText(userApprovment.getEmail());
-      password.setText(userApprovment.getUsername());
-
+      email.setText("Email: "+userApprovment.getEmail());
+      password.setText("Name: "+userApprovment.getUsername());
       delete_account.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -88,11 +86,10 @@ public class AdminAdapter extends RecyclerView.Adapter<AdminAdapter.AdminHolder>
                   .update("rejected",true).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-              data.remove(userApprovment);
-              notifyItemRemoved(getAdapterPosition());
+          //    data.remove(userApprovment);
+             // notifyItemRemoved(getAdapterPosition());
             }
           });
-
         }
       });
 
@@ -103,26 +100,17 @@ public class AdminAdapter extends RecyclerView.Adapter<AdminAdapter.AdminHolder>
 
           FirebaseFirestore.getInstance()
                   .collection("Users").document(userApprovment.getUserId())
-                  .update("approvement",true,
-                          "Role",options.getSelectedItem().toString())
+                  .update("Role",options.getSelectedItem().toString())
                   .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                      data.remove(userApprovment);
-                      notifyItemRemoved(getAdapterPosition());
+//                      data.remove(userApprovment);
+//                      notifyItemRemoved(getAdapterPosition());
                     }
                   });
-
         }
       });
 
-
-
-
-
-
     }
-
-
   }
 }

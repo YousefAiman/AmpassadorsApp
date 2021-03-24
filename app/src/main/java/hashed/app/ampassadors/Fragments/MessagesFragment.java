@@ -137,7 +137,6 @@ public class MessagesFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
 
     getAllChats();
-
   }
 
 

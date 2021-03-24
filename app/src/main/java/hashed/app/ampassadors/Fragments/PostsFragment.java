@@ -229,14 +229,12 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
       updatedQuery = query.startAfter(lastDocSnap);
 
     }
-
     updatedQuery.get().addOnSuccessListener(queryDocumentSnapshots -> {
       if (!queryDocumentSnapshots.isEmpty()) {
 
         lastDocSnap = queryDocumentSnapshots.getDocuments().get(
                 queryDocumentSnapshots.size() - 1
         );
-
         for (QueryDocumentSnapshot snapshot : queryDocumentSnapshots) {
 
           if (snapshot.getLong("type") == PostData.TYPE_POLL) {
@@ -247,7 +245,6 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                 posts.add(snapshot.toObject(PostData.class));
                 addedCount.getAndIncrement();
               }
-
             } else {
 
               if (System.currentTimeMillis() >
@@ -255,7 +252,6 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                               snapshot.getLong("pollDuration")) {
 
                 snapshot.getReference().update("pollEnded", true);
-
                 if (snapshot.getLong("totalVotes") > 0) {
 
                   final PostData post = snapshot.toObject(PostData.class);
@@ -265,27 +261,17 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                 }
 
               } else {
-
                 posts.add(snapshot.toObject(PostData.class));
                 addedCount.getAndIncrement();
               }
-
             }
-
           } else {
             posts.add(snapshot.toObject(PostData.class));
             addedCount.getAndIncrement();
           }
-
-
         }
-//          postData.addAll(queryDocumentSnapshots.toObjects(PostData.class));
-
       }
-
     }).addOnCompleteListener(task -> {
-
-
       if (isInitial) {
         adapter.notifyDataSetChanged();
 
@@ -298,7 +284,6 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
         adapter.notifyItemRangeInserted(posts.size() - addedCount.get(),
                 addedCount.get());
-
         if (addedCount.get() < POSTS_LIMIT && scrollListener != null) {
           post_list.removeOnScrollListener(scrollListener);
         }
@@ -309,7 +294,6 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
       isLoadingMessages = false;
     });
   }
-
 
   private void showPostOptionsBottomSheet() {
 

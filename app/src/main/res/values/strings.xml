@@ -313,6 +313,11 @@ Legal and human rights support program.
     <string name="sent_audio_message">sent an audio message</string>
     <string name="sent_an_attachment">sent an attachment</string>
     <string name="guest">Guest</string>
+    <string name="Admin">Admin</string>
+    <string name="Validityconfirmation">Validity confirmation</string>
+    <string name="BirthDay">"Birth Day "</string>
+    <string name="Invalied_Number_Message">Invalied Number !</string>
+    <string name="Auth_number_Message">Pleas Check your number</string>
     <string name="BirthDay">Date of birth</string>
     <string name="Invalied_Number_Message">Invalid Number!</string>
     <string name="Auth_number_Message">Please Check your phone number</string>

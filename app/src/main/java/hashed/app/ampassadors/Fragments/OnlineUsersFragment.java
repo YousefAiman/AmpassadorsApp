@@ -233,9 +233,7 @@ public class OnlineUsersFragment extends Fragment implements
     usersAdapter.notifyDataSetChanged();
     lastDocSnap = null;
     getMoreUsers(true);
-
   }
-
   @Override
   public void onDestroy() {
     super.onDestroy();
@@ -243,12 +241,10 @@ public class OnlineUsersFragment extends Fragment implements
     if (userRv != null && scrollListener != null) {
       userRv.removeOnScrollListener(scrollListener);
     }
-
     if(listenerRegistration!=null){
       listenerRegistration.remove();
     }
   }
-
   private class scrollListener extends RecyclerView.OnScrollListener {
     @Override
     public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -256,9 +252,7 @@ public class OnlineUsersFragment extends Fragment implements
 
       if (!isLoading && !recyclerView.canScrollVertically(1) &&
               newState == RecyclerView.SCROLL_STATE_IDLE) {
-
         getMoreUsers(false);
-
       }
     }
   }
