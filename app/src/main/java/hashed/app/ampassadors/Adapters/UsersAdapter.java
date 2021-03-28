@@ -240,9 +240,11 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         imageIv.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View view) {
-            imageIv.getContext().startActivity(new Intent(imageIv.getContext(),
-                    ProfileActiv.class).putExtra("userId",users.get(getAdapterPosition()).getUserId()).putExtra("ImageUrl",
-                    users.get(getAdapterPosition()).getImageUrl()).putExtra("username",users.get(getAdapterPosition()).getUsername()));
+            imageIv.getContext().startActivity(new Intent(itemView.getContext(),
+                    ProfileActiv.class).putExtra("userId",users.get(getAdapterPosition())
+                    .getUserId()).putExtra("ImageUrl",
+                    users.get(getAdapterPosition()).getImageUrl())
+                    .putExtra("username",users.get(getAdapterPosition()).getUsername()));
           }
         });
       }
