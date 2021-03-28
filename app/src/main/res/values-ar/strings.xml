@@ -18,7 +18,7 @@
     <string name="message_delete">هل تريد حذف هذه الرسالة؟</string>
     <string name="new_group">مجموعة جديدة</string>
     <string name="delete">حذف</string>
-    <string name="cancel">يلغي</string>
+    <string name="cancel">الغاء</string>
     <string name="dummy_button">الزر الوهمي</string>
     <string name="dummy_content">محتوى \nغبي</string>
     <string name="chosen_image">الصورة المختارة</string>
@@ -38,8 +38,8 @@
     <string name="no_current_messages">لا توجد رسائل حالية</string>
     <string name="no_online_users">لا يوجد مستخدمون متصلون</string>
     <string name="no_current_meetings">لا توجد اجتماعات حالية</string>
-    <string name="profile">حساب تعريفي</string>
-    <string name="away">بعيد</string>
+    <string name="profile">الصفحة الشخصية </string>
+    <string name="away">غير متصل </string>
     <string name="showmore">أظهر المزيد</string>
     <string name="About">حول</string>
     <string name="set_duration">حدد المدة</string>
@@ -94,7 +94,7 @@
     <string name="please_check_your_internet_connection_and_try_again">يرجى التحقق من اتصالك بالإنترنت وحاول مرة أخرى.</string>
     <string name="enter_meeting_topic">موضوع الاجتماع …</string>
     <string name="news">أخبار</string>
-    <string name="meeting_talk_points">نقاط الحديث عن الاجتماع</string>
+    <string name="meeting_talk_points">نقاط الاجتماع</string>
     <string name="meeting_duration">مدة الاجتماع</string>
     <string name="create_meeting_now">إنشاء اجتماع الآن</string>
     <string name="schedule_meeting">يرتب موعد للاجتماع</string>
@@ -109,9 +109,9 @@
         <item>مسؤل</item>
         <item>منسق</item>
     </string-array>
-    <string name="title_activity_side_drawer">درج جانبي</string>
-    <string name="navigation_drawer_open">افتح درج التنقل</string>
-    <string name="navigation_drawer_close">أغلق درج التنقل</string>
+    <string name="title_activity_side_drawer">قائمة جانبية</string>
+    <string name="navigation_drawer_open">فتح القائمة الجانية</string>
+    <string name="navigation_drawer_close">اغلاق القائمة الجانية</string>
     <string name="nav_header_title">بيئة تطوير أندرويد</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">رأس التنقل</string>
@@ -137,21 +137,21 @@
     <string name="enter_group_name_here">أدخل اسم المجموعة هنا …</string>
     <string name="contributors">المساهمون</string>
     <string name="newer">أحدث</string>
-    <string name="older">اكبر سنا</string>
+    <string name="older">اقدم</string>
     <string name="invited_meeting">دعوة للاجتماع</string>
-    <string name="like">يحب</string>
+    <string name="like">أعجبتي</string>
     <string name="About_us">معلومات عنا</string>
     <string name="comment">تعليق</string>
     <string name="publish">ينشر</string>
-    <string name="Title">لقب</string>
+    <string name="Title">عنوان</string>
     <string name="new_post">منشور جديد</string>
-    <string name="sign_in_man">تحتاج إلى الغناء لإكمال هذه العملية</string>
+    <string name="sign_in_man">تحتاج إلى تجيل عضوية  لإكمال هذه العملية</string>
     <string name="new_poll">استطلاع رأي جديد</string>
-    <string name="close">قريب</string>
+    <string name="close">اغلاق</string>
     <string name="createsubject">إنشاء الموضوع</string>
     <string name="Publish">ينشر</string>
     <string name="qusetoin">qusetoin ....</string>
-    <string name="timepoll">وقت الاستطلاع</string>
+    <string name="timepoll">الوقت المحدد للاستطلاع</string>
     <string name="Settings">إعدادات</string>
     <string name="country">دولة</string>
     <string name="city">مدينة</string>
@@ -166,26 +166,26 @@
     <string name="confirm_password">تأكيد كلمة المرور</string>
 
     <string name="sign_up">اشتراك</string>
-    <string name="alread_have_account">لديك حساب بالفعل</string>
-    <string name="approve">يوافق</string>
+    <string name="alread_have_account">لديك حساب بالفعل؟</string>
+    <string name="approve">الموافقة</string>
     <string name="photo">الصور</string>
-    <string name="edit">يحرر</string>
-    <string name="videos">أشرطة فيديو</string>
+    <string name="edit">التعديل</string>
+    <string name="videos"> فيديو</string>
     <string name="read_more">اقرأ أكثر</string>
-    <string name="join">ينضم</string>
+    <string name="join">انضمام</string>
     <string name="Meetings">الاجتماعات</string>
     <string name="Error_message_Details">الرجاء كتابة التفاصيل</string>
-    <string name="Error_meassage_subjectTitle">أدخل مناشدات العنوان الخاص بك</string>
-    <string name="write_your_subject">اكتب نداءات الموضوع الخاص بك</string>
+    <string name="Error_meassage_subjectTitle">أدخل  العنوان </string>
+    <string name="write_your_subject">اكتب  الموضوع الخاص بك</string>
     <string name="dowonloading_">جارى التحميل…</string>
-    <string name="SuccessfullMessage">أضف بنجاح</string>
+    <string name="SuccessfullMessage">تمت الاضافة بنجاح</string>
     <string name="Delete_success">تم حذف العنصر بنجاح</string>
     <string name="Download">جارى التحميل…</string>
-    <string name="AuthMessage">مناشدات تحقق من اتصال Intetnet الخاص بك</string>
+    <string name="AuthMessage">الرجاء التحقق من اتصال الانترنت الخاص بك</string>
     <string name="Meetings_Message_cant_Slected_item">لا يمكن أن يكون وقت الاجتماع في الوقت المحدد!</string>
     <string name="meeting_title">حدد وقت الاجتماع</string>
     <string name="Auth_from_sending_message">هل تريد ترك رسالة ترسل؟</string>
-    <string name="Leaving_Message">يغادر أثناء إرسال الرسالة أثناء إلغاء الرسالة!</string>
+    <string name="Leaving_Message">المغادرة أثناء إرسال الرسالة أثناء يعمل على إلغاء الرسالة!</string>
     <string name="YES">نعم</string>
     <string name="No">لا</string>
     <string name="Error_meassage_MeetingFiald">فشل في إنشاء الاجتماع ، يرجى المحاولة مرة أخرى!</string>
@@ -201,7 +201,6 @@
     <string name="DataScale">ميغابايت!</string>
     <string name="DownLoad_Asking">هل تريد التحميل؟</string>
     <string name="Download_btn">تحميل</string>
-    <string name="Cansle">كانسل</string>
     <string name="Start_zoom_Meeting">"بدأ اجتماع Zoom!"</string>
     <string name="send_An_Message">إرسال صورة</string>
     <string name="sen_Attachment">إرسال مرفق</string>
@@ -273,10 +272,10 @@
     <string name="Error_Message_Phone">رقم هاتفك المحمول مطلوب</string>
     <string name="SignUp_Message">جاري تسجيل الدخول </string>
     <string name="Rejcetet_Message">تم رفضك من قبل الادمن </string>
-    <string name="Appromvent_Message">لم تتم قبولك بعد
+    <string name="Appromvent_Message">لم يتم قبولك بعد
     </string>
     <string name="Error_Auth">"خطأ في التحقق "</string>
-    <string name="Update_Message">يتم تحديث البيانات </string>
+    <string name="Update_Message">يتم تحديث البيانات... </string>
     <string name="Update_Error_Message">حدث خطأ في التحديث </string>
     <string name="Error">خطأ</string>
     <string name="Warring_Group_Message">لانشاء مجموعة عليك ارسال دعوة الى 2 من المستخدمين </string>
@@ -288,6 +287,8 @@
     <string name="Invalied_Number_Message">الرقم غير صحيح !</string>
     <string name="Auth_number_Message">الرجاء التأكد من رقم هاتفك </string>
     <string name="BirthDay">تاريخ الميلاد</string>
+    <string name="show_more">اقرأ المزيد ...</string>
+
     <!-- Generated by Automatic String Resource Translation -->
     <!--          https://asrt.gluege.boerde.de             -->
 </resources>

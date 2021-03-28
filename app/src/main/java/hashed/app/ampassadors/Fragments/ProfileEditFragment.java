@@ -69,7 +69,7 @@ public class ProfileEditFragment extends Fragment {
   String cameraImageFilePath;
   FirebaseStorage storage;
   private Uri filePath;
-
+  EditText bio;
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
@@ -80,6 +80,7 @@ public class ProfileEditFragment extends Fragment {
     city = view.findViewById(R.id.input_city);
     phone = view.findViewById(R.id.input_phone);
     save = view.findViewById(R.id.save);
+    bio = view.findViewById(R.id.bio);
 //
     imageView = view.findViewById(R.id.profile_picture);
 
@@ -115,12 +116,13 @@ public class ProfileEditFragment extends Fragment {
             String coun = task.getResult().getString("country");
             String cit = task.getResult().getString("city");
             String pho = task.getResult().getString("phone");
-
+            String biotext = task.getResult().getString("Bio");
 
             username.setText(user_name);
             country.setText(coun);
             city.setText(cit);
             phone.setText(pho);
+            bio.setText(biotext);
 
           }
         } else {

@@ -46,6 +46,7 @@ public class ComplanitsListActivity extends AppCompatActivity implements Toolbar
     recyclerView.setAdapter(adapter);
     showSuggestions(true);
     setUpToolBarAndActions();
+    
   }
 
 
