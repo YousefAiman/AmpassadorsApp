@@ -154,7 +154,8 @@ public class UserMessageSearchActivity extends AppCompatActivity implements
   public void clickUser(String userId) {
 
     if(getIntent().hasExtra("isForCourse")){
-        setResult(AddCourseFragment.TUTOR_REQUEST,getIntent().putExtra("userId",userId));
+        setResult(AddCourseFragment.TUTOR_REQUEST
+                ,getIntent().putExtra("userId",userId));
     }else{
       startActivity(new Intent(UserMessageSearchActivity.this,
               PrivateMessagingActivity.class).putExtra("messagingUid", userId)

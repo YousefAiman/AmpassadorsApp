@@ -92,7 +92,8 @@ public class CoursesActivity extends AppCompatActivity implements
       public boolean onMenuItemClick(MenuItem item) {
 
         if (item.getItemId() == R.id.action_notifications) {
-          startActivity(new Intent(CoursesActivity.this, NotificationsActivity.class)
+          startActivity(new Intent(CoursesActivity.this,
+                  NotificationsActivity.class)
                   .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         }
 
@@ -272,8 +273,6 @@ public class CoursesActivity extends AppCompatActivity implements
             });
   }
 
-
-
   @Override
   public void onRefresh() {
     courses.clear();
@@ -290,7 +289,6 @@ public class CoursesActivity extends AppCompatActivity implements
       dialogFragment.show(getSupportFragmentManager(),"AddCourseFragment");
     }
   }
-
 
   @Override
   public void onDestroy() {
@@ -354,7 +352,6 @@ public class CoursesActivity extends AppCompatActivity implements
 
   }
 
-
   private class ScrollListener extends RecyclerView.OnScrollListener {
     @Override
     public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -368,11 +365,11 @@ public class CoursesActivity extends AppCompatActivity implements
     }
   }
 
-
   @Override
   protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
     Log.d("ttt","on acitivyt result");
     dialogFragment.onActivityResult(requestCode,resultCode,data);
   }
+
 }

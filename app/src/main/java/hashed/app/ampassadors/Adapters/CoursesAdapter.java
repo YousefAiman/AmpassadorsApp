@@ -121,7 +121,7 @@ public class CoursesAdapter extends RecyclerView.Adapter<CoursesAdapter.CoursesV
         public void onSuccess(DocumentSnapshot snapshot) {
           if(snapshot.exists()){
 
-            if (course.getStartTime() > System.currentTimeMillis()) {
+            if (course.getStartTime() < System.currentTimeMillis()) {
               Toast.makeText(itemView.getContext(),
                       "This Course hasn't started yet!", Toast.LENGTH_SHORT).show();
               return;
@@ -135,7 +135,6 @@ public class CoursesAdapter extends RecyclerView.Adapter<CoursesAdapter.CoursesV
           }else{
 
             if(!course.isHasEnded() && course.getStartTime() < System.currentTimeMillis()){
-
 
               final AlertDialog.Builder alert = new AlertDialog.Builder(itemView.getContext());
               alert.setTitle("Do you want to register for this course?");

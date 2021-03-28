@@ -19,6 +19,8 @@ public class Course implements Serializable {
   private String title;
   @PropertyName("tutorName")
   private String tutorName;
+  @PropertyName("tutorId")
+  private String tutorId;
   @PropertyName("startTime")
   private long startTime;
   @PropertyName("createdTime")
@@ -106,5 +108,13 @@ public class Course implements Serializable {
 
   public void setDuration(int duration) {
     this.duration = duration;
+  }
+
+  public String getTutorId() {
+    return tutorId;
+  }
+
+  public void setTutorId(String tutorId) {
+    this.tutorId = tutorId;
   }
 }

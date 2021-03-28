@@ -57,6 +57,8 @@ import java.util.UUID;
 import hashed.app.ampassadors.Activities.CoursesActivity;
 import hashed.app.ampassadors.Activities.GroupMessagingActivity;
 import hashed.app.ampassadors.Activities.UserMessageSearchActivity;
+import hashed.app.ampassadors.Activities.UserSearchActivity;
+import hashed.app.ampassadors.Activities.UsersPickerActivity;
 import hashed.app.ampassadors.Adapters.UsersAdapter;
 import hashed.app.ampassadors.NotificationUtil.CloudMessagingNotificationsSender;
 import hashed.app.ampassadors.NotificationUtil.Data;
@@ -215,8 +217,13 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
 //      }
 //
 //      tutorPickerRv.setVisibility(View.VISIBLE);
+
+//      Intent intent = new Intent(requireContext(), UserMessageSearchActivity.class);
+//      intent.putStringArrayListExtra("selectedUserIds", pickerAdapter.selectedUserIds);
+//      startActivityForResult(intent, 3);
+//
     getActivity().startActivityForResult(new Intent(requireContext(), UserMessageSearchActivity.class)
-    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("isForCourse",true),TUTOR_REQUEST);
+            .putExtra("isForCourse",true),TUTOR_REQUEST);
 
     }
 
@@ -415,6 +422,7 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
     courseMap.put("creatorId", currentUid);
     courseMap.put("title", title);
     courseMap.put("tutorName", tutor);
+    courseMap.put("tutorId", pickedTutorId);
     courseMap.put("startTime", scheduleTime);
     courseMap.put("createdTime", System.currentTimeMillis());
     courseMap.put("duration",duration);
@@ -521,7 +529,8 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
     if(requestCode == TUTOR_REQUEST && data!=null && data.hasExtra("userId")){
 
       pickedTutorId = data.getStringExtra("userId");
-      usersRef.document(pickedTutorId).get()
+      FirebaseFirestore.getInstance().collection("Users")
+              .document(pickedTutorId).get()
               .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
       @Override
       public void onSuccess(DocumentSnapshot snapshot) {
