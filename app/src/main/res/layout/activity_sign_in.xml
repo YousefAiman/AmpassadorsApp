@@ -1,188 +1,196 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F2F2F2"
+    android:fillViewport="true"
     tools:context=".Activities.sign_in">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
 
-    <ImageView
-        android:id="@+id/profile_picture"
-        android:layout_width="225dp"
-        android:layout_height="170dp"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/ic_logo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.486"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        >
 
-    <EditText
-        android:id="@+id/input_email"
-        android:layout_width="269dp"
-        android:layout_height="42dp"
-        android:layout_marginTop="56dp"
-        android:background="@drawable/input_bg"
-        android:drawableLeft="@drawable/ic_baseline_email"
-        android:elevation="50dp"
-        android:ems="10"
-        android:hint="@string/email"
-        android:inputType="textEmailAddress"
-        android:padding="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile_picture" />
+        <ImageView
+            android:id="@+id/profile_picture"
+            android:layout_width="267dp"
+            android:layout_height="189dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/ic_logo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.506"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/imput_password"
-        android:layout_width="269dp"
-        android:layout_height="39dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/input_bg"
-        android:drawableLeft="@drawable/ic_baseline_lock"
-        android:elevation="50dp"
+        <EditText
+            android:id="@+id/input_email"
+            android:layout_width="269dp"
+            android:layout_height="42dp"
+            android:layout_marginTop="56dp"
+            android:background="@drawable/input_bg"
+            android:drawableLeft="@drawable/ic_baseline_email"
+            android:elevation="50dp"
+            android:ems="10"
+            android:hint="@string/email"
+            android:inputType="textEmailAddress"
+            android:padding="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_picture" />
 
-        android:ems="10"
-        android:hint="@string/password"
-        android:inputType="textPassword"
-        android:padding="10dp"
-        app:layout_constraintEnd_toEndOf="@+id/input_email"
-        app:layout_constraintStart_toStartOf="@+id/input_email"
-        app:layout_constraintTop_toBottomOf="@+id/input_email" />
+        <EditText
+            android:id="@+id/imput_password"
+            android:layout_width="269dp"
+            android:layout_height="39dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/input_bg"
+            android:drawableLeft="@drawable/ic_baseline_lock"
+            android:elevation="50dp"
 
-    <android.widget.Button
+            android:ems="10"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:padding="10dp"
+            app:layout_constraintEnd_toEndOf="@+id/input_email"
+            app:layout_constraintStart_toStartOf="@+id/input_email"
+            app:layout_constraintTop_toBottomOf="@+id/input_email" />
 
-        android:id="@+id/sign_in_btn"
-        android:layout_width="167dp"
-        android:layout_height="47dp"
-        android:layout_marginTop="40dp"
-        android:background="@drawable/btn_bg"
-        android:elevation="50dp"
-        android:text="@string/sign_in"
-        android:textColor="#fff"
-        app:backgroundTint="@color/dark_green"
-        app:layout_constraintEnd_toEndOf="@+id/imput_password"
-        app:layout_constraintStart_toStartOf="@+id/imput_password"
-        app:layout_constraintTop_toBottomOf="@+id/imput_password"
-        tools:ignore="MissingConstraints" />
+        <android.widget.Button
 
-    <TextView
-        android:id="@+id/forget_pass"
-        android:layout_width="0dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="25dp"
-        android:clickable="true"
-        android:shadowColor="@color/black"
-        android:text="@string/forget_password"
-        android:textAlignment="center"
-        android:textColor="@color/black"
-        app:layout_constraintEnd_toEndOf="@+id/sign_in_btn"
-        app:layout_constraintStart_toStartOf="@+id/sign_in_btn"
-        app:layout_constraintTop_toBottomOf="@+id/sign_in_btn" />
+            android:id="@+id/sign_in_btn"
+            android:layout_width="167dp"
+            android:layout_height="47dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/btn_bg"
+            android:elevation="50dp"
+            android:text="@string/sign_in"
+            android:textColor="#fff"
+            app:backgroundTint="@color/dark_green"
+            app:layout_constraintEnd_toEndOf="@+id/imput_password"
+            app:layout_constraintStart_toStartOf="@+id/imput_password"
+            app:layout_constraintTop_toBottomOf="@+id/imput_password"
+            tools:ignore="MissingConstraints" />
 
-    <TextView
-        android:id="@+id/verify_email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:shadowColor="@color/black"
-        android:textColor="@color/black"
-        tools:layout_editor_absoluteX="178dp"
-        tools:layout_editor_absoluteY="406dp"
-        tools:ignore="MissingConstraints" />
+        <TextView
+            android:id="@+id/forget_pass"
+            android:layout_width="0dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="25dp"
+            android:clickable="true"
+            android:shadowColor="@color/black"
+            android:text="@string/forget_password"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="@+id/sign_in_btn"
+            app:layout_constraintStart_toStartOf="@+id/sign_in_btn"
+            app:layout_constraintTop_toBottomOf="@+id/sign_in_btn" />
 
-    <View
-        android:id="@+id/view3"
-        android:layout_width="0dp"
-        android:layout_height="2dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="28dp"
-        android:background="#c0c0c0"
-        app:layout_constraintEnd_toStartOf="@+id/guideline9"
-        app:layout_constraintStart_toEndOf="@+id/or"
-        app:layout_constraintTop_toBottomOf="@+id/forget_pass"
-        tools:ignore="MissingConstraints" />
+        <TextView
+            android:id="@+id/verify_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:shadowColor="@color/black"
+            android:textColor="@color/black"
+            tools:layout_editor_absoluteX="178dp"
+            tools:layout_editor_absoluteY="406dp"
+            tools:ignore="MissingConstraints" />
 
-    <TextView
-        android:id="@+id/or"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="OR"
-        android:textColor="#000"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="@+id/forget_pass"
-        app:layout_constraintStart_toStartOf="@+id/forget_pass"
-        app:layout_constraintTop_toBottomOf="@+id/forget_pass"
-        tools:ignore="MissingConstraints" />
+        <View
+            android:id="@+id/view3"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="28dp"
+            android:background="#c0c0c0"
+            app:layout_constraintEnd_toStartOf="@+id/guideline9"
+            app:layout_constraintStart_toEndOf="@+id/or"
+            app:layout_constraintTop_toBottomOf="@+id/forget_pass"
+            tools:ignore="MissingConstraints" />
 
-    <View
-        android:id="@+id/view2"
-        android:layout_width="0dp"
-        android:layout_height="2dp"
-        android:layout_marginTop="28dp"
-        android:layout_marginRight="20dp"
-        android:background="#c0c0c0"
-        app:layout_constraintEnd_toStartOf="@+id/or"
-        app:layout_constraintStart_toStartOf="@+id/guideline8"
-        app:layout_constraintTop_toBottomOf="@+id/forget_pass"
-        tools:ignore="MissingConstraints" />
+        <TextView
+            android:id="@+id/or"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="OR"
+            android:textColor="#000"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="@+id/forget_pass"
+            app:layout_constraintStart_toStartOf="@+id/forget_pass"
+            app:layout_constraintTop_toBottomOf="@+id/forget_pass"
+            tools:ignore="MissingConstraints" />
 
-    <Button
-        android:id="@+id/create_account_btn"
-        android:layout_width="0dp"
-        android:layout_height="36dp"
-        android:layout_marginTop="16dp"
-        android:textAllCaps="false"
-        android:background="@drawable/btn_create"
-        android:text="@string/create_new_account"
-        app:backgroundTint="@color/design_default_color_error"
-        app:layout_constraintEnd_toEndOf="@+id/facebookbtn"
-        app:layout_constraintStart_toStartOf="@+id/facebookbtn"
-        app:layout_constraintTop_toBottomOf="@+id/facebookbtn"
-        tools:ignore="MissingConstraints" />
+        <View
+            android:id="@+id/view2"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginRight="20dp"
+            android:background="#c0c0c0"
+            app:layout_constraintEnd_toStartOf="@+id/or"
+            app:layout_constraintStart_toStartOf="@+id/guideline8"
+            app:layout_constraintTop_toBottomOf="@+id/forget_pass"
+            tools:ignore="MissingConstraints" />
 
-    <android.widget.Button
-        android:id="@+id/gmailbtn"
-        android:layout_width="272dp"
-        android:layout_height="36dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/gamil_disgn"
-        android:drawableStart="@drawable/ic_gamil"
-        android:padding="130dp"
-        app:layout_constraintEnd_toEndOf="@+id/view3"
-        app:layout_constraintStart_toStartOf="@+id/view2"
-        app:layout_constraintTop_toBottomOf="@+id/or" />
+        <Button
+            android:id="@+id/create_account_btn"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="16dp"
+            android:textAllCaps="false"
+            android:background="@drawable/btn_create"
+            android:text="@string/create_new_account"
+            app:backgroundTint="@color/design_default_color_error"
+            app:layout_constraintEnd_toEndOf="@+id/facebookbtn"
+            app:layout_constraintStart_toStartOf="@+id/facebookbtn"
+            app:layout_constraintTop_toBottomOf="@+id/facebookbtn"
+            tools:ignore="MissingConstraints" />
 
-    <android.widget.Button
-        android:id="@+id/facebookbtn"
-        android:layout_width="0dp"
-        android:layout_height="36dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/facebook_button"
-        android:drawableStart="@drawable/ic_facebook"
-        android:padding="130dp"
-        app:layout_constraintEnd_toEndOf="@+id/gmailbtn"
-        app:layout_constraintStart_toStartOf="@+id/gmailbtn"
-        app:layout_constraintTop_toBottomOf="@+id/gmailbtn" />
+        <android.widget.Button
+            android:id="@+id/gmailbtn"
+            android:layout_width="272dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/gamil_disgn"
+            android:drawableStart="@drawable/ic_gamil"
+            android:padding="130dp"
+            app:layout_constraintEnd_toEndOf="@+id/view3"
+            app:layout_constraintStart_toStartOf="@+id/view2"
+            app:layout_constraintTop_toBottomOf="@+id/or" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline8"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.11192214"
-        app:layout_constraintStart_toStartOf="parent" />
+        <android.widget.Button
+            android:id="@+id/facebookbtn"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/facebook_button"
+            android:drawableStart="@drawable/ic_facebook"
+            android:padding="130dp"
+            app:layout_constraintEnd_toEndOf="@+id/gmailbtn"
+            app:layout_constraintStart_toStartOf="@+id/gmailbtn"
+            app:layout_constraintTop_toBottomOf="@+id/gmailbtn" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline9"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="822dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintGuide_percent="0.9026764" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.11192214"
+            app:layout_constraintStart_toStartOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="822dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintGuide_percent="0.9026764" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>
