@@ -189,18 +189,18 @@ public class sign_in extends AppCompatActivity {
                                                     dialog.dismiss();
 
                                                 } else {
-                                                    if (snapshot.getBoolean("approvement")) {
-
-                                                        GlobalVariables.setRole(snapshot.getString("Role"));
-
-                                                        FirebaseMessaging.getInstance()
-                                                                .getToken().addOnSuccessListener(new OnSuccessListener<String>() {
-                                                            @Override
-                                                            public void onSuccess(String s) {
-                                                                GlobalVariables.setCurrentToken(s);
-                                                                snapshot.getReference().update("token", s);
-                                                            }
-                                                        });
+//                                                    if (snapshot.getBoolean("approvement")) {
+//
+//                                                        GlobalVariables.setRole(snapshot.getString("Role"));
+//
+//                                                        FirebaseMessaging.getInstance()
+//                                                                .getToken().addOnSuccessListener(new OnSuccessListener<String>() {
+//                                                            @Override
+//                                                            public void onSuccess(String s) {
+//                                                                GlobalVariables.setCurrentToken(s);
+//                                                                snapshot.getReference().update("token", s);
+//                                                            }
+//                                                        });
 
                                                         FirebaseMessagingService.startMessagingService(sign_in.this);
 
@@ -212,18 +212,17 @@ public class sign_in extends AppCompatActivity {
                                                         startActivity(intent);
                                                         finish();
 
-                                                    } else {
-
-                                                        auth.signOut();
-                                                        dialog.dismiss();
-
-                                                        Toast.makeText(sign_in.this,
-                                                                R.string.Appromvent_Message,
-                                                                Toast.LENGTH_SHORT).show();
                                                     }
-
-                                                }
-
+//                                                    else {
+//
+//                                                        auth.signOut();
+//                                                        dialog.dismiss();
+//
+//                                                        Toast.makeText(sign_in.this,
+//                                                                R.string.Appromvent_Message,
+//                                                                Toast.LENGTH_SHORT).show();
+//                                                    }
+                                              //  }
                                             }
                                         }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                             @Override
@@ -237,9 +236,7 @@ public class sign_in extends AppCompatActivity {
                                                             R.string.Rejcetet_Message,
                                                             Toast.LENGTH_SHORT).show();
                                                     dialog.dismiss();
-
                                                 }
-
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
                                             @Override
@@ -258,8 +255,6 @@ public class sign_in extends AppCompatActivity {
                                                 Toast.LENGTH_SHORT).show();
 
                                     }
-
-
                                 }
 
                             }).addOnFailureListener(new OnFailureListener() {

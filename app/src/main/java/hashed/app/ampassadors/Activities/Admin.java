@@ -79,7 +79,6 @@ public class Admin extends AppCompatActivity {
      query = firebaseFirestore.collection("Users")
             .whereEqualTo("rejected",false)
             .limit(USER_LIMIT);
-
     getUsers(true);
   }
   private void getUsers(boolean isInitial) {
@@ -89,7 +88,6 @@ public class Admin extends AppCompatActivity {
     if (lastDocSnap != null) {
       updatedQuery = query.startAfter(lastDocSnap);
     }
-
     updatedQuery.get().addOnSuccessListener(queryDocumentSnapshots -> {
       if (!queryDocumentSnapshots.isEmpty()) {
 

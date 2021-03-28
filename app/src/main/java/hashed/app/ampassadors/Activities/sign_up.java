@@ -279,7 +279,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                 hashMap.put("email", email);
                 hashMap.put("country", country);
                 hashMap.put("city", city);
-                hashMap.put("approvement", false);
+             //   hashMap.put("approvement", false);
                 hashMap.put("rejected", false);
                 hashMap.put("phone", phone);
                 hashMap.put("userId", authResult.getUser().getUid());
