@@ -1557,7 +1557,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
 //            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
 //                    .getAbsolutePath();
 
-//    final Uri uri = Uri.parse(url);
+//    final Uri uri = Uri.parse(CREATE_MEETING_URL);
     DownloadManager.Request request;
 
     request = new DownloadManager.Request(Uri.parse(url))

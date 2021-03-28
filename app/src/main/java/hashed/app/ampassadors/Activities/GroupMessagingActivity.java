@@ -19,9 +19,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -33,6 +35,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
@@ -94,6 +97,9 @@ import hashed.app.ampassadors.Objects.ZoomMeeting;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
 import hashed.app.ampassadors.Utils.GlobalVariables;
+import hashed.app.ampassadors.Utils.TimeFormatter;
+import hashed.app.ampassadors.Utils.WorkRequester;
+import hashed.app.ampassadors.Workers.ZoomMeetingWorker;
 
 public class GroupMessagingActivity extends AppCompatActivity
         implements Toolbar.OnMenuItemClickListener, PrivateMessagingAdapter.DeleteMessageListener,
@@ -142,6 +148,8 @@ public class GroupMessagingActivity extends AppCompatActivity
   private FrameLayout pickerFrameLayout;
   private ImageView messagingTbProfileIv;
   private TextView messagingTbNameTv;
+  private ConstraintLayout zoomConstraint;
+
   //attachments
   private int messageAttachmentUploadedIndex = -1;
   private BroadcastReceiver downloadCompleteReceiver;
@@ -216,6 +224,7 @@ public class GroupMessagingActivity extends AppCompatActivity
     cancelIv = findViewById(R.id.cancelIv);
     messagingTbProfileIv = findViewById(R.id.messagingTbProfileIv);
     messagingTbNameTv = findViewById(R.id.messagingTbNameTv);
+    zoomConstraint = findViewById(R.id.zoomConstraint);
 
     privateMessagingRv.addOnLayoutChangeListener(this);
     messageAttachIv.setOnClickListener(this);
@@ -317,11 +326,37 @@ public class GroupMessagingActivity extends AppCompatActivity
                           @Nullable FirebaseFirestoreException error) {
 
         if (value != null) {
-          if (value.getBoolean("hasEnded")) {
+          Log.d("ttt","firebase messaigng doc event");
+          if (value.contains("hasEnded") && value.getBoolean("hasEnded")) {
             Toast.makeText(GroupMessagingActivity.this,
                     R.string.EndMeeting_Message,
                     Toast.LENGTH_SHORT).show();
             finish();
+
+          }else if(value.contains("currentZoomMeeting")){
+
+            final ZoomMeeting zoomMeeting =  value.get("currentZoomMeeting",ZoomMeeting.class);
+
+            if(zoomMeeting!=null){
+
+              final long endTime = zoomMeeting.getStartTime() +
+                      (zoomMeeting.getDuration() * DateUtils.MINUTE_IN_MILLIS);
+
+              Log.d("ttt","current time: "+System.currentTimeMillis());
+              Log.d("ttt","endTime: "+endTime);
+
+              if(System.currentTimeMillis() >= endTime){
+                value.getReference().update("currentZoomMeeting",null);
+              }else{
+                showZoomMeeting(zoomMeeting);
+              }
+            }else if(zoomConstraint.getVisibility() == View.VISIBLE){
+
+              zoomConstraint.setVisibility(View.GONE);
+
+              Toast.makeText(GroupMessagingActivity.this, "Zoom Meeting has ended!",
+                      Toast.LENGTH_SHORT).show();
+            }
           }
         }
       }
@@ -384,6 +419,8 @@ public class GroupMessagingActivity extends AppCompatActivity
 
 
                 addDeleteFieldListener();
+
+
                 messagesProgressBar.setVisibility(View.GONE);
               }
 
@@ -401,7 +438,7 @@ public class GroupMessagingActivity extends AppCompatActivity
   private void createGroupDocument(PrivateMessage privateMessage) {
 
     final Map<String, PrivateMessage> messages = new HashMap<>();
-    messages.put("0", privateMessage);
+    messages.put(String.valueOf(System.currentTimeMillis()), privateMessage);
 
     currentMessagingRef.child("Messages").setValue(messages)
             .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -499,10 +536,10 @@ public class GroupMessagingActivity extends AppCompatActivity
 
   private void addDeleteFieldListener() {
 
-
     valueEventListeners = new HashMap<>();
 
     ValueEventListener valueEventListener;
+
     currentMessagingRef
             .child("lastDeleted")
             .addValueEventListener(valueEventListener = new ValueEventListener() {
@@ -537,6 +574,72 @@ public class GroupMessagingActivity extends AppCompatActivity
 
   }
 
+  private void addZoomFieldListener() {
+
+    valueEventListeners = new HashMap<>();
+
+    ValueEventListener valueEventListener;
+
+
+
+    currentMessagingRef
+            .child("currentZoomMeeting")
+            .addValueEventListener(valueEventListener = new ValueEventListener() {
+              @Override
+              public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+
+                  final ZoomMeeting zoomMeeting = snapshot.getValue(ZoomMeeting.class);
+                  if(zoomMeeting != null){
+                    showZoomMeeting(zoomMeeting);
+                  }
+
+                }
+              }
+
+              @Override
+              public void onCancelled(@NonNull DatabaseError error) {
+
+              }
+            });
+
+    valueEventListeners.put(currentMessagingRef.child("currentZoomMeeting").getRef(),
+            valueEventListener);
+
+  }
+
+  private void showZoomMeeting(ZoomMeeting zoomMeeting){
+
+    TextView zoomMeetingTopicTv = findViewById(R.id.zoomMeetingTopicTv);
+    TextView zoomMeetingStartTimeTv = findViewById(R.id.zoomMeetingStartTimeTv);
+    TextView zoomMeetingDurationTv = findViewById(R.id.zoomMeetingDurationTv);
+    Button zoomMeetingJoinBtn = findViewById(R.id.zoomMeetingJoinBtn);
+
+    zoomConstraint.setVisibility(View.VISIBLE);
+
+    zoomMeetingTopicTv.setText(zoomMeeting.getTopic());
+    zoomMeetingStartTimeTv.setText(TimeFormatter.formatTime(zoomMeeting.getStartTime()));
+
+    int hours = zoomMeeting.getDuration() / 60;
+    int minutes = zoomMeeting.getDuration() % 60;
+
+//    String time = String.format(Locale.getDefault(),"%02d", hours, minutes);
+
+    zoomMeetingDurationTv.setText(hours+":"+minutes);
+
+    zoomMeetingJoinBtn.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+
+        if (zoomMeeting.getStartUrl() != null && !zoomMeeting.getStartUrl().isEmpty()) {
+          startZoomMeetingIntent(zoomMeeting.getStartUrl());
+        }
+
+      }
+    });
+
+  }
+
   private void sendMessage(PrivateMessage privateMessage) {
 
     messagingEd.setText("");
@@ -547,16 +650,28 @@ public class GroupMessagingActivity extends AppCompatActivity
       return;
     }
 
+    final String messageId = String.valueOf(System.currentTimeMillis());
 
     final DatabaseReference childRef = currentMessagingRef.child("Messages").
-            child(String.valueOf(System.currentTimeMillis()));
+            child(messageId);
 
+//    Bundle bundle = new Bundle();
+//    bundle.putString("message","new message");
+//
+//    FirebaseJobScheduler.scheduleJob(this,String.valueOf(
+//            System.currentTimeMillis()
+//    ),bundle,System.currentTimeMillis() + (3 * DateUtils.SECOND_IN_MILLIS));
+//
 
     childRef.setValue(privateMessage).addOnSuccessListener(v -> {
 
       if (privateMessage.getType() == Files.ZOOM) {
+
+        startZoomEndingWorker(privateMessage, messageId);
+
         sendZoomMeetingNotification(privateMessage.getZoomMeeting().getTopic(),
                 privateMessage.getZoomMeeting().getJoinUrl());
+
       } else {
         checkUserActivityAndSendNotifications(privateMessage.getContent(), privateMessage.getType());
       }
@@ -973,7 +1088,6 @@ public class GroupMessagingActivity extends AppCompatActivity
 
     uploadTasks.put(thumbnailUploadTask, thumbnailOnSuccessListener);
 
-
   }
 
   public void sendZoomMessage(String content, ZoomMeeting zoomMeeting) {
@@ -986,12 +1100,14 @@ public class GroupMessagingActivity extends AppCompatActivity
 
     privateMessage.setZoomMeeting(zoomMeeting);
 
+    firebaseMessageDocRef.update("currentZoomMeeting", zoomMeeting);
+
     sendMessage(privateMessage);
 
+//    if (zoomMeeting.getStartUrl() != null && !zoomMeeting.getStartUrl().isEmpty()) {
+//      startZoomMeetingIntent(zoomMeeting.getStartUrl());
+//    }
 
-    if (zoomMeeting.getStartUrl() != null && !zoomMeeting.getStartUrl().isEmpty()) {
-      startZoomMeetingIntent(zoomMeeting.getStartUrl());
-    }
   }
 
   private void startZoomMeetingIntent(String url) {
@@ -1587,6 +1703,21 @@ public class GroupMessagingActivity extends AppCompatActivity
 
 
     sendNotificationsToMembers(body);
+  }
+
+  private void startZoomEndingWorker(PrivateMessage privateMessage,String messageId){
+
+    androidx.work.Data workerData = new androidx.work.Data.Builder()
+            .putString("groupId",groupId)
+            .putString("zoomMeetingId",privateMessage.getZoomMeeting().getId())
+            .putString("messageId",messageId)
+            .build();
+
+    WorkRequester.requestWork(ZoomMeetingWorker.class,
+            this, privateMessage.getZoomMeeting().getStartTime() +
+                    (privateMessage.getZoomMeeting().getDuration() * DateUtils.MINUTE_IN_MILLIS),
+            workerData);
+
   }
 
   //notifications methods

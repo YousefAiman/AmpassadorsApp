@@ -16,7 +16,6 @@
     app:navigationIcon="@drawable/navigation_menu_icon"
     app:menu="@menu/menu_for_home_toolbar">
 
-
     <TextView
         android:id="@+id/toolbar_title"
         android:layout_width="wrap_content"

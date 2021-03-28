@@ -321,5 +321,14 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="Auth_number_Message">Please Check your phone number</string>
 
     <string name="show_more">Show more</string>
+    <string name="search">Search</string>
+    <string name="no_current_courses">No current courses</string>
+    <string name="tutor_name">Tutor name:</string>
+    <string name="start_time">Start time:</string>
+    <string name="course_duration">Course duration:</string>
+    <string name="course_title">Course title</string>
+    <string name="tutor_name_hint">Tutor name</string>
+    <string name="course_date">Course Date: </string>
+    <string name="course_time">Course time: </string>
 
 </resources>

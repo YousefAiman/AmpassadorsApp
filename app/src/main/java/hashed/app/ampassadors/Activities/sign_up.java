@@ -162,15 +162,14 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
             }
         }).start();
 
-
-
-
         iamge.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    ActivityCompat.requestPermissions(sign_up.this, new String[]{Manifest.permission.CAMERA,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+                    ActivityCompat.requestPermissions(sign_up.this,
+                            new String[]{Manifest.permission.CAMERA,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
                     SelectImage(sign_up.this);
 
                 }

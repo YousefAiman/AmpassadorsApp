@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="6dp"
+    android:layout_gravity="center"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="@color/white"
+    app:strokeColor="@color/medium_grey"
+    tools:context=".Fragments.AddCourseFragment"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:paddingHorizontal="14dp"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/courseNameEd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:background="@drawable/add_course_ed_back"
+            android:fontFamily="@font/segoe_ui"
+            android:paddingHorizontal="15dp"
+            android:inputType="text"
+            android:paddingVertical="10dp"
+            android:textColor="@color/black_transparent"
+            android:textSize="16sp"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/textView10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="27dp"
+            android:background="@color/white"
+            android:fontFamily="@font/segoe_ui"
+            android:paddingHorizontal="6dp"
+            android:text="@string/course_title"
+            android:textColor="@color/black_transparent"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@+id/courseNameEd"
+            app:layout_constraintStart_toStartOf="@+id/courseNameEd"
+            app:layout_constraintTop_toTopOf="@+id/courseNameEd" />
+
+
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Pick Tutor"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            app:layout_constraintStart_toStartOf="@+id/courseNameEd"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/courseNameEd" />-->
+<!--        -->
+        <EditText
+            android:id="@+id/courseTutorNameEd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/add_course_ed_back"
+            android:fontFamily="@font/segoe_ui"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="15dp"
+            android:textColor="@color/black_transparent"
+            android:textSize="16sp"
+            android:layout_marginTop="27dp"
+            app:layout_constraintTop_toBottomOf="@+id/courseNameEd"/>
+
+           <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/tutorPickerRv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:visibility="gone"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="@+id/courseTutorNameEd"
+            app:layout_constraintStart_toStartOf="@+id/courseTutorNameEd"
+            app:layout_constraintTop_toBottomOf="@+id/courseTutorNameEd" />
+
+
+        <TextView
+            android:id="@+id/textView14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="27dp"
+            android:background="@color/white"
+            android:fontFamily="@font/segoe_ui"
+            android:paddingHorizontal="6dp"
+            android:text="@string/tutor_name_hint"
+            android:textColor="@color/black_transparent"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@+id/courseTutorNameEd"
+            app:layout_constraintStart_toStartOf="@+id/courseTutorNameEd"
+            app:layout_constraintTop_toTopOf="@+id/courseTutorNameEd" />
+
+
+        <TextView
+            android:id="@+id/dateTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:fontFamily="@font/segoe_ui"
+            android:paddingVertical="8dp"
+            android:text="@string/course_date"
+            android:textColor="@color/black_transparent"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/courseTutorNameEd" />
+
+
+        <TextView
+            android:id="@+id/courseDateSetterTv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/meeting_topic_ed_border"
+            android:clickable="false"
+            android:fontFamily="@font/segoe_ui_bold"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="8dp"
+            android:hint="00/00/0000"
+            android:textColor="@color/black_transparent"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/dateTv"
+            app:layout_constraintStart_toEndOf="@+id/dateTv"
+            app:layout_constraintTop_toTopOf="@+id/dateTv"
+            app:layout_constraintWidth_min="wrap"
+            app:layout_constraintWidth_percent=".25" />
+
+
+        <ImageView
+            android:id="@+id/settingsIv1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/settings_icon"
+            app:layout_constraintBottom_toBottomOf="@+id/courseDateSetterTv"
+            app:layout_constraintStart_toEndOf="@+id/courseDateSetterTv"
+            app:layout_constraintTop_toTopOf="@+id/courseDateSetterTv" />
+
+
+        <TextView
+            android:id="@+id/timeTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/segoe_ui"
+            android:paddingVertical="8dp"
+            android:text="@string/course_time"
+            android:textColor="@color/black_transparent"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dateTv" />
+
+
+        <TextView
+            android:id="@+id/courseTimeSetterTv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/meeting_topic_ed_border"
+            android:clickable="false"
+            android:fontFamily="@font/segoe_ui_bold"
+            android:gravity="center"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="8dp"
+            android:hint="00:00"
+            android:textColor="@color/black_transparent"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/timeTv"
+            app:layout_constraintEnd_toEndOf="@+id/courseDateSetterTv"
+            app:layout_constraintStart_toStartOf="@+id/courseDateSetterTv"
+            app:layout_constraintTop_toTopOf="@+id/timeTv"
+            app:layout_constraintWidth_min="wrap" />
+
+
+        <ImageView
+            android:id="@+id/settingsIv2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/settings_icon"
+            android:layout_marginStart="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/courseTimeSetterTv"
+            app:layout_constraintStart_toEndOf="@+id/courseTimeSetterTv"
+            app:layout_constraintTop_toTopOf="@+id/courseTimeSetterTv" />
+
+
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="45dp"
+            android:fontFamily="@font/segoe_ui"
+            android:text="@string/course_duration"
+            android:textColor="@color/black_transparent"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/timeTv" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:fontFamily="@font/segoe_ui"
+            android:text="@string/minute"
+            android:visibility="gone"
+            android:textColor="@color/black_transparent"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/minutesTv"
+            app:layout_constraintStart_toEndOf="@+id/minutesTv"
+            app:layout_constraintTop_toTopOf="@+id/minutesTv" />
+
+        <TextView
+            android:id="@+id/courseDurationTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/meeting_topic_ed_border"
+            android:fontFamily="@font/segoe_ui_bold"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="8dp"
+            android:hint="00"
+            android:textColor="@color/black_transparent"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/textView9"
+            app:layout_constraintStart_toEndOf="@+id/textView9"
+            app:layout_constraintTop_toTopOf="@+id/textView9" />
+
+
+        <android.widget.Button
+            android:id="@+id/coursePublishBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/course_publish_btn_back"
+            android:fontFamily="@font/segoe_ui_bold"
+            android:text="@string/Publish"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:layout_marginBottom="54dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/courseDurationTv"
+            app:layout_constraintWidth_min="wrap"
+            app:layout_constraintWidth_percent="0.35" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

@@ -22,28 +22,18 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 import hashed.app.ampassadors.Activities.GroupMessagingActivity;
 import hashed.app.ampassadors.Objects.ZoomMeeting;
 import hashed.app.ampassadors.R;
-import hashed.app.ampassadors.Utils.ZoomRequester;
 import hashed.app.ampassadors.Utils.ZoomUtil;
 
 
@@ -206,7 +196,12 @@ public class ZoomMeetingCreationFragment extends Fragment implements View.OnClic
 
           zoomMeeting.setStartTime(scheduleTime);
 
+        }else{
+
+          zoomMeeting.setStartTime(System.currentTimeMillis());
+
         }
+
 
         Log.d("ttt", "zoomMeeting: " + zoomMeeting.toString());
 
@@ -230,63 +225,8 @@ public class ZoomMeetingCreationFragment extends Fragment implements View.OnClic
       }
     };
 
-    final RequestQueue queue = Volley.newRequestQueue(requireContext());
-
-    new Thread(new Runnable() {
-      @Override
-      public void run() {
-
-        final JSONObject jsonBodyObj = new JSONObject();
-
-        try {
-
-          jsonBodyObj.put("topic", topic);
-          jsonBodyObj.put("type", 1);
-          jsonBodyObj.put("duration", duration);
-          jsonBodyObj.put("agenda", description);
-
-        } catch (JSONException e) {
-          e.printStackTrace();
-        }
-
-        final String requestBody = jsonBodyObj.toString();
-
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,
-                ZoomUtil.url, null, responseListener, new Response.ErrorListener() {
-          @Override
-          public void onErrorResponse(VolleyError error) {
-
-//              createMeetBtn.setClickable(true);
-            zoomDialog.dismiss();
-
-
-            Toast.makeText(getContext(), "Meeting creation failed! Please try again",
-                    Toast.LENGTH_SHORT).show();
-
-            Log.d("ttt", "creating meeting failed: " + error.toString());
-          }
-        }) {
-          @Override
-          public Map<String, String> getHeaders() throws AuthFailureError {
-            Map<String, String> params = new HashMap<>();
-            params.put("Authorization", "Bearer " + ZoomRequester.JWT_TOKEN);
-            params.put("Content-Type", "application/json");
-            return params;
-          }
-
-          @Override
-          public byte[] getBody() {
-            return requestBody.getBytes(StandardCharsets.UTF_8);
-          }
-
-        };
-
-        queue.add(request);
-        queue.start();
-
-      }
-    }).start();
-
+    ZoomUtil.createMeeting(topic,duration,description,responseListener,
+            zoomDialog,requireContext());
 
   }
 
@@ -450,4 +390,6 @@ public class ZoomMeetingCreationFragment extends Fragment implements View.OnClic
     Log.d("ttt", "scheduleTime: " + scheduleTime);
 
   }
+
+
 }

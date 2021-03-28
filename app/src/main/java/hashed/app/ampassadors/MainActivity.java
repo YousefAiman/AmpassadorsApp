@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
       startActivityForResult(new Intent(MainActivity.this, ConnectionActivity.class)
               .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
               ConnectionActivity.CONNECTION_RESULT);
-      finish();
+//      finish();
     }, 800);
   }
 

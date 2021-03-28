@@ -47,15 +47,12 @@ public class UserMessageSearchActivity extends AppCompatActivity implements
     searchUserSearchView = findViewById(R.id.searchUserSearchView);
     progressBar = findViewById(R.id.progressBar);
 
-
     pickUserToolbar.setNavigationOnClickListener(v -> finish());
-
 
     searchUserSearchView.setOnClickListener(v -> searchUserSearchView.onActionViewCollapsed());
 
     searchUserSearchView.onActionViewExpanded();
     searchUserSearchView.setOnQueryTextListener(this);
-
 
     usersRef = FirebaseFirestore.getInstance().collection("Users");
 

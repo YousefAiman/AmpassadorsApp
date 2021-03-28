@@ -102,7 +102,7 @@ public class OnlineUsersFragment extends Fragment implements
     swipeRefreshLayout.setOnRefreshListener(this);
     userRv = view.findViewById(R.id.childRv);
     TextView noUsersTv = view.findViewById(R.id.emptyTv);
-    noUsersTv.setText(R.string.no_online_users);
+    noUsersTv.setText(getResources().getString(R.string.no_online_users));
 
     userRv.setLayoutManager(new LinearLayoutManager(getContext(),
             RecyclerView.VERTICAL, false) {
@@ -154,11 +154,12 @@ public class OnlineUsersFragment extends Fragment implements
   private void getMoreUsers(boolean isInitial) {
     swipeRefreshLayout.setRefreshing(true);
     isLoading = true;
+    Query currentQuery = query;
     if (lastDocSnap != null) {
-      query = query.startAfter(lastDocSnap);
+      currentQuery = query.startAfter(lastDocSnap);
     }
 
-    query.get().addOnSuccessListener(snapshots -> {
+    currentQuery.get().addOnSuccessListener(snapshots -> {
 
       if (!snapshots.isEmpty()) {
         lastDocSnap = snapshots.getDocuments().get(snapshots.size() - 1);
@@ -176,16 +177,17 @@ public class OnlineUsersFragment extends Fragment implements
 
       if (task.isSuccessful() && task.getResult() != null) {
 
+        boolean removedOne = false;
         if(!wasFound){
           for(int i=0;i<users.size();i++){
             if(users.get(i).getUserId().equals(currentUid)){
               wasFound = true;
+              removedOne = true;
               users.remove(i);
               break;
             }
           }
         }
-
 
         if (isInitial) {
 
@@ -202,17 +204,15 @@ public class OnlineUsersFragment extends Fragment implements
 
           if (!task.getResult().isEmpty()) {
 
+            int size = removedOne?task.getResult().size()-1:task.getResult().size();
+            
             usersAdapter.notifyItemRangeInserted(
-                    (users.size() - task.getResult().size()) - 1,
-                    task.getResult().size());
-
-
+                    users.size() - size,size);
+            
             if (task.getResult().size() < USERS_LIMIT && scrollListener != null) {
               userRv.removeOnScrollListener(scrollListener);
             }
           }
-
-
         }
         swipeRefreshLayout.setRefreshing(false);
       }

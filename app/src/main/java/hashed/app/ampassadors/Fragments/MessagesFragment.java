@@ -93,7 +93,7 @@ public class MessagesFragment extends Fragment {
     chatsRv = view.findViewById(R.id.childRv);
     noMessagesTv = view.findViewById(R.id.emptyTv);
     progressBar = view.findViewById(R.id.progressBar);
-    noMessagesTv.setText(R.string.no_current_messages);
+    noMessagesTv.setText(getResources().getString(R.string.no_current_messages));
 
     chatsRv.setLayoutManager(new LinearLayoutManager(getContext(),
             RecyclerView.VERTICAL, false) {

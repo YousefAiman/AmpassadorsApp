@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/dark_green"
+    android:layout_height="match_parent"
+    tools:context=".Activities.CoursesActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/courseToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:background="@color/medium_green"
+        android:elevation="4dp"
+        android:fitsSystemWindows="true"
+        android:textAlignment="center"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationContentDescription="navigate back"
+        app:navigationIcon="@drawable/back_arrow_icon"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:title="@string/Courses"
+        app:menu="@menu/courses_menu"
+        app:titleTextAppearance="@style/ToolbarTitleAppearance"
+        app:titleTextColor="@color/white"/>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/courseToolbar">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/coursesRv"
+            android:layout_width="match_parent"
+            android:paddingTop="20dp"
+            android:paddingBottom="15dp"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:visibility="invisible"/>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:id="@+id/emptyTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/segoe_ui"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:text="@string/no_current_courses"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/courseToolbar" />
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addCourseBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="@string/add_group"
+        android:src="@drawable/add_course_icon"
+        app:fabSize="normal"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="14dp"
+        android:visibility="gone"
+        app:maxImageSize="40dp"
+        app:tint="@color/white" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -34,8 +34,8 @@ public class UsersPickerAdapter extends RecyclerView.Adapter<UsersPickerAdapter.
 
   public UsersPickerAdapter(ArrayList<UserPreview> users, ArrayList<String> selectedUserIds,
                             boolean isFiltered) {
-    this.users = users;
     filteredUsers = users;
+    this.users = users;
     this.selectedUserIds = selectedUserIds;
   }
 

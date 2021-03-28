@@ -16,7 +16,7 @@ public class Meeting implements Serializable {
   private String title;
   @PropertyName("description")
   private String description;
-  @PropertyName("startTime;")
+  @PropertyName("startTime")
   private long startTime;
   @PropertyName("createdTime")
   private long createdTime;

@@ -39,7 +39,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
   private static final int IMAGE_NEWS = 3, VIDEO_NEWS = 4, ATTACHMENT_NEWS = 5;
   private static final CollectionReference postsCollectionRef =
           FirebaseFirestore.getInstance().collection("Posts");
-  private static List<PostData> posts;
+  private List<PostData> posts;
   private final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
   Context context;
 
@@ -56,7 +56,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //    }
 
   public PostAdapter(List<PostData> posts, Context context) {
-    PostAdapter.posts = posts;
+    this.posts = posts;
     this.context = context;
 //        this.commentsInterface = commentsInterface;
 //        this.imageInterface = imageInterface;
@@ -342,7 +342,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
   }
 
-  public static class NewsImageVh extends RecyclerView.ViewHolder
+  public class NewsImageVh extends RecyclerView.ViewHolder
           implements View.OnClickListener {
 
     private final ImageView newsIv;
@@ -374,7 +374,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
   }
 
-  public static class NewsVideosVh extends RecyclerView.ViewHolder
+  public  class NewsVideosVh extends RecyclerView.ViewHolder
           implements View.OnClickListener {
 
     private final ImageView newsIv;
@@ -407,7 +407,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
   }
 
-  public static class NewsAttachmentVh extends RecyclerView.ViewHolder
+  public  class NewsAttachmentVh extends RecyclerView.ViewHolder
           implements View.OnClickListener {
 
     private final TextView newsTitleTv;

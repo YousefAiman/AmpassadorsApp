@@ -304,6 +304,19 @@ public class Home_Activity extends AppCompatActivity implements
 //              replaceFragment(fragment);
 
 
+        } else if (item.getItemId() == R.id.courses) {
+
+        if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
+
+          SigninUtil.getInstance(Home_Activity.this,
+                  Home_Activity.this).show();
+        }else{
+          Intent intent = new Intent(Home_Activity.this, CoursesActivity.class);
+          intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+          startActivity(intent);
+
+        }
+
         } else if (item.getItemId() == R.id.complaints) {
 
           if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
