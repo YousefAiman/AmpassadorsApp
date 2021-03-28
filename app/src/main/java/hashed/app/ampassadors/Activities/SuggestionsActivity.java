@@ -42,11 +42,7 @@ public class SuggestionsActivity extends AppCompatActivity implements Toolbar.On
         setupCompontet();
         OnClick();
         setUpToolBarAndActions();
-
-
-
     }
-
     public void setupCompontet() {
         titleSubject = findViewById(R.id.defendant);
         send = findViewById(R.id.send);

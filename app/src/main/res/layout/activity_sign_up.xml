@@ -20,7 +20,7 @@
         app:layout_constraintWidth_percent="0.4"
         app:layout_constraintDimensionRatio="1"
         android:layout_marginTop="20dp"
-        android:background="@drawable/profile_background"
+        android:background="@drawable/add_photo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

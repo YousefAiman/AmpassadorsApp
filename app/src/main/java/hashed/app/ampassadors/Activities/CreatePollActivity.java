@@ -89,7 +89,6 @@ public class CreatePollActivity extends AppCompatActivity implements View.OnClic
 
     usernameTv.setText(GlobalVariables.getCurrentUsername());
     Picasso.get().load(GlobalVariables.getCurrentUserImageUrl()).fit().into(userIv);
-
   }
 
 

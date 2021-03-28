@@ -62,8 +62,6 @@ public class Profile extends AppCompatActivity {
                                         @Nullable FirebaseFirestoreException error) {
 
                         Log.d("ttt","value change");
-
-
                         if(userInfo[0] == null){
 
                             userInfo[0] = value.toObject(UserInfo.class);

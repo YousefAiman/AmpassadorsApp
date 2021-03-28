@@ -4,7 +4,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/profile_toolbar"
-    app:menu="@menu/chatting_toolbar_menu"
     android:layout_width="match_parent"
     app:navigationIcon="@drawable/back_arrow_icon"
     app:navigationContentDescription="Side menu"

@@ -169,7 +169,6 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
                         toolbar.getMenu().findItem(R.id.action_online).setTitle("online");
                     }
                 });
-                
             }else{
                 reference.update("status", true).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

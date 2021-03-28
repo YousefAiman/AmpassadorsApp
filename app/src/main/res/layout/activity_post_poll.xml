@@ -22,7 +22,7 @@
         android:layout_alignParentTop="true"
         android:background="@color/dark_green"
         app:navigationIcon="@drawable/back_arrow_icon"
-        app:menu="@menu/suggestions_toolbar_menu"/>
+       />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

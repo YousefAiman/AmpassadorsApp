@@ -39,11 +39,11 @@
                 android:layout_marginTop="36dp"
                 app:layout_constraintWidth_percent="0.4"
                 app:layout_constraintDimensionRatio="1"
-                android:background="@drawable/profile_background"
+                android:background="@drawable/add_photo"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/toolbar" />
-
+<!--
             <ImageView
                 android:id="@+id/updateImageIV"
                 android:layout_width="0dp"
@@ -55,7 +55,7 @@
                 app:layout_constraintEnd_toEndOf="@+id/profile_picture"
                 app:layout_constraintStart_toStartOf="@+id/profile_picture"
                 app:layout_constraintTop_toTopOf="@+id/profile_picture" />
-
+-->
             <EditText
                 android:padding="10dp"
                 android:id="@+id/input_username"

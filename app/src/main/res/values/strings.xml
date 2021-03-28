@@ -1,10 +1,11 @@
 <resources>
 
-    <string name="app_name">The National Mainstream</string>
+    <string name="app_name">TheNationalMainstream</string>
     <string name="more">More</string>
     <string name="notification_indicator">notification indicator</string>
     <string name="notifications">notifications</string>
     <string name="profile_image">profile image</string>
+
 
     <!--Messaging-->
     <string name="record_audio_message">record audio message</string>
