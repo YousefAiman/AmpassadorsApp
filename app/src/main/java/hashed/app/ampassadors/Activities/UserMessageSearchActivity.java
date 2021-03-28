@@ -24,6 +24,7 @@ import java.util.ArrayList;
 
 import hashed.app.ampassadors.Adapters.UsersAdapter;
 import hashed.app.ampassadors.Adapters.UsersPickerAdapter;
+import hashed.app.ampassadors.Fragments.AddCourseFragment;
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
 
@@ -152,10 +153,14 @@ public class UserMessageSearchActivity extends AppCompatActivity implements
   @Override
   public void clickUser(String userId) {
 
-    startActivity(new Intent(UserMessageSearchActivity.this,
-            PrivateMessagingActivity.class).putExtra("messagingUid", userId)
-            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+    if(getIntent().hasExtra("isForCourse")){
+        setResult(AddCourseFragment.TUTOR_REQUEST,new Intent().putExtra("userId",userId));
+    }else{
+      startActivity(new Intent(UserMessageSearchActivity.this,
+              PrivateMessagingActivity.class).putExtra("messagingUid", userId)
+              .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 
+    }
     finish();
   }
 }

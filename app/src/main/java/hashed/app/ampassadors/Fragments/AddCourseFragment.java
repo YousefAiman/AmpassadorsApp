@@ -3,6 +3,7 @@ package hashed.app.ampassadors.Fragments;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -55,6 +56,7 @@ import java.util.UUID;
 
 import hashed.app.ampassadors.Activities.CoursesActivity;
 import hashed.app.ampassadors.Activities.GroupMessagingActivity;
+import hashed.app.ampassadors.Activities.UserMessageSearchActivity;
 import hashed.app.ampassadors.Adapters.UsersAdapter;
 import hashed.app.ampassadors.NotificationUtil.CloudMessagingNotificationsSender;
 import hashed.app.ampassadors.NotificationUtil.Data;
@@ -67,11 +69,12 @@ import hashed.app.ampassadors.Utils.TimeFormatter;
 import hashed.app.ampassadors.Utils.ZoomUtil;
 
 public class AddCourseFragment extends DialogFragment implements View.OnClickListener,
-        HourMinutePickerDialogFragment.OnTimePass, UsersAdapter.UserAdapterClicker{
+        HourMinutePickerDialogFragment.OnTimePass{
 
+  public static final int TUTOR_REQUEST = 1;
   //views
-  private EditText courseNameEd,courseTutorNameEd;
-  private TextView courseDateSetterTv,courseTimeSetterTv,courseDurationTv;
+  private EditText courseNameEd;
+  private TextView courseDateSetterTv,courseTimeSetterTv,courseDurationTv,courseTutorNameTv;
   private ImageView settingsIv1,settingsIv2;
   private Button coursePublishBtn;
   private RecyclerView tutorPickerRv;
@@ -116,7 +119,7 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
     }
 
     courseNameEd = view.findViewById(R.id.courseNameEd);
-    courseTutorNameEd = view.findViewById(R.id.courseTutorNameEd);
+    courseTutorNameTv = view.findViewById(R.id.courseTutorNameTv);
     tutorPickerRv = view.findViewById(R.id.tutorPickerRv);
     courseDateSetterTv = view.findViewById(R.id.courseDateSetterTv);
     courseTimeSetterTv = view.findViewById(R.id.courseTimeSetterTv);
@@ -134,7 +137,7 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
 
     addClickListeners();
 
-    setUpTutorRecycler();
+//    setUpTutorRecycler();
 
   }
 
@@ -151,7 +154,7 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
 //      }
 //    });
 
-    courseTutorNameEd.setOnClickListener(this);
+    courseTutorNameTv.setOnClickListener(this);
     courseDateSetterTv.setOnClickListener(this);
     courseTimeSetterTv.setOnClickListener(this);
     courseDurationTv.setOnClickListener(this);
@@ -172,7 +175,7 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
       }
 
       final String name = courseNameEd.getText().toString().trim();
-      final String tutor = courseTutorNameEd.getText().toString().trim();
+      final String tutor = courseTutorNameTv.getText().toString().trim();
       final int duration = minutes + (hours*60);
 
       if (!name.isEmpty() && !tutor.isEmpty() && duration > 0) {
@@ -206,67 +209,69 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
 
       getMeetingTime();
 
-    }else if(view.getId() == courseTutorNameEd.getId()){
+    }else if(view.getId() == courseTutorNameTv.getId()){
 //      if(usersAdapter == null){
 //
 //      }
 //
 //      tutorPickerRv.setVisibility(View.VISIBLE);
-
+    startActivityForResult(new Intent(requireContext(), UserMessageSearchActivity.class)
+    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("isForCourse",true)
+            ,TUTOR_REQUEST);
 
     }
 
   }
 
 
-  private void setUpTutorRecycler(){
-
-//    FirebaseFirestore.getInstance().collection("Users")
-//            .limit(100).get().
-    usersRef = FirebaseFirestore.getInstance().collection("Users");
-
-    users = new ArrayList<>();
-    usersAdapter = new UsersAdapter(users,R.layout.user_item_layout,this);
-    tutorPickerRv.setAdapter(usersAdapter);
-
-    final long[] lastTextChange = new long[1];
-
-//    Handler handler = new Handler();
-//    Runnable target;
-//    Thread currentThread = new Thread(new );
-
-    courseTutorNameEd.addTextChangedListener(textWatcher = new TextWatcher() {
-      @Override
-      public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-      }
-
-      @Override
-      public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-        if(!users.isEmpty()){
-          users.clear();
-          usersAdapter.notifyDataSetChanged();
-          tutorPickerRv.setVisibility(View.GONE);
-        }
-
-        searchForUsers(charSequence.toString());
-      }
-
-      @Override
-      public void afterTextChanged(Editable editable) {
-        Log.d("ttt","afterTextChanged");
-//        if(lastTextChange[0]!=0){
-//          if(System.currentTimeMillis() - lastTextChange[0] > 1500){
-//            Log.d("ttt","will search now");
-////            searchForUsers(courseTutorNameEd.getText().toString());
-//          }
+//  private void setUpTutorRecycler(){
+//
+////    FirebaseFirestore.getInstance().collection("Users")
+////            .limit(100).get().
+//    usersRef = FirebaseFirestore.getInstance().collection("Users");
+//
+//    users = new ArrayList<>();
+//    usersAdapter = new UsersAdapter(users,R.layout.user_item_layout,this);
+//    tutorPickerRv.setAdapter(usersAdapter);
+//
+//    final long[] lastTextChange = new long[1];
+//
+////    Handler handler = new Handler();
+////    Runnable target;
+////    Thread currentThread = new Thread(new );
+//
+//    courseTutorNameEd.addTextChangedListener(textWatcher = new TextWatcher() {
+//      @Override
+//      public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//      }
+//
+//      @Override
+//      public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//        if(!users.isEmpty()){
+//          users.clear();
+//          usersAdapter.notifyDataSetChanged();
+//          tutorPickerRv.setVisibility(View.GONE);
 //        }
-//        lastTextChange[0] = System.currentTimeMillis();
-      }
-    });
-
-  }
+//
+//        searchForUsers(charSequence.toString());
+//      }
+//
+//      @Override
+//      public void afterTextChanged(Editable editable) {
+//        Log.d("ttt","afterTextChanged");
+////        if(lastTextChange[0]!=0){
+////          if(System.currentTimeMillis() - lastTextChange[0] > 1500){
+////            Log.d("ttt","will search now");
+//////            searchForUsers(courseTutorNameEd.getText().toString());
+////          }
+////        }
+////        lastTextChange[0] = System.currentTimeMillis();
+//      }
+//    });
+//
+//  }
 
   private void searchForUsers(String name){
 
@@ -293,9 +298,9 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
   @Override
   public void onDestroy() {
     super.onDestroy();
-    if(courseTutorNameEd!=null && textWatcher!=null){
-      courseTutorNameEd.removeTextChangedListener(textWatcher);
-    }
+//    if(courseTutorNameEd!=null && textWatcher!=null){
+//      courseTutorNameEd.removeTextChangedListener(textWatcher);
+//    }
   }
 
   private void getMeetingDate() {
@@ -483,22 +488,46 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
     this.hours = hours;
     courseDurationTv.setText(String.format(Locale.getDefault(),"%d:%d", hours, minutes));
   }
+//
+//  @Override
+//  public void clickUser(String userId) {
+//    users.clear();
+//    usersAdapter.notifyDataSetChanged();
+//    tutorPickerRv.setVisibility(View.GONE);
+//      pickedTutorId = userId;
+//      usersRef.document(userId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//      @Override
+//      public void onSuccess(DocumentSnapshot snapshot) {
+//       if(snapshot.exists()){
+////         final UserPreview userPreview = snapshot.toObject(UserPreview.class);
+//         courseTutorNameEd.setText(snapshot.getString("username"));
+//       }
+//      }
+//    });
+//
+//  }
 
   @Override
-  public void clickUser(String userId) {
-    users.clear();
-    usersAdapter.notifyDataSetChanged();
-    tutorPickerRv.setVisibility(View.GONE);
-      pickedTutorId = userId;
-      usersRef.document(userId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+  public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+
+    Log.d("ttt",requestCode+ " :requestCode");
+    Log.d("ttt",resultCode+ " :resultCode");
+    if(requestCode == TUTOR_REQUEST && data!=null && data.hasExtra("userId")){
+
+      pickedTutorId = data.getStringExtra("userId");
+      usersRef.document(pickedTutorId).get()
+              .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
       @Override
       public void onSuccess(DocumentSnapshot snapshot) {
        if(snapshot.exists()){
-//         final UserPreview userPreview = snapshot.toObject(UserPreview.class);
-         courseTutorNameEd.setText(snapshot.getString("username"));
+         courseTutorNameTv.setText(snapshot.getString("username"));
        }
       }
     });
+
+
+    }
 
   }
 }

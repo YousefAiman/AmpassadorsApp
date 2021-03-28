@@ -166,7 +166,7 @@ public class sign_in extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(AuthResult authResult) {
 
-                                    if (auth.getCurrentUser().isEmailVerified()) {
+//                                    if (auth.getCurrentUser().isEmailVerified()) {
 
                                         FirebaseFirestore.getInstance().collection("Users")
                                                 .document(authResult.getUser().getUid())
@@ -191,7 +191,6 @@ public class sign_in extends AppCompatActivity {
                                                 } else {
 //                                                    if (snapshot.getBoolean("approvement")) {
 //
-//                                                        GlobalVariables.setRole(snapshot.getString("Role"));
 //
 //                                                        FirebaseMessaging.getInstance()
 //                                                                .getToken().addOnSuccessListener(new OnSuccessListener<String>() {
@@ -201,6 +200,8 @@ public class sign_in extends AppCompatActivity {
 //                                                                snapshot.getReference().update("token", s);
 //                                                            }
 //                                                        });
+
+                                                    GlobalVariables.setRole(snapshot.getString("Role"));
 
                                                         FirebaseMessagingService.startMessagingService(sign_in.this);
 
@@ -246,15 +247,15 @@ public class sign_in extends AppCompatActivity {
                                             }
                                         });
 
-                                    } else {
-                                        auth.signOut();
-                                        dialog.dismiss();
-
-                                        Toast.makeText(sign_in.this,
-                                                "You need to verify your email in order to Sign in!",
-                                                Toast.LENGTH_SHORT).show();
-
-                                    }
+//                                    } else {
+//                                        auth.signOut();
+//                                        dialog.dismiss();
+//
+//                                        Toast.makeText(sign_in.this,
+//                                                "You need to verify your email in order to Sign in!",
+//                                                Toast.LENGTH_SHORT).show();
+//
+//                                    }
                                 }
 
                             }).addOnFailureListener(new OnFailureListener() {
