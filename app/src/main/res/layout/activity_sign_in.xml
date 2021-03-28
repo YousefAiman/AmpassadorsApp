@@ -16,8 +16,8 @@
 
         <ImageView
             android:id="@+id/profile_picture"
-            android:layout_width="267dp"
-            android:layout_height="189dp"
+            android:layout_width="245dp"
+            android:layout_height="151dp"
             android:layout_marginTop="40dp"
             android:background="@drawable/ic_logo"
             app:layout_constraintEnd_toEndOf="parent"
@@ -29,7 +29,7 @@
             android:id="@+id/input_email"
             android:layout_width="269dp"
             android:layout_height="42dp"
-            android:layout_marginTop="56dp"
+            android:layout_marginTop="8dp"
             android:background="@drawable/input_bg"
             android:drawableLeft="@drawable/ic_baseline_email"
             android:elevation="50dp"
@@ -136,19 +136,22 @@
             app:layout_constraintTop_toBottomOf="@+id/forget_pass"
             tools:ignore="MissingConstraints" />
 
-        <Button
+        <android.widget.Button
             android:id="@+id/create_account_btn"
             android:layout_width="0dp"
             android:layout_height="36dp"
             android:layout_marginTop="16dp"
-            android:textAllCaps="false"
             android:background="@drawable/btn_create"
             android:text="@string/create_new_account"
+            android:textAllCaps="false"
+            android:textColor="#fff"
             app:backgroundTint="@color/design_default_color_error"
+            app:layout_constraintBottom_toTopOf="@+id/guideline10"
             app:layout_constraintEnd_toEndOf="@+id/facebookbtn"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/facebookbtn"
             app:layout_constraintTop_toBottomOf="@+id/facebookbtn"
-            tools:ignore="MissingConstraints" />
+            app:layout_constraintVertical_bias="0.0" />
 
         <android.widget.Button
             android:id="@+id/gmailbtn"
@@ -190,6 +193,14 @@
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintGuide_percent="0.9026764" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintGuide_percent="0.96" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
