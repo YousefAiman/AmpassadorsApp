@@ -79,34 +79,47 @@ import hashed.app.ampassadors.Utils.GlobalVariables;
         setContentView(R.layout.activity_profile2);
 
         username = findViewById(R.id.textView6);
+        toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(v -> { onBackPressed(); });
+
         imageView = findViewById(R.id.profile_picture);
         swipeRefresh = findViewById(R.id.swipeRefreshLayout);
         swipeRefresh.setOnRefreshListener(this);
 
 
-        NestedScrollView nestedScrollView = findViewById(R.id.nestedScrollView);
-        nestedScrollView.setNestedScrollingEnabled(false);
+        Intent id = getIntent();
+        if (id.hasExtra("userId")){
 
-        toolbar = findViewById(R.id.toolbar);
-        toolbar.setNavigationOnClickListener(v -> {onBackPressed();});
+            String mn = id.getStringExtra("userId");
+            firebaseFirestore = FirebaseFirestore.getInstance();
+            query = firebaseFirestore.collection("Users").
+                    document(mn)
+                    .collection("UserPosts")
+                    .orderBy("publishTime",
+                            Query.Direction.DESCENDING).limit(10);
+            postData = new ArrayList<>();
+            adapter = new PostAdapter(postData, ProfileActiv.this);
+            post_list = findViewById(R.id.userpost_recycler);
+            post_list.setLayoutManager(new LinearLayoutManager(ProfileActiv.this, RecyclerView.VERTICAL,
+                    false));
+            post_list.setAdapter(adapter);
+            getUserNaImg();
+            ReadPost(true);
+        }
 
-        getUserNaImg();
-        firebaseFirestore = FirebaseFirestore.getInstance();
-        query = firebaseFirestore.collection("Users").
-                document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .collection("UserPosts")
-                .orderBy("publishTime",
-                        Query.Direction.DESCENDING).limit(10);
-        postData = new ArrayList<>();
-
-        adapter = new PostAdapter(postData, ProfileActiv.this);
-        post_list = findViewById(R.id.userpost_recycler);
-
-        post_list.setLayoutManager(new LinearLayoutManager(ProfileActiv.this, RecyclerView.VERTICAL,
-                false));
-
-        post_list.setAdapter(adapter);
-        ReadPost(true);
+//        firebaseFirestore = FirebaseFirestore.getInstance();
+//        query = firebaseFirestore.collection("Users").
+//                document(userid)
+//                .collection("UserPosts")
+//                .orderBy("publishTime",
+//                        Query.Direction.DESCENDING).limit(10);
+//        postData = new ArrayList<>();
+//        adapter = new PostAdapter(postData, ProfileActiv.this);
+//        post_list = findViewById(R.id.userpost_recycler);
+//        post_list.setLayoutManager(new LinearLayoutManager(ProfileActiv.this, RecyclerView.VERTICAL,
+//                false));
+//        post_list.setAdapter(adapter);
+//        ReadPost(true);
     }
     @Override
     public void onRefresh() {
@@ -122,8 +135,6 @@ import hashed.app.ampassadors.Utils.GlobalVariables;
             if (!isLoadingMessages &&
                     !recyclerView.canScrollVertically(1) &&
                     newState == RecyclerView.SCROLL_STATE_IDLE) {
-
-                Log.d("ttt","is at bottom man");
                 ReadPost(false);
             }
         }
@@ -204,23 +215,33 @@ import hashed.app.ampassadors.Utils.GlobalVariables;
         userid = fAuth.getCurrentUser().getUid();
         fStore = FirebaseFirestore.getInstance();
 
-        fStore.collection("Users").document(userid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()){
-                    if (task.getResult().exists()){
-                        String user_name = task.getResult().getString("username");
-                        String imgUrl = task.getResult().getString("imageUrl");
+        Intent userimage = getIntent();
+        if (userimage.hasExtra("username") && userimage.hasExtra("ImageUrl")){
+            String userimg = userimage.getStringExtra("ImageUrl");
+            String usernam = userimage.getStringExtra("username");
 
-                        task.getResult().getBoolean("status");
+            Picasso.get().load(userimg).fit().into(imageView);
+            username.setText(usernam);
 
-                        username.setText(user_name);
-                        Picasso.get().load(imgUrl).fit().into(imageView);
-                    }
-                }else {
-                    Toast.makeText(ProfileActiv.this, "Error"+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+
+        }
+//        fStore.collection("Users").document(userid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                if (task.isSuccessful()){
+//                    if (task.getResult().exists()){
+//                        String user_name = task.getResult().getString("username");
+//                        String imgUrl = task.getResult().getString("imageUrl");
+//
+//                        task.getResult().getBoolean("status");
+//
+//                        username.setText(user_name);
+//                        Picasso.get().load(imgUrl).fit().into(imageView);
+//                    }
+//                }else {
+//                    Toast.makeText(ProfileActiv.this, "Error"+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
     }
 }

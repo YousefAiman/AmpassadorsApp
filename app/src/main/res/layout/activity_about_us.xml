@@ -9,8 +9,6 @@
     <include
         android:id="@+id/about_toolbar"
         layout="@layout/aboutustoolbar" />
-
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"

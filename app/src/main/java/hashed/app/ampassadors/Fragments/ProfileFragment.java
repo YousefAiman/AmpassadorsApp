@@ -28,7 +28,7 @@ import hashed.app.ampassadors.Utils.SigninUtil;
 
 public class ProfileFragment extends Fragment {
 
-  TextView username, password, email, country, city, phone;
+  TextView username, password, email, country, city, phone,bio;
   Button edit_profile;
   ImageView imageView;
 
@@ -45,12 +45,12 @@ public class ProfileFragment extends Fragment {
     }
     edit_profile = view.findViewById(R.id.edit_data);
     username = view.findViewById(R.id.in_username);
-    password = view.findViewById(R.id.in_password);
     email = view.findViewById(R.id.in_email);
     country = view.findViewById(R.id.in_country);
     city = view.findViewById(R.id.in_city);
     phone = view.findViewById(R.id.in_phone);
     imageView = view.findViewById(R.id.profile_picture);
+    bio = view.findViewById(R.id.bio_text);
 //
 
     final UserInfo[] userInfo = new UserInfo[1];
@@ -77,6 +77,13 @@ public class ProfileFragment extends Fragment {
           city.setText(userInfo[0].getCity());
           phone.setText(userInfo[0].getPhone());
           Picasso.get().load(userInfo[0].getImageUrl()).fit().into(imageView);
+          if (bio.equals("")){
+            String biotxt = getString(R.string.add_Bio);
+            bio.setText(biotxt);
+          }else {
+            bio.setText(userInfo[0].getBio());
+          }
+
         } else {
           Toast.makeText(getActivity(), "Error" + task.getException().getMessage(),
                   Toast.LENGTH_SHORT).show();

@@ -2,12 +2,14 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_width="match_parent"
+    android:fillViewport="true"
+    android:layout_height="match_parent">
 
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     tools:context=".Fragments.ProfileFragment">
 
     <include
@@ -20,7 +22,7 @@
         android:id="@+id/textView6"
         android:layout_width="match_parent"
         android:layout_height="120dp"
-        android:background="@color/dark_green"
+        android:background="#2F6529"
         android:paddingTop="50dp"
         android:paddingRight="30dp"
         android:textAlignment="viewEnd"
@@ -32,54 +34,35 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
 
-
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_picture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="129dp"
+        android:layout_height="129dp"
         android:layout_marginTop="40dp"
         android:background="@drawable/profile_background"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline55"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.050000012" />
+        app:layout_constraintVertical_bias="0.082" />
 
     <TextView
         android:id="@+id/in_username"
-        android:layout_width="269dp"
-        android:layout_height="42dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="180dp"
-        android:layout_marginEnd="32dp"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="48dp"
         android:background="@drawable/profile_shape"
-        android:drawableLeft="@drawable/ic_baseline_person"
         android:ems="10"
         android:hint="@string/username"
         android:inputType="textPersonName"
         android:padding="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="20sp"
+        android:textColor="#fff"
+        app:layout_constraintEnd_toStartOf="@+id/guideline56"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/profile_picture"
         app:layout_constraintTop_toTopOf="@+id/profile_picture" />
 
-    <TextView
-        android:id="@+id/in_password"
-        android:layout_width="0dp"
-        android:layout_height="39dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/profile_shape"
-        android:drawableLeft="@drawable/ic_baseline_lock"
-        android:ems="10"
-        android:hint="@string/password"
-        android:inputType="text"
-        android:padding="10dp"
-        app:layout_constraintEnd_toEndOf="@+id/in_username"
-        app:layout_constraintStart_toStartOf="@+id/in_username"
-        app:layout_constraintTop_toBottomOf="@+id/in_username" />
-
-
-
-    <TextView
+        <TextView
         android:id="@+id/in_email"
         android:layout_width="0dp"
         android:layout_height="39dp"
@@ -89,9 +72,10 @@
         android:ems="10"
         android:hint="@string/email"
         android:padding="10dp"
-        app:layout_constraintEnd_toEndOf="@+id/in_password"
-        app:layout_constraintStart_toStartOf="@+id/in_password"
-        app:layout_constraintTop_toBottomOf="@+id/in_password" />
+        app:layout_constraintEnd_toStartOf="@+id/guideline56"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/guideline55"
+        app:layout_constraintTop_toBottomOf="@+id/profile_picture" />
 
     <TextView
         android:id="@+id/in_country"
@@ -135,20 +119,63 @@
         app:layout_constraintStart_toStartOf="@+id/in_city"
         app:layout_constraintTop_toBottomOf="@+id/in_city" />
 
+    <TextView
+        android:id="@+id/bio_text"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/profile_shape"
+        android:paddingBottom="80dp"
+        android:drawableStart="@drawable/ic_bio"
+        android:paddingStart="10dp"
+        android:text="@string/add_Bio"
+        android:paddingTop="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline57"
+        app:layout_constraintEnd_toEndOf="@+id/in_phone"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/in_phone"
+        app:layout_constraintTop_toBottomOf="@+id/in_phone" />
+
     <Button
         android:id="@+id/edit_data"
         android:layout_width="147dp"
         android:layout_height="47dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/btn_bg"
         android:text="@string/edit"
         app:backgroundTint="@color/design_default_color_error"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/in_phone"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="@+id/in_phone"
-        app:layout_constraintTop_toBottomOf="@+id/in_phone"
+        app:layout_constraintEnd_toEndOf="@+id/bio_text"
+        app:layout_constraintHorizontal_bias="0.509"
+        app:layout_constraintStart_toStartOf="@+id/bio_text"
+        app:layout_constraintTop_toBottomOf="@+id/bio_text"
+        app:layout_constraintVertical_bias="1.0"
         tools:ignore="MissingConstraints" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline55"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="27dp"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline56"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintGuide_begin="380dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline57"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="1317dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintGuide_begin="584dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

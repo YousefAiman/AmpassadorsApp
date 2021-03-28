@@ -1,10 +1,11 @@
 <resources>
 
-    <string name="app_name">The National Mainstream</string>
+    <string name="app_name">TheNationalMainstream</string>
     <string name="more">More</string>
     <string name="notification_indicator">notification indicator</string>
     <string name="notifications">notifications</string>
     <string name="profile_image">profile image</string>
+
 
     <!--Messaging-->
     <string name="record_audio_message">record audio message</string>
@@ -210,7 +211,7 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="publish">Publish</string>
     <string name="Title">Title</string>
     <string name="new_post">NEW POST</string>
-    <string name="sign_in_man">You need to sing in to complete this operation</string>
+    <string name="sign_in_man">You need to sign in to complete this operation</string>
     <string name="new_poll">NEW POLL</string>
     <string name="close">Close</string>
     <string name="createsubject">Create Subject</string>
@@ -232,7 +233,7 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="option">option</string>
     <string name="create_poll">Create Poll</string>
     <string name="sign_up">Sign Up</string>
-    <string name="alread_have_account">Already Have Account</string>
+    <string name="alread_have_account">Already Have Account?</string>
     <string name="approve">Approve</string>
     <string name="photo">photos</string>
     <string name="edit">Edit</string>
@@ -268,7 +269,6 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="DataScale">MB!</string>
     <string name="DownLoad_Asking">Do you want to download ?</string>
     <string name="Download_btn">Download</string>
-    <string name="Cansle">Cansle</string>
     <string name="Start_zoom_Meeting">Zoom meeting started!</string>
     <string name="send_An_Message">send an image</string>
     <string name="sen_Attachment">send an attachment</string>
@@ -304,11 +304,10 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="Rejcetet_Message">You have been rejected by the admin!</string>
     <string name="Appromvent_Message">You haven\'t been approved by the admin!</string>
     <string name="Error_Auth">"Error Authentication!: "</string>
-    <string name="Update_Message">Updating info</string>
+    <string name="Update_Message">Updating info...</string>
     <string name="Update_Error_Message">Info update error</string>
     <string name="Error">"Error.....   "</string>
     <string name="Warring_Group_Message">You need to add at least two people to this group!</string>
-    <string name="privacyPolicy">Privacy Policy</string>
     <string name="sent_an_image">sent an image</string>
     <string name="sent_a_video">sent a video</string>
     <string name="sent_audio_message">sent an audio message</string>
@@ -330,5 +329,7 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="tutor_name_hint">Tutor name</string>
     <string name="course_date">Course Date: </string>
     <string name="course_time">Course time: </string>
+    <string name="add_Bio">You can add your bio from Edit button</string>
+    <string name="Bio">Fill Bio</string>
 
 </resources>

@@ -111,7 +111,6 @@ public class OnlineUsersFragment extends Fragment implements
         lp.height = (int) (getWidth() * 0.21);
         return true;
       }
-
       @Override
       public void onItemsRemoved(@NonNull RecyclerView recyclerView,
                                  int positionStart, int itemCount) {

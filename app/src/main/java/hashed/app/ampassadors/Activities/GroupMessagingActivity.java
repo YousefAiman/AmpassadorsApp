@@ -1554,7 +1554,7 @@ public class GroupMessagingActivity extends AppCompatActivity
       downloadFile(position, url, fileName);
     });
 
-    alertDialogBuilder.setNegativeButton(getText(R.string.Cansle), (dialogInterface, i) -> {
+    alertDialogBuilder.setNegativeButton(getText(R.string.cancel), (dialogInterface, i) -> {
       dialogInterface.dismiss();
     });
 

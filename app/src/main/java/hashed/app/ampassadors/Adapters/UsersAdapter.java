@@ -1,5 +1,6 @@
 package hashed.app.ampassadors.Adapters;
 
+import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.graphics.drawable.DrawableCompat;
@@ -38,6 +40,8 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
   public interface UserAdapterClicker {
     void clickUser(String userId);
   }
+
+
 
 
   public UsersAdapter(ArrayList<UserPreview> users, int itemLayout) {
@@ -77,7 +81,6 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
       return new UsersPickedVh(LayoutInflater.from(parent.getContext())
               .inflate(itemLayout, parent, false));
     }
-
   }
 
   @Override
@@ -234,14 +237,15 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 PrivateMessagingActivity.class).putExtra("messagingUid",
                 users.get(getAdapterPosition()).getUserId())
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        imageIv.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+            imageIv.getContext().startActivity(new Intent(imageIv.getContext(),
+                    ProfileActiv.class).putExtra("userId",users.get(getAdapterPosition()).getUserId()).putExtra("ImageUrl",
+                    users.get(getAdapterPosition()).getImageUrl()).putExtra("username",users.get(getAdapterPosition()).getUsername()));
+          }
+        });
       }
-      imageIv.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-          imageIv.getContext().startActivity(new Intent(imageIv.getContext(),
-                  ProfileActiv.class));
-        }
-      });
-    }
+      }
   }
 }

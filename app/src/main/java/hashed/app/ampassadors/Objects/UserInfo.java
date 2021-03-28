@@ -22,6 +22,14 @@ public class UserInfo {
   String userId;
   @PropertyName("status")
   boolean status;
+  @PropertyName("Day")
+  int day;
+  @PropertyName("Month")
+  int month;
+  @PropertyName("Year")
+  int year;
+  @PropertyName("Bio")
+   String Bio;
   boolean approvement;
 
   public UserInfo() {
@@ -102,11 +110,43 @@ public class UserInfo {
     this.status = status;
   }
 
+  public String getBio() {
+    return Bio;
+  }
+
+  public void setBio(String bio) {
+    this.Bio = bio;
+  }
+
   public Boolean getApprovement() {
     return approvement;
   }
 
   public void setApprovement(boolean approvement) {
     this.approvement = approvement;
+  }
+
+  public int getDay() {
+    return day;
+  }
+
+  public void setDay(int day) {
+    this.day = day;
+  }
+
+  public int getMonth() {
+    return month;
+  }
+
+  public void setMonth(int month) {
+    this.month = month;
+  }
+
+  public int getYear() {
+    return year;
+  }
+
+  public void setYear(int year) {
+    this.year = year;
   }
 }

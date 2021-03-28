@@ -77,6 +77,7 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
     boolean status;
     FloatingActionButton floatingButton;
     Toolbar toolbar;
+
     private NotificationIndicatorReceiver notificationIndicatorReceiver;
     private TextView roleTv;
     public PostsProfileFragment() {
@@ -97,9 +98,9 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         swipeRefresh.setOnRefreshListener(this);
 
         if(FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
-            roleTv.setText(getResources().getString(R.string.guest));
-        }else if(GlobalVariables.getRole()!=null){
-            roleTv.setText(GlobalVariables.getRole());
+//            roleTv.setText(getResources().getString(R.string.guest));
+//        }else if(GlobalVariables.getRole()!=null){
+//            roleTv.setText(GlobalVariables.getRole());
         }
 
         NestedScrollView nestedScrollView = view.findViewById(R.id.nestedScrollView);
@@ -169,7 +170,6 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
                         toolbar.getMenu().findItem(R.id.action_online).setTitle("online");
                     }
                 });
-                
             }else{
                 reference.update("status", true).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
