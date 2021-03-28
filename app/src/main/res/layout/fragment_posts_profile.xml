@@ -8,8 +8,7 @@
 
     <include
         android:id="@+id/toolbar"
-        layout="@layout/toolbar_prof"
-        />
+        layout="@layout/toolbar_prof" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingbtn"
@@ -17,106 +16,94 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="14dp"
         android:contentDescription="@string/add_group"
         android:src="@drawable/feather_icon"
         app:fabSize="normal"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="14dp"
         app:maxImageSize="40dp"
         app:tint="@color/white" />
 
 
- <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                android:id="@+id/swipeRefreshLayout"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-     android:layout_alignParentBottom="true"
-     android:layout_below="@id/toolbar">
-
-
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedScrollView"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:overScrollMode="never"
+        android:layout_height="0dp"
         android:layout_below="@id/toolbar"
         android:layout_alignParentBottom="true">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:layout_below="@id/toolbar"
+            android:layout_alignParentBottom="true"
+            android:fillViewport="true"
+            android:overScrollMode="never">
 
-            <View
-                android:id="@+id/view8"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:background="@color/dark_green"
-                app:layout_constraintDimensionRatio="5:1"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_height="wrap_content">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/textView6"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
-                android:singleLine="true"
-                android:textAlignment="viewStart"
-                app:autoSizeMinTextSize="12sp"
-                app:autoSizeMaxTextSize="20sp"
-                android:textColor="#fff"
-                android:textSize="20sp"
-                android:layout_marginStart="10dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="@+id/view8"
-                app:layout_constraintStart_toEndOf="@+id/profile_picture"  />
+                <View
+                    android:id="@+id/view8"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:background="#2F6529"
+                    app:layout_constraintDimensionRatio="5:1"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/roleTv"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
-                android:singleLine="true"
-                android:textAlignment="viewEnd"
-                app:autoSizeMinTextSize="12sp"
-                app:autoSizeMaxTextSize="20sp"
-                android:textColor="#fff"
-                android:textSize="20sp"
-                app:layout_constraintBottom_toBottomOf="@+id/view8"
-                app:layout_constraintEnd_toStartOf="@+id/profile_picture"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profile_picture"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:background="@drawable/profile_background"
-                app:layout_constraintBottom_toBottomOf="@+id/view8"
-                app:layout_constraintDimensionRatio="1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/view8"
-                app:layout_constraintWidth_percent="0.35" />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/textView6"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:singleLine="true"
+                    android:textAlignment="viewStart"
+                    android:textColor="#fff"
+                    android:textSize="20sp"
+                    app:autoSizeMaxTextSize="20sp"
+                    app:autoSizeMinTextSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/view8"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/profile_picture" />
 
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/userpost_recycler"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="20dp"
-                android:clipToPadding="false"
-                android:overScrollMode="never"
-                app:layout_constraintTop_toBottomOf="@+id/profile_picture" />
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profile_picture"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:background="@drawable/profile_background"
+                    app:layout_constraintBottom_toBottomOf="@+id/view8"
+                    app:layout_constraintDimensionRatio="1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.112"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/view8"
+                    app:layout_constraintVertical_bias="0.458"
+                    app:layout_constraintWidth_percent="0.35" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/userpost_recycler"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:clipToPadding="false"
+                    android:overScrollMode="never"
+                    android:paddingBottom="20dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/profile_picture" />
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    </androidx.core.widget.NestedScrollView>
+        </androidx.core.widget.NestedScrollView>
 
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </RelativeLayout>

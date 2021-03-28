@@ -13,18 +13,18 @@
 
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:scaleType="centerCrop"
         android:id="@+id/profile_picture"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintWidth_percent="0.4"
-        app:layout_constraintDimensionRatio="1"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="50dp"
         android:background="@drawable/profile_background"
+        android:scaleType="centerCrop"
+        app:layout_constraintDimensionRatio="1"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.556"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.4" />
 
     <EditText
         android:id="@+id/input_username"
@@ -36,6 +36,7 @@
         android:layout_marginTop="20dp"
         android:drawableLeft="@drawable/ic_baseline_person"
         android:ems="10"
+        android:elevation="50dp"
         android:hint="@string/username"
         android:inputType="textPersonName"
         android:padding="10dp"
@@ -130,73 +131,122 @@
         app:layout_constraintStart_toStartOf="@+id/input_country"
         app:layout_constraintTop_toBottomOf="@+id/input_country" />
 
+    <DatePicker
+        android:id="@+id/dateofbirth"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+
+        android:calendarViewShown="false"
+        android:datePickerMode="spinner"
+        app:layout_constraintBottom_toTopOf="@+id/guideline48"
+        app:layout_constraintEnd_toStartOf="@+id/guideline51"
+        app:layout_constraintStart_toStartOf="@+id/guideline50"
+        app:layout_constraintTop_toBottomOf="@+id/textView10" />
+
     <EditText
         android:id="@+id/input_phone"
         android:layout_width="166dp"
         android:layout_height="39dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/input_bg"
         android:drawableLeft="@drawable/ic_baseline_phone"
         android:ems="10"
         android:hint="@string/phone"
         android:inputType="phone"
         android:padding="10dp"
-        app:layout_constraintEnd_toEndOf="@+id/birthday"
-        app:layout_constraintTop_toBottomOf="@+id/birthday" />
+        app:layout_constraintEnd_toEndOf="@+id/input_city"
+        app:layout_constraintTop_toBottomOf="@+id/input_city" />
 
     <Button
         android:id="@+id/sign_up_btn"
         android:layout_width="147dp"
         android:layout_height="47dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:background="@drawable/btn_bg"
         android:text="@string/sign_up"
         app:backgroundTint="@color/dark_green"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/input_phone"
+        app:layout_constraintEnd_toEndOf="@+id/input_phone"
+        app:layout_constraintHorizontal_bias="0.488"
+        app:layout_constraintStart_toStartOf="@+id/guideline50"
+        app:layout_constraintTop_toTopOf="@+id/guideline48"
         tools:ignore="MissingConstraints" />
-
-    <EditText
-        android:id="@+id/birthday"
-        android:layout_width="0dp"
-        android:layout_height="39dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/input_bg"
-        android:drawableLeft="@drawable/ic_birthday_cake"
-        android:ems="10"
-        android:hint="@string/BirthDay"
-        android:inputType="date"
-        android:padding="10dp"
-        app:layout_constraintEnd_toEndOf="@+id/input_city"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/input_city"
-        app:layout_constraintTop_toBottomOf="@+id/input_city" />
 
     <TextView
         android:id="@+id/back_sign_in"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginStart="9dp"
+        android:layout_marginTop="24dp"
         android:clickable="true"
         android:shadowColor="@color/black"
         android:text="@string/alread_have_account"
         android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/sign_up_btn"
+        app:layout_constraintStart_toStartOf="@+id/sign_up_btn"
         app:layout_constraintTop_toBottomOf="@+id/sign_up_btn" />
 
     <Spinner
         android:id="@+id/phoneSpinner"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/input_phone"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline47"
         app:layout_constraintEnd_toStartOf="@+id/input_phone"
-        app:layout_constraintStart_toStartOf="@+id/birthday"
+        app:layout_constraintStart_toStartOf="@+id/input_city"
         app:layout_constraintTop_toTopOf="@+id/input_phone" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline47"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintGuide_percent="0.7" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline48"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.86"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline49"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="883dp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline50"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="60dp"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline51"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintGuide_begin="348dp" />
+
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/BirthDay"
+        app:layout_constraintEnd_toStartOf="@+id/guideline51"
+        app:layout_constraintStart_toStartOf="@+id/guideline50"
+        app:layout_constraintTop_toTopOf="@+id/guideline47" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

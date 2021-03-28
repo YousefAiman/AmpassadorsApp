@@ -55,7 +55,7 @@ import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.TimeFormatter;
 
-public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickListener,
+public class  PostsFragment extends Fragment implements Toolbar.OnMenuItemClickListener,
         SwipeRefreshLayout.OnRefreshListener, View.OnClickListener {
 
   private static final int POSTS_LIMIT = 10;

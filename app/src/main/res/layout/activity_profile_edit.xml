@@ -5,11 +5,13 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="fill_parent"
+    android:fillViewport="true"
         android:layout_height="fill_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="#f2f2f2"
             tools:context=".Fragments.profile.edit">
 
             <include
@@ -20,7 +22,7 @@
                 android:id="@+id/textView6"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
-                android:background="@color/dark_green"
+                android:background="#2F6529"
                 android:paddingTop="50dp"
                 android:paddingRight="30dp"
                 android:textAlignment="viewEnd"
@@ -34,8 +36,8 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profile_picture"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_width="129dp"
+                android:layout_height="129dp"
                 android:layout_marginTop="36dp"
                 app:layout_constraintWidth_percent="0.4"
                 app:layout_constraintDimensionRatio="1"
@@ -56,24 +58,23 @@
                 app:layout_constraintStart_toStartOf="@+id/profile_picture"
                 app:layout_constraintTop_toTopOf="@+id/profile_picture" />
 
+
             <EditText
-                android:padding="10dp"
                 android:id="@+id/input_username"
                 android:layout_width="269dp"
                 android:layout_height="42dp"
                 android:layout_marginStart="32dp"
-                android:layout_marginTop="200dp"
+                android:layout_marginTop="152dp"
                 android:layout_marginEnd="32dp"
                 android:background="@drawable/profile_shape"
                 android:drawableLeft="@drawable/ic_baseline_person"
                 android:ems="10"
                 android:hint="@string/username"
                 android:inputType="textPersonName"
+                android:padding="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/profile_picture" />
-
-
 
             <EditText
                 android:id="@+id/input_country"
@@ -124,16 +125,48 @@
                 android:id="@+id/save"
                 android:layout_width="147dp"
                 android:layout_height="47dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginTop="24dp"
                 android:background="@drawable/btn_bg"
                 android:text="@string/save"
                 app:backgroundTint="@color/design_default_color_error"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/input_phone"
-                app:layout_constraintHorizontal_bias="0.496"
-                app:layout_constraintStart_toStartOf="@+id/input_phone"
-                app:layout_constraintTop_toBottomOf="@+id/input_phone"
+                app:layout_constraintBottom_toTopOf="@+id/guideline7"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/bio_edit"
                 tools:ignore="MissingConstraints" />
+
+            <EditText
+                android:id="@+id/bio_edit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:ems="10"
+                android:inputType="textMultiLine"
+                android:text="@string/Bio"
+                android:drawableStart="@drawable/ic_bio"
+                android:paddingStart="10dp"
+                app:layout_constraintBottom_toTopOf="@+id/guideline59"
+                app:layout_constraintEnd_toEndOf="@+id/input_phone"
+                app:layout_constraintHorizontal_bias="0.491"
+                app:layout_constraintStart_toStartOf="@+id/input_phone"
+                app:layout_constraintTop_toBottomOf="@+id/input_phone" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline59"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="1317dp"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintGuide_percent="0.77" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="1317dp"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintGuide_percent="0.93" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
