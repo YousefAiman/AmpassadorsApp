@@ -215,9 +215,8 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
 //      }
 //
 //      tutorPickerRv.setVisibility(View.VISIBLE);
-    startActivityForResult(new Intent(requireContext(), UserMessageSearchActivity.class)
-    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("isForCourse",true)
-            ,TUTOR_REQUEST);
+    getActivity().startActivityForResult(new Intent(requireContext(), UserMessageSearchActivity.class)
+    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("isForCourse",true),TUTOR_REQUEST);
 
     }
 
@@ -512,7 +511,13 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
     super.onActivityResult(requestCode, resultCode, data);
 
     Log.d("ttt",requestCode+ " :requestCode");
-    Log.d("ttt",resultCode+ " :resultCode");
+//    Log.d("ttt",resultCode+ " :resultCode");
+//    if(data!=null){
+//      Log.d("ttt",data.toString());
+//    }else{
+//      Log.d("ttt","data is null");
+//    }
+
     if(requestCode == TUTOR_REQUEST && data!=null && data.hasExtra("userId")){
 
       pickedTutorId = data.getStringExtra("userId");
@@ -525,7 +530,6 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
        }
       }
     });
-
 
     }
 

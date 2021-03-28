@@ -44,6 +44,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -222,7 +223,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     dataMap.put("publisherId", currentUid);
     dataMap.put("attachmentType", attachmentType);
     dataMap.put("attachmentUrl", attachmentUrl);
-    dataMap.put("keyWords", title.split(" "));
+    dataMap.put("keyWords", Arrays.asList(title.split(" ")));
 
     if (videoThumbnailUrl != null) {
       dataMap.put("videoThumbnailUrl", videoThumbnailUrl);

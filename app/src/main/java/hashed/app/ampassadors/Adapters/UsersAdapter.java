@@ -230,13 +230,15 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
     @Override
     public void onClick(View view) {
+
       if (userAdapterClicker != null) {
-        userAdapterClicker.clickUser(users.get(getAdapterPosition()).getUserId());
+        userAdapterClicker.clickUser(filteredUsers.get(getAdapterPosition()).getUserId());
       } else {
         itemView.getContext().startActivity(new Intent(itemView.getContext(),
                 PrivateMessagingActivity.class).putExtra("messagingUid",
                 users.get(getAdapterPosition()).getUserId())
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+
         imageIv.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View view) {

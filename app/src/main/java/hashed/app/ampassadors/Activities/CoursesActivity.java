@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -62,6 +63,7 @@ public class CoursesActivity extends AppCompatActivity implements
   private SwipeRefreshLayout swipeRefreshLayout;
   private RecyclerView coursesRv;
   private TextView emptyTv;
+  private DialogFragment dialogFragment;
 
   private NotificationIndicatorReceiver notificationIndicatorReceiver;
 
@@ -283,7 +285,9 @@ public class CoursesActivity extends AppCompatActivity implements
   @Override
   public void onClick(View view) {
     if (view.getId() == addCourseBtn.getId()) {
-      new AddCourseFragment().show(getSupportFragmentManager(),"AddCourseFragment");
+
+      dialogFragment = new AddCourseFragment();
+      dialogFragment.show(getSupportFragmentManager(),"AddCourseFragment");
     }
   }
 
@@ -365,5 +369,10 @@ public class CoursesActivity extends AppCompatActivity implements
   }
 
 
-
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    Log.d("ttt","on acitivyt result");
+    dialogFragment.onActivityResult(requestCode,resultCode,data);
+  }
 }

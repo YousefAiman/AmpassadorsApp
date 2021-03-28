@@ -200,7 +200,6 @@ public class sign_in extends AppCompatActivity {
 //                                                                snapshot.getReference().update("token", s);
 //                                                            }
 //                                                        });
-
                                                     GlobalVariables.setRole(snapshot.getString("Role"));
 
                                                         FirebaseMessagingService.startMessagingService(sign_in.this);
