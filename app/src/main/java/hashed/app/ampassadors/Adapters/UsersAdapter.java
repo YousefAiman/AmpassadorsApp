@@ -29,32 +29,44 @@ import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
 
 public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
-        implements Filterable
-{
+        implements Filterable {
 
   private final int itemLayout;
   private ArrayList<UserPreview> users;
+  private ArrayList<UserPreview> filteredUsers;
   private UserAdapterClicker userAdapterClicker;
   private String currentUid;
 
-  Context context;
+  public interface UserAdapterClicker {
+    void clickUser(String userId);
+  }
+
+
+
 
   public UsersAdapter(ArrayList<UserPreview> users, int itemLayout) {
     this.users = users;
     this.itemLayout = itemLayout;
   }
 
-  public UsersAdapter(ArrayList<UserPreview> filteredUsers, int itemLayout,
+
+  public UsersAdapter(ArrayList<UserPreview> users, int itemLayout,
                       UserAdapterClicker userAdapterClicker) {
     this.users = users;
+    this.filteredUsers = users;
     this.userAdapterClicker = userAdapterClicker;
     this.itemLayout = itemLayout;
     currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
   }
 
+
   @Override
   public int getItemCount() {
+    if (filteredUsers != null) {
+      return filteredUsers.size();
+    } else {
       return users.size();
+    }
   }
 
   @NonNull
@@ -62,6 +74,7 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
   public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
     if (itemLayout == R.layout.user_item_layout) {
+
       return new UsersVh(LayoutInflater.from(parent.getContext())
               .inflate(itemLayout, parent, false));
     } else {
@@ -74,9 +87,20 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
   public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
     if (itemLayout == R.layout.user_item_layout) {
+      if(filteredUsers!=null){
+        ((UsersVh) holder).bindChat(filteredUsers.get(position));
+      }else{
         ((UsersVh) holder).bindChat(users.get(position));
+      }
+
     } else if (itemLayout == R.layout.user_picked_preview_item_layout) {
+
+      if(filteredUsers!=null){
+        ((UsersPickedVh) holder).bindChat(filteredUsers.get(position));
+      }else{
         ((UsersPickedVh) holder).bindChat(users.get(position));
+      }
+
     }
 
   }
@@ -110,16 +134,14 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
       @Override
       protected void publishResults(CharSequence constraint, FilterResults results) {
-        users = (ArrayList<UserPreview>) results.values;
+        filteredUsers = (ArrayList<UserPreview>) results.values;
         notifyDataSetChanged();
       }
     };
   }
 
 
-  public interface UserAdapterClicker {
-    void clickUser(String userId);
-  }
+
 
   public static class UsersPickedVh extends RecyclerView.ViewHolder
           implements View.OnClickListener {
@@ -191,6 +213,7 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         );
 
         statusTv.setText(R.string.online);
+
       } else {
 
         DrawableCompat.setTint(
@@ -198,6 +221,7 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 itemView.getContext().getResources().getColor(R.color.red)
         );
         statusTv.setText(R.string.offline);
+
       }
 
       itemView.setOnClickListener(this);
@@ -216,9 +240,11 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         imageIv.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View view) {
-            imageIv.getContext().startActivity(new Intent(imageIv.getContext(),
-                    ProfileActiv.class).putExtra("userId",users.get(getAdapterPosition()).getUserId()).putExtra("ImageUrl",
-                    users.get(getAdapterPosition()).getImageUrl()).putExtra("username",users.get(getAdapterPosition()).getUsername()));
+            imageIv.getContext().startActivity(new Intent(itemView.getContext(),
+                    ProfileActiv.class).putExtra("userId",users.get(getAdapterPosition())
+                    .getUserId()).putExtra("ImageUrl",
+                    users.get(getAdapterPosition()).getImageUrl())
+                    .putExtra("username",users.get(getAdapterPosition()).getUsername()));
           }
         });
       }

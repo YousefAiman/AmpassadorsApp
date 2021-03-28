@@ -46,14 +46,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/add_group"
-        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         app:fabSize="normal"
         app:tint="@color/white"
         android:visibility="gone"
         app:maxImageSize="40dp"
-        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
         android:layout_marginBottom="14dp"
         android:src="@drawable/add_group_icon" />
+
+    <Button
+        android:id="@+id/deleteMeetingsBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        android:layout_alignParentEnd="true"
+        android:text="Delete All Meetings" />
 
 </RelativeLayout>

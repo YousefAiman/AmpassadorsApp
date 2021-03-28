@@ -863,7 +863,11 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
       final ZoomMeeting meeting = message.getZoomMeeting();
       titleTv.setText(meeting.getTopic());
-      durationTv.setText(String.valueOf(meeting.getDuration()));
+
+      int hours = meeting.getDuration() / 60;
+      int minutes = meeting.getDuration() % 60;
+
+      durationTv.setText(String.format(Locale.getDefault(),"%d:%d", hours, minutes));
 
       if (meeting.getType() == 1) {
         startTimeTv.setText(TimeFormatter.formatTime(message.getTime()));
@@ -871,7 +875,12 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
         startTimeTv.setText(TimeFormatter.formatTime(meeting.getStartTime()));
       }
 
-      itemView.setOnClickListener(this);
+//      if(meeting.getStatus().equals("ended")){
+//        itemView.setOnClickListener(null);
+//      }else{
+        itemView.setOnClickListener(this);
+//      }
+
       if (message.getSender().equals(currentUid)) {
         itemView.setOnLongClickListener(this);
       }

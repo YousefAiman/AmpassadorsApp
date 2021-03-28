@@ -19,8 +19,10 @@ public class ConnectionActivity extends AppCompatActivity {
 
     findViewById(R.id.retryBtn).setOnClickListener(v -> {
       if (WifiUtil.isConnectedToInternet(this)) {
+
         setResult(CONNECTION_RESULT);
         finish();
+
       } else {
         Toast.makeText(ConnectionActivity.this,
                 R.string.AuthMessage, Toast.LENGTH_SHORT).show();

@@ -171,7 +171,7 @@ public class ShowPollsActivity extends AppCompatActivity implements Toolbar.OnMe
             if (isInitial) {
                 adapter.notifyDataSetChanged();
 
-                if (postData.size() == POSTS_LIMIT) {
+                if (postData.size() == POSTS_LIMIT && scrollListener == null) {
                     post_list.addOnScrollListener(scrollListener = new PostsBottomScrollListener());
                 }
 

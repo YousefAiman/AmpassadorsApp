@@ -322,16 +322,6 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
       meetingMap.put("hasEnded", false);
 
 
-//      Meeting meeting = new Meeting(
-//              currentUid,
-//              name,
-//              scheduleTime,
-//              System.currentTimeMillis(),
-//              selectedUserIdsList,
-//              meetingId,
-//              false
-//      );
-
       if (imageUri != null) {
 
         final StorageReference reference = FirebaseStorage.getInstance().getReference()
@@ -387,7 +377,6 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
                             @Override
                             public void onSuccess(Void aVoid) {
 
-
                               final Data data = new Data(
                                       currentUid,
                                       "Meeting starts at: " +
@@ -410,7 +399,6 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
                                         meetingId
                                 );
                               }
-
 
                               progressDialog.dismiss();
                               finish();

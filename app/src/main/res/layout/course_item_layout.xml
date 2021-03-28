@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:paddingHorizontal="14dp"
+    android:layout_marginHorizontal="16dp"
+    android:paddingVertical="12dp"
+    android:layout_marginBottom="5dp"
+    android:background="@drawable/course_card_item_back"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/courseNameTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/segoe_ui"
+        android:textColor="@color/black_transparent"
+        android:textSize="18sp"
+        android:textAlignment="center"
+        android:singleLine="true"
+        android:ellipsize="marquee" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="30dp"
+        android:background="@color/medium_grey"/>
+
+
+    <TextView
+        android:id="@+id/courseTutorNameTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/segoe_ui"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/black_transparent"
+        android:textSize="14sp"
+        android:text="@string/tutor_name"
+        android:singleLine="true"
+        android:ellipsize="marquee" />
+
+    <TextView
+        android:id="@+id/courseStartTimeTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/segoe_ui"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/black_transparent"
+        android:textSize="14sp"
+        android:text="@string/start_time"
+        android:singleLine="true"
+        android:ellipsize="marquee" />
+
+
+    <TextView
+        android:id="@+id/courseDurationTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/segoe_ui"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/black_transparent"
+        android:textSize="14sp"
+        android:text="@string/course_duration"
+        android:singleLine="true"
+        android:ellipsize="marquee" />
+
+</LinearLayout>

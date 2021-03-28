@@ -22,19 +22,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AmpassadorsApp">
-
-        <activity android:name=".Activities.VideoWelcomeActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".Activities.ShowNewsActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Activities.ShowPollsActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".Activities.ProfileActiv"
-            android:screenOrientation="portrait"/>
-
-
+        <activity android:name=".Activities.CoursesActivity"></activity>
+        <activity android:name=".Activities.PostsSearchActivity" />
+        <activity
+            android:name=".Activities.VideoWelcomeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.ShowNewsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.ShowPollsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.ProfileActiv"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.WelcomeActivity"
             android:screenOrientation="portrait" />
@@ -119,7 +120,6 @@
             android:name=".Activities.PrivateMessagingActivity"
             android:parentActivityName=".Activities.Home_Activity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">

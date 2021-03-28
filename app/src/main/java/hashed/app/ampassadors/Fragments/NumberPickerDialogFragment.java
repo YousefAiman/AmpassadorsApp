@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
 
-import org.jetbrains.annotations.NotNull;
+import com.google.firebase.database.annotations.NotNull;
 
 import hashed.app.ampassadors.R;
 

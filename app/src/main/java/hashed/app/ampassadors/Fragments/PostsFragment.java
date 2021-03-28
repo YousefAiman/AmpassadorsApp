@@ -45,11 +45,13 @@ import hashed.app.ampassadors.Activities.CreatePollActivity;
 import hashed.app.ampassadors.Activities.Home_Activity;
 import hashed.app.ampassadors.Activities.NotificationsActivity;
 import hashed.app.ampassadors.Activities.PostNewActivity;
+import hashed.app.ampassadors.Activities.PostsSearchActivity;
 import hashed.app.ampassadors.Adapters.HomeNewsHeaderViewPagerAdapter;
 import hashed.app.ampassadors.Adapters.PostAdapter;
 import hashed.app.ampassadors.BroadcastReceivers.NotificationIndicatorReceiver;
 import hashed.app.ampassadors.BuildConfig;
 import hashed.app.ampassadors.Objects.MeetingPreview;
+import hashed.app.ampassadors.Objects.PollOption;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.GlobalVariables;
@@ -105,7 +107,9 @@ public class  PostsFragment extends Fragment implements Toolbar.OnMenuItemClickL
     pagerAdapter = new HomeNewsHeaderViewPagerAdapter(meetingPreviews);
 
     query = FirebaseFirestore.getInstance().collection("Posts")
-            .orderBy("publishTime", Query.Direction.DESCENDING).limit(POSTS_LIMIT);
+            .orderBy("publishTime", Query.Direction.DESCENDING)
+            .whereEqualTo("type",PostData.TYPE_NEWS)
+            .limit(POSTS_LIMIT);
 
     posts = new ArrayList<>();
     adapter = new PostAdapter(posts, getContext());
@@ -163,6 +167,9 @@ public class  PostsFragment extends Fragment implements Toolbar.OnMenuItemClickL
     if (item.getItemId() == R.id.action_notifications) {
       startActivity(new Intent(getContext(), NotificationsActivity.class)
               .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+    }else if (item.getItemId() == R.id.action_search) {
+      startActivity(new Intent(getContext(), PostsSearchActivity.class)
+              .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
     return false;
@@ -214,7 +221,7 @@ public class  PostsFragment extends Fragment implements Toolbar.OnMenuItemClickL
 
     isLoadingMessages = true;
 
-    final AtomicInteger addedCount = new AtomicInteger();
+//    final AtomicInteger addedCount = new AtomicInteger();
 
     swipeRefresh.setRefreshing(true);
 
@@ -231,41 +238,49 @@ public class  PostsFragment extends Fragment implements Toolbar.OnMenuItemClickL
         lastDocSnap = queryDocumentSnapshots.getDocuments().get(
                 queryDocumentSnapshots.size() - 1
         );
-        for (QueryDocumentSnapshot snapshot : queryDocumentSnapshots) {
 
-          if (snapshot.getLong("type") == PostData.TYPE_POLL) {
-
-            if (snapshot.getBoolean("pollEnded")) {
-
-              if (snapshot.getLong("totalVotes") > 0) {
-                posts.add(snapshot.toObject(PostData.class));
-                addedCount.getAndIncrement();
-              }
-            } else {
-
-              if (System.currentTimeMillis() >
-                      snapshot.getLong("publishTime") +
-                              snapshot.getLong("pollDuration")) {
-
-                snapshot.getReference().update("pollEnded", true);
-                if (snapshot.getLong("totalVotes") > 0) {
-
-                  final PostData post = snapshot.toObject(PostData.class);
-                  post.setPollEnded(true);
-                  posts.add(post);
-                  addedCount.getAndIncrement();
-                }
-
-              } else {
-                posts.add(snapshot.toObject(PostData.class));
-                addedCount.getAndIncrement();
-              }
-            }
-          } else {
-            posts.add(snapshot.toObject(PostData.class));
-            addedCount.getAndIncrement();
-          }
+        if(isInitial){
+          posts.addAll(queryDocumentSnapshots.toObjects(PostData.class));
+        }else{
+          posts.addAll(posts.size(),queryDocumentSnapshots.toObjects(PostData.class));
         }
+//        addedCount.getAndIncrement();
+
+//        for (QueryDocumentSnapshot snapshot : queryDocumentSnapshots) {
+//
+//          if (snapshot.getLong("type") == PostData.TYPE_POLL) {
+//
+//            if (snapshot.getBoolean("pollEnded")) {
+//
+//              if (snapshot.getLong("totalVotes") > 0) {
+//                posts.add(snapshot.toObject(PostData.class));
+//                addedCount.getAndIncrement();
+//              }
+//            } else {
+//
+//              if (System.currentTimeMillis() >
+//                      snapshot.getLong("publishTime") +
+//                              snapshot.getLong("pollDuration")) {
+//
+//                snapshot.getReference().update("pollEnded", true);
+//                if (snapshot.getLong("totalVotes") > 0) {
+//
+//                  final PostData post = snapshot.toObject(PostData.class);
+//                  post.setPollEnded(true);
+//                  posts.add(post);
+//                  addedCount.getAndIncrement();
+//                }
+//
+//              } else {
+//                posts.add(snapshot.toObject(PostData.class));
+//                addedCount.getAndIncrement();
+//              }
+//            }
+//          } else {
+//            posts.add(snapshot.toObject(PostData.class));
+//            addedCount.getAndIncrement();
+//          }
+//        }
       }
     }).addOnCompleteListener(task -> {
       if (isInitial) {
@@ -276,11 +291,11 @@ public class  PostsFragment extends Fragment implements Toolbar.OnMenuItemClickL
         }
 
       } else {
-        Log.d("ttt","Added count: "+addedCount.get());
 
-        adapter.notifyItemRangeInserted(posts.size() - addedCount.get(),
-                addedCount.get());
-        if (addedCount.get() < POSTS_LIMIT && scrollListener != null) {
+        final int resultSize = task.getResult().size();
+
+        adapter.notifyItemRangeInserted(posts.size() - resultSize,resultSize);
+        if (resultSize < POSTS_LIMIT && scrollListener != null) {
           post_list.removeOnScrollListener(scrollListener);
         }
       }

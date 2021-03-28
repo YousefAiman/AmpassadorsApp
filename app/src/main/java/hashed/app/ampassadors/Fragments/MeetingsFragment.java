@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -41,6 +42,7 @@ import hashed.app.ampassadors.BroadcastReceivers.NotificationIndicatorReceiver;
 import hashed.app.ampassadors.BuildConfig;
 import hashed.app.ampassadors.Objects.Meeting;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.FirebaseDeleteUtil;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 
 public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,
@@ -55,6 +57,7 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
   private SwipeRefreshLayout swipeRefreshLayout;
   private ScrollListener scrollListener;
   private FloatingActionButton floatingButton;
+  private Button deleteMeetingsBtn;
   private Toolbar toolbar;
 
 
@@ -97,9 +100,10 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
     noMessagesTv = view.findViewById(R.id.emptyTv);
 
     floatingButton = view.findViewById(R.id.floatingButton);
+    deleteMeetingsBtn = view.findViewById(R.id.deleteMeetingsBtn);
     toolbar = view.findViewById(R.id.groupToolbar);
 
-    noMessagesTv.setText(R.string.no_current_meetings);
+    noMessagesTv.setText(getResources().getString(R.string.no_current_meetings));
 
 
     meetingsRv.setAdapter(adapter);
@@ -163,14 +167,15 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
     getMoreMeetings(true);
 
 
-    floatingButton.setOnClickListener(this);
-
 
     if(!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
       if (GlobalVariables.getRole().equals("Admin") ||
               GlobalVariables.getRole().equals("Coordinator")){
 
         floatingButton.setVisibility(View.VISIBLE);
+        deleteMeetingsBtn.setVisibility(View.VISIBLE);
+        floatingButton.setOnClickListener(this);
+        deleteMeetingsBtn.setOnClickListener(this);
       }
     }
 
@@ -214,7 +219,7 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
             meetingsRv.setVisibility(View.VISIBLE);
             adapter.notifyDataSetChanged();
 
-            if (meetings.size() == MEETING_LIMIT) {
+            if (meetings.size() == MEETING_LIMIT && scrollListener == null) {
               meetingsRv.addOnScrollListener(scrollListener = new ScrollListener());
             }
 
@@ -311,6 +316,8 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
   public void onClick(View view) {
     if (view.getId() == R.id.floatingButton) {
       startActivity(new Intent(getContext(), UsersPickerActivity.class));
+    }else if (view.getId() == R.id.deleteMeetingsBtn) {
+      FirebaseDeleteUtil.deleteAllMeetingsAndMessages();
     }
   }
 
@@ -331,12 +338,10 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
               }
             };
 
-    getContext().registerReceiver(notificationIndicatorReceiver,
+    requireContext().registerReceiver(notificationIndicatorReceiver,
             new IntentFilter(BuildConfig.APPLICATION_ID + ".notificationIndicator"));
 
   }
-
-
 
 
 

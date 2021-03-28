@@ -12,7 +12,7 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/pickUserToolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?actionBarSize"
         android:layout_alignParentTop="true"
         android:background="@color/dark_green"
         app:navigationIcon="@drawable/back_arrow_icon">
@@ -21,13 +21,12 @@
             android:id="@+id/searchUserSearchView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/light_grey"
+            android:background="@drawable/search_round_back"
             android:layout_margin="10dp"
             android:hint="@string/search_user"
             app:searchIcon="@drawable/search_icon" />
 
     </androidx.appcompat.widget.Toolbar>
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/userRv"
@@ -40,7 +39,6 @@
         android:clipToPadding="false"
         android:layout_height="match_parent"/>
 
-
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
@@ -48,6 +46,5 @@
         android:theme="@style/progressBarGreen"
         android:visibility="gone"
         android:layout_centerInParent="true" />
-
 
 </RelativeLayout>

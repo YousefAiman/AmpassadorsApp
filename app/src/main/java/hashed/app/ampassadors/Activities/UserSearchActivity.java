@@ -74,11 +74,12 @@ public class UserSearchActivity extends AppCompatActivity implements
               = getIntent().getStringArrayListExtra("selectedUserIds");
     }
 
+    users = new ArrayList<>();
+
     pickerAdapter = new UsersPickerAdapter(users, previousSelectedUserIdsList,
             true);
     userRv.setAdapter(pickerAdapter);
 
-    users = new ArrayList<>();
 
     usersRef.orderBy("username")
             .limit(100).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {

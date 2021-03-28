@@ -9,7 +9,12 @@
 <!--        android:title="@string/AwarenessPosts" />-->
     <item
         android:id="@+id/polls"
-        android:title="@string/poll" />
+        android:title="@string/Polls" />
+
+    <item
+        android:id="@+id/courses"
+        android:title="@string/Courses" />
+
 
     <item
         android:id="@+id/listComplaints"

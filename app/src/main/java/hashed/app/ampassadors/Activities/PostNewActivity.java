@@ -222,6 +222,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     dataMap.put("publisherId", currentUid);
     dataMap.put("attachmentType", attachmentType);
     dataMap.put("attachmentUrl", attachmentUrl);
+    dataMap.put("keyWords", title.split(" "));
 
     if (videoThumbnailUrl != null) {
       dataMap.put("videoThumbnailUrl", videoThumbnailUrl);
