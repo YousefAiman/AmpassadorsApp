@@ -29,6 +29,9 @@ public class Course implements Serializable {
   private int duration;
   @PropertyName("hasEnded")
   private boolean hasEnded;
+  @PropertyName("hasStarted")
+  private boolean hasStarted;
+
 
   public Course() {
   }
@@ -116,5 +119,13 @@ public class Course implements Serializable {
 
   public void setTutorId(String tutorId) {
     this.tutorId = tutorId;
+  }
+
+  public boolean isHasStarted() {
+    return hasStarted;
+  }
+
+  public void setHasStarted(boolean hasStarted) {
+    this.hasStarted = hasStarted;
   }
 }

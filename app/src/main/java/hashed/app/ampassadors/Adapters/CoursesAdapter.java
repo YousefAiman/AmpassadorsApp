@@ -113,6 +113,40 @@ public class CoursesAdapter extends RecyclerView.Adapter<CoursesAdapter.CoursesV
 
       final String courseId = course.getCourseId();
 
+      if(currentUid.equals(course.getTutorId()) || currentUid.equals(course.getCreatorId())){
+        if (!course.isHasStarted()) {
+          //coordinator or tutor can start the course
+
+          final AlertDialog.Builder alert = new AlertDialog.Builder(itemView.getContext());
+          alert.setTitle("Do you want to start this course?");
+          alert.setPositiveButton("Start", (dialog, which) -> {
+            dialog.dismiss();
+            coursesRef.document(courseId).update("hasStarted",true)
+            .addOnSuccessListener(new OnSuccessListener<Void>() {
+              @Override
+              public void onSuccess(Void aVoid) {
+                itemView.getContext().startActivity(
+                        new Intent(itemView.getContext(), GroupMessagingActivity.class)
+                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("messagingUid",
+                                courseId));
+              }
+            });
+          });
+
+          alert.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());
+          alert.create().show();
+
+        }else{
+
+          itemView.getContext().startActivity(
+                  new Intent(itemView.getContext(), GroupMessagingActivity.class)
+                          .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("messagingUid",
+                          courseId));
+
+        }
+        return;
+      }
+
       coursesRef.document(courseId)
               .collection("Attendees")
               .document(currentUid).get().addOnSuccessListener(
@@ -121,7 +155,7 @@ public class CoursesAdapter extends RecyclerView.Adapter<CoursesAdapter.CoursesV
         public void onSuccess(DocumentSnapshot snapshot) {
           if(snapshot.exists()){
 
-            if (course.getStartTime() < System.currentTimeMillis()) {
+            if(!course.isHasStarted()){
               Toast.makeText(itemView.getContext(),
                       "This Course hasn't started yet!", Toast.LENGTH_SHORT).show();
               return;
@@ -134,7 +168,7 @@ public class CoursesAdapter extends RecyclerView.Adapter<CoursesAdapter.CoursesV
 
           }else{
 
-            if(!course.isHasEnded() && course.getStartTime() < System.currentTimeMillis()){
+            if(!course.isHasEnded() && !course.isHasStarted()){
 
               final AlertDialog.Builder alert = new AlertDialog.Builder(itemView.getContext());
               alert.setTitle("Do you want to register for this course?");

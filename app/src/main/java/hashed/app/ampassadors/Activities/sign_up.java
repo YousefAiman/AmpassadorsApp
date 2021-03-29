@@ -197,7 +197,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                 int month = dob.getMonth();
                 int day = dob.getDayOfMonth();
 
-                //                List<String> persons = new ArrayList<>();
+//                List<String> persons = new ArrayList<>();
 //                ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, persons);
 //                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 //                spinner.setAdapter(adapter);
