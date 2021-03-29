@@ -32,8 +32,8 @@
     <string name="hello_blank_fragment">مرحبا جزء فارغ</string>
     <string name="chats">الدردشات</string>
     <string name="add_group">أضف مجموعة</string>
-    <string name="online">عبر الانترنت</string>
-    <string name="offline">غير متصل على الانترنت</string>
+    <string name="online"> متصل</string>
+    <string name="offline">غير متصل </string>
     <string name="done">انتهى</string>
     <string name="no_current_messages">لا توجد رسائل حالية</string>
     <string name="no_online_users">لا يوجد مستخدمون متصلون</string>
