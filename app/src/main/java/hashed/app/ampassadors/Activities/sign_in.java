@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,16 +13,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -29,9 +37,17 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Services.FirebaseMessagingService;
 import hashed.app.ampassadors.Utils.GlobalVariables;
+import hashed.app.ampassadors.Utils.WifiUtil;
 
-public class sign_in extends AppCompatActivity {
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
+import java.util.HashMap;
+
+
+public class sign_in extends AppCompatActivity implements View.OnClickListener {
+
+    private static final int GOOGLE_REQUEST = 10;
     EditText email, password;
     Button btn_login, create_account_btn;
     FirebaseAuth auth;
@@ -39,6 +55,9 @@ public class sign_in extends AppCompatActivity {
     FirebaseFirestore fStore;
     FirebaseAuth fAuth;
 
+
+    private Button gmailbtn;
+    private ProgressDialog googleProgressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,7 +151,8 @@ public class sign_in extends AppCompatActivity {
         btn_login = findViewById(R.id.sign_in_btn);
         verifyEmail = findViewById(R.id.verify_email);
         forgetPass = findViewById(R.id.forget_pass);
-
+        gmailbtn = findViewById(R.id.gmailbtn);
+        gmailbtn.setOnClickListener(this);
 
         fAuth = FirebaseAuth.getInstance();
         // userid = fAuth.getCurrentUser().getUid();
@@ -166,7 +186,7 @@ public class sign_in extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(AuthResult authResult) {
 
-//                                    if (auth.getCurrentUser().isEmailVerified()) {
+                                    if (auth.getCurrentUser().isEmailVerified()) {
 
                                         FirebaseFirestore.getInstance().collection("Users")
                                                 .document(authResult.getUser().getUid())
@@ -246,15 +266,15 @@ public class sign_in extends AppCompatActivity {
                                             }
                                         });
 
-//                                    } else {
-//                                        auth.signOut();
-//                                        dialog.dismiss();
-//
-//                                        Toast.makeText(sign_in.this,
-//                                                "You need to verify your email in order to Sign in!",
-//                                                Toast.LENGTH_SHORT).show();
-//
-//                                    }
+                                    } else {
+                                        auth.signOut();
+                                        dialog.dismiss();
+
+                                        Toast.makeText(sign_in.this,
+                                                "You need to verify your email in order to Sign in!",
+                                                Toast.LENGTH_SHORT).show();
+
+                                    }
                                 }
 
                             }).addOnFailureListener(new OnFailureListener() {
@@ -285,4 +305,162 @@ public class sign_in extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onClick(View view) {
+        if(view.getId() == gmailbtn.getId()){
+//            if (WifiUtil.checkWifiConnection(this)) {
+//                googleSignIn();
+//            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == GOOGLE_REQUEST){
+//            if(resultCode ==RESULT_OK){
+                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+                task.addOnSuccessListener(googleSignInAccount -> {
+                    try {
+                        final GoogleSignInAccount account = task.getResult(ApiException.class);
+                        firebaseAuthWithGoogle(account);
+                    } catch (ApiException e) {
+                        googleProgressDialog.dismiss();
+
+                        Log.d("ttt","ApiException google: "+e.getMessage());
+
+                        Log.w("ttt", "Google sign in failed" + e.getMessage());
+                    }
+                }).addOnFailureListener(e -> {
+
+                    Log.d("ttt","task google: "+e.toString());
+                    googleProgressDialog.dismiss();
+                });
+//            }else{
+//                googleProgressDialog.dismiss();
+//            }
+        }
+    }
+
+    public void googleSignIn() {
+
+        googleProgressDialog = new ProgressDialog(this);
+        googleProgressDialog.setTitle("Signing in with Gmail account!");
+        googleProgressDialog.setCancelable(false);
+        googleProgressDialog.show();
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail().build();
+
+        Intent googleIntent = GoogleSignIn.getClient(this, gso).getSignInIntent();
+        startActivityForResult(googleIntent, GOOGLE_REQUEST);
+
+    }
+
+
+    private void firebaseAuthWithGoogle(final GoogleSignInAccount account) {
+
+       final  AuthCredential credential =
+                GoogleAuthProvider.getCredential(account.getIdToken(), null);
+        auth.signInWithCredential(credential)
+                .addOnSuccessListener(authResult -> {
+                    Log.d("ttt", "signInWithCredential:success");
+
+                    if (authResult.getAdditionalUserInfo().isNewUser()) {
+                        addUserToFirestore(account.getDisplayName(),account.getEmail()
+                                , auth.getCurrentUser().getUid(),
+                                account.getPhotoUrl().toString());
+                    } else {
+
+                        FirebaseFirestore.getInstance().collection("Users")
+                                .document(authResult.getUser().getUid())
+                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot snapshot) {
+
+                                if(snapshot.exists()){
+
+                                    FirebaseMessaging.getInstance().getToken().addOnSuccessListener(s -> {
+                                        snapshot.getReference().update("token", s);
+                                    });
+
+                                    FirebaseMessagingService.
+                                            startMessagingService(sign_in.this);
+
+                                    googleProgressDialog.dismiss();
+
+                                    startActivity(new Intent(getApplicationContext(),
+                                            Home_Activity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                    finish();
+
+                                }else{
+
+                                    googleProgressDialog.dismiss();
+                                }
+
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                            }
+                        });
+
+
+                    }
+
+                }).addOnFailureListener(e -> {
+            googleProgressDialog.dismiss();
+            Toast.makeText(sign_in.this, "لقد فشلت عملية التسجيل عن طريق حساب gmail!"
+                    , Toast.LENGTH_SHORT).show();
+        });
+    }
+
+
+
+    private void addUserToFirestore(String username,String email,String userId,
+                                    String imageUrl){
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("username", username);
+        hashMap.put("email", email);
+        hashMap.put("rejected", false);
+        hashMap.put("userId",userId);
+        if (imageUrl != null) {
+            hashMap.put("imageurl", imageUrl);
+        }
+        hashMap.put("status", true);
+        hashMap.put("Role", "Ambassador");
+
+        final DocumentReference userRef =
+                FirebaseFirestore.getInstance().collection("Users").document(userId);
+
+        FirebaseMessaging.getInstance().getToken().addOnSuccessListener(new OnSuccessListener<String>() {
+            @Override
+            public void onSuccess(String s) {
+                hashMap.put("token", s);
+
+                userRef.set(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                        FirebaseMessagingService.
+                            startMessagingService(sign_in.this);
+                        startActivity(new Intent(sign_in.this,Home_Activity.class)
+                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                        finish();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(sign_in.this,
+                                e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
+    }
 }

@@ -427,6 +427,7 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
     courseMap.put("createdTime", System.currentTimeMillis());
     courseMap.put("duration",duration);
     courseMap.put("hasEnded", false);
+    courseMap.put("hasStarted", false);
 
     final DocumentReference courseRef = FirebaseFirestore.getInstance()
             .collection("Courses").document(courseId);
