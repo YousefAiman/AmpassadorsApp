@@ -13,13 +13,13 @@
         android:id="@+id/imageIv"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="19dp"
         android:src="@color/white"
         app:civ_border_color="@color/light_green"
         app:civ_border_width="1dp"
         app:layout_constraintDimensionRatio="1"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_percent="0.15" />
 
@@ -52,14 +52,14 @@
 
     <ImageView
         android:id="@+id/menuIv"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="12dp"
         android:src="@drawable/menu_icon"
-        android:layout_marginStart="14dp"
         app:layout_constraintBottom_toBottomOf="@+id/imageIv"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/imageIv" />
-
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/materialCardView2"
