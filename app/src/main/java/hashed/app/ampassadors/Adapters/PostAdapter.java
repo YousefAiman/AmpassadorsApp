@@ -36,7 +36,7 @@ import hashed.app.ampassadors.Utils.Files;
 
 public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-  private static final int IMAGE_NEWS = 3, VIDEO_NEWS = 4, ATTACHMENT_NEWS = 5;
+  private static final int IMAGE_NEWS = 3, VIDEO_NEWS = 4, ATTACHMENT_NEWS = 5,TEXT_NEWS = 6;
   private static final CollectionReference postsCollectionRef =
           FirebaseFirestore.getInstance().collection("Posts");
   private List<PostData> posts;
@@ -79,6 +79,10 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return new NewsAttachmentVh(LayoutInflater.from(context).inflate(R.layout.news_attachment_item_layout
                 , parent, false));
 
+        case TEXT_NEWS:
+        return new NewsTextVh(LayoutInflater.from(context).inflate(R.layout.news_text_item_layout
+                , parent, false));
+
 
       case PostData.TYPE_POLL:
         return new PollPreviewVh(LayoutInflater.from(context).inflate(
@@ -104,6 +108,11 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
       case ATTACHMENT_NEWS:
         ((NewsAttachmentVh) holder).bind(posts.get(position));
         break;
+
+      case TEXT_NEWS:
+        ((NewsTextVh) holder).bind(posts.get(position));
+        break;
+
 
       case PostData.TYPE_POLL:
         ((PollPreviewVh) holder).bind(posts.get(position));
@@ -320,19 +329,25 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     if (postData.getType() == PostData.TYPE_NEWS) {
 
-      switch (postData.getAttachmentType()) {
-        case Files.IMAGE:
-          return IMAGE_NEWS;
+      if(postData.getAttachmentUrl() != null){
 
-        case Files.DOCUMENT:
-          return ATTACHMENT_NEWS;
+        switch (postData.getAttachmentType()) {
+          case Files.IMAGE:
+            return IMAGE_NEWS;
 
-        case Files.VIDEO:
-          return VIDEO_NEWS;
+          case Files.DOCUMENT:
+            return ATTACHMENT_NEWS;
 
-        default:
-          return IMAGE_NEWS;
+          case Files.VIDEO:
+            return VIDEO_NEWS;
+
+          default:
+            return IMAGE_NEWS;
+        }
+      }else{
+        return TEXT_NEWS;
       }
+
 
     } else if (postData.getType() == PostData.TYPE_POLL) {
       return PostData.TYPE_POLL;
@@ -374,7 +389,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
   }
 
-  public  class NewsVideosVh extends RecyclerView.ViewHolder
+  public class NewsVideosVh extends RecyclerView.ViewHolder
           implements View.OnClickListener {
 
     private final ImageView newsIv;
@@ -407,7 +422,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
   }
 
-  public  class NewsAttachmentVh extends RecyclerView.ViewHolder
+  public class NewsAttachmentVh extends RecyclerView.ViewHolder
           implements View.OnClickListener {
 
     private final TextView newsTitleTv;
@@ -432,6 +447,33 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
   }
 
+
+  public class NewsTextVh extends RecyclerView.ViewHolder
+          implements View.OnClickListener {
+
+    private final TextView newsTitleTv,newsDescriptionTv;
+
+    public NewsTextVh(@NonNull View itemView) {
+      super(itemView);
+      newsTitleTv = itemView.findViewById(R.id.newsTitleTv);
+      newsDescriptionTv = itemView.findViewById(R.id.newsDescriptionTv);
+    }
+
+    private void bind(PostData postData) {
+      newsTitleTv.setText(postData.getTitle());
+      newsDescriptionTv.setText(postData.getDescription());
+      itemView.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View view) {
+
+      view.getContext().startActivity(new Intent(view.getContext(),
+              PostNewsActivity.class).putExtra("postData",
+              posts.get(getAdapterPosition())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+
+    }
+  }
 
 //  public class NewsVh extends RecyclerView.ViewHolder implements View.OnClickListener {
 //      private final CircleImageView imageIv ;

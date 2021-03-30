@@ -6,9 +6,13 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -32,9 +36,14 @@ import hashed.app.ampassadors.R;
 public class PostsSearchActivity extends AppCompatActivity implements
         SearchView.OnQueryTextListener {
 
+  //views
   private SearchView searchView;
-  private ArrayList<PostData> posts;
   private RecyclerView postRv;
+  private ProgressBar progressBar;
+  private TextView noResultsTv;
+
+  //posts
+  private ArrayList<PostData> posts;
   private PostAdapter postAdapter;
   private CollectionReference postsRef;
 
@@ -62,12 +71,23 @@ public class PostsSearchActivity extends AppCompatActivity implements
 
     postRv = findViewById(R.id.userRv);
     searchView = findViewById(R.id.searchUserSearchView);
+    progressBar = findViewById(R.id.progressBar);
+    noResultsTv = findViewById(R.id.noResultsTv);
 
-    searchView.setOnClickListener(v -> searchView.onActionViewCollapsed());
+    noResultsTv.setText(getResources().getString(R.string.no_results_found));
+
+    searchView.setOnClickListener(v-> searchView.onActionViewCollapsed());
+
+    searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+      @Override
+      public boolean onClose() {
+        clearList();
+        return false;
+      }
+    });
+
     searchView.onActionViewExpanded();
     searchView.setOnQueryTextListener(this);
-
-
   }
 
   private void initializeObjects(){
@@ -91,12 +111,15 @@ public class PostsSearchActivity extends AppCompatActivity implements
 
   private void searchForPost(String query) {
 
+    progressBar.setVisibility(View.VISIBLE);
+    noResultsTv.setVisibility(View.GONE);
+
     Query searchQuery;
 
     searchQuery = postsRef
             .orderBy("publishTime", Query.Direction.DESCENDING);
 
-    final String[] splitArr = query.split(" ");
+    final String[] splitArr = query.toLowerCase().trim().split(" ");
 
     if(splitArr.length == 0){
 
@@ -118,6 +141,7 @@ public class PostsSearchActivity extends AppCompatActivity implements
     searchQuery.get().addOnSuccessListener(snapshots -> {
 
       if (!snapshots.isEmpty()) {
+        Log.d("ttt","search size: "+snapshots.size());
         posts.clear();
         posts.addAll(snapshots.toObjects(PostData.class));
       }
@@ -126,18 +150,27 @@ public class PostsSearchActivity extends AppCompatActivity implements
       @Override
       public void onComplete(@NonNull Task<QuerySnapshot> task) {
         if(task.isSuccessful() && !posts.isEmpty()){
-          postAdapter.notifyDataSetChanged();
+            postAdapter.notifyDataSetChanged();
         }
+        if(posts.isEmpty()){
+          noResultsTv.setVisibility(View.VISIBLE);
+        }
+        progressBar.setVisibility(View.GONE);
       }
     });
   }
 
   @Override
   public boolean onQueryTextChange(String newText) {
-//    pickerAdapter.getFilter().filter(newText);
+    clearList();
     return true;
   }
 
-
+  private void clearList(){
+    if(posts!=null && !posts.isEmpty()){
+      posts.clear();
+      postAdapter.notifyDataSetChanged();
+    }
+  }
 
 }
