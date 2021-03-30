@@ -91,7 +91,7 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsVh> {
 
       if (chatItem.getImageUrl() != null) {
         if (!chatItem.getImageUrl().isEmpty()) {
-          picasso.load(chatItem.getImageUrl()).fit().into(imageIv);
+          picasso.load(chatItem.getImageUrl()).fit().centerCrop().into(imageIv);
         }
         nameTv.setText(chatItem.getUsername());
       } else {
@@ -208,7 +208,7 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsVh> {
 
           if (task.isSuccessful()) {
             if (chatItem.getImageUrl() != null && !chatItem.getImageUrl().isEmpty()) {
-              picasso.load(chatItem.getImageUrl()).into(imageIv);
+              picasso.load(chatItem.getImageUrl()).fit().centerCrop().into(imageIv);
             }
             nameTv.setText(chatItem.getUsername());
           }

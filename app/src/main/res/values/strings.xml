@@ -331,5 +331,6 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="course_time">Course time: </string>
     <string name="add_Bio">You can add your bio from Edit button</string>
     <string name="Bio">Fill Bio</string>
+    <string name="no_results_found">No results found</string>
 
 </resources>

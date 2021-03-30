@@ -41,9 +41,6 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     void clickUser(String userId);
   }
 
-
-
-
   public UsersAdapter(ArrayList<UserPreview> users, int itemLayout) {
     this.users = users;
     this.itemLayout = itemLayout;
@@ -162,7 +159,7 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return;
 
       if (user.getImageUrl() != null) {
-        picasso.load(user.getImageUrl()).fit().into(userIv);
+        picasso.load(user.getImageUrl()).fit().centerCrop().into(userIv);
       }
 
       usernameTv.setText(user.getUsername());
@@ -198,7 +195,7 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
       if (user.getUserId() == null)
         return;
       if (user.getImageUrl() != null) {
-        picasso.load(user.getImageUrl()).fit().into(imageIv);
+        picasso.load(user.getImageUrl()).fit().centerCrop().into(imageIv);
       }else{
         imageIv.setImageResource(R.color.white);
       }

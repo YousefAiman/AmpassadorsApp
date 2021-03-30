@@ -67,7 +67,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
   private Bitmap videoThumbnailBitmap;
   private SimpleExoPlayer simpleExoPlayer;
   private Map<UploadTask, StorageTask<UploadTask.TaskSnapshot>> uploadTaskMap;
-  private int attachmentType;
+  private int attachmentType = 1;
   private String documentName;
   private double documentSize;
 
@@ -129,7 +129,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
         final String imageUrl = snapshot.getString("imageUrl");
 
         if (imageUrl != null && !imageUrl.isEmpty()) {
-          Picasso.get().load(imageUrl).fit().into(userIv);
+          Picasso.get().load(imageUrl).fit().centerCrop().into(userIv);
         }
         usernameTv.setText(snapshot.getString("username"));
 
@@ -160,13 +160,11 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
         return;
       }
 
-
-      if (attachmentUri == null) {
-        Toast.makeText(this, R.string.Message_Attchent_post
-                , Toast.LENGTH_SHORT).show();
-        return;
-      }
-
+//      if (attachmentUri == null) {
+//        Toast.makeText(this, R.string.Message_Attchent_post
+//                , Toast.LENGTH_SHORT).show();
+//        return;
+//      }
 
       publishBtn.setClickable(false);
 
@@ -193,6 +191,11 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
         case Files.DOCUMENT:
           uploadDocument(title, description, progressDialog);
           break;
+
+        case Files.TEXT:
+          uploadDocument(title, description, progressDialog);
+          break;
+
       }
 
 
@@ -221,9 +224,13 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     dataMap.put("title", title);
     dataMap.put("description", description);
     dataMap.put("publisherId", currentUid);
-    dataMap.put("attachmentType", attachmentType);
-    dataMap.put("attachmentUrl", attachmentUrl);
-    dataMap.put("keyWords", Arrays.asList(title.split(" ")));
+
+    if(attachmentUrl != null){
+      dataMap.put("attachmentType", attachmentType);
+      dataMap.put("attachmentUrl", attachmentUrl);
+    }
+
+    dataMap.put("keyWords", Arrays.asList(title.toLowerCase().trim().split(" ")));
 
     if (videoThumbnailUrl != null) {
       dataMap.put("videoThumbnailUrl", videoThumbnailUrl);
@@ -490,15 +497,14 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
 
     if (resultCode == RESULT_OK && data != null && data.getData() != null) {
 
-
       attachmentUri = data.getData();
-      attachmentLinear.setVisibility(View.GONE);
+//      attachmentLinear.setVisibility(View.GONE);
 
       switch (requestCode) {
 
         case Files.PICK_IMAGE:
           attachmentType = Files.IMAGE;
-          Picasso.get().load(attachmentUri).fit().into(attachmentIv);
+          Picasso.get().load(attachmentUri).fit().centerCrop().into(attachmentIv);
           break;
 
         case Files.PICK_VIDEO:
@@ -565,6 +571,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         if (videoThumbnailBitmap != null) {
+          attachmentIv.setScaleType(ImageView.ScaleType.CENTER_CROP);
           attachmentIv.post(new Runnable() {
             @Override
             public void run() {
@@ -637,6 +644,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     }
 
   }
+
 
   private void cancelUploadTasks() {
 
