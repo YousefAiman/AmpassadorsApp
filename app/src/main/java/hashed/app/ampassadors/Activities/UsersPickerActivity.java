@@ -37,6 +37,7 @@ public class UsersPickerActivity extends AppCompatActivity implements
   private ArrayList<String> previousSelectedUserIdsList;
   private CollectionReference usersRef;
   private Toolbar pickUserToolbar;
+  private FloatingActionButton nextFloatingBtn;
   //  private SearchView searchUserSearchView;
 
   @Override
@@ -45,20 +46,31 @@ public class UsersPickerActivity extends AppCompatActivity implements
     setContentView(R.layout.activity_users_picker);
 
     userRv = findViewById(R.id.userRv);
-    FloatingActionButton nextFloatingBtn = findViewById(R.id.nextFloatingBtn);
+    nextFloatingBtn = findViewById(R.id.nextFloatingBtn);
     pickUserToolbar = findViewById(R.id.pickUserToolbar);
     pickUserToolbar.setNavigationOnClickListener(v -> finish());
     pickUserToolbar.setOnMenuItemClickListener(this);
     usersRef = FirebaseFirestore.getInstance().collection("Users");
 
+    if(getIntent() != null &&
+            (getIntent().hasExtra("previousSelectedUserIdsList") ||
+                    getIntent().hasExtra("previousSearchSelectedUserIdsList"))){
 
-    if (getIntent() != null && getIntent().hasExtra("previousSelectedUserIdsList")) {
-      previousSelectedUserIdsList =
-              getIntent().getStringArrayListExtra("previousSelectedUserIdsList");
+      if(getIntent().hasExtra("previousSelectedUserIdsList")){
 
-    } else {
+        previousSelectedUserIdsList =
+                getIntent().getStringArrayListExtra("previousSelectedUserIdsList");
+
+      }else if(getIntent().hasExtra("previousSearchSelectedUserIdsList")){
+
+        previousSelectedUserIdsList =
+                getIntent().getStringArrayListExtra("previousSearchSelectedUserIdsList");
+
+      }
+    }else{
       previousSelectedUserIdsList = new ArrayList<>();
     }
+
 
     updateSubtitle();
 
@@ -68,34 +80,17 @@ public class UsersPickerActivity extends AppCompatActivity implements
 
 
     if (getIntent() != null && getIntent().hasExtra("previousSelectedUserIdsList")) {
+
       getPreviousUsers();
+
+
+    }else{
+
+
+
     }
 
-    nextFloatingBtn.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
 
-        if (pickerAdapter.selectedUserIds.size() < 2) {
-          Toast.makeText(UsersPickerActivity.this,
-                  R.string.Warring_Group_Message,
-                  Toast.LENGTH_SHORT).show();
-          return;
-        }
-
-        final Intent createMeetingIntent = new Intent(UsersPickerActivity.this,
-                CreateMeetingActivity.class)
-                .putStringArrayListExtra("selectedUserIdsList",
-                        pickerAdapter.selectedUserIds);
-
-        if (getIntent().hasExtra("meetingBundle")) {
-          createMeetingIntent.putExtra("meetingBundle",
-                  getIntent().getBundleExtra("meetingBundle"));
-        }
-
-        startActivity(createMeetingIntent);
-        finish();
-      }
-    });
   }
 
   @Override
@@ -151,6 +146,44 @@ public class UsersPickerActivity extends AppCompatActivity implements
     intent.putStringArrayListExtra("selectedUserIds", pickerAdapter.selectedUserIds);
     startActivityForResult(intent, 3);
     return false;
+  }
+
+
+  private void setNextClickListenerToCreateNewActivity(){
+    nextFloatingBtn.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+
+        if (pickerAdapter.selectedUserIds.size() < 2) {
+          Toast.makeText(UsersPickerActivity.this,
+                  R.string.Warring_Group_Message,
+                  Toast.LENGTH_SHORT).show();
+          return;
+        }
+
+        final Intent createMeetingIntent = new Intent(UsersPickerActivity.this,
+                CreateMeetingActivity.class)
+                .putStringArrayListExtra("selectedUserIdsList",
+                        pickerAdapter.selectedUserIds);
+
+        if(getIntent() != null &&
+                (getIntent().hasExtra("previousSelectedUserIdsList") ||
+                        getIntent().hasExtra("previousSearchSelectedUserIdsList"))){
+
+          if(getIntent().hasExtra("previousSelectedUserIdsList")){
+
+            setResult(3,createMeetingIntent);
+
+          }else if(getIntent().hasExtra("previousSearchSelectedUserIdsList")){
+            startActivity(createMeetingIntent);
+          }
+        }else{
+          startActivity(createMeetingIntent);
+        }
+
+        finish();
+      }
+    });
   }
 
 

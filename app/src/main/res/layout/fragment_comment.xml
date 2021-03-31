@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_marginTop="50dp"
     android:background="@drawable/comments_layout_card_back"
     tools:context=".Fragments.CommentsFragment">
@@ -43,15 +43,6 @@
             android:layout_marginTop="8dp"
             android:layout_marginHorizontal="13dp"
             android:background="@color/black_transparent" />
-
-        <FrameLayout
-            android:id="@+id/repliesFrameLayout"
-            android:layout_width="match_parent"
-            android:visibility="gone"
-            android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_below="@+id/view4" />
-
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/commentsRv"

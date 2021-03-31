@@ -16,6 +16,7 @@ public class ChatItem implements Serializable {
   private PrivateMessagePreview message;
   private long time;
   private long messageKey;
+  private long unSeenCount;
 
   public ChatItem() {
   }
@@ -28,7 +29,6 @@ public class ChatItem implements Serializable {
     this.message = message;
     this.time = time;
   }
-
 
   public PrivateMessagePreview getMessage() {
     return message;
@@ -93,5 +93,13 @@ public class ChatItem implements Serializable {
 
   public void setMessageKey(long messageKey) {
     this.messageKey = messageKey;
+  }
+
+  public long getUnSeenCount() {
+    return unSeenCount;
+  }
+
+  public void setUnSeenCount(long unSeenCount) {
+    this.unSeenCount = unSeenCount;
   }
 }

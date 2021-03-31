@@ -30,7 +30,8 @@
         android:layout_height="0dp"
         android:layout_marginStart="17dp"
         android:layout_marginTop="21dp"
-        android:src="@color/white"
+        android:src="@drawable/add_icon_white"
+        app:civ_circle_background_color="@color/dark_green"
         app:civ_border_color="@color/dark_green"
         app:civ_border_width="1dp"
         app:layout_constraintDimensionRatio="1"
@@ -143,16 +144,30 @@
         app:layout_constraintWidth_min="wrap" />
 
 
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/doneFloatingBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="9dp"
         android:contentDescription="@string/add_group"
         android:src="@drawable/check_icon_grey"
         android:theme="@style/floatingGreenTheme"
+        android:layout_marginBottom="14dp"
         app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="@color/white" />
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/editUsersFloatingBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="9dp"
+        android:contentDescription="@string/edit_contributors"
+        android:src="@drawable/edit_icon_white"
+        android:theme="@style/floatingGreenTheme"
+        app:fabSize="normal"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/linearLayout3"

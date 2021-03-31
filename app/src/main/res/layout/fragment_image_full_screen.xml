@@ -12,8 +12,7 @@
         android:id="@+id/fullScreenIv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:contentDescription="@string/fullscreen_image"
-        />
+        android:contentDescription="@string/fullscreen_image" />
 
     <include
         android:id="@+id/fullScreenToolbar"

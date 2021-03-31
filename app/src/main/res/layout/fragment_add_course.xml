@@ -202,8 +202,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/timeTv" />
 
-        <TextView
-            android:id="@+id/courseDurationTv"
+        <EditText
+            android:id="@+id/courseDurationEd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -211,12 +211,26 @@
             android:fontFamily="@font/segoe_ui_bold"
             android:paddingHorizontal="10dp"
             android:paddingVertical="8dp"
-            android:hint="00"
+            android:inputType="number"
+            android:hint="1-200"
             android:textColor="@color/black_transparent"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="@+id/textView9"
             app:layout_constraintStart_toEndOf="@+id/textView9"
             app:layout_constraintTop_toTopOf="@+id/textView9" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/segoe_ui"
+            android:text="@string/hours"
+            android:layout_marginStart="10dp"
+            android:textColor="@color/black_transparent"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/courseDurationEd"
+            app:layout_constraintStart_toEndOf="@+id/courseDurationEd"
+            app:layout_constraintTop_toTopOf="@+id/courseDurationEd" />
 
 
         <android.widget.Button
@@ -234,7 +248,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/courseDurationTv"
+            app:layout_constraintTop_toBottomOf="@+id/courseDurationEd"
             app:layout_constraintWidth_min="wrap"
             app:layout_constraintWidth_percent="0.35" />
 

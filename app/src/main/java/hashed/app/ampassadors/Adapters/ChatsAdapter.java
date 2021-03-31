@@ -35,20 +35,17 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsVh> {
 
   private static final CollectionReference usersCollectionRef =
           FirebaseFirestore.getInstance().collection("Users");
-  private static ArrayList<ChatItem> chatItems;
-  private static String currentUid;
-  private static int blackColor;
-
-  private static Typeface boldFont;
+  private final ArrayList<ChatItem> chatItems;
+  private final String currentUid;
+  private final Typeface boldFont,normalFont;
 
 
   public ChatsAdapter(ArrayList<ChatItem> chatItems, String currentUid, Context context) {
-    ChatsAdapter.chatItems = chatItems;
-    ChatsAdapter.currentUid = currentUid;
+    this.chatItems = chatItems;
+    this.currentUid = currentUid;
 
-    ChatsAdapter.blackColor = ResourcesCompat.getColor(context.getResources(),
-            R.color.black, null);
-    ChatsAdapter.boldFont = ResourcesCompat.getFont(context, R.font.segoe_ui_bold);
+    this.boldFont = ResourcesCompat.getFont(context, R.font.segoe_ui_bold);
+    this.normalFont = ResourcesCompat.getFont(context, R.font.segoe_ui);
 
   }
 
@@ -72,10 +69,10 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsVh> {
 
   }
 
-  static class ChatsVh extends RecyclerView.ViewHolder implements View.OnClickListener {
+  public class ChatsVh extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     private final CircleImageView imageIv;
-    private final TextView nameTv, messageTv, timeTv;
+    private final TextView nameTv, messageTv, timeTv,unSeenTv;
     private final Picasso picasso = Picasso.get();
 
     public ChatsVh(@NonNull View itemView) {
@@ -84,10 +81,10 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsVh> {
       nameTv = itemView.findViewById(R.id.nameTv);
       messageTv = itemView.findViewById(R.id.messageTv);
       timeTv = itemView.findViewById(R.id.timeTv);
+      unSeenTv = itemView.findViewById(R.id.unSeenTv);
     }
 
     private void bindChat(ChatItem chatItem) {
-
 
       if (chatItem.getImageUrl() != null) {
         if (!chatItem.getImageUrl().isEmpty()) {
@@ -102,12 +99,28 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsVh> {
 
       if (!chatItem.isSeen()) {
         messageTv.setTypeface(boldFont);
-        messageTv.setTextColor(blackColor);
+      }else{
+        messageTv.setTypeface(normalFont);
+      }
+
+      if(chatItem.getUnSeenCount() > 0){
+        unSeenTv.setVisibility(View.VISIBLE);
+        unSeenTv.setText(String.valueOf(chatItem.getUnSeenCount()));
+      }else{
+        unSeenTv.setVisibility(View.GONE);
       }
 
       timeTv.setText(TimeFormatter.formatTime(chatItem.getMessage().getTime()));
 
       itemView.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View view) {
+
+      itemView.getContext().startActivity(new Intent(itemView.getContext(),
+              PrivateMessagingActivity.class).putExtra("messagingUid",
+              chatItems.get(getAdapterPosition()).getMessagingUid()));
 
     }
 
@@ -179,41 +192,24 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsVh> {
       return text;
     }
 
-
-    @Override
-    public void onClick(View view) {
-
-      itemView.getContext().startActivity(new Intent(itemView.getContext(),
-              PrivateMessagingActivity.class).putExtra("messagingUid",
-              chatItems.get(getAdapterPosition()).getMessagingUid()));
-
-    }
-
-
     private void getUserInfo(ChatItem chatItem, String userId, ImageView imageIv, TextView nameTv) {
 
       usersCollectionRef.document(userId).get()
-              .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
+              .addOnSuccessListener(documentSnapshot -> {
 
-                  if (documentSnapshot.exists()) {
-                    chatItem.setImageUrl(documentSnapshot.getString("imageUrl"));
-                    chatItem.setUsername(documentSnapshot.getString("username"));
-                  }
+                if (documentSnapshot.exists()) {
+                  chatItem.setImageUrl(documentSnapshot.getString("imageUrl"));
+                  chatItem.setUsername(documentSnapshot.getString("username"));
                 }
-              }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-        @Override
-        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+              }).addOnCompleteListener(task -> {
 
-          if (task.isSuccessful()) {
-            if (chatItem.getImageUrl() != null && !chatItem.getImageUrl().isEmpty()) {
-              picasso.load(chatItem.getImageUrl()).fit().centerCrop().into(imageIv);
-            }
-            nameTv.setText(chatItem.getUsername());
-          }
-        }
-      });
+                if (task.isSuccessful()) {
+                  if (chatItem.getImageUrl() != null && !chatItem.getImageUrl().isEmpty()) {
+                    picasso.load(chatItem.getImageUrl()).fit().centerCrop().into(imageIv);
+                  }
+                  nameTv.setText(chatItem.getUsername());
+                }
+              });
 
     }
 

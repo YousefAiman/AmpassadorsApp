@@ -7,9 +7,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +28,7 @@ import com.google.android.exoplayer2.util.Log;
 import java.util.Objects;
 
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.FileDownloadUtil;
 import hashed.app.ampassadors.Utils.VideoCache;
 import hashed.app.ampassadors.Utils.VideoDataSourceFactory;
 
@@ -70,9 +73,18 @@ public class VideoFullScreenFragment extends Fragment {
   private boolean mVisible;
   private final Runnable mHideRunnable = this::hide;
 
+  private  String attachmentName;
+  private FileDownloadUtil fileDownloadUtil;
+
   public VideoFullScreenFragment(String videoUrl) {
     this.videoUrl = videoUrl;
   }
+
+  public VideoFullScreenFragment(String videoUrl,String attachmentName) {
+    this.videoUrl = videoUrl;
+    this.attachmentName = attachmentName;
+  }
+
 
   @Nullable
   @Override
@@ -83,6 +95,26 @@ public class VideoFullScreenFragment extends Fragment {
 
     final Toolbar fullScreenToolbar = view.findViewById(R.id.fullScreenToolbar);
     fullScreenToolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
+
+    if(attachmentName!=null){
+
+      fullScreenToolbar.inflateMenu(R.menu.download_menu);
+      fullScreenToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+          if(item.getItemId() == R.id.action_download){
+
+            if(fileDownloadUtil == null){
+              fileDownloadUtil = new FileDownloadUtil(requireContext(),
+                      videoUrl, attachmentName,null);
+            }
+            fileDownloadUtil.showDownloadAlert();
+          }
+          return false;
+        }
+      });
+
+    }
 
     playerView = view.findViewById(R.id.playerView);
 

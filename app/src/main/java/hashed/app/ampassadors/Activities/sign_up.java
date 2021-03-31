@@ -602,7 +602,10 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
 
     public void selectDefaultPhoneCode(String countryCode) {
         final String defaultSpinnerChoice = EmojiUtil.countryCodeToEmoji(countryCode)
-                + " +" + PhoneNumberUtil.getInstance().getCountryCodeForRegion(countryCode);
+                + " +" + PhoneNumberUtil.getInstance().getCountryCodeForRegion(countryCode.toUpperCase());
+
+
+        Log.d("ttt","default phone code: "+defaultSpinnerChoice);
 
         spinner.setSelection(spinnerArray.indexOf(defaultSpinnerChoice));
     }
