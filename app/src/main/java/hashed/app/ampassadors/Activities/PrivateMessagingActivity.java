@@ -491,7 +491,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
                           currentScrollListener = new toTopScrollListener());
                 }
 
-//                currentMessagingRef.child("LastSeenMessage:" + currentUid).setValue(lastKeyRef);
+                currentMessagingRef.child("LastSeenMessage:" + currentUid).setValue(lastKeyRef);
 
                 addDeleteFieldListener();
 
@@ -1455,9 +1455,9 @@ public class PrivateMessagingActivity extends AppCompatActivity
       progressHandle.removeCallbacks(progressRunnable);
     }
 
-//    if (currentMessagingRef != null && lastKeyRef != null) {
-//      currentMessagingRef.child("LastSeenMessage:" + currentUid).setValue(lastKeyRef);
-//    }
+    if (currentMessagingRef != null && lastKeyRef != null) {
+      currentMessagingRef.child("LastSeenMessage:" + currentUid).setValue(lastKeyRef);
+    }
 
     if (currentUid != null) {
       usersRef.document(currentUid).update("ActivelyMessaging", null);

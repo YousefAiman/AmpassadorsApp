@@ -36,24 +36,14 @@ import hashed.app.ampassadors.Utils.Files;
 
 public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-  private static final int IMAGE_NEWS = 3, VIDEO_NEWS = 4, ATTACHMENT_NEWS = 5,TEXT_NEWS = 6;
+  private static final int POLL_TYPE = 10;
+
   private static final CollectionReference postsCollectionRef =
           FirebaseFirestore.getInstance().collection("Posts");
-  private List<PostData> posts;
+  private final List<PostData> posts;
   private final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-  Context context;
-
+  private final Context context;
   public List<Integer> loadingItems = new ArrayList<>();
-//    private final CommentsInterface commentsInterface;
-//    private final ImageInterface imageInterface;
-//
-//    public interface CommentsInterface{
-//      void showComments(String postId,int comments);
-//    }
-//
-//    public interface ImageInterface{
-//      void showImage(String imageUrl);
-//    }
 
   public PostAdapter(List<PostData> posts, Context context) {
     this.posts = posts;
@@ -67,24 +57,25 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     switch (viewType) {
 
-      case IMAGE_NEWS:
+      case Files.IMAGE:
         return new NewsImageVh(LayoutInflater.from(context).inflate(R.layout.news_image_item_layout
                 , parent, false));
 
-      case VIDEO_NEWS:
+      case Files.VIDEO:
         return new NewsVideosVh(LayoutInflater.from(context).inflate(R.layout.news_video_item_layout
                 , parent, false));
 
-      case ATTACHMENT_NEWS:
-        return new NewsAttachmentVh(LayoutInflater.from(context).inflate(R.layout.news_attachment_item_layout
+      case Files.DOCUMENT:
+        return new NewsAttachmentVh(LayoutInflater.from(context).inflate(
+                R.layout.news_attachment_item_layout
                 , parent, false));
 
-        case TEXT_NEWS:
+      case Files.TEXT:
         return new NewsTextVh(LayoutInflater.from(context).inflate(R.layout.news_text_item_layout
                 , parent, false));
 
 
-      case PostData.TYPE_POLL:
+      case POLL_TYPE:
         return new PollPreviewVh(LayoutInflater.from(context).inflate(
                 R.layout.poll_preview_item_layout, parent, false));
 
@@ -97,24 +88,23 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
   public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
     switch (holder.getItemViewType()) {
-      case IMAGE_NEWS:
+      case Files.IMAGE:
         ((NewsImageVh) holder).bind(posts.get(position));
         break;
 
-      case VIDEO_NEWS:
+      case Files.VIDEO:
         ((NewsVideosVh) holder).bind(posts.get(position));
         break;
 
-      case ATTACHMENT_NEWS:
+      case Files.DOCUMENT:
         ((NewsAttachmentVh) holder).bind(posts.get(position));
         break;
 
-      case TEXT_NEWS:
+      case Files.TEXT:
         ((NewsTextVh) holder).bind(posts.get(position));
         break;
 
-
-      case PostData.TYPE_POLL:
+      case POLL_TYPE:
         ((PollPreviewVh) holder).bind(posts.get(position));
         break;
     }
@@ -327,33 +317,37 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     final PostData postData = posts.get(position);
 
-    if (postData.getType() == PostData.TYPE_NEWS) {
-
-      if(postData.getAttachmentUrl() != null){
-
-        switch (postData.getAttachmentType()) {
-          case Files.IMAGE:
-            return IMAGE_NEWS;
-
-          case Files.DOCUMENT:
-            return ATTACHMENT_NEWS;
-
-          case Files.VIDEO:
-            return VIDEO_NEWS;
-
-          default:
-            return IMAGE_NEWS;
-        }
-      }else{
-        return TEXT_NEWS;
-      }
-
-
-    } else if (postData.getType() == PostData.TYPE_POLL) {
-      return PostData.TYPE_POLL;
-    } else {
-      return PostData.TYPE_NEWS;
+    if (postData.getType() == PostData.TYPE_POLL){
+      return POLL_TYPE;
+    }else{
+      return postData.getAttachmentType();
     }
+//    if (postData.getType() == PostData.TYPE_NEWS) {
+//
+//
+////        switch (postData.getAttachmentType()) {
+////          case Files.IMAGE:
+////            return IMAGE_NEWS;
+////
+////          case Files.DOCUMENT:
+////            return ATTACHMENT_NEWS;
+////
+////          case Files.VIDEO:
+////            return VIDEO_NEWS;
+////
+////          case Files.VIDEO:
+////            return VIDEO_NEWS;
+////
+////          return TEXT_NEWS;
+////          default:
+////            return IMAGE_NEWS;
+////        }
+//
+//    } else  {
+//
+//    } else {
+//      return PostData.TYPE_NEWS;
+//    }
 
   }
 

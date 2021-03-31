@@ -1,5 +1,12 @@
 <resources>
 
+
+    <string name="web_client_id" translatable="false">76276922541-09csge1004nnptjognm1am0t5gv240kb.apps.googleusercontent.com</string>
+
+    <string name="facebook_app_id" translatable="false">278409073993872</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb485863972787866</string>
+
+
     <string name="app_name">TheNationalMainstream</string>
     <string name="more">More</string>
     <string name="notification_indicator">notification indicator</string>
@@ -332,5 +339,7 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="add_Bio">You can add your bio from Edit button</string>
     <string name="Bio">Fill Bio</string>
     <string name="no_results_found">No results found</string>
+    <string name="description">Description</string>
+    <string name="edit_contributors">Edit contributors</string>
 
 </resources>

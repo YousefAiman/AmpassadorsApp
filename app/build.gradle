@@ -81,6 +81,11 @@ dependencies {
 //    implementation 'com.google.oauth-client:google-oauth-client-assembly:1.30.5'
     implementation 'com.google.android.gms:play-services-auth:19.0.0'
 
+
+    //facebook
+    implementation 'com.facebook.android:facebook-login:5.15.3'
+
+
     //notifications
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'

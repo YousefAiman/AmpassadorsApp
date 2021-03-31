@@ -1,6 +1,5 @@
 package hashed.app.ampassadors.Adapters;
 
-import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +8,6 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.graphics.drawable.DrawableCompat;
@@ -24,7 +22,6 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
 import hashed.app.ampassadors.Activities.ProfileActiv;
-import hashed.app.ampassadors.Fragments.PostsProfileFragment;
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
 
@@ -159,7 +156,9 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return;
 
       if (user.getImageUrl() != null) {
-        picasso.load(user.getImageUrl()).fit().centerCrop().into(userIv);
+        picasso.load(user.getImageUrl()).fit().into(userIv);
+      }else{
+        userIv.setImageResource(R.color.white);
       }
 
       usernameTv.setText(user.getUsername());

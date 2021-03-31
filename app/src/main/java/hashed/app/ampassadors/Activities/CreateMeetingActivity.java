@@ -81,6 +81,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
   private CircleImageView groupIv;
   private EditText groupNameEd;
   private FloatingActionButton doneFloatingBtn;
+  private FloatingActionButton editUsersFloatingBtn;
   private TextView contributorsTv, dateSetterTv, timeSetterTv;
   private RecyclerView usersPickedRv;
 
@@ -102,17 +103,17 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
 
     selectedUserIdsList = getIntent().getStringArrayListExtra("selectedUserIdsList");
 
-    if (getIntent().hasExtra("meetingBundle")) {
-
-      final Bundle meetingBundle = getIntent().getBundleExtra("meetingBundle");
-      if (meetingBundle.containsKey("groupName")) {
-        groupNameEd.setText(meetingBundle.getString("meetingBundle"));
-      }
-      if (meetingBundle.containsKey("imageUri")) {
-        imageUri = Uri.parse(meetingBundle.getString("imageUri"));
-        Picasso.get().load(imageUri).fit().into(groupIv);
-      }
-    }
+//    if (getIntent().hasExtra("meetingBundle")) {
+//
+//      final Bundle meetingBundle = getIntent().getBundleExtra("meetingBundle");
+//      if (meetingBundle.containsKey("groupName")) {
+//        groupNameEd.setText(meetingBundle.getString("meetingBundle"));
+//      }
+//      if (meetingBundle.containsKey("imageUri")) {
+//        imageUri = Uri.parse(meetingBundle.getString("imageUri"));
+//        Picasso.get().load(imageUri).fit().centerCrop().into(groupIv);
+//      }
+//    }
 
     updateContributorsCount();
 
@@ -127,6 +128,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
     groupIv = findViewById(R.id.groupIv);
     groupNameEd = findViewById(R.id.groupNameEd);
     doneFloatingBtn = findViewById(R.id.doneFloatingBtn);
+    editUsersFloatingBtn = findViewById(R.id.editUsersFloatingBtn);
     contributorsTv = findViewById(R.id.contributorsTv);
     usersPickedRv = findViewById(R.id.usersPickedRv);
     dateSetterTv = findViewById(R.id.dateSetterTv);
@@ -150,29 +152,13 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
       @Override
       public void onClick(View view) {
 
-        Intent intent = new Intent(CreateMeetingActivity.this, UsersPickerActivity.class);
-        intent.putExtra("previousSelectedUserIdsList", selectedUserIdsList);
-
-        final String name = groupNameEd.getText().toString().trim();
-
-        if (imageUri != null || name.isEmpty()) {
-
-          final Bundle bundle = new Bundle();
-          if (imageUri != null) {
-            bundle.putString("imageUri", imageUri.toString());
-          }
-          if (!name.isEmpty()) {
-            bundle.putString("groupName", name);
-          }
-
-          intent.putExtra("meetingBundle", bundle);
-        }
-
-        startActivityForResult(intent, 3);
+        onBackPressed();
 
       }
     });
+
     doneFloatingBtn.setOnClickListener(this);
+    editUsersFloatingBtn.setOnClickListener(this);
     groupIv.setOnClickListener(this);
     dateSetterTv.setOnClickListener(this);
     timeSetterTv.setOnClickListener(this);
@@ -196,7 +182,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
     } else if (resultCode == RESULT_OK && requestCode == Files.PICK_IMAGE && data != null) {
 
       imageUri = data.getData();
-      Picasso.get().load(imageUri).fit().into(groupIv);
+      Picasso.get().load(imageUri).fit().centerCrop().into(groupIv);
 
     }
   }
@@ -424,6 +410,8 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
 
     if (view.getId() == R.id.doneFloatingBtn) {
       publishMeeting();
+    }else  if (view.getId() == R.id.editUsersFloatingBtn) {
+      editContributors();
     } else if (view.getId() == R.id.groupIv) {
 
       Files.startImageFetchIntent(this);
@@ -542,7 +530,6 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
 
   private void cancelUploadTasks() {
 
-
     final UploadTask uploadTask = uploadTaskMap.keySet().iterator().next();
 
     uploadTask.removeOnSuccessListener(
@@ -560,24 +547,49 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
   @Override
   public void onBackPressed() {
     super.onBackPressed();
-    if (uploadTaskMap != null && !uploadTaskMap.isEmpty()) {
+
+    if(!groupNameEd.getText().toString().trim().isEmpty()
+    || !selectedUserIdsList.isEmpty() || timeWasSelected || dateWasSelected
+    || imageUri!=null){
 
       AlertDialog.Builder alert = new AlertDialog.Builder(this);
-      alert.setTitle(R.string.Auth_from_sending_message);
-      alert.setMessage(R.string.Leaving_Message);
+      alert.setTitle("Do you want to leave without creating this meeting?");
+      alert.setMessage("Leaving will discard this meeting");
 
-      alert.setPositiveButton(R.string.YES, (dialogInterface, i) -> {
-        cancelUploadTasks();
-        dialogInterface.dismiss();
-        finish();
-      });
+      alert.setPositiveButton("Leave", (dialogInterface, i) -> {
+        if (uploadTaskMap != null && !uploadTaskMap.isEmpty()) {
+          cancelUploadTasks();
+          dialogInterface.dismiss();
+          finish();
+        }});
 
-      alert.setNegativeButton(R.string.No, (dialog, which) -> dialog.cancel());
-      alert.create().show();
+        alert.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+        alert.create().show();
 
     } else {
       super.onBackPressed();
     }
 
+  }
+
+  private void editContributors(){
+
+   Intent intent = new Intent(CreateMeetingActivity.this,
+                UsersPickerActivity.class);
+        intent.putExtra("previousSelectedUserIdsList", selectedUserIdsList);
+//        final String name = groupNameEd.getText().toString().trim();
+//        if (imageUri != null || name.isEmpty()) {
+//
+//          final Bundle bundle = new Bundle();
+//          if (imageUri != null) {
+//            bundle.putString("imageUri", imageUri.toString());
+//          }
+//          if (!name.isEmpty()) {
+//            bundle.putString("groupName", name);
+//          }
+//
+//          intent.putExtra("meetingBundle", bundle);
+//        }
+        startActivityForResult(intent, 3);
   }
 }

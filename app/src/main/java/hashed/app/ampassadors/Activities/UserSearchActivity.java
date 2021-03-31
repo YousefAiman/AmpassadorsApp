@@ -29,6 +29,7 @@ import hashed.app.ampassadors.R;
 public class UserSearchActivity extends AppCompatActivity implements
         SearchView.OnQueryTextListener {
 
+//  public static final int USER_SEARCH_RESULT = 10;
   private SearchView searchUserSearchView;
   private ArrayList<UserPreview> users;
   private RecyclerView userRv;
@@ -45,20 +46,14 @@ public class UserSearchActivity extends AppCompatActivity implements
     userRv = findViewById(R.id.userRv);
     searchUserSearchView = findViewById(R.id.searchUserSearchView);
 
-
     pickUserToolbar.setNavigationOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
 
-        if (pickerAdapter.selectedUserIds != null && !pickerAdapter.selectedUserIds.isEmpty()) {
-          setResult(3, new Intent().putExtra("previousSelectedUserIdsList"
-                  , pickerAdapter.selectedUserIds));
-        }
-        finish();
+    onBackPressed();
 
       }
     });
-
 
     searchUserSearchView.setOnClickListener(v -> searchUserSearchView.onActionViewCollapsed());
 
@@ -151,4 +146,14 @@ public class UserSearchActivity extends AppCompatActivity implements
     return true;
   }
 
+  @Override
+  public void onBackPressed() {
+
+    if (pickerAdapter.selectedUserIds != null && !pickerAdapter.selectedUserIds.isEmpty()) {
+      setResult(3, new Intent().putExtra("previousSearchSelectedUserIdsList"
+              , pickerAdapter.selectedUserIds));
+    }
+    finish();
+
+  }
 }

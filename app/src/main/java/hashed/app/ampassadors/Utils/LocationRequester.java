@@ -253,7 +253,7 @@ public class LocationRequester {
         cityEd.setText(city);
         locationIv.setVisibility(View.GONE);
 
-        ((sign_up)activity).selectDefaultPhoneCode(countryCode);
+        ((sign_up)activity).selectDefaultPhoneCode(countryCode.toUpperCase());
 
         dismissProgressDialog();
       } else {
@@ -267,9 +267,6 @@ public class LocationRequester {
     }
 
   }
-
-
-
 
   private void fetchFromApi(double latitude, double longitude) {
 
@@ -294,7 +291,7 @@ public class LocationRequester {
           cityEd.setText(city);
           locationIv.setVisibility(View.GONE);
 
-          ((sign_up)activity).selectDefaultPhoneCode(countryCode);
+          ((sign_up)activity).selectDefaultPhoneCode(countryCode.toUpperCase());
 
           dismissProgressDialog();
 

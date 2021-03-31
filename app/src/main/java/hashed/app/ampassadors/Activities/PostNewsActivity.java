@@ -30,6 +30,7 @@ import androidx.cardview.widget.CardView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Picasso;
 
 import hashed.app.ampassadors.Fragments.CommentsFragment;
@@ -37,6 +38,7 @@ import hashed.app.ampassadors.Fragments.ImageFullScreenFragment;
 import hashed.app.ampassadors.Fragments.VideoFullScreenFragment;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.FileDownloadUtil;
 import hashed.app.ampassadors.Utils.Files;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.SigninUtil;
@@ -56,9 +58,9 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
   private PostData postData;
   private BroadcastReceiver downloadCompleteReceiver;
 
-  @Override
-  public void onConfigurationChanged(@NonNull Configuration newConfig) {
-  }
+  //download
+  private FileDownloadUtil fileDownloadUtil;
+  private String fileName;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -144,44 +146,62 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
   private void getNewsType() {
 
-    switch (postData.getAttachmentType()) {
+      switch (postData.getAttachmentType()) {
 
-      case Files.VIDEO:
+        case Files.VIDEO:
 
-        playIv.setVisibility(View.VISIBLE);
-        newsIv.setOnClickListener(this);
-        break;
+          playIv.setVisibility(View.VISIBLE);
+          newsIv.setOnClickListener(this);
+          break;
 
-      case Files.DOCUMENT:
+        case Files.DOCUMENT:
 
-        attachmentImage = new ImageView(this);
-        attachmentImage.setImageResource(R.drawable.download_icon);
+          attachmentImage = new ImageView(this);
+          attachmentImage.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+          attachmentImage.setImageResource(R.drawable.download_icon);
 
-        final LayoutParams lp2 = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp2.gravity = Gravity.TOP;
-        final float density = getResources().getDisplayMetrics().density;
-        lp2.setMargins((int) (4 * density), (int) (4 * density), 0, 0);
+          final LayoutParams lp2 = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                  ViewGroup.LayoutParams.WRAP_CONTENT);
+          lp2.gravity = Gravity.TOP;
+          final float density = getResources().getDisplayMetrics().density;
+          lp2.setMargins((int) (4 * density), (int) (4 * density), 0, 0);
 
 
-        newsIv.setScaleType(ImageView.ScaleType.CENTER);
-        newsIv.setImageResource(R.drawable.pdf_icon);
+          newsIv.setScaleType(ImageView.ScaleType.CENTER);
+          newsIv.setImageResource(R.drawable.pdf_icon);
 
-        attachmentImage.setLayoutParams(lp2);
+          attachmentImage.setLayoutParams(lp2);
 
-        attachmentImage.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View view) {
-            showDownloadAlert();
-          }
-        });
+          attachmentImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-        cardView.addView(attachmentImage);
+              if(fileDownloadUtil == null){
+                fileDownloadUtil = new FileDownloadUtil(PostNewsActivity.this,postData.getAttachmentUrl(),
+                        postData.getDocumentName(),attachmentImage);
+              }
 
-        break;
+              fileDownloadUtil.showDownloadAlert();
 
-    }
+              if (downloadCompleteReceiver == null) {
+                setUpDownloadReceiver();
+              }
+
+            }
+          });
+
+          cardView.addView(attachmentImage);
+
+          break;
+
+        case Files.TEXT:
+          cardView.setVisibility(View.GONE);
+          break;
+      }
+
   }
+
+
 
   private void getUserInfo() {
 
@@ -222,7 +242,8 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
           frameLayout.setVisibility(View.VISIBLE);
 
           getSupportFragmentManager().beginTransaction().replace(frameLayout.getId(),
-                  new ImageFullScreenFragment(postData.getAttachmentUrl()),"FullScreen")
+                  new ImageFullScreenFragment(postData.getAttachmentUrl(),
+                          getFileName()),"FullScreen")
                   .commit();
 
         } else if (postData.getAttachmentType() == Files.VIDEO) {
@@ -230,11 +251,20 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
           frameLayout.setVisibility(View.VISIBLE);
 
           getSupportFragmentManager().beginTransaction().replace(frameLayout.getId(),
-                  new VideoFullScreenFragment(postData.getAttachmentUrl())).commit();
+                  new VideoFullScreenFragment(postData.getAttachmentUrl(),
+                          getFileName())).commit();
 
         }
       }
     }
+  }
+
+  private String getFileName(){
+    if(fileName == null){
+      fileName =
+              FirebaseStorage.getInstance().getReferenceFromUrl(postData.getAttachmentUrl()).getName();
+    }
+    return fileName;
   }
 
   private void likeOrDislike() {
@@ -244,7 +274,6 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
       SigninUtil.getInstance(PostNewsActivity.this,
               PostNewsActivity.this).show();
     }else{
-
 
       if (likeTv.getCurrentTextColor() == getResources().getColor(R.color.red)) {
 
@@ -273,22 +302,6 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
     return false;
   }
 
-  private void showDownloadAlert() {
-    final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-    alertDialogBuilder.setMessage(getString(R.string.DownLoad_Asking));
-
-    alertDialogBuilder.setPositiveButton(R.string.YES, (dialogInterface, i) -> {
-      downloadFile(postData.getAttachmentUrl(), postData.getDocumentName());
-    });
-
-    alertDialogBuilder.setNegativeButton(R.string.No, (dialogInterface, i) -> {
-      dialogInterface.dismiss();
-    });
-
-    alertDialogBuilder.show();
-
-  }
-
   @Override
   public void onBackPressed() {
 
@@ -302,55 +315,6 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
   }
 
-  private void downloadFile(String url, String fileName) {
-
-    DownloadManager.Request request;
-
-    request = new DownloadManager.Request(Uri.parse(url))
-            .setTitle(fileName)
-            .setDescription(getString(R.string.Download))
-            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-            .setAllowedOverMetered(true)
-            .setAllowedOverRoaming(true);
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      request.setRequiresCharging(false);
-    }
-
-    DownloadManager downloadManager = (DownloadManager)
-            this.getSystemService(Context.DOWNLOAD_SERVICE);
-
-
-    request.setDestinationInExternalFilesDir(this, Environment.DIRECTORY_DOWNLOADS,
-            fileName);
-
-    long downloadId = downloadManager.enqueue(request);
-    attachmentImage.setImageResource(R.drawable.cancel_icon);
-    attachmentImage.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-
-        final DownloadManager downloadManager = (DownloadManager)
-                getSystemService(Context.DOWNLOAD_SERVICE);
-
-        downloadManager.remove(downloadId);
-        attachmentImage.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View view) {
-            showDownloadAlert();
-          }
-        });
-
-      }
-    });
-
-    if (downloadCompleteReceiver == null) {
-      setUpDownloadReceiver();
-    }
-
-
-  }
-
   private void setUpDownloadReceiver() {
 
     downloadCompleteReceiver = new BroadcastReceiver() {
@@ -360,17 +324,13 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
         long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
 
         if (id != -1) {
-
-//          openDownloadedFile(id);
-
           attachmentImage.setImageResource(R.drawable.download_icon);
           attachmentImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-              showDownloadAlert();
+              fileDownloadUtil.showDownloadAlert();
             }
           });
-
         }
 
       }
