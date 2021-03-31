@@ -17,18 +17,13 @@
         android:id="@+id/action_delete"
         android:title="Delete messages"
         app:showAsAction="ifRoom" />
-
 </menu>
-
     </item>
-
     <item
         android:id="@+id/action_notifications"
         app:showAsAction="ifRoom"
         android:icon="@drawable/notification_icon"
         android:title="Notifications">
 
-
     </item>
-
 </menu>

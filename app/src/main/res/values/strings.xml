@@ -333,4 +333,11 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="Bio">Fill Bio</string>
     <string name="no_results_found">No results found</string>
 
+
+
+    <!--  FaceBook -->
+    <string name="facebook_app_id">485863972787866</string>
+    <string name="fb_login_protocol_scheme">fb485863972787866</string>
+
+
 </resources>

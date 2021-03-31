@@ -49,7 +49,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
 
     private static final int GOOGLE_REQUEST = 10;
     EditText email, password;
-    Button btn_login, create_account_btn;
+    Button btn_login, create_account_btn, facebookbtn;
     FirebaseAuth auth;
     TextView verifyEmail, forgetPass;
     FirebaseFirestore fStore;
@@ -61,6 +61,8 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_sign_in);
         init();
         LogIn();
@@ -153,6 +155,9 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
         forgetPass = findViewById(R.id.forget_pass);
         gmailbtn = findViewById(R.id.gmailbtn);
         gmailbtn.setOnClickListener(this);
+
+
+        facebookbtn = findViewById(R.id.facebookbtn);
 
         fAuth = FirebaseAuth.getInstance();
         // userid = fAuth.getCurrentUser().getUid();

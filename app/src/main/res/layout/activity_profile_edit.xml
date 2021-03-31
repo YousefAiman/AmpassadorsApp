@@ -11,7 +11,6 @@
             android:layout_height="match_parent"
             android:background="#f2f2f2"
             tools:context=".Fragments.profile.edit">
-
             <include
                 android:id="@+id/toolbar"
                 layout="@layout/profile_toolbar" />
@@ -65,7 +64,7 @@
                 android:layout_marginTop="152dp"
                 android:layout_marginEnd="32dp"
                 android:background="@drawable/profile_shape"
-                android:drawableLeft="@drawable/ic_baseline_person"
+                android:drawableStart="@drawable/ic_baseline_person"
                 android:ems="10"
                 android:hint="@string/username"
                 android:inputType="textPersonName"
@@ -80,7 +79,7 @@
                 android:layout_height="39dp"
                 android:layout_marginTop="16dp"
                 android:background="@drawable/profile_shape"
-                android:drawableLeft="@drawable/ic_baseline_home"
+                android:drawableStart="@drawable/ic_baseline_home"
                 android:ems="10"
                 android:hint="@string/country"
                 android:inputType="text"
@@ -95,7 +94,7 @@
                 android:layout_height="39dp"
                 android:layout_marginTop="16dp"
                 android:background="@drawable/profile_shape"
-                android:drawableLeft="@drawable/ic_baseline_place"
+                android:drawableStart="@drawable/ic_baseline_place"
                 android:ems="10"
                 android:hint="@string/city"
                 android:inputType="text"
@@ -110,7 +109,7 @@
                 android:layout_height="39dp"
                 android:layout_marginTop="16dp"
                 android:background="@drawable/profile_shape"
-                android:drawableLeft="@drawable/ic_baseline_phone"
+                android:drawableStart="@drawable/ic_baseline_phone"
                 android:ems="10"
                 android:hint="@string/phone"
                 android:inputType="text"

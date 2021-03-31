@@ -286,7 +286,6 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
         @Override
         public void onSuccess(Void aVoid) {
           progressDialog.dismiss();
-
           setResult(3, new Intent().putExtra("postData",
                   new PostData(dataMap)));
 
