@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import hashed.app.ampassadors.NotificationUtil.CloudMessagingNotificationsSender;
+import hashed.app.ampassadors.NotificationUtil.Data;
 import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.R;
 
@@ -116,7 +118,8 @@ public class PostData implements Serializable {
     this.type = type;
   }
 
-  public static void likePost(String postId, int type, String creatorId, Context context) {
+  public static void likePost(String postId,String postTitle, int type,
+                              String creatorId, Context context) {
 
     if (type == 1) {
 
@@ -135,10 +138,12 @@ public class PostData implements Serializable {
                   FirebaseFirestore.getInstance().collection("Posts")
                           .document(postId).update("likes", FieldValue.increment(1));
 
+                  final String currentUid = FirebaseAuth.getInstance()
+                          .getCurrentUser().getUid();
+
                   final DocumentReference userRef =
                           FirebaseFirestore.getInstance().collection("Users")
-                                  .document(FirebaseAuth.getInstance()
-                                          .getCurrentUser().getUid());
+                                  .document(currentUid);
                   userRef.update("Likes", FieldValue.arrayUnion(postId));
 
                   userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -146,15 +151,31 @@ public class PostData implements Serializable {
                     public void onSuccess(DocumentSnapshot snapshot) {
                       if (snapshot.exists()) {
                         final String username = snapshot.getString("username");
+                        final String imageUrl = snapshot.getString("imageUrl");
+
+                          final String message = username + context.getResources()
+                                  .getString(R.string.liked_post);
 
                         FirestoreNotificationSender.sendFirestoreNotification(
-                                creatorId, "postLike",
-                                username +
-                                        context.getResources()
-                                                .getString(R.string.liked_post),
-                                username,
-                                postId
-                        );
+                                creatorId, FirestoreNotificationSender.TYPE_LIKE,
+                                message, username, postId);
+
+
+                        final Data  data = new Data(
+                                currentUid,
+                                message,
+                                postTitle,
+                                null,
+                                "Post Like",
+                                FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE,
+                                postId);
+
+                        if(imageUrl!=null && !imageUrl.isEmpty()){
+                          data.setSenderImageUrl(imageUrl);
+                        }
+
+                        CloudMessagingNotificationsSender.sendNotification(creatorId, data);
+
                       }
                     }
                   });

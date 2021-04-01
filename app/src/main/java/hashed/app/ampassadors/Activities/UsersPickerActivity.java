@@ -38,6 +38,7 @@ public class UsersPickerActivity extends AppCompatActivity implements
   private CollectionReference usersRef;
   private Toolbar pickUserToolbar;
   private FloatingActionButton nextFloatingBtn;
+  private boolean wasFound;
   //  private SearchView searchUserSearchView;
 
   @Override
@@ -71,6 +72,7 @@ public class UsersPickerActivity extends AppCompatActivity implements
       previousSelectedUserIdsList = new ArrayList<>();
     }
 
+    setNextClickListenerToCreateNewActivity();
 
     updateSubtitle();
 
@@ -97,13 +99,13 @@ public class UsersPickerActivity extends AppCompatActivity implements
   protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
 
-    if (resultCode == 3 && data != null && data.hasExtra("previousSelectedUserIdsList")) {
+    if (resultCode == 3 && data != null && data.hasExtra("previousSearchSelectedUserIdsList")) {
 
       users.clear();
       pickerAdapter.notifyDataSetChanged();
 
       previousSelectedUserIdsList =
-              data.getStringArrayListExtra("previousSelectedUserIdsList");
+              data.getStringArrayListExtra("previousSearchSelectedUserIdsList");
 
       updateSubtitle();
       pickerAdapter.selectedUserIds = previousSelectedUserIdsList;
@@ -126,6 +128,19 @@ public class UsersPickerActivity extends AppCompatActivity implements
       }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
         @Override
         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+//          boolean removedOne = false;
+//          if(!wasFound){
+//            for(int i=0;i<users.size();i++){
+//              if(users.get(i).getUserId().equals(currentUid)){
+//                wasFound = true;
+//                removedOne = true;
+//                users.remove(i);
+//                break;
+//              }
+//            }
+//          }
+
           pickerAdapter.notifyItemInserted(users.size() - 1);
         }
       });

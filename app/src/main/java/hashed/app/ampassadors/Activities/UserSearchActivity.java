@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -76,7 +77,9 @@ public class UserSearchActivity extends AppCompatActivity implements
     userRv.setAdapter(pickerAdapter);
 
 
-    usersRef.orderBy("username")
+    usersRef.whereNotEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
+            .orderBy("userId")
+            .orderBy("username",Query.Direction.ASCENDING)
             .limit(100).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
       @Override
       public void onSuccess(QuerySnapshot snapshots) {
@@ -153,6 +156,7 @@ public class UserSearchActivity extends AppCompatActivity implements
       setResult(3, new Intent().putExtra("previousSearchSelectedUserIdsList"
               , pickerAdapter.selectedUserIds));
     }
+
     finish();
 
   }

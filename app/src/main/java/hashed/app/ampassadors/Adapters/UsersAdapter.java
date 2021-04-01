@@ -53,6 +53,14 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
   }
 
+  @Override
+  public int getItemViewType(int position) {
+
+    if(itemLayout == R.layout.meeting_contributor_details_item){
+      return 1;
+    }
+      return super.getItemViewType(position);
+  }
 
   @Override
   public int getItemCount() {
@@ -67,7 +75,11 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
   @Override
   public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-    if (itemLayout == R.layout.user_item_layout) {
+    if(viewType == 1){
+      return new UserMeetingContributorsVh(LayoutInflater.from(parent.getContext())
+              .inflate(itemLayout, parent, false));
+    }else{
+          if (itemLayout == R.layout.user_item_layout) {
 
       return new UsersVh(LayoutInflater.from(parent.getContext())
               .inflate(itemLayout, parent, false));
@@ -75,28 +87,33 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
       return new UsersPickedVh(LayoutInflater.from(parent.getContext())
               .inflate(itemLayout, parent, false));
     }
+    }
+
   }
 
   @Override
   public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
-    if (itemLayout == R.layout.user_item_layout) {
-      if(filteredUsers!=null){
-        ((UsersVh) holder).bindChat(filteredUsers.get(position));
-      }else{
-        ((UsersVh) holder).bindChat(users.get(position));
+    if(holder.getItemViewType() ==1){
+      ((UserMeetingContributorsVh) holder).bindChat(users.get(position));
+    }else {
+      if (itemLayout == R.layout.user_item_layout) {
+        if (filteredUsers != null) {
+          ((UsersVh) holder).bindChat(filteredUsers.get(position));
+        } else {
+          ((UsersVh) holder).bindChat(users.get(position));
+        }
+
+      } else if (itemLayout == R.layout.user_picked_preview_item_layout) {
+
+        if (filteredUsers != null) {
+          ((UsersPickedVh) holder).bindChat(filteredUsers.get(position));
+        } else {
+          ((UsersPickedVh) holder).bindChat(users.get(position));
+        }
+
       }
-
-    } else if (itemLayout == R.layout.user_picked_preview_item_layout) {
-
-      if(filteredUsers!=null){
-        ((UsersPickedVh) holder).bindChat(filteredUsers.get(position));
-      }else{
-        ((UsersPickedVh) holder).bindChat(users.get(position));
-      }
-
     }
-
   }
 
   @Override
@@ -193,8 +210,9 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
       if (user.getUserId() == null)
         return;
+
       if (user.getImageUrl() != null) {
-        picasso.load(user.getImageUrl()).fit().centerCrop().into(imageIv);
+        picasso.load(user.getImageUrl()).fit().into(imageIv);
       }else{
         imageIv.setImageResource(R.color.white);
       }
@@ -248,4 +266,40 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
       }
       }
   }
+
+  public static class UserMeetingContributorsVh
+          extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+    private final ImageView contributorImageIv;
+    private final TextView contributorNameTv;
+    private final Picasso picasso = Picasso.get();
+
+    public UserMeetingContributorsVh(@NonNull View itemView) {
+      super(itemView);
+      contributorImageIv = itemView.findViewById(R.id.contributorImageIv);
+      contributorNameTv = itemView.findViewById(R.id.contributorNameTv);
+    }
+
+    private void bindChat(UserPreview user) {
+
+      if (user.getUserId() == null)
+        return;
+
+      if (user.getImageUrl() != null) {
+        picasso.load(user.getImageUrl()).fit().into(contributorImageIv);
+      }else{
+        contributorImageIv.setImageResource(R.color.white);
+      }
+
+      contributorNameTv.setText(user.getUsername());
+
+      itemView.setOnClickListener(this);
+    }
+    @Override
+    public void onClick(View view) {
+
+
+    }
+  }
+
 }

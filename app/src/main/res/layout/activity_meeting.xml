@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white_grey"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:context=".Activities.MeetingActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/meetingToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/dark_green"
+        app:navigationIcon="@drawable/back_arrow_icon" />
+
+   <androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginHorizontal="14dp"
+    android:layout_marginVertical="11dp"
+    android:paddingTop="50dp"
+    android:paddingBottom="20dp"
+    android:background="@drawable/meeting_red_item_back"
+    android:clipToPadding="false"
+    android:scrollbarSize="0dp"
+    android:paddingHorizontal="10dp">
+
+    <TextView
+        android:id="@+id/meetingTitleTv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/segoe_ui"
+        android:textAlignment="viewStart"
+        android:maxLines="3"
+        android:textColor="@color/black_transparent"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/meetingDateTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/segoe_ui"
+            android:textColor="@color/black_transparent"
+            android:layout_marginTop="10dp"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@+id/meetingTitleTv"
+            app:layout_constraintTop_toBottomOf="@+id/meetingTitleTv" />
+
+        <TextView
+            android:id="@+id/meetingTimeTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/segoe_ui"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/black_transparent"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@+id/meetingDateTv"
+            app:layout_constraintTop_toBottomOf="@+id/meetingDateTv" />
+
+
+<!--    <TextView-->
+<!--        android:id="@+id/meetingDurationTv"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:fontFamily="@font/segoe_ui"-->
+<!--        android:textColor="@color/black_transparent"-->
+<!--        -->
+<!--        android:layout_marginTop="10dp"-->
+<!--        android:textSize="14sp"-->
+<!--        app:layout_constraintStart_toStartOf="@+id/meetingTitleTv"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/meetingTitleTv" />-->
+
+
+        <TextView
+            android:id="@+id/textView15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:fontFamily="@font/segoe_ui"
+            android:text="@string/contributors"
+            android:textColor="@color/black_transparent"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/meetingTimeTv" />
+
+
+       <android.widget.Button
+           android:id="@+id/joinBtn"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:background="@drawable/meeting_join_btn_back"
+           android:fontFamily="@font/segoe_ui"
+           android:text="@string/join"
+           android:layout_marginBottom="5dp"
+           android:textColor="@color/white"
+           android:textSize="14sp"
+           app:layout_constraintBottom_toTopOf="@+id/contributorsRv"
+           app:layout_constraintEnd_toEndOf="parent"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/contributorsRv"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="3dp"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="2"
+            android:overScrollMode="never"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="14dp"
+            app:layout_constraintTop_toBottomOf="@+id/textView15" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

@@ -46,6 +46,8 @@ import java.util.UUID;
 
 import hashed.app.ampassadors.Adapters.CommentsAdapter;
 import hashed.app.ampassadors.Adapters.RepliesAdapter;
+import hashed.app.ampassadors.NotificationUtil.CloudMessagingNotificationsSender;
+import hashed.app.ampassadors.NotificationUtil.Data;
 import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.Objects.Comment;
 import hashed.app.ampassadors.Objects.CommentReply;
@@ -279,30 +281,47 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
         if (snapshot.exists()) {
 
           final String creatorId = snapshot.getString("publisherId");
+          final String postTitle = snapshot.getString("title");
 
           if (!creatorId.
                   equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-
 
             final DocumentReference userRef =
                     FirebaseFirestore.getInstance().collection("Users")
                             .document(FirebaseAuth.getInstance()
                                     .getCurrentUser().getUid());
 
-
             userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
               @Override
               public void onSuccess(DocumentSnapshot snapshot) {
                 if (snapshot.exists()) {
                   final String username = snapshot.getString("username");
+                  final String imageUrl = snapshot.getString("imageUrl");
+
+                  final String currentUid =FirebaseAuth.getInstance().getCurrentUser().getUid();
 
                   FirestoreNotificationSender.sendFirestoreNotification(
                           creatorId,
-                          "postComment",
-                          username + message,
+                          FirestoreNotificationSender.TYPE_COMMENT,
+                          "Commented on your post: "+ message,
                           username,
                           postId
                   );
+
+                  final Data data = new Data(
+                          currentUid,
+                          username + " commented: " + message,
+                          postTitle,
+                          null,
+                          "Post Comment",
+                          FirestoreNotificationSender.TYPE_COMMENT,
+                          postId);
+
+                  if(imageUrl!=null && !imageUrl.isEmpty()){
+                    data.setSenderImageUrl(imageUrl);
+                  }
+
+                  CloudMessagingNotificationsSender.sendNotification(creatorId, data);
                 }
               }
             });

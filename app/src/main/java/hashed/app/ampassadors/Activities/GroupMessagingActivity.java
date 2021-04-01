@@ -241,7 +241,7 @@ public class GroupMessagingActivity extends AppCompatActivity
       final String sourceId = destinationBundle.getString("sourceId");
       final String sourceType = destinationBundle.getString("sourceType");
 
-      if (sourceType.equals("zoomMeeting")) {
+      if (sourceType.equals(FirestoreNotificationSender.TYPE_ZOOM)) {
 
         groupId = sourceId.split("-")[0];
         final String joinUrl = sourceId.split("-")[1];
@@ -1693,7 +1693,7 @@ public class GroupMessagingActivity extends AppCompatActivity
               currentGroupName,
               currentGroupImage,
               "Group Messages",
-              "zoomMeeting",
+              FirestoreNotificationSender.TYPE_ZOOM,
               groupId + "-" + joinUrl
       );
 
@@ -1791,7 +1791,8 @@ public class GroupMessagingActivity extends AppCompatActivity
 
   private void sendBothNotifs(String body, String userId) {
 
-    FirestoreNotificationSender.sendFirestoreNotification(userId, data.getSourceType(), body,
+    FirestoreNotificationSender.sendFirestoreNotification(userId,
+            FirestoreNotificationSender.TYPE_GROUP_MESSAGE, body,
             currentGroupName, groupId);
 
     CloudMessagingNotificationsSender.sendNotification(userId, data);

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import hashed.app.ampassadors.Activities.GroupMessagingActivity;
+import hashed.app.ampassadors.Activities.MeetingActivity;
 import hashed.app.ampassadors.Objects.Meeting;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.TimeFormatter;
@@ -76,34 +77,40 @@ public class MeetingsAdapter extends RecyclerView.Adapter<MeetingsAdapter.Meetin
     @Override
     public void onClick(View view) {
 
-      if (meetings.get(getAdapterPosition()).isHasEnded()) {
-
-        Toast.makeText(itemView.getContext(),
-                "This Meeting has ended!", Toast.LENGTH_SHORT).show();
-
-        meetings.remove(getAdapterPosition());
-        notifyItemRemoved(getAdapterPosition());
-        return;
-      }
-
-      if (meetings.get(getAdapterPosition()).getStartTime() > System.currentTimeMillis()) {
-
-        Log.d("ttt","meeting start time: "+
-                meetings.get(getAdapterPosition()).getStartTime());
-
-        Log.d("ttt","System.currentTimeMillis(): "+
-                System.currentTimeMillis());
-
-        Toast.makeText(itemView.getContext(),
-                "This Meeting hasn't started yet!", Toast.LENGTH_SHORT).show();
-
-        return;
-      }
+//      if (meetings.get(getAdapterPosition()).isHasEnded()) {
+//
+//        Toast.makeText(itemView.getContext(),
+//                "This Meeting has ended!", Toast.LENGTH_SHORT).show();
+//
+//        meetings.remove(getAdapterPosition());
+//        notifyItemRemoved(getAdapterPosition());
+//        return;
+//      }
+//
+//      if (meetings.get(getAdapterPosition()).getStartTime() > System.currentTimeMillis()) {
+//
+//        Log.d("ttt","meeting start time: "+
+//                meetings.get(getAdapterPosition()).getStartTime());
+//
+//        Log.d("ttt","System.currentTimeMillis(): "+
+//                System.currentTimeMillis());
+//
+//        Toast.makeText(itemView.getContext(),
+//                "This Meeting hasn't started yet!", Toast.LENGTH_SHORT).show();
+//
+//        return;
+//      }
 
       itemView.getContext().startActivity(
-              new Intent(itemView.getContext(), GroupMessagingActivity.class)
-                      .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("messagingUid",
-                      meetings.get(getAdapterPosition()).getMeetingId()));
+              new Intent(itemView.getContext(), MeetingActivity.class)
+                      .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("meeting",
+                      meetings.get(getAdapterPosition())));
+
+
+//      itemView.getContext().startActivity(
+//              new Intent(itemView.getContext(), GroupMessagingActivity.class)
+//                      .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("messagingUid",
+//                      meetings.get(getAdapterPosition()).getMeetingId()));
 
     }
 

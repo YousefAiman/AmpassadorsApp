@@ -3,8 +3,8 @@
 
     <string name="web_client_id" translatable="false">76276922541-09csge1004nnptjognm1am0t5gv240kb.apps.googleusercontent.com</string>
 
-    <string name="facebook_app_id" translatable="false">278409073993872</string>
-    <string name="fb_login_protocol_scheme" translatable="false">fb485863972787866</string>
+    <string name="facebook_app_id">278409073993872</string>
+    <string name="fb_login_protocol_scheme">fb485863972787866</string>
 
 
     <string name="app_name">TheNationalMainstream</string>

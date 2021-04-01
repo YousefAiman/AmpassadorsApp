@@ -40,7 +40,6 @@ public class CloudMessagingNotificationsSender {
 
             Log.d("ttt", "sending to token: " + token);
             Sender sender = new Sender(data, token);
-
 //            String msgID = token + System.currentTimeMillis();
 //
 //            RemoteMessage.Builder RMBuilder =
@@ -61,7 +60,6 @@ public class CloudMessagingNotificationsSender {
 //            }
 //
 //            FirebaseMessaging.getInstance().send(RMBuilder.build());
-
             apiService.sendNotification(sender).enqueue(new Callback<MyResponse>() {
               @Override
               public void onResponse(@NonNull Call<MyResponse> call,

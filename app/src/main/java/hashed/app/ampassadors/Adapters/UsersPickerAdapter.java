@@ -123,6 +123,8 @@ public class UsersPickerAdapter extends RecyclerView.Adapter<UsersPickerAdapter.
 
       if (user.getImageUrl() != null) {
         Picasso.get().load(user.getImageUrl()).fit().into(userIv);
+      }else{
+        userIv.setImageResource(R.color.white);
       }
 
       usernameTv.setText(user.getUsername());
