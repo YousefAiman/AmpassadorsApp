@@ -343,10 +343,4 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="edit_contributors">Edit contributors</string>
 
 
-
-    <!--  FaceBook -->
-    <string name="facebook_app_id">485863972787866</string>
-    <string name="fb_login_protocol_scheme">fb485863972787866</string>
-
-
 </resources>

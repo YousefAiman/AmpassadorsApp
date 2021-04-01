@@ -152,6 +152,7 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private void bindChat(UserPreview user) {
 
+
       if (user.getUserId() == null)
         return;
 
@@ -190,7 +191,16 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     private void bindChat(UserPreview user) {
-
+      imageIv.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          imageIv.getContext().startActivity(new Intent(itemView.getContext(),
+                  ProfileActiv.class).putExtra("userId",users.get(getAdapterPosition())
+                  .getUserId()).putExtra("ImageUrl",
+                  users.get(getAdapterPosition()).getImageUrl())
+                  .putExtra("username",users.get(getAdapterPosition()).getUsername()));
+        }
+      });
       if (user.getUserId() == null)
         return;
       if (user.getImageUrl() != null) {
@@ -219,7 +229,6 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         statusTv.setText(R.string.offline);
 
       }
-
       itemView.setOnClickListener(this);
 //         itemView.setOnClickListener(v->
 //                 userClickListener.clickUser(user.getUserId(),getAdapterPosition()));
@@ -235,16 +244,6 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 users.get(getAdapterPosition()).getUserId())
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 
-        imageIv.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View view) {
-            imageIv.getContext().startActivity(new Intent(itemView.getContext(),
-                    ProfileActiv.class).putExtra("userId",users.get(getAdapterPosition())
-                    .getUserId()).putExtra("ImageUrl",
-                    users.get(getAdapterPosition()).getImageUrl())
-                    .putExtra("username",users.get(getAdapterPosition()).getUsername()));
-          }
-        });
       }
       }
   }

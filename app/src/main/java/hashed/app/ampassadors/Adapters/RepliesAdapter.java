@@ -2,6 +2,7 @@ package hashed.app.ampassadors.Adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import hashed.app.ampassadors.Activities.ProfileActiv;
 import hashed.app.ampassadors.Objects.CommentReply;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.TimeFormatter;
@@ -110,6 +112,18 @@ public class RepliesAdapter extends RecyclerView.Adapter<RepliesAdapter.RepliesV
 
     @SuppressLint("SetTextI18n")
     private void bind(CommentReply commentReply) {
+      imageIv.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          imageIv.getContext().startActivity(new Intent(itemView.getContext(),
+                  ProfileActiv.class).putExtra("userId",replies.get(getAdapterPosition())
+                  .getUserId()).putExtra("ImageUrl",
+                  replies.get(getAdapterPosition()).getUserImage())
+                  .putExtra("username",replies.get(getAdapterPosition()).getUserName()));
+
+        }
+      });
+
 
       replyTv.setText(commentReply.getReply());
 
@@ -182,7 +196,10 @@ public class RepliesAdapter extends RecyclerView.Adapter<RepliesAdapter.RepliesV
       if (view.getId() == R.id.likesTv) {
         repliesListener.likeReply(replies.get(getAdapterPosition()), likesTv, commentId);
       }
+
     }
+
+
   }
 
 }

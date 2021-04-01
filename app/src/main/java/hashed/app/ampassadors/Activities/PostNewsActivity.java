@@ -33,6 +33,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
 import hashed.app.ampassadors.Fragments.CommentsFragment;
 import hashed.app.ampassadors.Fragments.ImageFullScreenFragment;
 import hashed.app.ampassadors.Fragments.VideoFullScreenFragment;
@@ -54,6 +56,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
   private FrameLayout frameLayout;
 
 
+
   //data
   private PostData postData;
   private BroadcastReceiver downloadCompleteReceiver;
@@ -66,6 +69,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_post_news);
+
 
 
     setupToolbar();
@@ -145,8 +149,17 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
   }
 
   private void getNewsType() {
+    userIv.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        userIv.getContext().startActivity(new Intent(PostNewsActivity.this,
+                ProfileActiv.class).putExtra("userId",postData.getPublisherId())
+                .putExtra("ImageUrl", postData.getPublisherImage())
+                .putExtra("username",postData.getPublisherName()));
+      }
+    });
 
-      switch (postData.getAttachmentType()) {
+    switch (postData.getAttachmentType()) {
 
         case Files.VIDEO:
 
@@ -224,6 +237,8 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
   @Override
   public void onClick(View view) {
+
+
 
     final int id = view.getId();
 

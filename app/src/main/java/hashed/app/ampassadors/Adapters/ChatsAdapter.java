@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
+import hashed.app.ampassadors.Activities.ProfileActiv;
 import hashed.app.ampassadors.Objects.ChatItem;
 import hashed.app.ampassadors.Objects.PrivateMessagePreview;
 import hashed.app.ampassadors.R;
@@ -85,6 +86,17 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsVh> {
     }
 
     private void bindChat(ChatItem chatItem) {
+      imageIv.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          imageIv.getContext().startActivity(new Intent(itemView.getContext(),
+                  ProfileActiv.class).putExtra("userId",chatItems.get(getAdapterPosition())
+                  .getMessagingUid()).putExtra("ImageUrl",
+                  chatItems.get(getAdapterPosition()).getImageUrl())
+                  .putExtra("username",chatItems.get(getAdapterPosition()).getUsername()));
+        }
+      });
+
 
       if (chatItem.getImageUrl() != null) {
         if (!chatItem.getImageUrl().isEmpty()) {

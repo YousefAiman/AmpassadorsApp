@@ -34,6 +34,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -50,6 +51,8 @@ import hashed.app.ampassadors.Utils.WifiUtil;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
+import org.json.JSONException;
+
 import java.util.HashMap;
 
 
@@ -64,7 +67,6 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
     FirebaseAuth fAuth;
 
 
-    private Button gmailbtn;
     private ProgressDialog googleProgressDialog;
 
 

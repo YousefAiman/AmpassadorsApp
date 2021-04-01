@@ -31,10 +31,7 @@
         <activity android:name=".Activities.CoursesActivity"></activity>
         <activity android:name=".Activities.PostsSearchActivity" />
 
-        <activity android:name=".Activities.CoursesActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Activities.PostsSearchActivity"
-            android:screenOrientation="portrait"/>
+
         <activity
             android:name=".Activities.VideoWelcomeActivity"
             android:screenOrientation="portrait" />
