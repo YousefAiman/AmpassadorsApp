@@ -77,6 +77,7 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
     boolean status;
     FloatingActionButton floatingButton;
     Toolbar toolbar;
+    TextView biotext;
 
     private NotificationIndicatorReceiver notificationIndicatorReceiver;
     private TextView roleTv;
@@ -94,8 +95,8 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         username = view.findViewById(R.id.textView6);
         imageView = view.findViewById(R.id.profile_picture);
         swipeRefresh = view.findViewById(R.id.swipeRefreshLayout);
-        roleTv = view.findViewById(R.id.roleTv);
         swipeRefresh.setOnRefreshListener(this);
+        biotext = view.findViewById(R.id.bio_profile);
 
         if(FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
 //            roleTv.setText(getResources().getString(R.string.guest));
@@ -305,12 +306,13 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
                     if (task.getResult().exists()){
                         String user_name = task.getResult().getString("username");
                         String imgUrl = task.getResult().getString("imageUrl");
-
+                        String bio = task.getResult().getString("Bio");
                         task.getResult().getBoolean("status");
                         toolbar.setOnMenuItemClickListener(PostsProfileFragment.this);
 
                         username.setText(user_name);
                         Picasso.get().load(imgUrl).fit().into(imageView);
+                        biotext.setText(bio);
                     }
                 }else {
                     Toast.makeText(getActivity(), "Error"+task.getException().getMessage(), Toast.LENGTH_SHORT).show();

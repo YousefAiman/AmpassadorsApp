@@ -332,5 +332,8 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="add_Bio">You can add your bio from Edit button</string>
     <string name="Bio">Fill Bio</string>
     <string name="no_results_found">No results found</string>
+    <string name="Chooset_profile_photo">Choose your  profile photo</string>
+    <string name="fill_the_felids">All field are required</string>
+    <string name="important_post">Important post</string>
 
 </resources>

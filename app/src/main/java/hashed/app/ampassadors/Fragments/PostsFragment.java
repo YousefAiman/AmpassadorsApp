@@ -78,7 +78,7 @@ public class  PostsFragment extends Fragment implements Toolbar.OnMenuItemClickL
   private Handler handler;
   private Runnable pagerRunnable;
   private HomeNewsHeaderViewPagerAdapter pagerAdapter;
-  private ArrayList<MeetingPreview> meetingPreviews;
+  private ArrayList<PostData> importantPost;
 
   private NotificationIndicatorReceiver notificationIndicatorReceiver;
 
@@ -103,8 +103,8 @@ public class  PostsFragment extends Fragment implements Toolbar.OnMenuItemClickL
     super.onCreate(savedInstanceState);
 
 
-    meetingPreviews = new ArrayList<>(5);
-    pagerAdapter = new HomeNewsHeaderViewPagerAdapter(meetingPreviews);
+    importantPost = new ArrayList<>(5);
+    pagerAdapter = new HomeNewsHeaderViewPagerAdapter(importantPost);
 
     query = FirebaseFirestore.getInstance().collection("Posts")
             .orderBy("publishTime", Query.Direction.DESCENDING)
@@ -147,7 +147,7 @@ public class  PostsFragment extends Fragment implements Toolbar.OnMenuItemClickL
                     R.drawable.notification_icon);
 
     if(!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
-      if (GlobalVariables.getRole().equals("Admin") ||
+        if (GlobalVariables.getRole().equals("Admin") ||
               GlobalVariables.getRole().equals("Publisher")){
         floatingButton.setVisibility(View.VISIBLE);
       }
@@ -179,7 +179,7 @@ public class  PostsFragment extends Fragment implements Toolbar.OnMenuItemClickL
   public void onRefresh() {
 
     //header pager
-    meetingPreviews.clear();
+    importantPost.clear();
     pagerAdapter.notifyDataSetChanged();
     createHeaderPager();
     if (handler != null && pagerRunnable != null) {
@@ -332,19 +332,17 @@ public class  PostsFragment extends Fragment implements Toolbar.OnMenuItemClickL
   }
   private void createHeaderPager() {
 
-    FirebaseFirestore.getInstance().collection("Meetings")
-            .whereEqualTo("hasEnded", false)
-            .whereGreaterThan("startTime", System.currentTimeMillis())
-            .whereLessThan("startTime", remainingTime())
-            .orderBy("startTime", Query.Direction.ASCENDING)
+    FirebaseFirestore.getInstance().collection("Posts")
+            .whereEqualTo("important post", true)
+            .orderBy("publishTime", Query.Direction.ASCENDING)
             .limit(5).get().addOnSuccessListener(snapshots -> {
               if(!snapshots.isEmpty()){
-                meetingPreviews.addAll(snapshots.toObjects(MeetingPreview.class));
+                importantPost.addAll(snapshots.toObjects(PostData.class));
               }
     }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
       @Override
       public void onComplete(@NonNull Task<QuerySnapshot> task) {
-        if (task.isSuccessful() && meetingPreviews.size() > 0) {
+        if (task.isSuccessful() && importantPost.size() > 0) {
 
 
           if (headerViewPager.getVisibility() == View.GONE) {
@@ -353,8 +351,8 @@ public class  PostsFragment extends Fragment implements Toolbar.OnMenuItemClickL
           }
           pagerAdapter.notifyDataSetChanged();
 
-          if (meetingPreviews.size() > 1) {
-            final ImageView[] dots = new ImageView[meetingPreviews.size()];
+          if (importantPost.size() > 1) {
+            final ImageView[] dots = new ImageView[importantPost.size()];
 
             final LinearLayout.LayoutParams params =
                     new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -367,7 +365,7 @@ public class  PostsFragment extends Fragment implements Toolbar.OnMenuItemClickL
               density = 1;
             }
 
-            for (int i = 0; i < meetingPreviews.size(); i++) {
+            for (int i = 0; i < importantPost.size(); i++) {
               dots[i] = new ImageView(requireContext());
               dots[i].setImageResource(R.drawable.indicator_inactive_icon);
               params.setMargins((int) (5 * density), 0, (int) (5 * density), 0);
@@ -405,7 +403,7 @@ public class  PostsFragment extends Fragment implements Toolbar.OnMenuItemClickL
               @Override
               public void run() {
 
-                if (scrollPosition + 1 == meetingPreviews.size()) {
+                if (scrollPosition + 1 == importantPost.size()) {
                   scrollPosition = 0;
                 } else {
                   scrollPosition++;

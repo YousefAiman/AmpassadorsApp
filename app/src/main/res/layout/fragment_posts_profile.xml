@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#F2F2F2">
 
     <include
         android:id="@+id/toolbar"
@@ -16,11 +17,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
+        android:layout_marginEnd="20dp"
         android:layout_marginBottom="14dp"
         android:contentDescription="@string/add_group"
         android:src="@drawable/feather_icon"
         app:fabSize="normal"
-        android:layout_marginEnd="20dp"
         app:maxImageSize="40dp"
         app:tint="@color/white" />
 
@@ -30,7 +31,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_below="@id/toolbar"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp">
 
 
         <androidx.core.widget.NestedScrollView
@@ -74,8 +77,8 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profile_picture"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
+                    android:layout_width="130dp"
+                    android:layout_height="130dp"
                     android:background="@drawable/profile_background"
                     app:layout_constraintBottom_toBottomOf="@+id/view8"
                     app:layout_constraintDimensionRatio="1"
@@ -90,14 +93,71 @@
                     android:id="@+id/userpost_recycler"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginEnd="8dp"
                     android:clipToPadding="false"
                     android:overScrollMode="never"
                     android:paddingBottom="20dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/profile_picture" />
+                    app:layout_constraintTop_toTopOf="@+id/guideline33" />
 
+                <TextView
+                    android:id="@+id/bio_profile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:drawableStart="@drawable/ic_bio"
+                    android:gravity="start"
+                    android:paddingStart="10dp"
+                    android:text="Phasellus finibus enim nulla, quis ornare odio facilisis eu. Suspendisse ornare ante sit amet arcu semper, vel eleifend tortor egestas. Aenean luctus, lorem in "
+                    app:layout_constraintBottom_toTopOf="@+id/guideline34"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.4"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/guideline32"
+                    tools:ignore="RtlCompat" />
+
+                <View
+                    android:id="@+id/view9"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="24dp"
+                    android:background="#707070"
+                    app:layout_constraintBottom_toTopOf="@+id/userpost_recycler"
+                    app:layout_constraintEnd_toEndOf="@+id/bio_profile"
+                    app:layout_constraintHorizontal_bias="0.88"
+                    app:layout_constraintStart_toStartOf="@+id/bio_profile"
+                    app:layout_constraintTop_toTopOf="@+id/guideline34" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline32"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_percent="0.26"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline33"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="1205dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintGuide_percent="0.4" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline34"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_percent="0.34285715"
+                    app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

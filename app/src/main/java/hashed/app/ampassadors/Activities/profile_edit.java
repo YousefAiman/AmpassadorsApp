@@ -151,7 +151,8 @@ public class profile_edit extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 updatedata();
-
+                Intent intent = new Intent(profile_edit.this, Profile.class );
+                startActivity(intent);
             }
         });
 
