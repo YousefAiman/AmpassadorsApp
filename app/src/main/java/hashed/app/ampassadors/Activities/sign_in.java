@@ -293,7 +293,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                                         dialog.dismiss();
 
                                         Toast.makeText(sign_in.this,
-                                                "You need to verify your email in order to Sign in!",
+                                                R.string.Email_Verfiy_Message,
                                                 Toast.LENGTH_SHORT).show();
 
                                     }
@@ -339,7 +339,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
             }
         }else if(view.getId() == facebookLoginBtn.getId()){
             ProgressDialog progressDialog = new ProgressDialog(this);
-            progressDialog.setTitle("Logging in with facebook");
+            progressDialog.setTitle(R.string.Login_By_facebook);
             progressDialog.show();
 
             FacebookSdk.fullyInitialize();
@@ -397,7 +397,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
     public void googleSignIn() {
 
         googleProgressDialog = new ProgressDialog(this);
-        googleProgressDialog.setTitle("Signing in with Gmail account!");
+        googleProgressDialog.setTitle(getString(R.string.SignIn_By_gmail));
         googleProgressDialog.setCancelable(false);
         googleProgressDialog.show();
 //        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -471,7 +471,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
 
                 }).addOnFailureListener(e -> {
             googleProgressDialog.dismiss();
-            Toast.makeText(sign_in.this, "لقد فشلت عملية التسجيل عن طريق حساب gmail!"
+            Toast.makeText(sign_in.this, R.string.Fail_Login_Use_Gmail
                     , Toast.LENGTH_SHORT).show();
         });
     }
@@ -491,7 +491,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
         }
         hashMap.put("status", true);
         hashMap.put("Role", "Ambassador");
-
+         hashMap.put("Bio","");
         GlobalVariables.setRole("Ambassador");
 
         final DocumentReference userRef =
@@ -578,7 +578,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
 
 
             }).addOnFailureListener(e -> Toast.makeText(sign_in.this,
-                    "لقد فشلت عملية تسجيل الدخول:"
+                    R.string.Fail_Login
                             + e.getLocalizedMessage(), Toast.LENGTH_LONG).show());
         });
 

@@ -57,7 +57,7 @@ import hashed.app.ampassadors.Utils.Files;
 public class PostNewActivity extends AppCompatActivity implements View.OnClickListener {
 
   private final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-  private ImageView userIv, pdfIv, videoIv, imageIv, attachmentIv, videoPlayIv;
+  private ImageView userIv, pdfIv,  videoIv, imageIv, attachmentIv, videoPlayIv;
   private Button publishBtn;
   private TextView usernameTv, attachmentTv;
   private EditText titleEd, descriptionEd;
@@ -99,7 +99,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     videoIv = findViewById(R.id.videoIv);
     imageIv = findViewById(R.id.imageIv);
     attachmentIv = findViewById(R.id.attachmentIv);
-    publishBtn = findViewById(R.id.publishBtn);
+    publishBtn = findViewById(R.id.edit_btn);
     usernameTv = findViewById(R.id.usernameTv);
     titleEd = findViewById(R.id.titleEd);
     descriptionEd = findViewById(R.id.descriptionEd);

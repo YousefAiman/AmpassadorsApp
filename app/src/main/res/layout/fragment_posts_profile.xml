@@ -94,7 +94,6 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="32dp"
                     android:layout_marginEnd="8dp"
                     android:clipToPadding="false"
                     android:overScrollMode="never"
@@ -113,26 +112,25 @@
                     android:drawableStart="@drawable/ic_bio"
                     android:gravity="start"
                     android:paddingStart="10dp"
-                    android:text="Phasellus finibus enim nulla, quis ornare odio facilisis eu. Suspendisse ornare ante sit amet arcu semper, vel eleifend tortor egestas. Aenean luctus, lorem in "
                     app:layout_constraintBottom_toTopOf="@+id/guideline34"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.4"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/guideline32"
+                    app:layout_constraintVertical_bias="0.0"
                     tools:ignore="RtlCompat" />
 
                 <View
                     android:id="@+id/view9"
                     android:layout_width="0dp"
                     android:layout_height="1dp"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginBottom="24dp"
+                    android:layout_marginTop="8dp"
                     android:background="#707070"
                     app:layout_constraintBottom_toTopOf="@+id/userpost_recycler"
                     app:layout_constraintEnd_toEndOf="@+id/bio_profile"
-                    app:layout_constraintHorizontal_bias="0.88"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="@+id/bio_profile"
-                    app:layout_constraintTop_toTopOf="@+id/guideline34" />
+                    app:layout_constraintTop_toTopOf="@+id/guideline34"
+                    app:layout_constraintVertical_bias="0.0" />
 
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guideline32"
@@ -156,7 +154,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    app:layout_constraintGuide_percent="0.34285715"
+                    app:layout_constraintGuide_percent="0.32"
                     app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
