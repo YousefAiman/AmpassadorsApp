@@ -28,7 +28,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Picasso;
@@ -90,6 +92,8 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
     final Toolbar toolbar = findViewById(R.id.toolbar);
     toolbar.setNavigationOnClickListener(v -> finish());
     toolbar.setOnMenuItemClickListener(this);
+
+
 
   }
 
@@ -314,9 +318,15 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
   @Override
   public boolean onMenuItemClick(MenuItem item) {
+
+    if (item.getItemId() == R.id.edit){
+
+    }else if (item.getItemId() == R.id.delete){
+
+    }else if (item.getItemId() == R.id.Reporting){
+    }
     return false;
   }
-
   @Override
   public void onBackPressed() {
 

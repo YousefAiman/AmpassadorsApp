@@ -22,7 +22,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,7 +68,7 @@ public class CreatePollActivity extends AppCompatActivity implements View.OnClic
 
     userIv = findViewById(R.id.userIv);
     usernameTv = findViewById(R.id.usernameTv);
-    publishBtn = findViewById(R.id.publishBtn);
+    publishBtn = findViewById(R.id.edit_btn);
     questionEd = findViewById(R.id.questionEd);
     timeTv = findViewById(R.id.timeTv);
     pollRv = findViewById(R.id.pollRv);
@@ -109,7 +108,7 @@ public class CreatePollActivity extends AppCompatActivity implements View.OnClic
   @Override
   public void onClick(View view) {
 
-    if (view.getId() == R.id.publishBtn) {
+    if (view.getId() == R.id.edit_btn) {
       Log.d("ttt", "pollItems: " + pollItems.size());
       final String question = questionEd.getText().toString();
       if (question.isEmpty()) {

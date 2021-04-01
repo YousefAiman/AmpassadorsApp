@@ -22,16 +22,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AmpassadorsApp">
-
-
-
-
-
-
-        <activity android:name=".Activities.CoursesActivity"></activity>
+        <activity android:name=".Activities.Edit_Post"></activity>
+        <activity android:name=".Activities.CoursesActivity" />
         <activity android:name=".Activities.PostsSearchActivity" />
-
-
         <activity
             android:name=".Activities.VideoWelcomeActivity"
             android:screenOrientation="portrait" />
@@ -117,9 +110,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.sign_in"
-            android:screenOrientation="portrait"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.ComplaintsActivity"
             android:screenOrientation="portrait" />
@@ -140,9 +132,9 @@
             </intent-filter>
         </activity>
 
-        <meta-data android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"/>
-
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
