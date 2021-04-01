@@ -1,5 +1,7 @@
 package hashed.app.ampassadors.Objects;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
 
@@ -114,6 +116,7 @@ public class ZoomMeeting {
   }
 
 
+  @NonNull
   @Override
   public String toString() {
     return "ZoomMeeting{" +

@@ -23,6 +23,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -334,35 +335,40 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                 googleSignIn();
             }
         }else if(view.getId() == facebookbtn.getId()){
-            if (WifiUtil.checkWifiConnection(this)) {
+//            if (WifiUtil.checkWifiConnection(this)) {
+            facebookLoginBtn.setOnClickListener(this);
                 facebookLoginBtn.performClick();
-            }
+//            }
         }else if(view.getId() == facebookLoginBtn.getId()){
+
             ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setTitle(R.string.Login_By_facebook);
             progressDialog.show();
 
-            FacebookSdk.fullyInitialize();
+            if(callbackManager == null){
+                FacebookSdk.fullyInitialize();
+                callbackManager = CallbackManager.Factory.create();
+                facebookLoginBtn.setReadPermissions("email", "public_profile");
+                facebookLoginBtn.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        Log.d("ttt","handleFacebookAccessToken");
+                        handleFacebookAccessToken(loginResult.getAccessToken(),progressDialog);
+                    }
 
-            callbackManager = CallbackManager.Factory.create();
-            facebookLoginBtn.setReadPermissions("email", "public_profile");
-            facebookLoginBtn.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-                @Override
-                public void onSuccess(LoginResult loginResult) {
-                    handleFacebookAccessToken(loginResult.getAccessToken(),progressDialog);
-                }
+                    @Override
+                    public void onCancel() {
+                        Log.d("ttt", "facebook:onCancel");
+                    }
 
-                @Override
-                public void onCancel() {
-                    Log.d("ttt", "facebook:onCancel");
-                }
+                    @Override
+                    public void onError(FacebookException error) {
+                        Log.d("ttt", "facebook:onError", error);
+                    }
+                });
 
-                @Override
-                public void onError(FacebookException error) {
-                    Log.d("ttt", "facebook:onError", error);
-                }
-            });
-
+            }
+//            facebookLoginBtn.performClick();
         }
     }
 
@@ -487,7 +493,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
         hashMap.put("rejected", false);
         hashMap.put("userId",userId);
         if (imageUrl != null) {
-            hashMap.put("imageurl", imageUrl);
+            hashMap.put("imageUrl", imageUrl);
         }
         hashMap.put("status", true);
         hashMap.put("Role", "Ambassador");
@@ -527,13 +533,62 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
 
     private void handleFacebookAccessToken(final AccessToken token,ProgressDialog progressDialog) {
 
-        FacebookSdk.setAutoInitEnabled(true);
+//        FacebookSdk.setAutoInitEnabled(true);
+//
+//        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+//
+//        auth.signInWithCredential(credential).addOnSuccessListener(authResult -> {
+//
+//            final FirebaseUser facebookUser = authResult.getUser();
+//
+//            FirebaseFirestore.getInstance().collection("Users")
+//                    .document(facebookUser.getUid()).get()
+//                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//
+//                            if (!task.getResult().exists()) {
+//                                String email = "";
+//                                if (authResult.getUser().getEmail()!=null) {
+//                                        email = authResult.getUser().getEmail();
+//                                }
+//                                addUserToFirestore(email, facebookUser.getDisplayName(),
+//                                        facebookUser.getPhotoUrl().toString(),
+//                                        facebookUser.getUid());
+//                            } else {
+//
+//                                final DocumentReference userRef = task.getResult().getReference();
+//
+//                                FirebaseMessaging.getInstance().getToken().addOnSuccessListener(s ->
+//                                        userRef.update("token", s));
+//
+//                                GlobalVariables.setRole(task.getResult().getString("Role"));
+//
+//                                FirebaseMessagingService.
+//                                        startMessagingService(sign_in.this);
+//
+//                                progressDialog.dismiss();
+//                                startActivity(new Intent(getApplicationContext(),
+//                                        Home_Activity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+//                                finish();
+//
+//                            }
+//
+//                        }
+//                    });
+//
+//
+//
+//        }).addOnFailureListener(e -> Toast.makeText(sign_in.this,
+//                "لقد فشلت عملية تسجيل الدخول:"
+//                        + e.getLocalizedMessage(), Toast.LENGTH_LONG).show());
 
+//    });
         GraphRequest graphRequest = GraphRequest.newMeRequest(token, (object, response) -> {
             AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
             auth.signInWithCredential(credential).addOnSuccessListener(authResult -> {
 
-                final FirebaseUser facebookUser = auth.getCurrentUser();
+                final FirebaseUser facebookUser = authResult.getUser();
 
                 FirebaseFirestore.getInstance().collection("Users")
                         .document(facebookUser.getUid()).get()
@@ -550,9 +605,9 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                                             e.printStackTrace();
                                         }
                                     }
-                                    addUserToFirestore(email, facebookUser.getDisplayName(),
-                                            facebookUser.getPhotoUrl().toString(),
-                                            facebookUser.getUid());
+                                    addUserToFirestore(facebookUser.getDisplayName(), email,
+                                            facebookUser.getUid(),
+                                            facebookUser.getPhotoUrl().toString());
                                 } else {
 
                                     final DocumentReference userRef = task.getResult().getReference();

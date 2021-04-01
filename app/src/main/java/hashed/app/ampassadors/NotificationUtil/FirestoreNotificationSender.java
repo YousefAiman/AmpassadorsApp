@@ -10,6 +10,14 @@ import java.util.HashMap;
 
 public class FirestoreNotificationSender {
 
+
+  public static final String TYPE_PRIVATE_MESSAGE = "privateMessaging",
+          TYPE_GROUP_MESSAGE = "groupMessaging",
+          TYPE_LIKE = "postLike",TYPE_COMMENT = "postComment",TYPE_ZOOM = "zoomMeeting",
+          TYPE_MEETING_ADDED = "meetingAdded",TYPE_MEETING_STARTED = "meetingStarted";
+
+
+
   private static final CollectionReference notificationRef =
           FirebaseFirestore.getInstance().collection("Notifications");
 
@@ -38,7 +46,8 @@ public class FirestoreNotificationSender {
         notificationRef.document(notificationPath).set(notification);
       } else {
 
-        if (type.equals("message")) {
+        if (type.equals(FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE)
+        || type.equals(FirestoreNotificationSender.TYPE_GROUP_MESSAGE)) {
           documentSnapshot.getReference().update("timeCreated",
                   System.currentTimeMillis(), "content", body);
         } else {

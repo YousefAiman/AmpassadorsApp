@@ -3,6 +3,7 @@ package hashed.app.ampassadors.Objects;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
+import com.google.firebase.firestore.Exclude;
 
 import java.io.Serializable;
 import java.util.List;
@@ -20,8 +21,8 @@ public class Meeting implements Serializable {
   private long startTime;
   @PropertyName("createdTime")
   private long createdTime;
-  @PropertyName("members")
-  private List<String> members;
+//  @Exclude
+//  private List<String> members;
   @PropertyName("meetingId")
   private String meetingId;
   @PropertyName("hasEnded")
@@ -32,43 +33,6 @@ public class Meeting implements Serializable {
   private String imageUrl;
 
   public Meeting() {
-  }
-
-  public Meeting(String creatorId, String title, String description, long startTime,
-                 long createdTime, List<String> members, String meetingId, boolean hasEnded) {
-    this.creatorId = creatorId;
-    this.title = title;
-    this.description = description;
-    this.startTime = startTime;
-    this.createdTime = createdTime;
-    this.members = members;
-    this.meetingId = meetingId;
-    this.hasEnded = hasEnded;
-  }
-
-
-  public Meeting(String creatorId, String title, long startTime,
-                 long createdTime, List<String> members, String meetingId, boolean hasEnded) {
-    this.creatorId = creatorId;
-    this.title = title;
-    this.startTime = startTime;
-    this.createdTime = createdTime;
-    this.members = members;
-    this.meetingId = meetingId;
-    this.hasEnded = hasEnded;
-  }
-
-  public Meeting(String creatorId, String title, long startTime,
-                 long createdTime, List<String> members, String meetingId, boolean hasEnded,
-                 String imageUrl) {
-    this.creatorId = creatorId;
-    this.title = title;
-    this.startTime = startTime;
-    this.createdTime = createdTime;
-    this.members = members;
-    this.meetingId = meetingId;
-    this.hasEnded = hasEnded;
-    this.imageUrl = imageUrl;
   }
 
   public String getCreatorId() {
@@ -111,13 +75,13 @@ public class Meeting implements Serializable {
     this.createdTime = createdTime;
   }
 
-  public List<String> getMembers() {
-    return members;
-  }
-
-  public void setMembers(List<String> members) {
-    this.members = members;
-  }
+//  public List<String> getMembers() {
+//    return members;
+//  }
+//
+//  public void setMembers(List<String> members) {
+//    this.members = members;
+//  }
 
   public String getMeetingId() {
     return meetingId;

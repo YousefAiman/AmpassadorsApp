@@ -177,14 +177,14 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
             likesTv.setText(String.valueOf(
                     (Integer.parseInt(likesTv.getText().toString()) - 1)));
 
-            PostData.likePost(postData.getPostId(), 2, postData.getPublisherId(), this);
+            PostData.likePost(postData.getPostId(),postData.getTitle(), 2, postData.getPublisherId(), this);
           } else {
             likeTv.setTextColor(getResources().getColor(R.color.red));
 
             likesTv.setText(String.valueOf(
                     (Integer.parseInt(likesTv.getText().toString()) + 1)));
 
-            PostData.likePost(postData.getPostId(), 1, postData.getPublisherId(), this);
+            PostData.likePost(postData.getPostId(),postData.getTitle(), 1, postData.getPublisherId(), this);
 
           }
         }

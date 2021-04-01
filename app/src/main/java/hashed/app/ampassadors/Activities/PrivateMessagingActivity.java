@@ -354,8 +354,9 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
   private void sendBothNotifs(String message) {
 
-    FirestoreNotificationSender.sendFirestoreNotification(messagingUid, "privateMessage",
-            message, currentUserName, messagingUid);
+    FirestoreNotificationSender.sendFirestoreNotification(messagingUid,
+            FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE,
+            message, currentUserName, currentUid);
 
     sendCloudNotification(message);
 
@@ -372,7 +373,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
               getResources().getString(R.string.new_message) + " " + currentUserName,
               currentImageUrl,
               "Private Messages",
-              "privateMessaging",
+              FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE,
               currentUid
       );
 
@@ -710,7 +711,6 @@ public class PrivateMessagingActivity extends AppCompatActivity
               checkUserActivityAndSendNotifications(privateMessage.getContent(),
                       privateMessage.getType());
 
-//            checkUserActivityAndSendNotifications(messageMap.getContent());
               messageSendIv.setClickable(true);
 
             }).addOnFailureListener(e -> {

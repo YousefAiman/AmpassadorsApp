@@ -18,6 +18,8 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import com.facebook.AccessToken;
+import com.facebook.login.LoginManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -257,7 +259,12 @@ public class Home_Activity extends AppCompatActivity implements
 
                     NotificationManagerCompat.from(this).cancelAll();
 
-                    FirebaseAuth.getInstance().signOut();
+        if (AccessToken.getCurrentAccessToken() != null) {
+          LoginManager.getInstance().logOut();
+        }
+
+
+        FirebaseAuth.getInstance().signOut();
 
                     getPackageManager().setComponentEnabledSetting(
                             new ComponentName(Home_Activity.this, FirebaseMessagingService.class),
@@ -375,7 +382,7 @@ public class Home_Activity extends AppCompatActivity implements
     intentFilter.addAction(indicatorAction);
     registerReceiver(new NotificationIndicatorReceiver(), intentFilter);
 
-    final AtomicInteger notificationCount = new AtomicInteger();
+//    final AtomicInteger notificationCount = new AtomicInteger();
 
     listenerRegistrations.add(
             FirebaseFirestore.getInstance().collection("Notifications")

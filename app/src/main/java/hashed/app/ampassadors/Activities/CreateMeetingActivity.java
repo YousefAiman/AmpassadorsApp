@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -187,53 +188,6 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
     }
   }
 
-//  private void pickTime() {
-//
-//    Calendar mcurrentDate = Calendar.getInstance(Locale.getDefault());
-//    DatePickerDialog StartTime = new DatePickerDialog(this,
-//            new DatePickerDialog.OnDateSetListener() {
-//      String date;
-//
-//      public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-//        Calendar newDate = Calendar.getInstance(Locale.getDefault());
-//        newDate.set(year, monthOfYear, dayOfMonth);
-//        date = todayYearMonthDayFormat.format(newDate.getTime());
-//        Calendar mcurrentTime = Calendar.getInstance(Locale.getDefault());
-//        TimePickerDialog mTimePicker = new TimePickerDialog(
-//                CreateMeetingActivity.this, (timePicker, selectedHour, selectedMinute) -> {
-//          final Calendar calendar = Calendar.getInstance(Locale.getDefault());
-//          final long currentTime = calendar.getTimeInMillis();
-//          calendar.set(Calendar.YEAR, year);
-//          calendar.set(Calendar.MONTH, monthOfYear);
-//          calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-//          calendar.set(Calendar.HOUR, selectedHour);
-////          calendar.set(Calendar.AM, selectedHour);
-//          calendar.set(Calendar.MINUTE, selectedMinute);
-//          calendar.set(Calendar.SECOND, 0);
-//          calendar.set(Calendar.MILLISECOND, 0);
-//
-//            if (calendar.getTimeInMillis() >= currentTime) {
-//              startMillis = calendar.getTimeInMillis();
-//              date = date.concat(" " + selectedHour + ":" + selectedMinute);
-//              meetingTimeTv.setText(date);
-//            } else {
-//              Toast.makeText(CreateMeetingActivity.this,
-//                      "Meeting time can't be at selected time!", Toast.LENGTH_SHORT).show();
-//            }
-//
-//        }, mcurrentTime.get(Calendar.HOUR_OF_DAY), mcurrentTime.get(Calendar.MINUTE),
-//                true);
-//        mTimePicker.setTitle("Select Meeting Time");
-//        mTimePicker.show();
-//      }
-//
-//    }, mcurrentDate.get(Calendar.YEAR), mcurrentDate.get(Calendar.MONTH),
-//            mcurrentDate.get(Calendar.DAY_OF_MONTH));
-//    StartTime.show();
-//
-//  }
-//
-
   private void createSelectedUserAdapter() {
 
     usersRef = FirebaseFirestore.getInstance().collection("Users");
@@ -308,6 +262,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
       meetingMap.put("hasEnded", false);
 
 
+
       if (imageUri != null) {
 
         final StorageReference reference = FirebaseStorage.getInstance().getReference()
@@ -343,12 +298,16 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
 
 
   private void createMeeting(Map<String, Object> meeting, String meetingId, String name, ProgressDialog progressDialog) {
+
     meetingsRef.document(meetingId).set(meeting)
             .addOnCompleteListener(new OnCompleteListener<Void>() {
               @Override
               public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
 
+//                  meetingsRef.document(meetingId)
+//                          .collection("Contributors")
+//                          .document()
                   final Map<String, Object> meetingMap = new HashMap<>();
                   meetingMap.put("Moderator", currentUid);
                   meetingMap.put("groupId", meetingId);
@@ -370,7 +329,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
                                       "Meeting about: " + name,
                                       meetingImageUrl,
                                       "meeting",
-                                      "meetingCreated",
+                                      FirestoreNotificationSender.TYPE_MEETING_ADDED,
                                       meetingId);
 
 
@@ -379,7 +338,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
                               for (String userId : selectedUserIdsList) {
                                 CloudMessagingNotificationsSender.sendNotification(userId, data);
                                 FirestoreNotificationSender.sendFirestoreNotification(
-                                        userId, "meetingCreated",
+                                        userId, FirestoreNotificationSender.TYPE_MEETING_ADDED,
                                         getResources().getString(R.string.invited_meeting),
                                         name,
                                         meetingId
@@ -428,10 +387,20 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
   }
 
 
+  @Override
+  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                         @NonNull int[] grantResults) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+      if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == Files.PICK_IMAGE) {
+          Files.startImageFetchIntent(this);
+        }
+      }
+  }
+
   private void getMeetingDate() {
 
-    Calendar mcurrentDate = Calendar.getInstance(Locale.getDefault());
-
+    final Calendar mcurrentDate = Calendar.getInstance(Locale.getDefault());
 
     DatePickerDialog StartTime = new DatePickerDialog(this,
             (view, year, monthOfYear, dayOfMonth) -> {
@@ -546,7 +515,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
 
   @Override
   public void onBackPressed() {
-    super.onBackPressed();
+
 
     if(!groupNameEd.getText().toString().trim().isEmpty()
     || !selectedUserIdsList.isEmpty() || timeWasSelected || dateWasSelected

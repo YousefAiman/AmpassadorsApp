@@ -163,7 +163,8 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                         .submit()
                         .get());
       } else {
-        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.app_icon_small));
+        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(),
+                R.drawable.app_icon_small));
       }
 
       Log.d("ttt", "after imageUrl");

@@ -23,15 +23,13 @@
         app:subtitleTextColor="@color/white"
         app:titleTextAppearance="@style/ToolbarTitleAppearance"/>
 
-
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/groupIv"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="17dp"
         android:layout_marginTop="21dp"
-        android:src="@drawable/add_icon_white"
-        app:civ_circle_background_color="@color/dark_green"
+        android:src="@color/white"
         app:civ_border_color="@color/dark_green"
         app:civ_border_width="1dp"
         app:layout_constraintDimensionRatio="1"

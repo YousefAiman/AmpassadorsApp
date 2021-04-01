@@ -23,7 +23,6 @@
         app:titleTextAppearance="@style/CreateMeetingToolbar" />
 
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/userRv"
         android:layout_width="match_parent"

@@ -286,7 +286,7 @@ public class  PostsFragment extends Fragment implements Toolbar.OnMenuItemClickL
       if (isInitial) {
         adapter.notifyDataSetChanged();
 
-        if (task.getResult().size() == POSTS_LIMIT) {
+        if (task.getResult().size() == POSTS_LIMIT && scrollListener == null) {
           post_list.addOnScrollListener(scrollListener = new PostsBottomScrollListener());
         }
 
