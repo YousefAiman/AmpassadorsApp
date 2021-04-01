@@ -22,16 +22,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AmpassadorsApp">
-        <activity android:name=".Activities.MeetingActivity"></activity>
+
+        <activity android:name=".Activities.MeetingActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Activities.CoursesActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.PostsSearchActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".Activities.Edit_Post"></activity>
-        <activity android:name=".Activities.CoursesActivity" />
-        <activity android:name=".Activities.PostsSearchActivity" />
+
+        <activity android:name=".Activities.Edit_Post"
+            android:screenOrientation="portrait"/>
+
         <activity
             android:name=".Activities.VideoWelcomeActivity"
             android:screenOrientation="portrait" />
