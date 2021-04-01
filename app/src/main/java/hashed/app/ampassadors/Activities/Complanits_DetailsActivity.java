@@ -90,6 +90,7 @@ public class Complanits_DetailsActivity extends AppCompatActivity implements Too
             Intent intent1 = new Intent(getApplicationContext(), ComplanitsListActivity.class);
             startActivity(intent1);
             Toast.makeText(Complanits_DetailsActivity.this, R.string.Delete_success, Toast.LENGTH_SHORT).show();
+            finish();
           }
         });
       }

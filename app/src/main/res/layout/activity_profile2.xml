@@ -57,44 +57,55 @@
                     app:layout_constraintBottom_toBottomOf="@+id/view8"
                     app:layout_constraintStart_toEndOf="@+id/profile_picture"  />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/roleTv"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:singleLine="true"
-                    android:textAlignment="viewEnd"
-                    app:autoSizeMinTextSize="12sp"
-                    app:autoSizeMaxTextSize="20sp"
-                    android:textColor="#fff"
-                    android:textSize="20sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/view8"
-                    app:layout_constraintEnd_toStartOf="@+id/profile_picture"
-                    app:layout_constraintStart_toStartOf="parent" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profile_picture"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:background="@drawable/profile_background"
+                    android:layout_width="130dp"
+                    android:layout_height="130dp"
+                    android:background="@drawable/ic_blanck_profile"
                     app:layout_constraintBottom_toBottomOf="@+id/view8"
                     app:layout_constraintDimensionRatio="1"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.209"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/view8"
+                    app:layout_constraintVertical_bias="0.507"
                     app:layout_constraintWidth_percent="0.35" />
-
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/userpost_recycler"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="20dp"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="24dp"
                     android:clipToPadding="false"
                     android:overScrollMode="never"
+                    android:paddingBottom="20dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/view9" />
+
+                <TextView
+                    android:id="@+id/textView15"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="8dp"
+                    android:drawableStart="@drawable/ic_bio"
+                    android:layout_marginRight="20dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/profile_picture" />
 
+                <View
+                    android:id="@+id/view9"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp"
+                    android:background="#707070"
+                    app:layout_constraintEnd_toEndOf="@+id/textView15"
+                    app:layout_constraintStart_toStartOf="@+id/textView15"
+                    app:layout_constraintTop_toBottomOf="@+id/textView15" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>

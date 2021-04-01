@@ -1,5 +1,6 @@
 package hashed.app.ampassadors.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -99,9 +100,16 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
     likeTv.setOnClickListener(this);
     commentTv.setOnClickListener(this);
   }
-
   private void getPostData() {
-
+        userIv.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        userIv.getContext().startActivity(new Intent(PostPollActivity.this,
+                ProfileActiv.class).putExtra("userId",postData.getPublisherId())
+                .putExtra("ImageUrl", postData.getPublisherImage())
+                .putExtra("username",postData.getPublisherName()));
+      }
+    });
     postData = (PostData) getIntent().getSerializableExtra("postData");
     titleTv.setText(postData.getTitle());
 

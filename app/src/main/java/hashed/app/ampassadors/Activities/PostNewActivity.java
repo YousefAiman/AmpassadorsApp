@@ -1,6 +1,5 @@
 package hashed.app.ampassadors.Activities;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -50,7 +49,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import hashed.app.ampassadors.Fragments.ImageFullScreenFragment;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
@@ -59,7 +57,7 @@ import hashed.app.ampassadors.Utils.Files;
 public class PostNewActivity extends AppCompatActivity implements View.OnClickListener {
 
   private final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-  private ImageView userIv, pdfIv, videoIv, imageIv, attachmentIv, videoPlayIv;
+  private ImageView userIv, pdfIv,  videoIv, imageIv, attachmentIv, videoPlayIv;
   private Button publishBtn;
   private TextView usernameTv, attachmentTv;
   private EditText titleEd, descriptionEd;
@@ -69,7 +67,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
   private Bitmap videoThumbnailBitmap;
   private SimpleExoPlayer simpleExoPlayer;
   private Map<UploadTask, StorageTask<UploadTask.TaskSnapshot>> uploadTaskMap;
-  private int attachmentType = Files.TEXT;
+  private int attachmentType = 1;
   private String documentName;
   private double documentSize;
 
@@ -101,7 +99,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     videoIv = findViewById(R.id.videoIv);
     imageIv = findViewById(R.id.imageIv);
     attachmentIv = findViewById(R.id.attachmentIv);
-    publishBtn = findViewById(R.id.publishBtn);
+    publishBtn = findViewById(R.id.edit_btn);
     usernameTv = findViewById(R.id.usernameTv);
     titleEd = findViewById(R.id.titleEd);
     descriptionEd = findViewById(R.id.descriptionEd);
@@ -131,7 +129,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
         final String imageUrl = snapshot.getString("imageUrl");
 
         if (imageUrl != null && !imageUrl.isEmpty()) {
-          Picasso.get().load(imageUrl).fit().into(userIv);
+          Picasso.get().load(imageUrl).fit().centerCrop().into(userIv);
         }
         usernameTv.setText(snapshot.getString("username"));
 
@@ -195,7 +193,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
           break;
 
         case Files.TEXT:
-          publishPost(title,description,null,null,progressDialog);
+          uploadDocument(title, description, progressDialog);
           break;
 
       }
@@ -226,9 +224,9 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     dataMap.put("title", title);
     dataMap.put("description", description);
     dataMap.put("publisherId", currentUid);
-    dataMap.put("attachmentType", attachmentType);
 
     if(attachmentUrl != null){
+      dataMap.put("attachmentType", attachmentType);
       dataMap.put("attachmentUrl", attachmentUrl);
     }
 
@@ -499,42 +497,20 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
 
     if (resultCode == RESULT_OK && data != null && data.getData() != null) {
 
-      if(attachmentUri!=null){
-        new File(attachmentUri.getPath()).delete();
-      }
-
       attachmentUri = data.getData();
 //      attachmentLinear.setVisibility(View.GONE);
 
       switch (requestCode) {
 
         case Files.PICK_IMAGE:
-
-          if(attachmentType == Files.DOCUMENT){
-            attachmentTv.setVisibility(View.GONE);
-          }else if(attachmentType == Files.VIDEO){
-            videoPlayIv.setVisibility(View.GONE);
-          }
-
           attachmentType = Files.IMAGE;
           Picasso.get().load(attachmentUri).fit().centerCrop().into(attachmentIv);
-
-         attachmentIv.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View view) {
-             new ImageFullScreenFragment(attachmentUri).show();
-           }
-         });
           break;
 
         case Files.PICK_VIDEO:
           attachmentType = Files.VIDEO;
           getVideoThumbnail();
           videoPlayIv.setVisibility(View.VISIBLE);
-
-          if(attachmentType == Files.DOCUMENT){
-            attachmentTv.setVisibility(View.GONE);
-          }
 
           attachmentIv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -551,12 +527,6 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
           break;
 
         case Files.PICK_FILE:
-
-          if(attachmentType == Files.IMAGE){
-            attachmentIv.setOnClickListener(null);
-          }else if(attachmentType == Files.VIDEO){
-            videoPlayIv.setVisibility(View.GONE);
-          }
 
           attachmentType = Files.DOCUMENT;
           attachmentTv.setVisibility(View.VISIBLE);
@@ -700,29 +670,4 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
 
   }
 
-  @Override
-  public void onBackPressed() {
-
-    if (!titleEd.getText().toString().isEmpty() ||
-            descriptionEd.getText().toString().isEmpty() ||
-            attachmentUri!=null) {
-
-      AlertDialog.Builder alert = new AlertDialog.Builder(this);
-      alert.setTitle("Do you want to leave before publishing your post?");
-      alert.setMessage("leaving will discard this post!");
-
-      alert.setPositiveButton("Leave", (dialogInterface, i) -> {
-        if(attachmentUri!=null){
-          new File(attachmentUri.getPath()).delete();
-        }
-        finish();
-      });
-
-      alert.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
-      alert.create().show();
-
-    } else {
-      super.onBackPressed();
-    }
-  }
 }

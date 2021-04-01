@@ -84,6 +84,7 @@ public class List_Sug_Activity extends AppCompatActivity implements Toolbar.OnMe
     toolbar.setNavigationOnClickListener(v -> onBackPressed());
     toolbar.setOnMenuItemClickListener(this);
 
+
   }
   @Override
   public boolean onMenuItemClick(MenuItem item) {

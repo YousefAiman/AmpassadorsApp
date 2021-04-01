@@ -28,10 +28,14 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 import hashed.app.ampassadors.Fragments.CommentsFragment;
 import hashed.app.ampassadors.Fragments.ImageFullScreenFragment;
@@ -54,6 +58,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
   private FrameLayout frameLayout;
 
 
+
   //data
   private PostData postData;
   private BroadcastReceiver downloadCompleteReceiver;
@@ -66,6 +71,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_post_news);
+
 
 
     setupToolbar();
@@ -86,6 +92,8 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
     final Toolbar toolbar = findViewById(R.id.toolbar);
     toolbar.setNavigationOnClickListener(v -> finish());
     toolbar.setOnMenuItemClickListener(this);
+
+
 
   }
 
@@ -145,8 +153,17 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
   }
 
   private void getNewsType() {
+    userIv.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        userIv.getContext().startActivity(new Intent(PostNewsActivity.this,
+                ProfileActiv.class).putExtra("userId",postData.getPublisherId())
+                .putExtra("ImageUrl", postData.getPublisherImage())
+                .putExtra("username",postData.getPublisherName()));
+      }
+    });
 
-      switch (postData.getAttachmentType()) {
+    switch (postData.getAttachmentType()) {
 
         case Files.VIDEO:
 
@@ -225,6 +242,8 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
   @Override
   public void onClick(View view) {
 
+
+
     final int id = view.getId();
 
     if (id == likeTv.getId()) {
@@ -299,9 +318,15 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
   @Override
   public boolean onMenuItemClick(MenuItem item) {
+
+    if (item.getItemId() == R.id.edit){
+
+    }else if (item.getItemId() == R.id.delete){
+
+    }else if (item.getItemId() == R.id.Reporting){
+    }
     return false;
   }
-
   @Override
   public void onBackPressed() {
 

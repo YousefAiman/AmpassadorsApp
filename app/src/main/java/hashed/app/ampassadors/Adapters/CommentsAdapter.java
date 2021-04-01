@@ -1,6 +1,7 @@
 package hashed.app.ampassadors.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import hashed.app.ampassadors.Activities.ProfileActiv;
 import hashed.app.ampassadors.Objects.Comment;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.TimeFormatter;
@@ -52,6 +54,8 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
   public CommentHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     return new CommentsAdapter.CommentHolder(LayoutInflater.from(parent.getContext())
             .inflate(R.layout.comment_item_layout, parent, false));
+
+
   }
 
   @Override
@@ -99,6 +103,8 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     private final TextView addCommentTv;
     private final RecyclerView repliesRv;
 
+
+
     public CommentHolder(@NonNull View itemView) {
       super(itemView);
       usernameTv = itemView.findViewById(R.id.usernameTv);
@@ -112,7 +118,16 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     }
 
     private void bind(Comment comment) {
-
+      imageIv.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          imageIv.getContext().startActivity(new Intent(itemView.getContext(),
+                  ProfileActiv.class).putExtra("userId",comments.get(getAdapterPosition())
+                  .getUserId()).putExtra("ImageUrl",
+                  comments.get(getAdapterPosition()).getUserImage())
+                  .putExtra("username",comments.get(getAdapterPosition()).getUserName()));
+        }
+      });
       commentTv.setText(comment.getComment());
 
       likesTv.setText(itemView.getResources()
@@ -181,6 +196,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
 
     @Override
     public void onClick(View view) {
+
 
 
       if (view.getId() == R.id.showRepliesTv) {

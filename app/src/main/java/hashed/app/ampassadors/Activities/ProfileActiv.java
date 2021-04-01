@@ -27,6 +27,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -46,7 +47,7 @@ import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 
-    public class ProfileActiv extends AppCompatActivity implements
+public class ProfileActiv extends AppCompatActivity implements
         SwipeRefreshLayout.OnRefreshListener {
 
     FirebaseFirestore firebaseFirestore;
@@ -61,12 +62,14 @@ import hashed.app.ampassadors.Utils.GlobalVariables;
     SwipeRefreshLayout swipeRefresh;
     TextView username;
     FirebaseAuth fAuth;
-    FirebaseFirestore fStore;
-    String userid ;
+FirebaseFirestore fStore;
+    String userid;
     ImageView imageView;
     boolean status;
     FloatingActionButton floatingButton;
     Toolbar toolbar;
+        TextView bio;
+    String bio_txt;
     private NotificationIndicatorReceiver notificationIndicatorReceiver;
 
     public ProfileActiv() {
@@ -80,15 +83,17 @@ import hashed.app.ampassadors.Utils.GlobalVariables;
 
         username = findViewById(R.id.textView6);
         toolbar = findViewById(R.id.toolbar);
-        toolbar.setNavigationOnClickListener(v -> { onBackPressed(); });
-
+        toolbar.setNavigationOnClickListener(v -> {
+            onBackPressed();
+        });
+        bio = findViewById(R.id.textView15);
         imageView = findViewById(R.id.profile_picture);
         swipeRefresh = findViewById(R.id.swipeRefreshLayout);
         swipeRefresh.setOnRefreshListener(this);
 
 
         Intent id = getIntent();
-        if (id.hasExtra("userId")){
+        if (id.hasExtra("userId")) {
 
             String mn = id.getStringExtra("userId");
             firebaseFirestore = FirebaseFirestore.getInstance();
@@ -121,6 +126,7 @@ import hashed.app.ampassadors.Utils.GlobalVariables;
 //        post_list.setAdapter(adapter);
 //        ReadPost(true);
     }
+
     @Override
     public void onRefresh() {
         postData.clear();
@@ -128,6 +134,7 @@ import hashed.app.ampassadors.Utils.GlobalVariables;
         lastDocSnap = null;
         ReadPost(true);
     }
+
     private class ChatsScrollListener extends RecyclerView.OnScrollListener {
         @Override
         public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -139,6 +146,7 @@ import hashed.app.ampassadors.Utils.GlobalVariables;
             }
         }
     }
+
     private void ReadPost(boolean isInitial) {
         swipeRefresh.setRefreshing(true);
         isLoadingMessages = true;
@@ -151,7 +159,7 @@ import hashed.app.ampassadors.Utils.GlobalVariables;
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 if (!queryDocumentSnapshots.isEmpty()) {
                     lastDocSnap = queryDocumentSnapshots.getDocuments().get(
-                            queryDocumentSnapshots.size()-1
+                            queryDocumentSnapshots.size() - 1
                     );
                     postData.addAll(queryDocumentSnapshots.toObjects(PostData.class));
                 }
@@ -159,10 +167,10 @@ import hashed.app.ampassadors.Utils.GlobalVariables;
         }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(isInitial){
+                if (isInitial) {
                     adapter.notifyDataSetChanged();
-                }else{
-                    adapter.notifyItemRangeInserted((postData.size()-task.getResult().size())-1,
+                } else {
+                    adapter.notifyItemRangeInserted((postData.size() - task.getResult().size()) - 1,
                             task.getResult().size());
                 }
                 swipeRefresh.setRefreshing(false);
@@ -191,6 +199,7 @@ import hashed.app.ampassadors.Utils.GlobalVariables;
         ProfileActiv.this.registerReceiver(notificationIndicatorReceiver,
                 new IntentFilter(BuildConfig.APPLICATION_ID + ".notificationIndicator"));
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -199,29 +208,39 @@ import hashed.app.ampassadors.Utils.GlobalVariables;
         }
     }
 
-    private void setUpToolBarAndActions() {
-
-        final Toolbar toolbar = findViewById(R.id.toolbar);
-
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(ProfileActiv.this, "tool", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-    private void getUserNaImg(){
+//
+    private void getUserNaImg() {
         fAuth = FirebaseAuth.getInstance();
         userid = fAuth.getCurrentUser().getUid();
         fStore = FirebaseFirestore.getInstance();
 
         Intent userimage = getIntent();
-        if (userimage.hasExtra("username") && userimage.hasExtra("ImageUrl")){
+        if (userimage.hasExtra("username") && userimage.hasExtra("ImageUrl")) {
             String userimg = userimage.getStringExtra("ImageUrl");
             String usernam = userimage.getStringExtra("username");
+            String id  = userimage.getStringExtra("userId");
 
-            Picasso.get().load(userimg).fit().into(imageView);
-            username.setText(usernam);
+            fStore.collection("Users").document(id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    bio_txt=documentSnapshot.getString("Bio");
+                    if (bio_txt.isEmpty()){
+                        bio.setVisibility(View.GONE);
+                        Picasso.get().load(userimg).fit().into(imageView);
+
+                        username.setText(usernam);
+                    }else {
+                        bio_txt = documentSnapshot.getString("Bio");
+                        bio.setText(bio_txt);
+                        Picasso.get().load(userimg).fit().into(imageView);
+                        username.setText(usernam);
+
+                    }
+                }
+            });
+                   }
+
+
 
 
         }
@@ -244,4 +263,15 @@ import hashed.app.ampassadors.Utils.GlobalVariables;
 //            }
 //        });
     }
-}
+
+    //private void setUpToolBarAndActions() {
+//
+//        final Toolbar toolbar = findViewById(R.id.toolbar);
+//
+//        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(ProfileActiv.this, "tool", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }

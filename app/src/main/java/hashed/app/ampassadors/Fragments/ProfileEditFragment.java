@@ -141,7 +141,7 @@ public class ProfileEditFragment extends Fragment {
 
     // CAMERA
     if (requestCode == 2 && resultCode == RESULT_OK) {
-      mProgressDialog.setMessage("جاري التحميل...");
+      mProgressDialog.setMessage(getString(R.string.Download));
       mProgressDialog.show();
       Uri uri = data.getData();
       StorageReference filepath = sreference.child("Profile img").child(uri.getLastPathSegment());
@@ -162,13 +162,13 @@ public class ProfileEditFragment extends Fragment {
               Log.d("ttt", imageUrl);
             }
           });
-          Toast.makeText(getActivity(), "انتهى التحميل...", Toast.LENGTH_SHORT).show();
+          Toast.makeText(getActivity(), R.string.Finish_message, Toast.LENGTH_SHORT).show();
         }
       });
     } else if (requestCode == CAMERA_REQUEST_CODE) {
       /// GALLERY
       uploading = true;
-      mProgressDialog.setMessage("جاري التحميل ......");
+      mProgressDialog.setMessage(getString(R.string.Download));
       mProgressDialog.show();
       filePath = Uri.parse("file://" + cameraImageFilePath);
       sreference = FirebaseStorage.getInstance().getReference().child("Profile img/" + UUID.randomUUID().toString());
@@ -186,7 +186,7 @@ public class ProfileEditFragment extends Fragment {
               Toast.makeText(getActivity(), imageUrl, Toast.LENGTH_SHORT).show();
             }
           });
-          Toast.makeText(getActivity(), "انتهى التحميل...", Toast.LENGTH_SHORT).show();
+          Toast.makeText(getActivity(), R.string.Finish_message, Toast.LENGTH_SHORT).show();
         }
       }).addOnFailureListener(new OnFailureListener() {
         @Override
@@ -200,9 +200,9 @@ public class ProfileEditFragment extends Fragment {
 
   private void SelectImage(Context context) {
     //  CHOOSE WHERE WILL UPLOAD THE IMAGE
-    final CharSequence[] options = {"Take photo", "open Gallery", "Cancel"};
+    final CharSequence[] options = {getString(R.string.CaptuerPhoto), getString(R.string.OpenGallray), getString(R.string.cancel)};
     final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-    builder.setTitle("Choose you profile photo");
+    builder.setTitle(getString(R.string.Chooset_profile_photo));
     builder.setItems(options, new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialogInterface, int i) {
@@ -290,7 +290,7 @@ public class ProfileEditFragment extends Fragment {
 
         if (TextUtils.isEmpty(txt_username) || TextUtils.isEmpty(txt_email)
                 || TextUtils.isEmpty(txt_country) || TextUtils.isEmpty(txt_city) || TextUtils.isEmpty(txt_phone)) {
-          Toast.makeText(getActivity(), "All field are required", Toast.LENGTH_SHORT).show();
+          Toast.makeText(getActivity(), R.string.fill_the_felids, Toast.LENGTH_SHORT).show();
         } else {
           register(txt_username, txt_email,
                   txt_country, txt_city, txt_phone);
