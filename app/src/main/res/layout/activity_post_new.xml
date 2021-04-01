@@ -81,24 +81,26 @@
 
             <EditText
                 android:id="@+id/titleEd"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
+                android:layout_width="222dp"
+                android:layout_height="40dp"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="44dp"
+                android:layout_marginEnd="16dp"
                 android:background="@color/white_grey"
                 android:elevation="3dp"
-                android:hint="@string/Title"
                 android:fontFamily="@font/segoe_ui_light"
-                android:textSize="16sp"
+                android:hint="@string/Title"
                 android:inputType="text"
                 android:maxLength="200"
-                android:textColor="@color/black"
-                android:textColorHint="@color/black_transparent"
                 android:paddingHorizontal="5dp"
                 android:paddingVertical="8dp"
-                android:layout_marginHorizontal="10dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black_transparent"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toStartOf="@+id/checkbox"
                 app:layout_constraintTop_toBottomOf="@+id/edit_btn" />
 
-                <EditText
+            <EditText
                     android:id="@+id/descriptionEd"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -163,6 +165,16 @@
                 app:layout_constraintEnd_toEndOf="@+id/attachmentIv"
                 app:layout_constraintStart_toStartOf="@+id/attachmentIv"/>
 
+            <CheckBox
+                android:id="@+id/checkbox"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_marginEnd="12dp"
+                android:text="@string/important_post"
+                app:layout_constraintBottom_toBottomOf="@+id/titleEd"
+                app:layout_constraintEnd_toEndOf="@+id/edit_btn"
+                app:layout_constraintTop_toTopOf="@+id/titleEd"
+                app:layout_constraintVertical_bias="0.0" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

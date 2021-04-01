@@ -333,7 +333,7 @@ public class  PostsFragment extends Fragment implements Toolbar.OnMenuItemClickL
   private void createHeaderPager() {
 
     FirebaseFirestore.getInstance().collection("Posts")
-            .whereEqualTo("important post", true)
+            .whereEqualTo("important", true)
             .orderBy("publishTime", Query.Direction.ASCENDING)
             .limit(5).get().addOnSuccessListener(snapshots -> {
               if(!snapshots.isEmpty()){

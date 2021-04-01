@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -54,7 +56,7 @@ import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
 
 
-public class PostNewActivity extends AppCompatActivity implements View.OnClickListener {
+public class PostNewActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
   private final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
   private ImageView userIv, pdfIv,  videoIv, imageIv, attachmentIv, videoPlayIv;
@@ -70,7 +72,8 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
   private int attachmentType = 1;
   private String documentName;
   private double documentSize;
-
+  CheckBox checkBox ;
+  boolean  important  = false;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -107,7 +110,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     videoPlayIv = findViewById(R.id.videoPlayIv);
     playerView = findViewById(R.id.playerView);
     attachmentTv = findViewById(R.id.attachmentTv);
-
+    checkBox = findViewById(R.id.checkbox);
   }
 
   private void setClickListeners() {
@@ -243,7 +246,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     if (documentSize != 0) {
       dataMap.put("documentSize", documentSize);
     }
-
+    dataMap.put("important",  important);
     dataMap.put("publishTime", System.currentTimeMillis());
     dataMap.put("likes", 0);
     dataMap.put("comments", 0);
@@ -546,6 +549,12 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
   }
 
 
+  @Override
+  public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+    if (buttonView.getId() == R.id.checkbox){
+        important = true;
+    }
+  }
   private void getVideoThumbnail() {
 
     new Thread(new Runnable() {
