@@ -61,7 +61,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_in);
+        setContentView(R.layout.activit y_sign_in);
         init();
         LogIn();
         CreateAccount();

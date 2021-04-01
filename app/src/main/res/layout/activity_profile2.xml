@@ -93,7 +93,6 @@
                     android:layout_marginTop="8dp"
                     android:drawableStart="@drawable/ic_bio"
                     android:layout_marginRight="20dp"
-                    android:text="Phasellus finibus enim nulla, quis ornare odio facilisis eu. Suspendisse ornare ante sit amet arcu semper, vel eleifend tortor egestas. Aenean luctus, lorem in "
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/profile_picture" />

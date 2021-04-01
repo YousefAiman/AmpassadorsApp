@@ -27,6 +27,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -61,13 +62,13 @@ public class ProfileActiv extends AppCompatActivity implements
     SwipeRefreshLayout swipeRefresh;
     TextView username;
     FirebaseAuth fAuth;
-    FirebaseFirestore fStore;
+FirebaseFirestore fStore;
     String userid;
     ImageView imageView;
     boolean status;
     FloatingActionButton floatingButton;
     Toolbar toolbar;
-    TextView bio;
+        TextView bio;
     String bio_txt;
     private NotificationIndicatorReceiver notificationIndicatorReceiver;
 
@@ -222,13 +223,14 @@ public class ProfileActiv extends AppCompatActivity implements
             fStore.collection("Users").document(id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    bio_txt = documentSnapshot.getString("Bio");
-                    if (bio.equals(null) || bio_txt.isEmpty()){
+                    bio_txt=documentSnapshot.getString("Bio");
+                    if (bio_txt.isEmpty()){
                         bio.setVisibility(View.GONE);
                         Picasso.get().load(userimg).fit().into(imageView);
-                        username.setText(usernam);
 
+                        username.setText(usernam);
                     }else {
+                        bio_txt = documentSnapshot.getString("Bio");
                         bio.setText(bio_txt);
                         Picasso.get().load(userimg).fit().into(imageView);
                         username.setText(usernam);

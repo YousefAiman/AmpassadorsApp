@@ -27,7 +27,7 @@
             android:id="@+id/input_email"
             android:layout_width="269dp"
             android:layout_height="42dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="32dp"
             android:background="@drawable/input_bg"
             android:drawableStart="@drawable/ic_baseline_email"
             android:elevation="10dp"
@@ -137,7 +137,7 @@
         <android.widget.Button
             android:id="@+id/create_account_btn"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="36dp"
             android:layout_marginTop="16dp"
             android:background="@drawable/btn_create"
             android:text="@string/create_new_account"
