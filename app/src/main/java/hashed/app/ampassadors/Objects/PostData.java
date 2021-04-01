@@ -76,7 +76,15 @@ public class PostData implements Serializable {
     this.title = (String) postMap.get("title");
     this.description = (String) postMap.get("description");
     this.publisherId = (String) postMap.get("publisherId");
-    this.attachmentType = (int) postMap.get("attachmentType");
+
+    if(postMap.containsKey("attachmentType")){
+      this.attachmentType = (int) postMap.get("attachmentType");
+    }
+
+    if(postMap.containsKey("attachmentUrl")){
+      this.attachmentUrl = (String) postMap.get("attachmentUrl");
+    }
+
 
     if (videoThumbnailUrl != null) {
       this.videoThumbnailUrl = (String) postMap.get("videoThumbnailUrl");

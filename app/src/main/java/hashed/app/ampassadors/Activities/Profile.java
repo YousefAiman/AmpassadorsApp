@@ -51,8 +51,8 @@ public class Profile extends AppCompatActivity {
         phone = findViewById(R.id.in_phone);
         imageView = findViewById(R.id.profile_picture);
         bio = findViewById(R.id.bio_text);
-        final UserInfo[] userInfo = new UserInfo[1];
 
+        final UserInfo[] userInfo = new UserInfo[1];
         listenerRegistration =  FirebaseFirestore.getInstance().collection("Users")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .addSnapshotListener(new EventListener<DocumentSnapshot>() {
@@ -62,12 +62,12 @@ public class Profile extends AppCompatActivity {
                         Log.d("ttt","value change");
 
                         if(userInfo[0] == null){
+
                             userInfo[0] = value.toObject(UserInfo.class);
                             username.setText(userInfo[0].getUsername());
                             email.setText(userInfo[0].getEmail());
                             country.setText(userInfo[0].getCountry());
                             city.setText(userInfo[0].getCity());
-                            Log.d("tttt",userInfo[0].getCity());
 
                             phone.setText(userInfo[0].getPhone());
                             Picasso.get().load(userInfo[0].getImageUrl()).fit().into(imageView);

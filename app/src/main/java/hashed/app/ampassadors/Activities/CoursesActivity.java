@@ -372,4 +372,13 @@ public class CoursesActivity extends AppCompatActivity implements
     dialogFragment.onActivityResult(requestCode,resultCode,data);
   }
 
+  @Override
+  public void onBackPressed() {
+
+    if(dialogFragment!=null && dialogFragment.isVisible()){
+      ((AddCourseFragment)dialogFragment).backPressing();
+    }else{
+      super.onBackPressed();
+    }
+  }
 }

@@ -289,6 +289,7 @@
     <string name="BirthDay">تاريخ الميلاد</string>
     <string name="show_more">اقرأ المزيد ...</string>
     <string name="no_results_found">لم يوجد نتائج للبحث</string>
+    <string name="description">Description</string>
 
     <string name="search">البحث</string>
     <string name="no_current_courses">لا توجد دورات</string>

@@ -1,5 +1,6 @@
 package hashed.app.ampassadors.Fragments;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
@@ -16,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -70,34 +73,36 @@ import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.TimeFormatter;
 import hashed.app.ampassadors.Utils.ZoomUtil;
 
-public class AddCourseFragment extends DialogFragment implements View.OnClickListener,
-        HourMinutePickerDialogFragment.OnTimePass{
+public class AddCourseFragment extends DialogFragment implements View.OnClickListener
+//        ,  HourMinutePickerDialogFragment.OnTimePass
+{
 
   public static final int TUTOR_REQUEST = 1;
   //views
-  private EditText courseNameEd;
-  private TextView courseDateSetterTv,courseTimeSetterTv,courseDurationTv,courseTutorNameTv;
+  private EditText courseNameEd,courseDurationEd;
+  private TextView courseDateSetterTv,courseTimeSetterTv,courseTutorNameTv;
   private ImageView settingsIv1,settingsIv2;
   private Button coursePublishBtn;
   private RecyclerView tutorPickerRv;
 
   //time
   private final Integer[] meetingStartTime = new Integer[5];
-  private int minutes,hours;
+//  private int minutes,hours;
   private long scheduleTime;
   private boolean timeWasSelected, dateWasSelected;
 
 
   //pick attendee
-  private UsersAdapter usersAdapter;
-  private ArrayList<UserPreview> users;
-  private TextWatcher textWatcher;
-  private CollectionReference usersRef;
+//  private UsersAdapter usersAdapter;
+//  private ArrayList<UserPreview> users;
+//  private TextWatcher textWatcher;
+//  private CollectionReference usersRef;
   private String pickedTutorId;
+
   public AddCourseFragment() {
   }
 
-    @Override
+  @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
@@ -125,7 +130,7 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
     tutorPickerRv = view.findViewById(R.id.tutorPickerRv);
     courseDateSetterTv = view.findViewById(R.id.courseDateSetterTv);
     courseTimeSetterTv = view.findViewById(R.id.courseTimeSetterTv);
-    courseDurationTv = view.findViewById(R.id.courseDurationTv);
+    courseDurationEd = view.findViewById(R.id.courseDurationEd);
     settingsIv1 = view.findViewById(R.id.settingsIv1);
     settingsIv2 = view.findViewById(R.id.settingsIv2);
     coursePublishBtn = view.findViewById(R.id.coursePublishBtn);
@@ -159,10 +164,13 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
     courseTutorNameTv.setOnClickListener(this);
     courseDateSetterTv.setOnClickListener(this);
     courseTimeSetterTv.setOnClickListener(this);
-    courseDurationTv.setOnClickListener(this);
+//    courseDurationTv.setOnClickListener(this);
     coursePublishBtn.setOnClickListener(this);
     settingsIv1.setOnClickListener(this);
     settingsIv2.setOnClickListener(this);
+
+    courseDurationEd.setFilters(new InputFilter[]{new NumberMaxAndMinFilter("1","200")});
+
   }
 
   @Override
@@ -178,7 +186,7 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
 
       final String name = courseNameEd.getText().toString().trim();
       final String tutor = courseTutorNameTv.getText().toString().trim();
-      final int duration = minutes + (hours*60);
+      final int duration = Integer.parseInt(courseDurationEd.getText().toString());
 
       if (!name.isEmpty() && !tutor.isEmpty() && duration > 0) {
 
@@ -196,14 +204,16 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
                 Toast.LENGTH_SHORT).show();
       }
 
-    }else if (view.getId() == courseDurationTv.getId()) {
-
-      final HourMinutePickerDialogFragment hourMinutePicker
-              = new HourMinutePickerDialogFragment(minutes,hours,this);
-
-      hourMinutePicker.show(getChildFragmentManager(), "hourMinutePicker");
-
-    } else if (view.getId() == courseDateSetterTv.getId() || view.getId() == settingsIv1.getId()) {
+    }
+//    else if (view.getId() == courseDurationTv.getId()) {
+//
+//      final HourMinutePickerDialogFragment hourMinutePicker
+//              = new HourMinutePickerDialogFragment(minutes,hours,this);
+//
+//      hourMinutePicker.show(getChildFragmentManager(), "hourMinutePicker");
+//
+//    }
+    else if (view.getId() == courseDateSetterTv.getId() || view.getId() == settingsIv1.getId()) {
 
       getMeetingDate();
 
@@ -230,83 +240,41 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
   }
 
 
-//  private void setUpTutorRecycler(){
-//
-////    FirebaseFirestore.getInstance().collection("Users")
-////            .limit(100).get().
-//    usersRef = FirebaseFirestore.getInstance().collection("Users");
-//
-//    users = new ArrayList<>();
-//    usersAdapter = new UsersAdapter(users,R.layout.user_item_layout,this);
-//    tutorPickerRv.setAdapter(usersAdapter);
-//
-//    final long[] lastTextChange = new long[1];
-//
-////    Handler handler = new Handler();
-////    Runnable target;
-////    Thread currentThread = new Thread(new );
-//
-//    courseTutorNameEd.addTextChangedListener(textWatcher = new TextWatcher() {
-//      @Override
-//      public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//
-//      }
-//
-//      @Override
-//      public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//
-//        if(!users.isEmpty()){
-//          users.clear();
-//          usersAdapter.notifyDataSetChanged();
-//          tutorPickerRv.setVisibility(View.GONE);
-//        }
-//
-//        searchForUsers(charSequence.toString());
-//      }
-//
-//      @Override
-//      public void afterTextChanged(Editable editable) {
-//        Log.d("ttt","afterTextChanged");
-////        if(lastTextChange[0]!=0){
-////          if(System.currentTimeMillis() - lastTextChange[0] > 1500){
-////            Log.d("ttt","will search now");
-//////            searchForUsers(courseTutorNameEd.getText().toString());
-////          }
-////        }
-////        lastTextChange[0] = System.currentTimeMillis();
-//      }
-//    });
-//
-//  }
+  private class NumberMaxAndMinFilter implements InputFilter {
 
-  private void searchForUsers(String name){
+    private int min, max;
 
-    usersRef.whereEqualTo("username",name)
-            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-      @Override
-      public void onSuccess(QuerySnapshot snapshots) {
-          if(!snapshots.isEmpty()){
+    public NumberMaxAndMinFilter(int min, int max) {
+      this.min = min;
+      this.max = max;
+    }
 
-            users.addAll(snapshots.toObjects(UserPreview.class));
-          }
-      }
-    }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-      @Override
-      public void onComplete(@NonNull Task<QuerySnapshot> task) {
-        if(task.isSuccessful() && !users.isEmpty()){
-          tutorPickerRv.setVisibility(View.VISIBLE);
-          usersAdapter.notifyDataSetChanged();
-        }
-      }
-    });
-  }
+    public NumberMaxAndMinFilter(String min, String max) {
+      this.min = Integer.parseInt(min);
+      this.max = Integer.parseInt(max);
+    }
 
-  @Override
-  public void onDestroy() {
-    super.onDestroy();
-//    if(courseTutorNameEd!=null && textWatcher!=null){
-//      courseTutorNameEd.removeTextChangedListener(textWatcher);
-//    }
+    @Override
+    public CharSequence filter(CharSequence charSequence, int start, int end, Spanned spanned,
+                               int spanStart, int spanEnd) {
+      try {
+        // Remove the string out of destination that is to be replaced
+        String newVal = spanned.toString().substring(0, spanStart) +
+                spanned.toString().substring(spanEnd);
+        // Add the new string in
+        newVal = newVal.substring(0, spanStart) +
+                charSequence.toString() + newVal.substring(spanStart);
+        int input = Integer.parseInt(newVal);
+        if (isInRange(min, max, input))
+          return null;
+      } catch (NumberFormatException ignored) { }
+      return "";
+    }
+
+    private boolean isInRange(int a, int b, int c) {
+      return b > a ? c >= a && c <= b : c >= b && c <= a;
+    }
+
   }
 
   private void getMeetingDate() {
@@ -490,12 +458,12 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
 
   }
 
-  @Override
-  public void passTime(int minutes,int hours) {
-    this.minutes = minutes;
-    this.hours = hours;
-    courseDurationTv.setText(String.format(Locale.getDefault(),"%d:%d", hours, minutes));
-  }
+//  @Override
+//  public void passTime(int minutes,int hours) {
+//    this.minutes = minutes;
+//    this.hours = hours;
+////    courseDurationTv.setText(String.format(Locale.getDefault(),"%d:%d", hours, minutes));
+//  }
 //
 //  @Override
 //  public void clickUser(String userId) {
@@ -544,4 +512,30 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
     }
 
   }
+
+  public void backPressing(){
+
+    if(!courseNameEd.getText().toString().trim().isEmpty()
+            || !courseDurationEd.getText().toString().trim().isEmpty()
+            || pickedTutorId != null || timeWasSelected || dateWasSelected){
+
+      final AlertDialog.Builder alert = new AlertDialog.Builder(requireContext());
+      alert.setTitle("Do you want to leave without creating this course?");
+      alert.setMessage("Leaving will discard this course");
+
+      alert.setPositiveButton("Leave", (dialogInterface, i) -> {
+          dialogInterface.dismiss();
+          dismiss();
+      });
+
+      alert.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+      alert.create().show();
+
+    } else {
+     dismiss();
+     requireActivity().onBackPressed();
+    }
+
+  }
+
 }

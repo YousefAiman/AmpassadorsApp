@@ -1,5 +1,6 @@
 package hashed.app.ampassadors.Activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +22,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -88,7 +90,7 @@ public class CreatePollActivity extends AppCompatActivity implements View.OnClic
   private void getUserInfo() {
 
     usernameTv.setText(GlobalVariables.getCurrentUsername());
-    Picasso.get().load(GlobalVariables.getCurrentUserImageUrl()).fit().into(userIv);
+    Picasso.get().load(GlobalVariables.getCurrentUserImageUrl()).fit().centerCrop().into(userIv);
   }
 
 
@@ -226,4 +228,40 @@ public class CreatePollActivity extends AppCompatActivity implements View.OnClic
   public void scrollToBottom() {
     pollRv.smoothScrollToPosition(pollItems.size()-1);
   }
+
+  @Override
+  public void onBackPressed() {
+
+    if (!questionEd.getText().toString().isEmpty() || pollDuration != 0){
+      showAlert();
+    } else {
+
+      boolean hasFilledOptions = false;
+      for (int i = 0; i < pollItems.size(); i++) {
+        final EditText editText = pollRv.getChildAt(i).findViewById(R.id.pollEd);
+        if(!editText.getText().toString().trim().isEmpty()){
+          hasFilledOptions = true;
+        }
+      }
+      if(hasFilledOptions){
+        showAlert();
+      }else{
+        super.onBackPressed();
+      }
+    }
+  }
+
+  private void showAlert(){
+    final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+    alert.setTitle("Do you want to leave before publishing your poll?");
+    alert.setMessage("leaving will discard this poll!");
+
+    alert.setPositiveButton("Leave", (dialogInterface, i) -> {
+      finish();
+    });
+
+    alert.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+    alert.create().show();
+  }
+
 }

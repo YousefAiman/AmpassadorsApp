@@ -17,6 +17,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
@@ -26,6 +34,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -42,6 +51,8 @@ import hashed.app.ampassadors.Utils.WifiUtil;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
+import org.json.JSONException;
+
 import java.util.HashMap;
 
 
@@ -49,19 +60,24 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
 
     private static final int GOOGLE_REQUEST = 10;
     EditText email, password;
-    Button btn_login, create_account_btn;
+    Button btn_login, create_account_btn,gmailbtn,facebookbtn;
     FirebaseAuth auth;
     TextView verifyEmail, forgetPass;
     FirebaseFirestore fStore;
     FirebaseAuth fAuth;
 
 
-    private Button gmailbtn;
     private ProgressDialog googleProgressDialog;
+
+
+    LoginButton facebookLoginBtn;
+    CallbackManager callbackManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activit y_sign_in);
+
+
+        setContentView(R.layout.activity_sign_in);
         init();
         LogIn();
         CreateAccount();
@@ -152,7 +168,13 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
         verifyEmail = findViewById(R.id.verify_email);
         forgetPass = findViewById(R.id.forget_pass);
         gmailbtn = findViewById(R.id.gmailbtn);
+        facebookbtn = findViewById(R.id.facebookbtn);
+        facebookLoginBtn = findViewById(R.id.facebookLoginBtn);
         gmailbtn.setOnClickListener(this);
+        facebookbtn.setOnClickListener(this);
+
+
+        facebookbtn = findViewById(R.id.facebookbtn);
 
         fAuth = FirebaseAuth.getInstance();
         // userid = fAuth.getCurrentUser().getUid();
@@ -308,9 +330,39 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         if(view.getId() == gmailbtn.getId()){
-//            if (WifiUtil.checkWifiConnection(this)) {
-//                googleSignIn();
-//            }
+            if (WifiUtil.checkWifiConnection(this)) {
+                googleSignIn();
+            }
+        }else if(view.getId() == facebookbtn.getId()){
+            if (WifiUtil.checkWifiConnection(this)) {
+                facebookLoginBtn.performClick();
+            }
+        }else if(view.getId() == facebookLoginBtn.getId()){
+            ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Logging in with facebook");
+            progressDialog.show();
+
+            FacebookSdk.fullyInitialize();
+
+            callbackManager = CallbackManager.Factory.create();
+            facebookLoginBtn.setReadPermissions("email", "public_profile");
+            facebookLoginBtn.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+                @Override
+                public void onSuccess(LoginResult loginResult) {
+                    handleFacebookAccessToken(loginResult.getAccessToken(),progressDialog);
+                }
+
+                @Override
+                public void onCancel() {
+                    Log.d("ttt", "facebook:onCancel");
+                }
+
+                @Override
+                public void onError(FacebookException error) {
+                    Log.d("ttt", "facebook:onError", error);
+                }
+            });
+
         }
     }
 
@@ -337,9 +389,8 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                     Log.d("ttt","task google: "+e.toString());
                     googleProgressDialog.dismiss();
                 });
-//            }else{
-//                googleProgressDialog.dismiss();
-//            }
+        }else if(callbackManager != null){
+            callbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -349,10 +400,15 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
         googleProgressDialog.setTitle("Signing in with Gmail account!");
         googleProgressDialog.setCancelable(false);
         googleProgressDialog.show();
+//        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+////                .requestIdToken(R.string)
+//                .requestEmail().build();
 
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail().build();
+        GoogleSignInOptions gso = new GoogleSignInOptions
+                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.web_client_id))
+                .requestEmail()
+                .build();
 
         Intent googleIntent = GoogleSignIn.getClient(this, gso).getSignInIntent();
         startActivityForResult(googleIntent, GOOGLE_REQUEST);
@@ -385,6 +441,8 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                                     FirebaseMessaging.getInstance().getToken().addOnSuccessListener(s -> {
                                         snapshot.getReference().update("token", s);
                                     });
+
+                                    GlobalVariables.setRole(snapshot.getString("Role"));
 
                                     FirebaseMessagingService.
                                             startMessagingService(sign_in.this);
@@ -434,6 +492,8 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
         hashMap.put("status", true);
         hashMap.put("Role", "Ambassador");
 
+        GlobalVariables.setRole("Ambassador");
+
         final DocumentReference userRef =
                 FirebaseFirestore.getInstance().collection("Users").document(userId);
 
@@ -463,4 +523,70 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
         });
 
     }
+
+
+    private void handleFacebookAccessToken(final AccessToken token,ProgressDialog progressDialog) {
+
+        FacebookSdk.setAutoInitEnabled(true);
+
+        GraphRequest graphRequest = GraphRequest.newMeRequest(token, (object, response) -> {
+            AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+            auth.signInWithCredential(credential).addOnSuccessListener(authResult -> {
+
+                final FirebaseUser facebookUser = auth.getCurrentUser();
+
+                FirebaseFirestore.getInstance().collection("Users")
+                        .document(facebookUser.getUid()).get()
+                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                                if (!task.getResult().exists()) {
+                                    String email = "";
+                                    if (object.has("email")) {
+                                        try {
+                                            email = object.getString("email");
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    addUserToFirestore(email, facebookUser.getDisplayName(),
+                                            facebookUser.getPhotoUrl().toString(),
+                                            facebookUser.getUid());
+                                } else {
+
+                                    final DocumentReference userRef = task.getResult().getReference();
+
+                                    FirebaseMessaging.getInstance().getToken().addOnSuccessListener(s ->
+                                            userRef.update("token", s));
+
+                                    GlobalVariables.setRole(task.getResult().getString("Role"));
+
+                                    FirebaseMessagingService.
+                                            startMessagingService(sign_in.this);
+
+                                    progressDialog.dismiss();
+                                    startActivity(new Intent(getApplicationContext(),
+                                            Home_Activity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                    finish();
+
+                                }
+
+                            }
+                        });
+
+
+
+            }).addOnFailureListener(e -> Toast.makeText(sign_in.this,
+                    "لقد فشلت عملية تسجيل الدخول:"
+                            + e.getLocalizedMessage(), Toast.LENGTH_LONG).show());
+        });
+
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "email");
+        graphRequest.setParameters(parameters);
+        graphRequest.executeAsync();
+
+    }
+
 }

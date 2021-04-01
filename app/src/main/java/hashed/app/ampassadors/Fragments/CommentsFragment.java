@@ -1,6 +1,8 @@
 package hashed.app.ampassadors.Fragments;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -24,6 +26,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -40,7 +44,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import hashed.app.ampassadors.Activities.SuggestionsActivity;
 import hashed.app.ampassadors.Adapters.CommentsAdapter;
 import hashed.app.ampassadors.Adapters.RepliesAdapter;
 import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
@@ -66,7 +69,6 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
   RecyclerView commentsRv;
   TextView commentCountTv;
   ImageView commentSubmitIv;
-  FrameLayout repliesFrameLayout;
   int commentsCount;
   private Query commentsQuery;
   private ChatsScrollListener chatsScrollListener;
@@ -78,6 +80,28 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
     this.commentsCount = commentsCount;
   }
 
+
+  @NonNull
+  @Override
+  public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+    final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext(), getTheme());
+    bottomSheetDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+      @Override
+      public void onShow(DialogInterface dialogInterface) {
+
+        BottomSheetDialog dialogc = (BottomSheetDialog) dialogInterface;
+        // When using AndroidX the resource can be found at com.google.android.material.R.id.design_bottom_sheet
+        FrameLayout bottomSheet =  dialogc.findViewById(R.id.design_bottom_sheet);
+
+        BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+        bottomSheetBehavior.setPeekHeight(requireContext().getResources().getDisplayMetrics().heightPixels);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+      }
+    });
+
+    return bottomSheetDialog;
+  }
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -94,13 +118,13 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_commnet, container, false);
+    View view = inflater.inflate(R.layout.fragment_comment, container, false);
 
     commentEd = view.findViewById(R.id.commentEd);
     commentsRv = view.findViewById(R.id.commentsRv);
     commentSubmitIv = view.findViewById(R.id.commentSubmitIv);
     commentCountTv = view.findViewById(R.id.commentCountTv);
-    repliesFrameLayout = view.findViewById(R.id.repliesFrameLayout);
+
 
     commentSubmitIv.setOnClickListener(this);
 

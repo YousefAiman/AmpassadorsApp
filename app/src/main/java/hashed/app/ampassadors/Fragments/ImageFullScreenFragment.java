@@ -2,10 +2,17 @@ package hashed.app.ampassadors.Fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +29,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
 
+import hashed.app.ampassadors.Activities.PostNewsActivity;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.FileDownloadUtil;
 
 public class ImageFullScreenFragment extends Fragment {
 
@@ -52,9 +61,13 @@ public class ImageFullScreenFragment extends Fragment {
 
     }
   };
-  private final String imageUrl;
+  private  String imageUrl;
+  private  String attachmentName;
+  private  Uri imageUri;
   private ImageView fullScreenIv;
   private boolean mVisible;
+  private FileDownloadUtil fileDownloadUtil;
+
   private final Runnable mHideRunnable = new Runnable() {
     @Override
     public void run() {
@@ -74,6 +87,16 @@ public class ImageFullScreenFragment extends Fragment {
   public ImageFullScreenFragment(String imageUrl) {
     this.imageUrl = imageUrl;
   }
+
+  public ImageFullScreenFragment(String imageUrl,String attachmentName) {
+    this.imageUrl = imageUrl;
+    this.attachmentName = attachmentName;
+  }
+
+  public ImageFullScreenFragment(Uri imageUri) {
+    this.imageUri = imageUri;
+  }
+
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -98,6 +121,30 @@ public class ImageFullScreenFragment extends Fragment {
     final Toolbar fullScreenToolbar = view.findViewById(R.id.fullScreenToolbar);
     fullScreenToolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
 
+    if(attachmentName!=null){
+
+      fullScreenToolbar.inflateMenu(R.menu.download_menu);
+      fullScreenToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+          if(item.getItemId() == R.id.action_download){
+
+            if(fileDownloadUtil == null){
+              fileDownloadUtil = new FileDownloadUtil(requireContext(),
+                      imageUrl, attachmentName,null);
+            }
+
+            fileDownloadUtil.showDownloadAlert();
+//            if (downloadCompleteReceiver == null) {
+//              setUpDownloadReceiver();
+//            }
+          }
+          return false;
+        }
+      });
+
+    }
+
     return view;
   }
 
@@ -109,10 +156,13 @@ public class ImageFullScreenFragment extends Fragment {
 
     fullScreenIv.setOnClickListener(v -> toggle());
 
-    Picasso.get().load(imageUrl).fit().centerInside().into(fullScreenIv);
+    if (imageUri != null) {
+      Picasso.get().load(imageUri).fit().centerInside().into(fullScreenIv);
+    } else if (imageUrl != null) {
+      Picasso.get().load(imageUrl).fit().centerInside().into(fullScreenIv);
+    }
 
   }
-
 
   private void toggle() {
     if (mVisible) {
@@ -174,6 +224,31 @@ public class ImageFullScreenFragment extends Fragment {
     show();
 
   }
+
+
+//  private void setUpDownloadReceiver() {
+//
+//    downloadCompleteReceiver = new BroadcastReceiver() {
+//      @Override
+//      public void onReceive(Context context, Intent intent) {
+//
+//        long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+//        if (id != -1) {
+//          attachmentImage.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//              fileDownloadUtil.showDownloadAlert();
+//            }
+//          });
+//        }
+//      }
+//    };
+//
+//    registerReceiver(downloadCompleteReceiver,
+//            new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+//
+//  }
+
 
   @Override
   public void onResume() {
