@@ -27,10 +27,9 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".Activities.CreateGroupActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".Activities.RepostedPosts"></activity>
-        <activity
-            android:name=".Activities.MeetingActivity"
-            android:screenOrientation="portrait" />
+        <activity android:name=".Activities.RepostedPosts"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".Activities.CoursesActivity"
             android:screenOrientation="portrait" />
