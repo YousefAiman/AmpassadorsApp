@@ -74,8 +74,5 @@ public class HomeNewsHeaderViewPagerAdapter extends PagerAdapter implements View
   }
 
   @Override
-  public void onClick(View view) {
-
-
-  }
+  public void onClick(View view) {}
 }

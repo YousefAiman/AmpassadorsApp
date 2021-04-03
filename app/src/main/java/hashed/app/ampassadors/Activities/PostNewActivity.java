@@ -56,7 +56,7 @@ import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
 
 
-public class PostNewActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+public class PostNewActivity extends AppCompatActivity implements View.OnClickListener {
 
   private final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
   private ImageView userIv, pdfIv,  videoIv, imageIv, attachmentIv, videoPlayIv;
@@ -74,6 +74,8 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
   private double documentSize;
   CheckBox checkBox ;
   boolean  important  = false;
+
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -227,7 +229,11 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     dataMap.put("title", title);
     dataMap.put("description", description);
     dataMap.put("publisherId", currentUid);
-
+    if (checkBox.isChecked()){
+      important= true;
+      dataMap.put("important",important);
+    }
+    dataMap.put("isReported",false);
     if(attachmentUrl != null){
       dataMap.put("attachmentType", attachmentType);
       dataMap.put("attachmentUrl", attachmentUrl);
@@ -305,9 +311,6 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
       });
 
     }
-
-
-
   }
 
   private void uploadImage(String title, String description, ProgressDialog progressDialog) {
@@ -549,12 +552,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
   }
 
 
-  @Override
-  public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-    if (buttonView.getId() == R.id.checkbox){
-        important = true;
-    }
-  }
+
   private void getVideoThumbnail() {
 
     new Thread(new Runnable() {

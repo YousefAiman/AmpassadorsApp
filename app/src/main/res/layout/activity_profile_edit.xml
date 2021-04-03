@@ -37,7 +37,7 @@
             android:layout_width="129dp"
             android:layout_height="129dp"
             android:layout_marginTop="36dp"
-            android:background="@drawable/ic_blanck_profile"
+            android:background="@drawable/profile_background"
             app:layout_constraintDimensionRatio="1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
