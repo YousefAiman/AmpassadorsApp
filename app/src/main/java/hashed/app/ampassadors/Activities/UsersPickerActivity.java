@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -32,7 +33,6 @@ public class UsersPickerActivity extends AppCompatActivity implements
   //  private Query query;
 //  private static final int USERS_LIMIT = 15;
   private ArrayList<UserPreview> users;
-  private RecyclerView userRv;
   private UsersPickerAdapter pickerAdapter;
   private ArrayList<String> previousSelectedUserIdsList;
   private CollectionReference usersRef;
@@ -46,7 +46,7 @@ public class UsersPickerActivity extends AppCompatActivity implements
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_users_picker);
 
-    userRv = findViewById(R.id.userRv);
+    RecyclerView userRv = findViewById(R.id.userRv);
     nextFloatingBtn = findViewById(R.id.nextFloatingBtn);
     pickUserToolbar = findViewById(R.id.pickUserToolbar);
     pickUserToolbar.setNavigationOnClickListener(v -> finish());
@@ -118,6 +118,8 @@ public class UsersPickerActivity extends AppCompatActivity implements
 
   private void getPreviousUsers() {
 
+    final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
     for (String id : previousSelectedUserIdsList) {
 
       usersRef.document(id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -129,18 +131,15 @@ public class UsersPickerActivity extends AppCompatActivity implements
         @Override
         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-//          boolean removedOne = false;
-//          if(!wasFound){
-//            for(int i=0;i<users.size();i++){
-//              if(users.get(i).getUserId().equals(currentUid)){
-//                wasFound = true;
-//                removedOne = true;
-//                users.remove(i);
-//                break;
-//              }
-//            }
-//          }
-
+          if(!wasFound){
+            for(int i=0;i<users.size();i++){
+              if(users.get(i).getUserId().equals(currentUid)){
+                wasFound = true;
+                users.remove(i);
+                break;
+              }
+            }
+          }
           pickerAdapter.notifyItemInserted(users.size() - 1);
         }
       });
@@ -176,10 +175,19 @@ public class UsersPickerActivity extends AppCompatActivity implements
           return;
         }
 
-        final Intent createMeetingIntent = new Intent(UsersPickerActivity.this,
-                CreateMeetingActivity.class)
-                .putStringArrayListExtra("selectedUserIdsList",
-                        pickerAdapter.selectedUserIds);
+        Intent createMeetingIntent;
+
+        if(getIntent().hasExtra("isForGroup") &&
+                getIntent().getBooleanExtra("isForGroup",false)){
+          createMeetingIntent = new Intent(UsersPickerActivity.this,
+                  CreateGroupActivity.class);
+        }else{
+          createMeetingIntent = new Intent(UsersPickerActivity.this,
+                  CreateMeetingActivity.class);
+        }
+
+        createMeetingIntent.putStringArrayListExtra("selectedUserIdsList",
+                pickerAdapter.selectedUserIds);
 
         if(getIntent() != null &&
                 (getIntent().hasExtra("previousSelectedUserIdsList") ||

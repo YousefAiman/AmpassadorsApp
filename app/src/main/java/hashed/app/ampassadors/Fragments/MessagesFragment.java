@@ -1,5 +1,6 @@
 package hashed.app.ampassadors.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,12 +41,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import hashed.app.ampassadors.Activities.UsersPickerActivity;
 import hashed.app.ampassadors.Adapters.ChatsAdapter;
 import hashed.app.ampassadors.Objects.ChatItem;
+import hashed.app.ampassadors.Objects.PrivateMessage;
 import hashed.app.ampassadors.Objects.PrivateMessagePreview;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.Files;
 
-public class MessagesFragment extends Fragment {
+public class MessagesFragment extends Fragment{
 
   private static final int ADD__TYPE = 0,UPDATE_TYPE = 1,MOVE_TOP_FIRST_TYPE = 2;
 
@@ -58,6 +62,7 @@ public class MessagesFragment extends Fragment {
   private RecyclerView chatsRv;
   private ProgressBar progressBar;
   private TextView noMessagesTv;
+
 
   //chats
   private ArrayList<ChatItem> chatItems;
@@ -86,6 +91,8 @@ public class MessagesFragment extends Fragment {
     chatsRv = view.findViewById(R.id.childRv);
     noMessagesTv = view.findViewById(R.id.emptyTv);
     progressBar = view.findViewById(R.id.progressBar);
+
+
     noMessagesTv.setText(getResources().getString(R.string.no_current_messages));
 
     chatsRv.setLayoutManager(new LinearLayoutManager(getContext(),
@@ -129,11 +136,9 @@ public class MessagesFragment extends Fragment {
     getAllChats();
   }
 
-
   private void getAllChats() {
 
-    Query query = messagesCollectionRef
-            .whereArrayContains("users", currentUid)
+    Query query = messagesCollectionRef.whereArrayContains("users", currentUid)
             .orderBy("latestMessageTime", Query.Direction.DESCENDING);
 
     query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -183,7 +188,17 @@ public class MessagesFragment extends Fragment {
     final ChatItem chatItem = new ChatItem();
     chatItem.setMessagingDocId(snapshot.getString("databaseRefId"));
     final String[] ids = chatItem.getMessagingDocId().split("-");
-    chatItem.setMessagingUid(ids[0].equals(currentUid) ? ids[1] : ids[0]);
+
+    final List<String> users = (List<String>) snapshot.get("users");
+
+    if(users.size() <= 2){
+      chatItem.setMessagingUid(ids[0].equals(currentUid) ? ids[1] : ids[0]);
+      chatItem.setGroupMessage(false);
+    }else{
+      chatItem.setMessagingUid(snapshot.getId());
+      chatItem.setGroupMessage(true);
+    }
+
     getLastMessage(chatItem, addToFirst);
 
   }
@@ -215,7 +230,7 @@ public class MessagesFragment extends Fragment {
                     chatItem.setMessage(ref.getValue(PrivateMessagePreview.class));
                     chatItem.setMessageKey(Long.parseLong(ref.getKey()));
 
-                    checkMessageSeenAndAddSeenListener(ref, chatItem, addToFirst);
+                    checkMessageSeenAndAddSeenListener(chatItem, addToFirst,false);
 
                   } else {
 
@@ -237,7 +252,8 @@ public class MessagesFragment extends Fragment {
 
                     final DatabaseReference lastSeenRef =
                             messagesRef.child(chatItem1.getMessagingDocId()).
-                                    child("LastSeenMessage:" + currentUid);
+                                    child("UsersLastSeenMessages").
+                                    child(currentUid);
 
                     final int finalIndex = index;
                     lastSeenRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -246,7 +262,7 @@ public class MessagesFragment extends Fragment {
 
                         final String lastSeen = snapshot.getValue(String.class);
 
-                          calculateUnseenCount(lastSeen,ref,chatItem, finalIndex,
+                          calculateUnseenCount(lastSeen,chatItem, finalIndex,
                                   finalIndex == 0?UPDATE_TYPE:MOVE_TOP_FIRST_TYPE);
 
                       }
@@ -259,6 +275,114 @@ public class MessagesFragment extends Fragment {
 
 
                   }
+                }else{
+
+                  chatItem.setSeen(true);
+                  chatItem.setUnSeenCount(0);
+
+                  messagesCollectionRef.document(chatItem.getMessagingDocId())
+                          .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot document) {
+                      if(document.exists()){
+                        final PrivateMessagePreview privateMessagePreview =
+                                new PrivateMessagePreview();
+
+                        final String creatorId = document.getString("creatorId");
+
+                        privateMessagePreview.setSender(creatorId);
+
+                        if(creatorId.equals(currentUid)){
+
+                          final List<String> users = (List<String>) document.get("users");
+                          users.remove(currentUid);
+//                                    if(users.size() == 2){
+//
+//                                      privateMessagePreview.setContent("You added ");
+//
+//                                      FirebaseFirestore.getInstance().collection("Users")
+//                                              .whereIn("userId",users.size()>2?users.subList(0,2):users)
+//                                              .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//                                        @Override
+//                                        public void onSuccess(QuerySnapshot snapshots) {
+//
+//                                          if(!snapshots.isEmpty()){
+//                                            for(DocumentSnapshot snapshot1:snapshots.getDocuments()){
+//                                              privateMessagePreview.setContent(
+//                                                      privateMessagePreview.getContent().concat(
+//                                                              snapshot1.getString("username")+", "
+//                                                      ));
+//                                            }
+//                                          }
+//                                        }
+//                                      }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                                        @Override
+//                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                                          privateMessagePreview.setContent(
+//                                                  privateMessagePreview.getContent().concat(" and others to this group")
+//                                          );
+//                                        }
+//                                      });
+//
+//                                    }else{
+//
+//                                      privateMessagePreview.setContent("You added "+users.size()
+//                                      +" users to this group.");
+//
+//                                    }
+                          privateMessagePreview.setContent("You added "+users.size()
+                                  +" users to this group.");
+
+                        }else{
+                          privateMessagePreview.setContent("added you to this group");
+                        }
+
+                        privateMessagePreview.setTime(document.getLong("createdTime"));
+                        privateMessagePreview.setDeleted(false);
+                        privateMessagePreview.setType(Files.TEXT);
+                        chatItem.setMessage(privateMessagePreview);
+
+                        chatItem.setImageUrl(document.getString("imageUrl"));
+                        chatItem.setUsername(document.getString("groupName"));
+//                                  chatItems.add(chatItem);
+//                                  adapter.notifyItemInserted(chatItems.size());
+
+                        checkMessageSeenAndAddSeenListener(chatItem, false,
+                                true);
+
+                      }
+                    }
+                  });
+
+
+
+
+
+//                  int index = listenerRegistrations.size();
+//                  listenerRegistrations.add(messagesCollectionRef.document(chatItem.getMessagingDocId())
+//                          .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+//                            @Override
+//                            public void onEvent(@Nullable DocumentSnapshot value,
+//                                                @Nullable FirebaseFirestoreException error) {
+//                              if(value!=null){
+//
+//                                if(chatItem.getMessage() == null){
+//
+//                                }
+////                                else if(value.getLong("latestMessageTime")
+////                                        > chatItem.getMessage().getTime()){
+////                                    listenerRegistrations.get(index).remove();
+////                                    listenerRegistrations.remove(index);
+////
+////                                  getMessageFromSnapshot(value,true);
+////
+////                                }
+//                              }
+//
+//                            }
+//                          }));
+
+
                 }
               }
 
@@ -270,12 +394,13 @@ public class MessagesFragment extends Fragment {
 
   }
 
-  private void checkMessageSeenAndAddSeenListener(DataSnapshot messageSnapshot,
-                                                  ChatItem chatItem,
-                                                  boolean addToFirst) {
+  private void checkMessageSeenAndAddSeenListener(ChatItem chatItem, boolean addToFirst,
+                                                  boolean isAnEmptyGroupMessage) {
 
     DatabaseReference lastSeenRef =
-            messagesRef.child(chatItem.getMessagingDocId()).child("LastSeenMessage:" + currentUid);
+            messagesRef.child(chatItem.getMessagingDocId())
+                    .child("UsersLastSeenMessages")
+                    .child(currentUid);
 
     ValueEventListener listener;
 
@@ -296,18 +421,29 @@ public class MessagesFragment extends Fragment {
 
             final String lastSeen = snapshot.getValue(String.class);
 
-            if (addToFirst) {
-              chatItems.add(0, chatItem);
-//              adapter.notifyItemInserted(0);
-              calculateUnseenCount(lastSeen,messageSnapshot,chatItem,0,
-                      ADD__TYPE);
-            } else {
-              chatItems.add(chatItem);
-//              adapter.notifyItemInserted(chatItems.size()-1);
-              calculateUnseenCount(lastSeen,messageSnapshot,chatItem,chatItems.size(),
-                      ADD__TYPE);
-            }
+            Log.d("ttt","last seen key: "+lastSeen);
 
+            if(isAnEmptyGroupMessage){
+
+              chatItems.add(chatItem);
+              final int index = chatItems.size();
+              adapter.notifyItemInserted(index);
+
+            }else{
+              if (addToFirst) {
+//                chatItems.add(0, chatItem);
+//              adapter.notifyItemInserted(0);
+                calculateUnseenCount(lastSeen,chatItem,0,
+                        ADD__TYPE);
+              } else {
+
+//                chatItems.add(chatItem);
+//              adapter.notifyItemInserted(chatItems.size());
+                final int index = chatItems.size();
+                calculateUnseenCount(lastSeen,chatItem,index,
+                        ADD__TYPE);
+              }
+            }
 
             if(progressBar.getVisibility() == View.VISIBLE){
               progressBar.setVisibility(View.GONE);
@@ -328,7 +464,7 @@ public class MessagesFragment extends Fragment {
 //            }
             final ChatItem chatItem1 = chatItems.get(index);
             final String lastSeen = snapshot.getValue(String.class);
-            calculateUnseenCount(lastSeen,messageSnapshot,chatItem1,index,UPDATE_TYPE);
+            calculateUnseenCount(lastSeen,chatItem1,index,UPDATE_TYPE);
 
           }
         }
@@ -344,13 +480,10 @@ public class MessagesFragment extends Fragment {
   }
 
 
-  private void calculateUnseenCount(String lastSeen,
-                                    DataSnapshot messageSnapshot,ChatItem chatItem,int index,
+  private void calculateUnseenCount(String lastSeen,ChatItem chatItem,int index,
                                     int updateType){
 
-    messageSnapshot.getRef().getParent()
-            .orderByKey()
-            .startAt(lastSeen)
+    messagesRef.child(chatItem.getMessagingDocId()).child("messages").orderByKey().startAt(lastSeen)
             .addListenerForSingleValueEvent(new ValueEventListener() {
               @Override
               public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -365,7 +498,6 @@ public class MessagesFragment extends Fragment {
                   Log.d("ttt", "chatItems.get(position),getseen: " +
                           chatItem.isSeen());
 
-
                   if(updateType == UPDATE_TYPE){
 
                       adapter.notifyItemChanged(index);
@@ -378,9 +510,12 @@ public class MessagesFragment extends Fragment {
                     adapter.notifyItemInserted(0);
 
                   }else{
-                    adapter.notifyItemInserted(index);
+                    chatItems.add(chatItem);
+                    adapter.notifyItemInserted(chatItems.size());
                   }
 
+                }else{
+//                  adapter.notifyItemInserted(chatItems.size());
                 }
               }
 
@@ -508,4 +643,8 @@ public class MessagesFragment extends Fragment {
     }
 
   }
+
+
+
+
 }

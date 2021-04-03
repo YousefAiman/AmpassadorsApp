@@ -17,6 +17,8 @@ public class ChatItem implements Serializable {
   private long time;
   private long messageKey;
   private long unSeenCount;
+  private boolean isGroupMessage;
+
 
   public ChatItem() {
   }
@@ -101,5 +103,13 @@ public class ChatItem implements Serializable {
 
   public void setUnSeenCount(long unSeenCount) {
     this.unSeenCount = unSeenCount;
+  }
+
+  public boolean isGroupMessage() {
+    return isGroupMessage;
+  }
+
+  public void setGroupMessage(boolean groupMessage) {
+    isGroupMessage = groupMessage;
   }
 }

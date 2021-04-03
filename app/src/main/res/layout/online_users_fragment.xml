@@ -34,4 +34,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/groupFloatingBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/add_group"
+        android:src="@drawable/group_round_icon"
+        app:tint="@color/white"
+        android:layout_gravity="bottom|end"
+        app:fabSize="normal"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="14dp"
+        app:maxImageSize="40dp"/>
+
 </FrameLayout>

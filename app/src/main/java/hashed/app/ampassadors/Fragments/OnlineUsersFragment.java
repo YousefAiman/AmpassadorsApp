@@ -1,5 +1,6 @@
 package hashed.app.ampassadors.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -27,12 +29,13 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import hashed.app.ampassadors.Activities.UsersPickerActivity;
 import hashed.app.ampassadors.Adapters.UsersAdapter;
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
 
 public class OnlineUsersFragment extends Fragment implements
-        SwipeRefreshLayout.OnRefreshListener {
+        SwipeRefreshLayout.OnRefreshListener , View.OnClickListener {
 
   private static final int USERS_LIMIT = 15;
   private Query query;
@@ -46,6 +49,9 @@ public class OnlineUsersFragment extends Fragment implements
   private ListenerRegistration listenerRegistration;
   private String currentUid;
   private boolean wasFound = false;
+
+  private FloatingActionButton groupFloatingBtn;
+
   public OnlineUsersFragment() {
   }
 
@@ -101,6 +107,9 @@ public class OnlineUsersFragment extends Fragment implements
     swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
     swipeRefreshLayout.setOnRefreshListener(this);
     userRv = view.findViewById(R.id.childRv);
+    groupFloatingBtn = view.findViewById(R.id.groupFloatingBtn);
+    groupFloatingBtn.setOnClickListener(this);
+
     TextView noUsersTv = view.findViewById(R.id.emptyTv);
     noUsersTv.setText(getResources().getString(R.string.no_online_users));
 
@@ -251,4 +260,14 @@ public class OnlineUsersFragment extends Fragment implements
       }
     }
   }
+
+  @Override
+  public void onClick(View view) {
+
+    if(view.getId() == groupFloatingBtn.getId()){
+      startActivity(new Intent(getContext(), UsersPickerActivity.class)
+              .putExtra("isForGroup", true));
+    }
+  }
+
 }

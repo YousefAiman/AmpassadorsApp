@@ -23,7 +23,6 @@ public class PrivateMessagePreview implements Serializable {
   public PrivateMessagePreview() {
   }
 
-
   public String getContent() {
     return content;
   }

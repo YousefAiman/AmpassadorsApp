@@ -14,7 +14,8 @@ public class FirestoreNotificationSender {
   public static final String TYPE_PRIVATE_MESSAGE = "privateMessaging",
           TYPE_GROUP_MESSAGE = "groupMessaging",
           TYPE_LIKE = "postLike",TYPE_COMMENT = "postComment",TYPE_ZOOM = "zoomMeeting",
-          TYPE_MEETING_ADDED = "meetingAdded",TYPE_MEETING_STARTED = "meetingStarted";
+          TYPE_MEETING_ADDED = "meetingAdded",TYPE_MEETING_STARTED = "meetingStarted",
+          TYPE_GROUP_ADDED = "groupAdded";
 
 
 

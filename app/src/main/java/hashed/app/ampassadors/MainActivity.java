@@ -166,8 +166,7 @@ public class MainActivity extends AppCompatActivity {
 
   private void startConnectionActivity() {
     new Handler().postDelayed(() -> {
-      startActivityForResult(new Intent(MainActivity.this, ConnectionActivity.class)
-              .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+      startActivityForResult(new Intent(MainActivity.this, ConnectionActivity.class),
               ConnectionActivity.CONNECTION_RESULT);
 //      finish();
     }, 800);

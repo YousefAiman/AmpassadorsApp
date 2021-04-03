@@ -375,11 +375,11 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
 
       Files.startImageFetchIntent(this);
 
-    } else if (view.getId() == R.id.dateSetterTv || view.getId() == R.id.settingsIv1) {
+    } else if (view.getId() == R.id.dateSetterTv) {
 
       getMeetingDate();
 
-    } else if (view.getId() == R.id.timeSetterTv || view.getId() == R.id.settingsIv2) {
+    } else if (view.getId() == R.id.timeSetterTv) {
 
       getMeetingTime();
 

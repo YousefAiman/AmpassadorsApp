@@ -20,9 +20,15 @@ import androidx.fragment.app.Fragment;
 
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -33,6 +39,7 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -85,6 +92,54 @@ public class Home_Activity extends AppCompatActivity implements
       }
     }
 
+
+    DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("PrivateMessages");
+
+    FirebaseFirestore.getInstance().collection("PrivateMessages")
+            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+      @Override
+      public void onSuccess(QuerySnapshot snapshots) {
+
+        for(DocumentSnapshot snapshot:snapshots.getDocuments()){
+
+          final HashMap<String, String> usersLastSeenMap = new HashMap<>();
+          final List<String> users = (List<String>) snapshot.get("users");
+
+          ref.child(snapshot.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+              if(snapshot.exists()){
+                  for(String user:users){
+//                    if(snapshot.hasChild("LastSeenMessage:"+user)){
+//                      usersLastSeenMap.put(user,snapshot.child("LastSeenMessage:"+user)
+//                              .getValue(String.class));
+//
+//                      snapshot.child("LastSeenMessage:"+user).getRef().removeValue();
+//
+//                    }else{
+                      usersLastSeenMap.put(user,"0");
+//                    }
+
+                    if(users.indexOf(user) == users.size()-1){
+
+                      //last user loop
+
+                      snapshot.getRef().child("UsersLastSeenMessages").setValue(usersLastSeenMap);
+                    }
+                  }
+              }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+          });
+        }
+      }
+    });
+
+
     OnClickButtons();
     createUserLikesListener();
     createNotificationListener();
@@ -115,6 +170,7 @@ public class Home_Activity extends AppCompatActivity implements
 
                           }
 
+                          GlobalVariables.setRole(value.getString("Role"));
                           if (value.contains("Likes")) {
                             final List<String> likes = (List<String>) value.get("Likes");
                             GlobalVariables.setLikesList(likes);

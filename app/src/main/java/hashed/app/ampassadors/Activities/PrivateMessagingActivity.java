@@ -214,13 +214,9 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
   @Override
   public boolean onMenuItemClick(MenuItem item) {
-
     if (item.getItemId() == R.id.action_delete) {
-
       deleteMessageDocument();
-
     }
-
     return false;
   }
 
@@ -241,17 +237,49 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
   //firestore user data
   private void getUserData() {
-    usersRef.document(messagingUid).get().addOnSuccessListener(documentSnapshot -> {
+
+    if(getIntent().hasExtra("groupId")){
+      messagingUid = getIntent().getStringExtra("groupId");
+
+      FirebaseFirestore.getInstance().collection("PrivateMessages")
+              .document(messagingUid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        @Override
+        public void onSuccess(DocumentSnapshot snapshot) {
+         if(snapshot.exists()){
+
+           if (snapshot.contains("imageUrl")) {
+             final String imageUrl = snapshot.getString("imageUrl");
+             if(imageUrl!=null && !imageUrl.isEmpty()){
+               Picasso.get().load(snapshot.getString("imageUrl")).fit().
+                       into(messagingTbProfileIv);
+             }
+           }
+
+           messagingTbNameTv.setText(snapshot.getString("groupName"));
+         }
+        }
+      });
+
+    }else{
+
+       usersRef.document(messagingUid).get().addOnSuccessListener(documentSnapshot -> {
       if (documentSnapshot.exists()) {
 
         if (documentSnapshot.contains("imageUrl")) {
-          Picasso.get().load(documentSnapshot.getString("imageUrl")).fit().into(messagingTbProfileIv);
+          final String imageUrl = documentSnapshot.getString("imageUrl");
+          if(imageUrl!=null && !imageUrl.isEmpty()){
+            Picasso.get().load(documentSnapshot.getString("imageUrl")).fit().
+                    into(messagingTbProfileIv);
+          }
         }
-
         messagingTbNameTv.setText(documentSnapshot.getString("username"));
 
       }
     });
+
+
+    }
+
 
   }
 
@@ -389,15 +417,38 @@ public class PrivateMessagingActivity extends AppCompatActivity
   //database messages functions
   private void fetchPreviousMessages() {
 
+    String groupId = null;
+    if(getIntent().hasExtra("groupId")){
+      groupId = getIntent().getStringExtra("groupId");
+    }
+
     adapter = new PrivateMessagingAdapter(privateMessages, this,
             this, this, this,
-            this, this, false);
+            this, this, groupId != null);
 
     privateMessagingRv.setAdapter(adapter);
 
     Log.d("privateMessaging", "start fetching");
+    if(groupId!=null){
 
-    databaseReference.child(currentUid + "-" + messagingUid)
+      databaseReference.child(groupId).addListenerForSingleValueEvent(new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+          if (snapshot.exists()) {
+            messagesProgressBar.setVisibility(View.VISIBLE);
+            fetchMessagesFromSnapshot(snapshot);
+          }
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+
+        }
+      });
+
+    }else{
+
+          databaseReference.child(currentUid + "-" + messagingUid)
             .addListenerForSingleValueEvent(new ValueEventListener() {
               @Override
               public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -450,6 +501,9 @@ public class PrivateMessagingActivity extends AppCompatActivity
                         + error.getMessage());
               }
             });
+    }
+
+
   }
 
 
@@ -476,6 +530,12 @@ public class PrivateMessagingActivity extends AppCompatActivity
               public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 if (!snapshot.exists() || snapshot.getChildrenCount() == 0) {
+                  messageSendIv.setOnClickListener(new TextMessageSenderClickListener());
+                  messagesProgressBar.setVisibility(View.GONE);
+
+                  addListenerForNewMessages();
+                  addDeleteFieldListener();
+
                   return;
                 }
 
@@ -502,7 +562,8 @@ public class PrivateMessagingActivity extends AppCompatActivity
                           currentScrollListener = new toTopScrollListener());
                 }
 
-                currentMessagingRef.child("LastSeenMessage:" + currentUid).setValue(lastKeyRef);
+                currentMessagingRef.child("UsersLastSeenMessages")
+                        .child(currentUid).setValue(lastKeyRef);
 
                 addDeleteFieldListener();
 
@@ -524,8 +585,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
     ChildEventListener childEventListener;
 
-    final Query query = currentMessagingRef
-            .child("messages").orderByKey()
+    final Query query = currentMessagingRef.child("messages").orderByKey()
             .startAt(String.valueOf(System.currentTimeMillis()));
 
     query.addChildEventListener(childEventListener = new ChildEventListener() {
@@ -640,8 +700,8 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
     final Map<String, Object> messagingDocumentMap = new HashMap<>();
 
-    messagingDocumentMap.put("LastSeenMessage:" + currentUid, "0");
-    messagingDocumentMap.put("LastSeenMessage:" + messagingUid, "0");
+//    messagingDocumentMap.put("LastSeenMessage:" + currentUid, "0");
+//    messagingDocumentMap.put("LastSeenMessage:" + messagingUid, "0");
     messagingDocumentMap.put("DeletedFor:" + currentUid, false);
     messagingDocumentMap.put("DeletedFor:" + messagingUid, false);
 
@@ -650,8 +710,15 @@ public class PrivateMessagingActivity extends AppCompatActivity
     messages.put(String.valueOf(System.currentTimeMillis()), privateMessage);
 
     messagingDocumentMap.put("messages", messages);
+    
 
+            
     currentMessagingRef.setValue(messagingDocumentMap).addOnSuccessListener(v -> {
+        
+        HashMap<String, String> lastSeenMap = new HashMap<>();
+        lastSeenMap.put(currentUid,"0");
+        lastSeenMap.put(messagingUid,"0");
+        currentMessagingRef.child("UsersLastSeenMessages").setValue(lastSeenMap);
 
       final Map<String, Object> messageDocumentPreviewMap = new HashMap<>();
 
@@ -697,8 +764,8 @@ public class PrivateMessagingActivity extends AppCompatActivity
     messagingEd.setText("");
     messagingEd.setClickable(false);
 
-    if (lastKeyRef == null) {
-      createMessagingDocument(privateMessage);
+    if (lastKeyRef == null && !getIntent().hasExtra("groupId")) {
+        createMessagingDocument(privateMessage);
       return;
     }
 
@@ -1466,7 +1533,8 @@ public class PrivateMessagingActivity extends AppCompatActivity
     }
 
     if (currentMessagingRef != null && lastKeyRef != null) {
-      currentMessagingRef.child("LastSeenMessage:" + currentUid).setValue(lastKeyRef);
+      currentMessagingRef.child("UsersLastSeenMessages")
+              .child(currentUid).setValue(lastKeyRef);
     }
 
     if (currentUid != null) {

@@ -197,6 +197,7 @@
             android:layout_marginTop="20dp"
             android:overScrollMode="never"
             android:paddingHorizontal="15dp"
+
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:spanCount="5" />
 

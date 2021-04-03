@@ -13,8 +13,7 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:paddingBottom="30dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        />
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
 
     <ProgressBar
@@ -34,5 +33,7 @@
         android:fontFamily="@font/segoe_ui_bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+
+
 
 </FrameLayout>

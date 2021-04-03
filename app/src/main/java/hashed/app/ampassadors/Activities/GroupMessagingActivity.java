@@ -574,40 +574,6 @@ public class GroupMessagingActivity extends AppCompatActivity
 
   }
 
-  private void addZoomFieldListener() {
-
-    valueEventListeners = new HashMap<>();
-
-    ValueEventListener valueEventListener;
-
-
-
-    currentMessagingRef
-            .child("currentZoomMeeting")
-            .addValueEventListener(valueEventListener = new ValueEventListener() {
-              @Override
-              public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-
-                  final ZoomMeeting zoomMeeting = snapshot.getValue(ZoomMeeting.class);
-                  if(zoomMeeting != null){
-                    showZoomMeeting(zoomMeeting);
-                  }
-
-                }
-              }
-
-              @Override
-              public void onCancelled(@NonNull DatabaseError error) {
-
-              }
-            });
-
-    valueEventListeners.put(currentMessagingRef.child("currentZoomMeeting").getRef(),
-            valueEventListener);
-
-  }
-
   private void showZoomMeeting(ZoomMeeting zoomMeeting){
 
     TextView zoomMeetingTopicTv = findViewById(R.id.zoomMeetingTopicTv);
@@ -673,7 +639,8 @@ public class GroupMessagingActivity extends AppCompatActivity
                 privateMessage.getZoomMeeting().getJoinUrl());
 
       } else {
-        checkUserActivityAndSendNotifications(privateMessage.getContent(), privateMessage.getType());
+        checkUserActivityAndSendNotifications(privateMessage.getContent(),
+                privateMessage.getType());
       }
 
       messageSendIv.setClickable(true);

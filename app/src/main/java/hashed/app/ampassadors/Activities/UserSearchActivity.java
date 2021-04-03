@@ -33,18 +33,17 @@ public class UserSearchActivity extends AppCompatActivity implements
 //  public static final int USER_SEARCH_RESULT = 10;
   private SearchView searchUserSearchView;
   private ArrayList<UserPreview> users;
-  private RecyclerView userRv;
   private UsersPickerAdapter pickerAdapter;
   private ArrayList<String> previousSelectedUserIdsList;
   private CollectionReference usersRef;
-
+  private boolean wasFound = false;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_user_search);
 
     Toolbar pickUserToolbar = findViewById(R.id.pickUserToolbar);
-    userRv = findViewById(R.id.userRv);
+    RecyclerView userRv = findViewById(R.id.userRv);
     searchUserSearchView = findViewById(R.id.searchUserSearchView);
 
     pickUserToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -70,6 +69,8 @@ public class UserSearchActivity extends AppCompatActivity implements
               = getIntent().getStringArrayListExtra("selectedUserIds");
     }
 
+    final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
     users = new ArrayList<>();
 
     pickerAdapter = new UsersPickerAdapter(users, previousSelectedUserIdsList,
@@ -77,9 +78,7 @@ public class UserSearchActivity extends AppCompatActivity implements
     userRv.setAdapter(pickerAdapter);
 
 
-    usersRef.whereNotEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getUid())
-            .orderBy("userId")
-            .orderBy("username",Query.Direction.ASCENDING)
+    usersRef.orderBy("username",Query.Direction.ASCENDING)
             .limit(100).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
       @Override
       public void onSuccess(QuerySnapshot snapshots) {
@@ -91,6 +90,17 @@ public class UserSearchActivity extends AppCompatActivity implements
       @Override
       public void onComplete(@NonNull Task<QuerySnapshot> task) {
         if(task.isSuccessful()){
+
+          if(!wasFound){
+            for(int i=0;i<users.size();i++){
+              if(users.get(i).getUserId().equals(currentUid)){
+                wasFound = true;
+                users.remove(i);
+                break;
+              }
+            }
+          }
+
           pickerAdapter.notifyDataSetChanged();
         }
       }
