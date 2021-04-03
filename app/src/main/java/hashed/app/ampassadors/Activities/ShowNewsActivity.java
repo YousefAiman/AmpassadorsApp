@@ -233,5 +233,4 @@ public class ShowNewsActivity extends AppCompatActivity implements Toolbar.OnMen
             }
         }
     }
-
 }

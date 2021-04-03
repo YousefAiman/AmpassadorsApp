@@ -91,7 +91,6 @@ public class AdminAdapter extends RecyclerView.Adapter<AdminAdapter.AdminHolder>
           });
         }
       });
-
      approve_account.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
