@@ -59,6 +59,10 @@ public class PostData implements Serializable {
   private long totalVotes;
   @PropertyName("pollEnded")
   private boolean pollEnded;
+  @PropertyName("isReported")
+  boolean isReported;
+  @PropertyName("important")
+  boolean important ;
   @Exclude
   private String publisherName;
   @Exclude
@@ -373,5 +377,21 @@ public class PostData implements Serializable {
 
   public void setDocumentSize(long documentSize) {
     this.documentSize = documentSize;
+  }
+
+  public boolean isReported() {
+    return isReported;
+  }
+
+  public void setReported(boolean reported) {
+    isReported = reported;
+  }
+
+  public boolean isImportant() {
+    return important;
+  }
+
+  public void setImportant(boolean important) {
+    this.important = important;
   }
 }

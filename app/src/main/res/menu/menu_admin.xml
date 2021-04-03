@@ -24,6 +24,9 @@
         android:id="@+id/listSuggestion"
         android:title="@string/listSuggestion" />
 
+    <item android:id="@+id/repotred"
+        android:title="@string/PostRepored"
+        />
     <item
         android:id="@+id/policy"
         android:title="@string/policy_Privacy" />

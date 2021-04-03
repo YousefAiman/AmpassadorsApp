@@ -385,7 +385,7 @@ public class profile_edit extends AppCompatActivity {
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(profile_edit.this, "Info update error"
+                    Toast.makeText(profile_edit.this, R.string.Error_UpdateFail
                             , Toast.LENGTH_SHORT).show();
                     progressDialog.dismiss();
                     save.setClickable(true);

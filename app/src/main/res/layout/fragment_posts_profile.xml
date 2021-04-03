@@ -95,6 +95,7 @@
                     android:layout_height="0dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
                     android:clipToPadding="false"
                     android:overScrollMode="never"
                     android:paddingBottom="20dp"
@@ -147,7 +148,7 @@
                     android:layout_marginBottom="1205dp"
                     android:orientation="horizontal"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintGuide_percent="0.4" />
+                    app:layout_constraintGuide_percent="0.36" />
 
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guideline34"

@@ -177,7 +177,7 @@
 
 
         <ImageView
-            android:id="@+id/pdfIv"
+            android:id="@+id/documentIv"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:background="@drawable/btn_design_post"
