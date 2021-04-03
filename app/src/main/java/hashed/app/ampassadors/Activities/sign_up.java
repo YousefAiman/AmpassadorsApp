@@ -173,10 +173,8 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                 ActivityCompat.requestPermissions(sign_up.this, new String[]{Manifest.permission.CAMERA,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
                 SelectImage(sign_up.this);
-
             }
         });
-
     }
 
     private void signUp() {

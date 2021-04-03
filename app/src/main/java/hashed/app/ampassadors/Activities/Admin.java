@@ -57,12 +57,10 @@ public class Admin extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_admin);
-
     final Toolbar toolbar = findViewById(R.id.admin_toolbar);
     toolbar.setNavigationOnClickListener(v -> {
       onBackPressed();
     });
-
     fAuth = FirebaseAuth.getInstance();
     userid = fAuth.getCurrentUser().getUid();
     spinner = findViewById(R.id.options);

@@ -24,14 +24,13 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import hashed.app.ampassadors.Adapters.PostAdapter;
-import hashed.app.ampassadors.B_Fragment;
+import hashed.app.ampassadors.Adapters.ReprotedAdapter;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 
-import static hashed.app.ampassadors.Objects.PostData.TYPE_NEWS;
 import static hashed.app.ampassadors.Objects.PostData.TYPE_POLL;
 
-public class ShowNewsActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener,
+public class RepostedPosts extends AppCompatActivity implements Toolbar.OnMenuItemClickListener,
         SwipeRefreshLayout.OnRefreshListener, View.OnClickListener {
 
     private static final int POSTS_LIMIT = 10;
@@ -41,72 +40,49 @@ public class ShowNewsActivity extends AppCompatActivity implements Toolbar.OnMen
     private RecyclerView post_list;
     private DocumentSnapshot lastDocSnap;
     private boolean isLoadingMessages;
-    private ShowNewsActivity.PostsBottomScrollListener scrollListener;
+    private RepostedPosts.PostsBottomScrollListener scrollListener;
+    private ArrayList<String> titles;
     private TextView toolbarTv;
-
     //header Pager
     private Handler handler;
     private Runnable pagerRunnable;
-    private ArrayList<String> titles;
 
-    public ShowNewsActivity() {
+    public RepostedPosts() {
         // Required empty public constructor
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_show_news);
-
-
+        setContentView(R.layout.activity_reposted_posts);
         int key = 1;
-        if(getIntent()!=null && getIntent().hasExtra("postType")){
+        if (getIntent() != null && getIntent().hasExtra("postType")) {
             key = getIntent().getIntExtra("postType", 0);
         }
 
-        titles = new ArrayList<>(5);
+//        titles = new ArrayList<>(5);
         query = FirebaseFirestore.getInstance().collection("Posts")
-                .orderBy("publishTime", Query.Direction.DESCENDING).whereEqualTo(
-                        "type",key).limit(POSTS_LIMIT);
+                .whereEqualTo("isReported", true)
+                .whereEqualTo("type", key).limit(POSTS_LIMIT)
+                .orderBy("publishTime", Query.Direction.DESCENDING);
+
         postData = new ArrayList<>();
-        adapter = new PostAdapter(postData, ShowNewsActivity.this);
+        adapter = new PostAdapter(postData, this);
 
 
-        post_list = findViewById(R.id.home_listb);
-        toolbarTv = findViewById(R.id.toolbarTv);
-        post_list.setLayoutManager(new LinearLayoutManager(ShowNewsActivity.this, RecyclerView.VERTICAL, false));
+        post_list = findViewById(R.id.reportedlist);
+//        toolbarTv = findViewById(R.id.toolbarTv);
+        post_list.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
-        Toolbar toolbar = findViewById(R.id.newstoolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
 
         post_list.setAdapter(adapter);
         ReadPost(true);
 
+
     }
-
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        return false;
-    }
-
-    @Override
-    public void onRefresh() {
-
-            //header pager
-            titles.clear();
-            handler.removeCallbacks(pagerRunnable);
-
-            //post recycler
-            postData.clear();
-            adapter.notifyDataSetChanged();
-            lastDocSnap = null;
-            ReadPost(true);
-    }
-
-    @Override
-    public void onClick(View view) {
-    }
-
 
     private void ReadPost(boolean isInitial) {
 
@@ -129,7 +105,7 @@ public class ShowNewsActivity extends AppCompatActivity implements Toolbar.OnMen
                 for (QueryDocumentSnapshot snapshot : queryDocumentSnapshots) {
 
                     if (snapshot.getLong("type") == TYPE_POLL) {
-                       // Log.d("ggggg", snapshot.getLong("type") + "هههههههههههههههه");
+                        // Log.d("ggggg", snapshot.getLong("type") + "هههههههههههههههه");
 
 
                         if (snapshot.getBoolean("pollEnded")) {
@@ -196,6 +172,48 @@ public class ShowNewsActivity extends AppCompatActivity implements Toolbar.OnMen
         });
     }
 
+
+    @Override
+    public void onClick(View v) {
+
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        return false;
+    }
+
+    @Override
+    public void onRefresh() {
+
+        //header pager
+//        titles.clear();
+        handler.removeCallbacks(pagerRunnable);
+
+        //post recycler
+        postData.clear();
+        adapter.notifyDataSetChanged();
+        lastDocSnap = null;
+        ReadPost(true);
+
+    }
+
+    private class PostsBottomScrollListener extends RecyclerView.OnScrollListener {
+        @Override
+        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+            if (!isLoadingMessages &&
+                    !recyclerView.canScrollVertically(1) &&
+                    newState == RecyclerView.SCROLL_STATE_IDLE) {
+
+                Log.d("ttt", "is at bottom");
+
+                ReadPost(false);
+
+            }
+        }
+    }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -212,22 +230,6 @@ public class ShowNewsActivity extends AppCompatActivity implements Toolbar.OnMen
 
         if (handler != null && pagerRunnable != null) {
             handler.postDelayed(pagerRunnable, 3000);
-        }
-    }
-
-    private class PostsBottomScrollListener extends RecyclerView.OnScrollListener {
-        @Override
-        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
-            if (!isLoadingMessages &&
-                    !recyclerView.canScrollVertically(1) &&
-                    newState == RecyclerView.SCROLL_STATE_IDLE) {
-
-                Log.d("ttt", "is at bottom");
-
-                ReadPost(false);
-
-            }
         }
     }
 }

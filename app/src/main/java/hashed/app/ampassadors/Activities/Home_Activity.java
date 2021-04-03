@@ -426,7 +426,15 @@ public class Home_Activity extends AppCompatActivity implements
             Intent intent = new Intent(Home_Activity.this, Admin.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-        }
+        }else  if (item.getItemId() == R.id.repotred){
+
+          Intent intent = new Intent(Home_Activity.this, RepostedPosts.class);
+          Bundle bundle = new Bundle();
+          bundle.putInt("postType", PostData.TYPE_NEWS);
+          intent.putExtras(bundle);
+          intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+          startActivity(intent);
+      }
 
     return true;
     }

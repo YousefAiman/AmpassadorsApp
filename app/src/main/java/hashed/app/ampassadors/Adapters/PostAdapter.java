@@ -116,6 +116,281 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     return posts.size();
   }
 
+
+  @Override
+  public int getItemViewType(int position) {
+
+    final PostData postData = posts.get(position);
+
+    if (postData.getType() == PostData.TYPE_POLL){
+      return POLL_TYPE;
+    }else{
+      return postData.getAttachmentType();
+    }
+
+  }
+
+  public class NewsImageVh extends RecyclerView.ViewHolder
+          implements View.OnClickListener {
+
+    private final ImageView newsIv;
+    private final TextView newsTitleTv;
+
+    public NewsImageVh(@NonNull View itemView) {
+      super(itemView);
+      newsIv = itemView.findViewById(R.id.newsIv);
+      newsTitleTv = itemView.findViewById(R.id.newsTitleTv);
+    }
+
+    private void bind(PostData postData) {
+
+      if (postData.getAttachmentUrl() != null) {
+        Picasso.get().load(postData.getAttachmentUrl()).fit().centerCrop().into(newsIv);
+      }
+      newsTitleTv.setText(postData.getTitle());
+      itemView.setOnClickListener(this);
+
+    }
+
+    @Override
+    public void onClick(View view) {
+
+      view.getContext().startActivity(new Intent(view.getContext(),
+              PostNewsActivity.class).putExtra("postData",
+              posts.get(getAdapterPosition())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+
+    }
+  }
+
+  public class NewsVideosVh extends RecyclerView.ViewHolder
+          implements View.OnClickListener {
+
+    private final ImageView newsIv;
+    private final TextView newsTitleTv;
+
+    public NewsVideosVh(@NonNull View itemView) {
+      super(itemView);
+      newsIv = itemView.findViewById(R.id.newsIv);
+      newsTitleTv = itemView.findViewById(R.id.newsTitleTv);
+    }
+
+    private void bind(PostData postData) {
+
+      if (postData.getVideoThumbnailUrl() != null) {
+        Picasso.get().load(postData.getVideoThumbnailUrl()).fit().centerCrop().into(newsIv);
+      }
+
+      newsTitleTv.setText(postData.getTitle());
+      itemView.setOnClickListener(this);
+
+    }
+
+    @Override
+    public void onClick(View view) {
+
+      view.getContext().startActivity(new Intent(view.getContext(),
+              PostNewsActivity.class).putExtra("postData",
+              posts.get(getAdapterPosition())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+
+    }
+  }
+
+  public class NewsAttachmentVh extends RecyclerView.ViewHolder
+          implements View.OnClickListener {
+
+    private final TextView newsTitleTv;
+
+    public NewsAttachmentVh(@NonNull View itemView) {
+      super(itemView);
+      newsTitleTv = itemView.findViewById(R.id.newsTitleTv);
+    }
+
+    private void bind(PostData postData) {
+      newsTitleTv.setText(postData.getTitle());
+      itemView.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View view) {
+
+      view.getContext().startActivity(new Intent(view.getContext(),
+              PostNewsActivity.class).putExtra("postData",
+              posts.get(getAdapterPosition())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+
+    }
+  }
+
+
+  public class NewsTextVh extends RecyclerView.ViewHolder
+          implements View.OnClickListener {
+
+    private final TextView newsTitleTv,newsDescriptionTv;
+
+    public NewsTextVh(@NonNull View itemView) {
+      super(itemView);
+      newsTitleTv = itemView.findViewById(R.id.newsTitleTv);
+      newsDescriptionTv = itemView.findViewById(R.id.newsDescriptionTv);
+    }
+
+    private void bind(PostData postData) {
+      newsTitleTv.setText(postData.getTitle());
+      newsDescriptionTv.setText(postData.getDescription());
+      itemView.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View view) {
+
+      view.getContext().startActivity(new Intent(view.getContext(),
+              PostNewsActivity.class).putExtra("postData",
+              posts.get(getAdapterPosition())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+
+    }
+  }
+
+
+  public class PollPreviewVh extends RecyclerView.ViewHolder
+          implements View.OnClickListener {
+
+    private final TextView questionTv;
+    private final TextView showMoreTv;
+    private final RecyclerView pollRv;
+
+    public PollPreviewVh(@NonNull View itemView) {
+      super(itemView);
+      questionTv = itemView.findViewById(R.id.questionTv);
+      pollRv = itemView.findViewById(R.id.pollRv);
+      showMoreTv = itemView.findViewById(R.id.showMoreTv);
+    }
+
+    private void bind(PostData postData) {
+
+      questionTv.setText(postData.getTitle());
+
+      if(postData.getPollOptions() == null){
+        postData.setChosenPollOption(-1);
+      }
+
+      if(postData.getChosenPollOption() == -1 &&
+              postData.getPollOptions() == null){
+
+        postsCollectionRef.document(postData.getPostId())
+                .collection("UserVotes").document(currentUid)
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+          @Override
+          public void onSuccess(DocumentSnapshot snapshot) {
+
+            if (snapshot.exists()) {
+              final int option = snapshot.get("voteOption", Integer.class);
+              postData.setChosenPollOption(option);
+            }
+
+            checkShowProgress(postData);
+          }
+        });
+
+      }else{
+
+        checkShowProgress(postData);
+      }
+
+      itemView.setOnClickListener(this);
+
+    }
+
+    private void checkShowProgress(PostData postData){
+
+      if (postData.isPollEnded()) {
+        getPollRecycler(postData,true,true);
+      } else {
+
+        if (System.currentTimeMillis() >
+                postData.getPublishTime() + postData.getPollDuration()) {
+
+          postsCollectionRef.document(postData.getPostId())
+                  .update("pollEnded", true);
+
+          getPollRecycler(postData,true,true);
+
+        } else {
+
+          getPollRecycler(postData,false,
+                  postData.getChosenPollOption() != -1);
+
+        }
+      }
+
+    }
+    private void getPollRecycler(PostData postData,boolean hasEnded,boolean showProgress) {
+
+      if(postData.getPollOptions() == null){
+//        postData.setChosenPollOption(-1);
+        postData.setPollOptions(new ArrayList<>());
+      }
+
+      final PollPostAdapter adapter = new PollPostAdapter(postData.getPollOptions()
+              , postData.getPostId(), hasEnded, postData.getTotalVotes());
+
+      adapter.setChosenOption(postData.getChosenPollOption());
+
+      adapter.showProgress = showProgress;
+
+      pollRv.setNestedScrollingEnabled(false);
+      pollRv.setHasFixedSize(true);
+      adapter.setHasStableIds(true);
+      pollRv.setAdapter(adapter);
+
+      if(!loadingItems.contains(getAdapterPosition())){
+
+        loadingItems.add(getAdapterPosition());
+
+        postsCollectionRef.document(postData.getPostId())
+                .collection("Options")
+                .orderBy("votes", Query.Direction.DESCENDING)
+                .orderBy("option", Query.Direction.ASCENDING)
+                .limit(6)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                  @Override
+                  public void onSuccess(QuerySnapshot snapshots) {
+
+                    if (!snapshots.isEmpty()) {
+                      if(snapshots.size() == 6){
+                        showMoreTv.setVisibility(View.VISIBLE);
+                        for(int i=0;i<snapshots.size()-1;i++){
+                          postData.getPollOptions().add(
+                                  snapshots.getDocuments().get(i).toObject(PollOption.class));
+                        }
+                      }else{
+                        showMoreTv.setVisibility(View.GONE);
+                        postData.getPollOptions().addAll(snapshots.toObjects(PollOption.class));
+                      }
+                    }
+                  }
+                })
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+          @Override
+          public void onComplete(@NonNull Task<QuerySnapshot> task) {
+            if (task.isSuccessful() && !postData.getPollOptions().isEmpty()) {
+              adapter.notifyDataSetChanged();
+            }
+          }
+        });
+
+      }
+    }
+
+    @Override
+    public void onClick(View view) {
+
+      view.getContext().startActivity(new Intent(view.getContext(),
+              PostPollActivity.class).putExtra("postData",
+              posts.get(getAdapterPosition())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+    }
+  }
+}
+
+
 //  public class PollVh extends RecyclerView.ViewHolder implements View.OnClickListener{
 //
 //      private final CircleImageView imageIv;
@@ -312,162 +587,6 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //      }
 //    }
 
-  @Override
-  public int getItemViewType(int position) {
-
-    final PostData postData = posts.get(position);
-
-    if (postData.getType() == PostData.TYPE_POLL){
-      return POLL_TYPE;
-    }else{
-      return postData.getAttachmentType();
-    }
-//    if (postData.getType() == PostData.TYPE_NEWS) {
-//
-//
-////        switch (postData.getAttachmentType()) {
-////          case Files.IMAGE:
-////            return IMAGE_NEWS;
-////
-////          case Files.DOCUMENT:
-////            return ATTACHMENT_NEWS;
-////
-////          case Files.VIDEO:
-////            return VIDEO_NEWS;
-////
-////          case Files.VIDEO:
-////            return VIDEO_NEWS;
-////
-////          return TEXT_NEWS;
-////          default:
-////            return IMAGE_NEWS;
-////        }
-//
-//    } else  {
-//
-//    } else {
-//      return PostData.TYPE_NEWS;
-//    }
-
-  }
-
-  public class NewsImageVh extends RecyclerView.ViewHolder
-          implements View.OnClickListener {
-
-    private final ImageView newsIv;
-    private final TextView newsTitleTv;
-
-    public NewsImageVh(@NonNull View itemView) {
-      super(itemView);
-      newsIv = itemView.findViewById(R.id.newsIv);
-      newsTitleTv = itemView.findViewById(R.id.newsTitleTv);
-    }
-
-    private void bind(PostData postData) {
-
-      if (postData.getAttachmentUrl() != null) {
-        Picasso.get().load(postData.getAttachmentUrl()).fit().centerCrop().into(newsIv);
-      }
-      newsTitleTv.setText(postData.getTitle());
-      itemView.setOnClickListener(this);
-
-    }
-
-    @Override
-    public void onClick(View view) {
-
-      view.getContext().startActivity(new Intent(view.getContext(),
-              PostNewsActivity.class).putExtra("postData",
-              posts.get(getAdapterPosition())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-
-    }
-  }
-
-  public class NewsVideosVh extends RecyclerView.ViewHolder
-          implements View.OnClickListener {
-
-    private final ImageView newsIv;
-    private final TextView newsTitleTv;
-
-    public NewsVideosVh(@NonNull View itemView) {
-      super(itemView);
-      newsIv = itemView.findViewById(R.id.newsIv);
-      newsTitleTv = itemView.findViewById(R.id.newsTitleTv);
-    }
-
-    private void bind(PostData postData) {
-
-      if (postData.getVideoThumbnailUrl() != null) {
-        Picasso.get().load(postData.getVideoThumbnailUrl()).fit().centerCrop().into(newsIv);
-      }
-
-      newsTitleTv.setText(postData.getTitle());
-      itemView.setOnClickListener(this);
-
-    }
-
-    @Override
-    public void onClick(View view) {
-
-      view.getContext().startActivity(new Intent(view.getContext(),
-              PostNewsActivity.class).putExtra("postData",
-              posts.get(getAdapterPosition())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-
-    }
-  }
-
-  public class NewsAttachmentVh extends RecyclerView.ViewHolder
-          implements View.OnClickListener {
-
-    private final TextView newsTitleTv;
-
-    public NewsAttachmentVh(@NonNull View itemView) {
-      super(itemView);
-      newsTitleTv = itemView.findViewById(R.id.newsTitleTv);
-    }
-
-    private void bind(PostData postData) {
-      newsTitleTv.setText(postData.getTitle());
-      itemView.setOnClickListener(this);
-    }
-
-    @Override
-    public void onClick(View view) {
-
-      view.getContext().startActivity(new Intent(view.getContext(),
-              PostNewsActivity.class).putExtra("postData",
-              posts.get(getAdapterPosition())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-
-    }
-  }
-
-
-  public class NewsTextVh extends RecyclerView.ViewHolder
-          implements View.OnClickListener {
-
-    private final TextView newsTitleTv,newsDescriptionTv;
-
-    public NewsTextVh(@NonNull View itemView) {
-      super(itemView);
-      newsTitleTv = itemView.findViewById(R.id.newsTitleTv);
-      newsDescriptionTv = itemView.findViewById(R.id.newsDescriptionTv);
-    }
-
-    private void bind(PostData postData) {
-      newsTitleTv.setText(postData.getTitle());
-      newsDescriptionTv.setText(postData.getDescription());
-      itemView.setOnClickListener(this);
-    }
-
-    @Override
-    public void onClick(View view) {
-
-      view.getContext().startActivity(new Intent(view.getContext(),
-              PostNewsActivity.class).putExtra("postData",
-              posts.get(getAdapterPosition())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-
-    }
-  }
 
 //  public class NewsVh extends RecyclerView.ViewHolder implements View.OnClickListener {
 //      private final CircleImageView imageIv ;
@@ -648,144 +767,29 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //            });
 //
 //  }
-
-  public class PollPreviewVh extends RecyclerView.ViewHolder
-          implements View.OnClickListener {
-
-    private final TextView questionTv;
-    private final TextView showMoreTv;
-    private final RecyclerView pollRv;
-
-    public PollPreviewVh(@NonNull View itemView) {
-      super(itemView);
-      questionTv = itemView.findViewById(R.id.questionTv);
-      pollRv = itemView.findViewById(R.id.pollRv);
-      showMoreTv = itemView.findViewById(R.id.showMoreTv);
-    }
-
-    private void bind(PostData postData) {
-
-      questionTv.setText(postData.getTitle());
-
-      if(postData.getPollOptions() == null){
-        postData.setChosenPollOption(-1);
-      }
-
-      if(postData.getChosenPollOption() == -1 &&
-              postData.getPollOptions() == null){
-
-        postsCollectionRef.document(postData.getPostId())
-                .collection("UserVotes").document(currentUid)
-                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-          @Override
-          public void onSuccess(DocumentSnapshot snapshot) {
-
-            if (snapshot.exists()) {
-              final int option = snapshot.get("voteOption", Integer.class);
-              postData.setChosenPollOption(option);
-            }
-
-            checkShowProgress(postData);
-          }
-        });
-
-      }else{
-
-        checkShowProgress(postData);
-      }
-
-      itemView.setOnClickListener(this);
-
-    }
-
-    private void checkShowProgress(PostData postData){
-
-      if (postData.isPollEnded()) {
-        getPollRecycler(postData,true,true);
-      } else {
-
-        if (System.currentTimeMillis() >
-                postData.getPublishTime() + postData.getPollDuration()) {
-
-          postsCollectionRef.document(postData.getPostId())
-                  .update("pollEnded", true);
-
-          getPollRecycler(postData,true,true);
-
-        } else {
-
-          getPollRecycler(postData,false,
-                  postData.getChosenPollOption() != -1);
-
-        }
-      }
-
-    }
-    private void getPollRecycler(PostData postData,boolean hasEnded,boolean showProgress) {
-
-      if(postData.getPollOptions() == null){
-//        postData.setChosenPollOption(-1);
-        postData.setPollOptions(new ArrayList<>());
-      }
-
-      final PollPostAdapter adapter = new PollPostAdapter(postData.getPollOptions()
-              , postData.getPostId(), hasEnded, postData.getTotalVotes());
-
-      adapter.setChosenOption(postData.getChosenPollOption());
-
-      adapter.showProgress = showProgress;
-
-      pollRv.setNestedScrollingEnabled(false);
-      pollRv.setHasFixedSize(true);
-      adapter.setHasStableIds(true);
-      pollRv.setAdapter(adapter);
-
-      if(!loadingItems.contains(getAdapterPosition())){
-
-        loadingItems.add(getAdapterPosition());
-
-        postsCollectionRef.document(postData.getPostId())
-                .collection("Options")
-                .orderBy("votes", Query.Direction.DESCENDING)
-                .orderBy("option", Query.Direction.ASCENDING)
-                .limit(6)
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                  @Override
-                  public void onSuccess(QuerySnapshot snapshots) {
-
-                    if (!snapshots.isEmpty()) {
-                      if(snapshots.size() == 6){
-                        showMoreTv.setVisibility(View.VISIBLE);
-                        for(int i=0;i<snapshots.size()-1;i++){
-                          postData.getPollOptions().add(
-                                  snapshots.getDocuments().get(i).toObject(PollOption.class));
-                        }
-                      }else{
-                        showMoreTv.setVisibility(View.GONE);
-                        postData.getPollOptions().addAll(snapshots.toObjects(PollOption.class));
-                      }
-                    }
-                  }
-                })
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-          @Override
-          public void onComplete(@NonNull Task<QuerySnapshot> task) {
-            if (task.isSuccessful() && !postData.getPollOptions().isEmpty()) {
-              adapter.notifyDataSetChanged();
-            }
-          }
-        });
-
-      }
-    }
-
-    @Override
-    public void onClick(View view) {
-
-      view.getContext().startActivity(new Intent(view.getContext(),
-              PostPollActivity.class).putExtra("postData",
-              posts.get(getAdapterPosition())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-    }
-  }
-}
+//    if (postData.getType() == PostData.TYPE_NEWS) {
+//
+//
+////        switch (postData.getAttachmentType()) {
+////          case Files.IMAGE:
+////            return IMAGE_NEWS;
+////
+////          case Files.DOCUMENT:
+////            return ATTACHMENT_NEWS;
+////
+////          case Files.VIDEO:
+////            return VIDEO_NEWS;
+////
+////          case Files.VIDEO:
+////            return VIDEO_NEWS;
+////
+////          return TEXT_NEWS;
+////          default:
+////            return IMAGE_NEWS;
+////        }
+//
+//    } else  {
+//
+//    } else {
+//      return PostData.TYPE_NEWS;
+//    }
