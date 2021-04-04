@@ -88,8 +88,6 @@ public class Suggestions_DtailesActivity extends AppCompatActivity implements To
         reference.document(id).update("reviewed", true).addOnSuccessListener(new OnSuccessListener<Void>() {
           @Override
           public void onSuccess(Void aVoid) {
-
-
             Toast.makeText(Suggestions_DtailesActivity.this, R.string.Delete_success, Toast.LENGTH_SHORT).show();
             finish();
           }
