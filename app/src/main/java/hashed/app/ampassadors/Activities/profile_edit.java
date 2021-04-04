@@ -65,7 +65,6 @@ public class profile_edit extends AppCompatActivity {
     FirebaseFirestore fStore;
     String userid;
     ImageView imageView;
-
     ProgressDialog mProgressDialog;
     String imageUrl;
     StorageReference sreference;
@@ -75,8 +74,9 @@ public class profile_edit extends AppCompatActivity {
     private Uri filePath;
     private Uri imageUri;
     private ImageView updateImageIV;
-    int  counter;
+    int counter;
     TextView counterTV;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -189,8 +189,8 @@ public class profile_edit extends AppCompatActivity {
         fStore = FirebaseFirestore.getInstance();
 
 
-            storage = FirebaseStorage.getInstance();
-            sreference = storage.getReference();
+        storage = FirebaseStorage.getInstance();
+        sreference = storage.getReference();
         mProgressDialog = new ProgressDialog(this);
 
     }
@@ -345,6 +345,7 @@ public class profile_edit extends AppCompatActivity {
 
         }
     }
+
     private void updateData(String txt_username, String txt_country,
                             String txt_city, String txt_phone, String txt_bio, ProgressDialog progressDialog) {
 
@@ -368,7 +369,6 @@ public class profile_edit extends AppCompatActivity {
                                     progressDialog.dismiss();
                                     save.setClickable(true);
                                     Intent intent = new Intent(profile_edit.this, Profile.class);
-                                    startActivity(intent);
                                     finish();
                                 }
                             });
@@ -376,36 +376,35 @@ public class profile_edit extends AppCompatActivity {
                             progressDialog.dismiss();
                             save.setClickable(true);
                             Intent intent = new Intent(profile_edit.this, Profile.class);
-                            startActivity(intent);
                             finish();
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(profile_edit.this, R.string.Error_UpdateFail
-                            , Toast.LENGTH_SHORT).show();
-                    progressDialog.dismiss();
-                    save.setClickable(true);
+                Toast.makeText(profile_edit.this, R.string.Error_UpdateFail
+                        , Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
+                save.setClickable(true);
             }
         });
     }
+
     public void editTExt() {
         bio.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 counter = bio.length();
-                if (counter >160){
+                if (counter > 160) {
                     Toast.makeText(profile_edit.this, R.string.Limit_Messgae, Toast.LENGTH_SHORT).show();
-                }else {
+                } else {
                 }
-                counterTV.setText(counter+"");
+                counterTV.setText(counter + "");
             }
-
-
 
 
             @Override

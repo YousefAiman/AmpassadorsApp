@@ -91,7 +91,6 @@ FirebaseFirestore fStore;
         swipeRefresh = findViewById(R.id.swipeRefreshLayout);
         swipeRefresh.setOnRefreshListener(this);
 
-
         Intent id = getIntent();
         if (id.hasExtra("userId")) {
 
@@ -223,6 +222,7 @@ FirebaseFirestore fStore;
             fStore.collection("Users").document(id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
+
                     bio_txt = documentSnapshot.getString("Bio");
 
                     if (bio_txt == null || bio_txt.isEmpty()){

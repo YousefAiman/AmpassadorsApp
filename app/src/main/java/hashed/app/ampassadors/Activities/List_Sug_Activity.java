@@ -55,7 +55,6 @@ public class List_Sug_Activity extends AppCompatActivity implements Toolbar.OnMe
     collectionReference = firebaseFirestore.collection("Suggestions");
     query = collectionReference.whereEqualTo("reviewed", false);
     task = firebaseFirestore.collection("Suggestions").get();
-
   }
 
   public void showSuggestions(boolean isInitial) {

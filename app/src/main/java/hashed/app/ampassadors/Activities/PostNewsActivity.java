@@ -60,7 +60,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
     private ImageView newsIv, userIv, attachmentImage, playIv;
     private FrameLayout frameLayout;
     ProgressDialog progressDialog;
-
+    Toolbar toolbar;
     //data
     private PostData postData;
     private BroadcastReceiver downloadCompleteReceiver;
@@ -90,9 +90,10 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
     private void setupToolbar() {
 
-        final Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(v -> finish());
         toolbar.setOnMenuItemClickListener(this);
+
 
 
     }
@@ -129,6 +130,15 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
     private void getPostData() {
 
         postData = (PostData) getIntent().getSerializableExtra("postData");
+        if (postData.getPublisherId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
+            toolbar.inflateMenu(R.menu.post_menu);
+
+        }else if (GlobalVariables.getRole().equals("Admin")){
+            toolbar.inflateMenu(R.menu.admin_menu);
+        }else {
+            toolbar.inflateMenu(R.menu.users_post_menu);
+
+        }
 
         if (postData.getAttachmentType() == Files.IMAGE) {
             Picasso.get().load(postData.getAttachmentUrl()).fit().centerCrop().into(newsIv);
@@ -321,12 +331,13 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
             Intent intent = new Intent(PostNewsActivity.this, Edit_Post.class);
             intent.putExtra("postID",postData.getPostId());
-            intent.putExtra("publisheName",postData.getPublisherName());
-            intent.putExtra("publisherimage",postData.getPublisherImage());
+//            intent.putExtra("publisheName",postData.getPublisherName());
+//            intent.putExtra("publisherimage",postData.getPublisherImage());
             intent.putExtra("userid",postData.getPublisherId());
             startActivity(intent);
             finish();
         } else if (item.getItemId() == R.id.delete) {
+            
             progressDialog.setMessage(getString(R.string.Dleteing));
             progressDialog.show();
             FirebaseFirestore.getInstance().collection("Posts")
