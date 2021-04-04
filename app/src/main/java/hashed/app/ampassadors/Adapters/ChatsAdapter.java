@@ -124,18 +124,21 @@ public class ChatsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
       messageTv.setText(getMessageText(chatItem.getMessage()));
 
-      if (!chatItem.isSeen()) {
-        messageTv.setTypeface(boldFont);
-      }else{
-        messageTv.setTypeface(normalFont);
-      }
+//      if (!chatItem.isSeen()) {
+//        messageTv.setTypeface(boldFont);
+//      }else{
+//        messageTv.setTypeface(normalFont);
+//      }
 
       if(chatItem.getUnSeenCount() > 0){
         unSeenTv.setVisibility(View.VISIBLE);
+        messageTv.setTypeface(boldFont);
         unSeenTv.setText(String.valueOf(chatItem.getUnSeenCount()));
       }else{
+        messageTv.setTypeface(normalFont);
         unSeenTv.setVisibility(View.GONE);
       }
+
 
       timeTv.setText(TimeFormatter.formatTime(chatItem.getMessage().getTime()));
 
@@ -149,74 +152,6 @@ public class ChatsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
               PrivateMessagingActivity.class).putExtra("messagingUid",
               chatItems.get(getAdapterPosition()).getMessagingUid()));
 
-    }
-
-    private String getMessageText(PrivateMessagePreview message) {
-
-      String text = null;
-
-      if (message.getSender().equals(currentUid)) {
-
-        if (message.getDeleted()) {
-          text = "You deleted a message";
-        }else{
-          switch (message.getType()) {
-
-            case Files.TEXT:
-              text = message.getContent();
-              break;
-
-            case Files.IMAGE:
-              text = "You sent an image";
-              break;
-
-            case Files.VIDEO:
-              text = "You sent a video";
-              break;
-
-            case Files.DOCUMENT:
-              text = "You sent an attachment";
-              break;
-
-            case Files.AUDIO:
-              text = "You sent an audio message";
-              break;
-
-          }
-        }
-      } else {
-
-        if (message.getDeleted()) {
-          text = "Deleted message";
-        }else{
-          switch (message.getType()) {
-
-            case Files.TEXT:
-              text = message.getContent();
-              break;
-
-            case Files.IMAGE:
-              text = "Sent an image";
-              break;
-
-            case Files.VIDEO:
-              text = "Sent a video";
-              break;
-
-            case Files.DOCUMENT:
-              text = "Sent an attachment";
-              break;
-
-            case Files.AUDIO:
-              text = "Sent an audio message";
-              break;
-
-          }
-        }
-      }
-
-
-      return text;
     }
 
     private void getUserInfo(ChatItem chatItem, String userId, ImageView imageIv, TextView nameTv) {
@@ -276,16 +211,18 @@ public class ChatsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
          attachUsernameToMessage(chatItem.getMessage().getSender(),
                  getMessageText(chatItem.getMessage()),messageTv);
 
-        if (!chatItem.isSeen()) {
-          messageTv.setTypeface(boldFont);
-        }else{
-          messageTv.setTypeface(normalFont);
-        }
+//        if (!chatItem.isSeen()) {
+//          messageTv.setTypeface(boldFont);
+//        }else{
+//          messageTv.setTypeface(normalFont);
+//        }
 
         if(chatItem.getUnSeenCount() > 0){
           unSeenTv.setVisibility(View.VISIBLE);
+          messageTv.setTypeface(boldFont);
           unSeenTv.setText(String.valueOf(chatItem.getUnSeenCount()));
         }else{
+          messageTv.setTypeface(normalFont);
           unSeenTv.setVisibility(View.GONE);
         }
 
@@ -305,75 +242,77 @@ public class ChatsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     }
 
-    private String getMessageText(PrivateMessagePreview message) {
 
-      String text = null;
 
-      if (message.getSender().equals(currentUid)) {
 
-        if (message.getDeleted()) {
-          text = "You deleted a message";
-        }else{
-          switch (message.getType()) {
+  }
 
-            case Files.TEXT:
-              text = message.getContent();
-              break;
+  private String getMessageText(PrivateMessagePreview message) {
 
-            case Files.IMAGE:
-              text = "You sent an image";
-              break;
+    String text = null;
 
-            case Files.VIDEO:
-              text = "You sent a video";
-              break;
+    if (message.getSender().equals(currentUid)) {
 
-            case Files.DOCUMENT:
-              text = "You sent an attachment";
-              break;
+      if (message.getDeleted()) {
+        text = "You deleted a message";
+      }else{
+        switch (message.getType()) {
 
-            case Files.AUDIO:
-              text = "You sent an audio message";
-              break;
+          case Files.TEXT:
+            text = message.getContent();
+            break;
 
-          }
-        }
-      } else {
+          case Files.IMAGE:
+            text = "You sent an image";
+            break;
 
-        if (message.getDeleted()) {
-          text = "Deleted message";
-        }else{
-          switch (message.getType()) {
+          case Files.VIDEO:
+            text = "You sent a video";
+            break;
 
-            case Files.TEXT:
-              text = message.getContent();
-              break;
+          case Files.DOCUMENT:
+            text = "You sent an attachment";
+            break;
 
-            case Files.IMAGE:
-              text = "Sent an image";
-              break;
+          case Files.AUDIO:
+            text = "You sent an audio message";
+            break;
 
-            case Files.VIDEO:
-              text = "Sent a video";
-              break;
-
-            case Files.DOCUMENT:
-              text = "Sent an attachment";
-              break;
-
-            case Files.AUDIO:
-              text = "Sent an audio message";
-              break;
-
-          }
         }
       }
+    } else {
 
+      if (message.getDeleted()) {
+        text = "Deleted message";
+      }else{
+        switch (message.getType()) {
 
-      return text;
+          case Files.TEXT:
+            text = message.getContent();
+            break;
+
+          case Files.IMAGE:
+            text = "Sent an image";
+            break;
+
+          case Files.VIDEO:
+            text = "Sent a video";
+            break;
+
+          case Files.DOCUMENT:
+            text = "Sent an attachment";
+            break;
+
+          case Files.AUDIO:
+            text = "Sent an audio message";
+            break;
+
+        }
+      }
     }
 
 
+    return text;
   }
 
   private void getUserInfo(ChatItem chatItem, String userId, ImageView imageIv, TextView nameTv) {

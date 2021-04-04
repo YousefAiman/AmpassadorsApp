@@ -1,5 +1,6 @@
 package hashed.app.ampassadors.Activities;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -305,6 +306,8 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
 
 
   }
+
+
 
   private class ScrollListener extends RecyclerView.OnScrollListener {
     @Override

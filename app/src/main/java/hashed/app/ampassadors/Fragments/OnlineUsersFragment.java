@@ -66,6 +66,7 @@ public class OnlineUsersFragment extends Fragment implements
 
     query = FirebaseFirestore.getInstance().collection("Users")
             .whereEqualTo("status", true)
+            .whereEqualTo("isEmailVerified",true)
 //            .whereNotEqualTo("userId",
 //                    Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
 //            .orderBy("userId")

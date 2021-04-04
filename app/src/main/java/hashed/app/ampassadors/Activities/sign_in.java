@@ -23,6 +23,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
+import com.facebook.login.LoginBehavior;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -243,6 +244,8 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
 //                                                                snapshot.getReference().update("token", s);
 //                                                            }
 //                                                        });
+                                                    snapshot.getReference().update("isEmailVerified",true);
+
                                                     GlobalVariables.setRole(snapshot.getString("Role"));
 
                                                         FirebaseMessagingService.startMessagingService(sign_in.this);
@@ -348,6 +351,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
             if(callbackManager == null){
                 FacebookSdk.fullyInitialize();
                 callbackManager = CallbackManager.Factory.create();
+//                facebookLoginBtn.setLoginBehavior(LoginBehavior.WEB_VIEW_ONLY);
                 facebookLoginBtn.setReadPermissions("email", "public_profile");
                 facebookLoginBtn.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                     @Override
@@ -358,11 +362,13 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
 
                     @Override
                     public void onCancel() {
+                        progressDialog.dismiss();
                         Log.d("ttt", "facebook:onCancel");
                     }
 
                     @Override
                     public void onError(FacebookException error) {
+                        progressDialog.dismiss();
                         Log.d("ttt", "facebook:onError", error);
                     }
                 });
@@ -406,9 +412,6 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
         googleProgressDialog.setTitle(getString(R.string.SignIn_By_gmail));
         googleProgressDialog.setCancelable(false);
         googleProgressDialog.show();
-//        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-////                .requestIdToken(R.string)
-//                .requestEmail().build();
 
         GoogleSignInOptions gso = new GoogleSignInOptions
                 .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -424,7 +427,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
 
     private void firebaseAuthWithGoogle(final GoogleSignInAccount account) {
 
-       final  AuthCredential credential =
+       final AuthCredential credential =
                 GoogleAuthProvider.getCredential(account.getIdToken(), null);
         auth.signInWithCredential(credential)
                 .addOnSuccessListener(authResult -> {
@@ -497,6 +500,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
         }
         hashMap.put("status", true);
         hashMap.put("Role", "Ambassador");
+        hashMap.put("isEmailVerified", true);
          hashMap.put("Bio","");
         GlobalVariables.setRole("Ambassador");
 

@@ -86,12 +86,12 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
     switch (notification.getType()) {
 
-      case "privateMessaging":
+      case FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE:
         documentReference = firestore.collection("Users")
                 .document(notification.getSenderId());
         break;
 
-      case "groupMessaging":
+      case FirestoreNotificationSender.TYPE_MEETING_MESSAGE:
         documentReference = firestore.collection("Meetings")
                 .document(notification.getSenderId());
         break;
@@ -174,16 +174,26 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
       switch (notification.getType()) {
 
         case FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE:
+        case FirestoreNotificationSender.TYPE_GROUP_MESSAGE:
+        case FirestoreNotificationSender.TYPE_GROUP_ADDED:
 
           notificationDeleter.deleteNotification(notification);
 
-          view.getContext().startActivity(new Intent(view.getContext(),
-                  PrivateMessagingActivity.class)
-                  .putExtra("messagingUid", notification.getDestinationId()));
+          final Intent intent = new Intent(view.getContext(),
+                  PrivateMessagingActivity.class);
+
+          if(notification.getType().equals(FirestoreNotificationSender.TYPE_GROUP_MESSAGE)
+                  || notification.getType().equals(FirestoreNotificationSender.TYPE_GROUP_ADDED)){
+            intent.putExtra("groupId", notification.getDestinationId());
+          }else{
+            intent.putExtra("messagingUid", notification.getDestinationId());
+          }
+
+          view.getContext().startActivity(intent);
 
           break;
 
-        case FirestoreNotificationSender.TYPE_GROUP_MESSAGE:
+        case FirestoreNotificationSender.TYPE_MEETING_MESSAGE:
         case FirestoreNotificationSender.TYPE_MEETING_ADDED:
         case FirestoreNotificationSender.TYPE_ZOOM:
         case FirestoreNotificationSender.TYPE_MEETING_STARTED:

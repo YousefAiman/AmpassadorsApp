@@ -649,7 +649,8 @@ public class Edit_Post extends AppCompatActivity implements View.OnClickListener
 
         if (TextUtils.isEmpty(texttitle)
                 || TextUtils.isEmpty(texttitle) || TextUtils.isEmpty(textdesc)) {
-            Toast.makeText(Edit_Post.this, "All field are required", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Edit_Post.this, "All field are required",
+                    Toast.LENGTH_SHORT).show();
         } else {
 
             ProgressDialog progressDialog = new ProgressDialog(this);

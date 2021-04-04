@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -14,9 +14,10 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:background="@color/dark_green"
         app:navigationIcon="@drawable/back_arrow_icon"
-        app:title="@string/notifications"
+        app:title="@string/Notifications"
         app:layout_constraintTop_toTopOf="parent"
         app:titleTextColor="@color/white"
         app:titleTextAppearance="@style/ToolbarTitleAppearance"/>
@@ -25,6 +26,8 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:id="@+id/swipeRefreshLayout"
+        android:layout_below="@+id/toolbar"
+        android:layout_alignParentBottom="true"
         android:layout_height="match_parent">
 
 
@@ -32,10 +35,23 @@
         android:id="@+id/newestNotificationsRv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:orientation="vertical" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
+    <TextView
+        android:id="@+id/emptyTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/segoe_ui"
+        android:textColor="@color/dark_green"
+        android:textSize="24sp"
+        android:text="@string/no_new_notifications"
+        android:visibility="gone"
+        android:layout_centerInParent="true"/>
+
 <!--    <androidx.core.widget.NestedScrollView-->
 <!--        android:id="@+id/nestedScrollView"-->
 <!--        android:layout_width="match_parent"-->
@@ -98,4 +114,4 @@
 
 <!--    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>-->
 
-    </LinearLayout>
+    </RelativeLayout>

@@ -150,6 +150,12 @@ public class PrivateMessagingActivity extends AppCompatActivity
   private String currentUserName;
   private String currentImageUrl;
 
+
+  //groups
+  private boolean isGroupMessaging;
+  private String groupImageUrl;
+  private String groupName;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -225,7 +231,14 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
     final Intent intent = getIntent();
 
-    messagingUid = intent.getStringExtra("messagingUid");
+    if(isGroupMessaging = intent.hasExtra("groupId")){
+
+      messagingUid = intent.getStringExtra("groupId");
+
+    }else{
+      messagingUid = intent.getStringExtra("messagingUid");
+    }
+
 
     if (intent.hasExtra("isFromNotification") && Build.VERSION.SDK_INT < 26) {
       BadgeUtil.decrementBadgeNum(this);
@@ -238,8 +251,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
   //firestore user data
   private void getUserData() {
 
-    if(getIntent().hasExtra("groupId")){
-      messagingUid = getIntent().getStringExtra("groupId");
+    if(isGroupMessaging){
 
       FirebaseFirestore.getInstance().collection("PrivateMessages")
               .document(messagingUid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -266,13 +278,13 @@ public class PrivateMessagingActivity extends AppCompatActivity
       if (documentSnapshot.exists()) {
 
         if (documentSnapshot.contains("imageUrl")) {
-          final String imageUrl = documentSnapshot.getString("imageUrl");
-          if(imageUrl!=null && !imageUrl.isEmpty()){
+          groupImageUrl = documentSnapshot.getString("imageUrl");
+          if(groupImageUrl!=null && !groupImageUrl.isEmpty()){
             Picasso.get().load(documentSnapshot.getString("imageUrl")).fit().
                     into(messagingTbProfileIv);
           }
         }
-        messagingTbNameTv.setText(documentSnapshot.getString("username"));
+        messagingTbNameTv.setText(groupName = documentSnapshot.getString("username"));
 
       }
     });
@@ -316,7 +328,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
     if (GlobalVariables.getMessagesNotificationMap() != null) {
 
-      String title = messagingUid + "privateMessaging";
+      String title = messagingUid + FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE;
       if (GlobalVariables.getMessagesNotificationMap().containsKey(title)) {
         Log.d("ttt", "removing: " + title);
 
@@ -382,9 +394,17 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
   private void sendBothNotifs(String message) {
 
-    FirestoreNotificationSender.sendFirestoreNotification(messagingUid,
-            FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE,
-            message, currentUserName, currentUid);
+    if(isGroupMessaging){
+      FirestoreNotificationSender.sendFirestoreNotification(messagingUid,
+              FirestoreNotificationSender.TYPE_GROUP_MESSAGE,
+              currentUserName+": "+message, groupName, messagingUid);
+    }else{
+      FirestoreNotificationSender.sendFirestoreNotification(messagingUid,
+              FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE,
+              message, getResources().getString(R.string.new_message)+" "+currentUserName,
+              currentUid);
+    }
+
 
     sendCloudNotification(message);
 
@@ -393,7 +413,28 @@ public class PrivateMessagingActivity extends AppCompatActivity
   private void sendCloudNotification(String message) {
     Log.d("ttt", "sending cloud notificaiton");
 
+    if(isGroupMessaging){
+
     if (data == null) {
+
+      data = new Data(
+              currentUid,
+              currentUserName+": "+message,
+              groupName,
+              groupImageUrl!=null?groupImageUrl:currentImageUrl,
+              "Group Messages",
+              FirestoreNotificationSender.TYPE_GROUP_MESSAGE,
+              currentUid
+      );
+
+    } else {
+      data.setBody(currentUserName+": "+message);
+    }
+
+
+    }else{
+
+     if (data == null) {
 
       data = new Data(
               currentUid,
@@ -409,6 +450,9 @@ public class PrivateMessagingActivity extends AppCompatActivity
       data.setBody(message);
     }
 
+    }
+
+
     CloudMessagingNotificationsSender.sendNotification(messagingUid, data);
 
   }
@@ -417,21 +461,17 @@ public class PrivateMessagingActivity extends AppCompatActivity
   //database messages functions
   private void fetchPreviousMessages() {
 
-    String groupId = null;
-    if(getIntent().hasExtra("groupId")){
-      groupId = getIntent().getStringExtra("groupId");
-    }
 
     adapter = new PrivateMessagingAdapter(privateMessages, this,
             this, this, this,
-            this, this, groupId != null);
+            this, this, isGroupMessaging);
 
     privateMessagingRv.setAdapter(adapter);
 
     Log.d("privateMessaging", "start fetching");
-    if(groupId!=null){
+    if(isGroupMessaging){
 
-      databaseReference.child(groupId).addListenerForSingleValueEvent(new ValueEventListener() {
+      databaseReference.child(messagingUid).addListenerForSingleValueEvent(new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
           if (snapshot.exists()) {
@@ -691,8 +731,8 @@ public class PrivateMessagingActivity extends AppCompatActivity
   }
 
   @Override
-  public void showImage(String url) {
-    showFullScreenFragment(new ImageFullScreenFragment(url));
+  public void showImage(String url,String fileName) {
+    showFullScreenFragment(new ImageFullScreenFragment(url,fileName));
   }
 
   //messaging methods
@@ -764,7 +804,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
     messagingEd.setText("");
     messagingEd.setClickable(false);
 
-    if (lastKeyRef == null && !getIntent().hasExtra("groupId")) {
+    if (lastKeyRef == null && !isGroupMessaging) {
         createMessagingDocument(privateMessage);
       return;
     }
@@ -1349,12 +1389,12 @@ public class PrivateMessagingActivity extends AppCompatActivity
   }
 
   @Override
-  public void playVideo(String url) {
+  public void playVideo(String url,String fileName) {
 
     pickerFrameLayout.setVisibility(View.VISIBLE);
 
     getSupportFragmentManager().beginTransaction().replace(pickerFrameLayout.getId(),
-            new VideoFullScreenFragment(url)).commit();
+            new VideoFullScreenFragment(url),fileName).commit();
 
   }
 

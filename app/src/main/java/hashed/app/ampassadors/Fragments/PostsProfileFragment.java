@@ -32,7 +32,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
@@ -51,6 +54,7 @@ import hashed.app.ampassadors.Adapters.UserPostAdapter;
 import hashed.app.ampassadors.BroadcastReceivers.NotificationIndicatorReceiver;
 import hashed.app.ampassadors.BuildConfig;
 import hashed.app.ampassadors.Objects.PostData;
+import hashed.app.ampassadors.Objects.UserInfo;
 import hashed.app.ampassadors.Objects.UserPostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
@@ -63,7 +67,6 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
     FirebaseFirestore firebaseFirestore;
     Query query;
     List<PostData> postData;
-    //private UserPostData posda;
     PostAdapter adapter;
     RecyclerView post_list;
     DocumentSnapshot lastDocSnap;
@@ -81,6 +84,8 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
 
     private NotificationIndicatorReceiver notificationIndicatorReceiver;
     private TextView roleTv;
+    private ListenerRegistration listenerRegistration;
+
     public PostsProfileFragment() {
         // Required empty public constructor
     }
@@ -279,6 +284,9 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         if (notificationIndicatorReceiver != null) {
             requireContext().unregisterReceiver(notificationIndicatorReceiver);
         }
+        if(listenerRegistration!=null){
+            listenerRegistration.remove();
+        }
     }
 
     private void setUpToolBarAndActions() {
@@ -299,26 +307,18 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         userid = fAuth.getCurrentUser().getUid();
         fStore = FirebaseFirestore.getInstance();
 
-        fStore.collection("Users").document(userid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()){
-                    if (task.getResult().exists()){
-                        String user_name = task.getResult().getString("username");
-                        String imgUrl = task.getResult().getString("imageUrl");
-                        String bio = task.getResult().getString("Bio");
-                        task.getResult().getBoolean("status");
-                        toolbar.setOnMenuItemClickListener(PostsProfileFragment.this);
+        listenerRegistration = fStore.collection("Users").document(userid)
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot value,
+                                        @Nullable FirebaseFirestoreException error) {
+                        Log.d("ttt","value change");
 
-                        username.setText(user_name);
-                        Picasso.get().load(imgUrl).fit().into(imageView);
-                        biotext.setText(bio);
+                            username.setText(value.getString("username"));
+                            biotext.setText(value.getString("Bio"));
+                         Picasso.get().load(value.getString("imageUrl")).fit().into(imageView);
                     }
-                }else {
-                    Toast.makeText(getActivity(), "Error"+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+                });
     }
     private void drawer(){
         final DrawerLayout drawerLayout_b = getView().findViewById(R.id.drawer_layout);
@@ -329,5 +329,6 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
             }
         });
     }
+
 
 }

@@ -39,7 +39,8 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<SuggestionsAdapter.
     @NonNull
     @Override
     public SuggestionHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.sug_com_design, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.sug_com_design, parent,
+                false);
 
         return new SuggestionsAdapter.SuggestionHolder(view);
     }
@@ -65,16 +66,12 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<SuggestionsAdapter.
     }
 
     public class SuggestionHolder extends RecyclerView.ViewHolder {
-
         TextView tile;
         TextView readmore;
-
         public SuggestionHolder(@NonNull View itemView) {
             super(itemView);
-
             tile = itemView.findViewById(R.id.title);
             readmore = itemView.findViewById(R.id.title_com);
-
         }
     }
 

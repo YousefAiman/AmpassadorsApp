@@ -441,11 +441,11 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
   }
 
   public interface VideoMessageListener {
-    void playVideo(String url);
+    void playVideo(String url,String fileName);
   }
 
   public interface ImageMessageListener {
-    void showImage(String url);
+    void showImage(String url,String fileName);
   }
 
   public interface TimeClickListener {
@@ -579,8 +579,8 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
       if (view.getId() == R.id.imageIv) {
         if (privateMessages.get(getAdapterPosition()).getAttachmentUrl() != null) {
-          imageMessageListener.showImage(privateMessages.get(
-                  getAdapterPosition()).getAttachmentUrl());
+          imageMessageListener.showImage(privateMessages.get(getAdapterPosition()).getAttachmentUrl(),
+                  privateMessages.get(getAdapterPosition()).getFileName());
         }
       }
 
@@ -830,7 +830,8 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
     @Override
     public void onClick(View view) {
 
-      videoMessageListener.playVideo(privateMessages.get(getAdapterPosition()).getAttachmentUrl());
+      videoMessageListener.playVideo(privateMessages.get(getAdapterPosition()).getAttachmentUrl(),
+              privateMessages.get(getAdapterPosition()).getFileName());
 
     }
 

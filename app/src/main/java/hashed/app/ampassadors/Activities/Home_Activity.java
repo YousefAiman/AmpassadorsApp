@@ -23,7 +23,9 @@ import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -58,8 +60,8 @@ import hashed.app.ampassadors.Utils.SigninUtil;
 public class Home_Activity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
 
-  private String userid;
-  private FirebaseAuth auth;
+  private final FirebaseAuth auth = FirebaseAuth.getInstance();
+  private final String userid = auth.getCurrentUser().getUid();
   private DocumentReference reference;
   private FirebaseFirestore firebaseFirestore;
   private BottomNavigationView nav_btom;
@@ -69,6 +71,20 @@ public class Home_Activity extends AppCompatActivity implements
   private List<ListenerRegistration> listenerRegistrations;
 
   @Override
+  protected void onResume() {
+    super.onResume();
+    FirebaseFirestore.getInstance().collection("Users")
+            .document(userid).update("status",true);
+  }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    FirebaseFirestore.getInstance().collection("Users")
+            .document(userid).update("status",false);
+  }
+
+  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.home_activity);
@@ -76,13 +92,12 @@ public class Home_Activity extends AppCompatActivity implements
     SetUpCompetent();
     GlobalVariables.setAppIsRunning(true);
 
-    auth = FirebaseAuth.getInstance();
-    userid = auth.getCurrentUser().getUid();
+
     firebaseFirestore = FirebaseFirestore.getInstance();
 
     replaceFragment(new PostsFragment());
 
-    if(FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
+    if(auth.getCurrentUser().isAnonymous()){
       navigationview.inflateMenu(R.menu.menu_nav);
     }else{
       if (GlobalVariables.getRole()!=null && GlobalVariables.getRole().equals("Admin")) {
@@ -92,52 +107,83 @@ public class Home_Activity extends AppCompatActivity implements
       }
     }
 
-
-    DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("PrivateMessages");
-
-    FirebaseFirestore.getInstance().collection("PrivateMessages")
-            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-      @Override
-      public void onSuccess(QuerySnapshot snapshots) {
-
-        for(DocumentSnapshot snapshot:snapshots.getDocuments()){
-
-          final HashMap<String, String> usersLastSeenMap = new HashMap<>();
-          final List<String> users = (List<String>) snapshot.get("users");
-
-          ref.child(snapshot.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-              if(snapshot.exists()){
-                  for(String user:users){
-//                    if(snapshot.hasChild("LastSeenMessage:"+user)){
-//                      usersLastSeenMap.put(user,snapshot.child("LastSeenMessage:"+user)
-//                              .getValue(String.class));
+//    FirebaseFirestore.getInstance().collection("Users")
+//          .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//      @Override
+//      public void onSuccess(QuerySnapshot snapshots) {
 //
-//                      snapshot.child("LastSeenMessage:"+user).getRef().removeValue();
+//        for(DocumentSnapshot snapshot:snapshots.getDocuments()){
+//          snapshot.getReference().update("status",false);
+////          if(snapshot.contains("email") && snapshot.contains("password")){
+////
+////            String email = snapshot.getString("email");
+////            String password = snapshot.getString("password");
+////
+////            if(email!=null && !email.isEmpty() && password!=null && !password.isEmpty()){
+////              auth.signInWithEmailAndPassword(email,password)
+////                      .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+////                        @Override
+////                        public void onSuccess(AuthResult authResult) {
+////                          if(authResult!=null){
+////                            Log.d("ttt","logged in as :"+authResult.getUser().getEmail());
+////                            if(authResult.getUser().isEmailVerified()){
+////                              snapshot.getReference().update("isEmailVerified",true);
+////                            }
+//////                            auth.signOut();
+////                          }
+////                        }
+////                      });
+////            }
+////
+////          }
+//        }
+//      }
+//    });
+
+//    DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("PrivateMessages");
+//    FirebaseFirestore.getInstance().collection("PrivateMessages")
+//            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//      @Override
+//      public void onSuccess(QuerySnapshot snapshots) {
 //
-//                    }else{
-                      usersLastSeenMap.put(user,"0");
+//        for(DocumentSnapshot snapshot:snapshots.getDocuments()){
+//
+//          final HashMap<String, String> usersLastSeenMap = new HashMap<>();
+//          final List<String> users = (List<String>) snapshot.get("users");
+//
+//          ref.child(snapshot.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//
+//              if(snapshot.exists()){
+//                  for(String user:users){
+////                    if(snapshot.hasChild("LastSeenMessage:"+user)){
+////                      usersLastSeenMap.put(user,snapshot.child("LastSeenMessage:"+user)
+////                              .getValue(String.class));
+////
+////                      snapshot.child("LastSeenMessage:"+user).getRef().removeValue();
+////
+////                    }else{
+//                      usersLastSeenMap.put(user,"0");
+////                    }
+//
+//                    if(users.indexOf(user) == users.size()-1){
+//
+//                      //last user loop
+//
+//                      snapshot.getRef().child("UsersLastSeenMessages").setValue(usersLastSeenMap);
 //                    }
-
-                    if(users.indexOf(user) == users.size()-1){
-
-                      //last user loop
-
-                      snapshot.getRef().child("UsersLastSeenMessages").setValue(usersLastSeenMap);
-                    }
-                  }
-              }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-          });
-        }
-      }
-    });
+//                  }
+//              }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//            }
+//          });
+//        }
+//      }
+//    });
 
 
     OnClickButtons();
@@ -152,7 +198,7 @@ public class Home_Activity extends AppCompatActivity implements
 
     listenerRegistrations.add(
             FirebaseFirestore.getInstance().collection("Users")
-                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .document(userid)
                     .addSnapshotListener(new EventListener<DocumentSnapshot>() {
                       @Override
                       public void onEvent(@Nullable DocumentSnapshot value,
@@ -203,7 +249,7 @@ public class Home_Activity extends AppCompatActivity implements
           replaceFragment(new PostsFragment());
         }
       } else if (item.getItemId() == R.id.profile) {
-          if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
+          if (auth.getCurrentUser().isAnonymous()) {
 
               SigninUtil.getInstance(Home_Activity.this,
                       Home_Activity.this).show();
@@ -216,7 +262,7 @@ public class Home_Activity extends AppCompatActivity implements
 
       } else if (item.getItemId() == R.id.chat) {
 
-          if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
+          if (auth.getCurrentUser().isAnonymous()){
               SigninUtil.getInstance(Home_Activity.this,
                       Home_Activity.this).show();
             return false;
@@ -228,7 +274,7 @@ public class Home_Activity extends AppCompatActivity implements
 
       } else if (item.getItemId() == R.id.charity) {
 
-          if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
+          if (auth.getCurrentUser().isAnonymous()){
               SigninUtil.getInstance(Home_Activity.this,
                       Home_Activity.this).show();
             return false;
@@ -320,7 +366,7 @@ public class Home_Activity extends AppCompatActivity implements
         }
 
 
-        FirebaseAuth.getInstance().signOut();
+        auth.signOut();
 
                     getPackageManager().setComponentEnabledSetting(
                             new ComponentName(Home_Activity.this, FirebaseMessagingService.class),
@@ -368,7 +414,7 @@ public class Home_Activity extends AppCompatActivity implements
 
         } else if (item.getItemId() == R.id.courses) {
 
-        if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
+        if (auth.getCurrentUser().isAnonymous()) {
 
           SigninUtil.getInstance(Home_Activity.this,
                   Home_Activity.this).show();
@@ -381,7 +427,7 @@ public class Home_Activity extends AppCompatActivity implements
 
         } else if (item.getItemId() == R.id.complaints) {
 
-          if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
+          if (auth.getCurrentUser().isAnonymous()) {
 
               SigninUtil.getInstance(Home_Activity.this,
                       Home_Activity.this).show();
@@ -403,7 +449,7 @@ public class Home_Activity extends AppCompatActivity implements
 
 
         } else if (item.getItemId() == R.id.proposals) {
-          if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
+          if (auth.getCurrentUser().isAnonymous()) {
 
               SigninUtil.getInstance(Home_Activity.this,
                       Home_Activity.this).show();
@@ -450,7 +496,7 @@ public class Home_Activity extends AppCompatActivity implements
 
     listenerRegistrations.add(
             FirebaseFirestore.getInstance().collection("Notifications")
-                    .whereEqualTo("receiverId", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .whereEqualTo("receiverId", userid)
                     .addSnapshotListener(new EventListener<QuerySnapshot>() {
                       @Override
                       public void onEvent(@Nullable QuerySnapshot value,
@@ -458,7 +504,7 @@ public class Home_Activity extends AppCompatActivity implements
         final AtomicInteger notificationCount = new AtomicInteger();
         listenerRegistrations.add(
                 FirebaseFirestore.getInstance().collection("Notifications")
-                .whereEqualTo("receiverId", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .whereEqualTo("receiverId", userid)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value,

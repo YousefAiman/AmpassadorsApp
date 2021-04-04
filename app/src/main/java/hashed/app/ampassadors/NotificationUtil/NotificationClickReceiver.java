@@ -20,20 +20,20 @@ public class NotificationClickReceiver extends BroadcastReceiver {
 
     if (intent.hasExtra("destinationBundle")) {
 
-      if (GlobalVariables.isAppIsRunning()) {
+      Bundle bundle = intent.getBundleExtra("destinationBundle");
 
-        Bundle bundle = intent.getBundleExtra("destinationBundle");
+      String sourceType = bundle.getString("sourceType");
+
+      if (GlobalVariables.isAppIsRunning()) {
 
         Intent destinationIntent;
 
-        String sourceType = bundle.getString("sourceType");
-
-        if (sourceType.equals("privateMessaging")) {
+        if (sourceType.equals(FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE)) {
           Log.d("ttt", "sourceType privateMessaging");
 
           destinationIntent = new Intent(context, PrivateMessagingActivity.class);
 
-        } else if (sourceType.equals("groupMessaging")) {
+        } else if (sourceType.equals(FirestoreNotificationSender.TYPE_MEETING_MESSAGE)) {
 
           destinationIntent = new Intent(context, GroupMessagingActivity.class);
 
@@ -41,20 +41,28 @@ public class NotificationClickReceiver extends BroadcastReceiver {
 
           destinationIntent = new Intent(context, MainActivity.class);
 
+        }else if(sourceType.equals(FirestoreNotificationSender.TYPE_GROUP_ADDED)){
+
+          destinationIntent = new Intent(context, PrivateMessagingActivity.class);
+
         } else {
 
           destinationIntent = new Intent(context, MainActivity.class);
 
         }
 
-        if (sourceType.equals("privateMessaging")){
+        if (sourceType.equals(FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE)){
           destinationIntent.putExtra("messagingUid", bundle.getString("sourceId"));
+        }else if(sourceType.equals(FirestoreNotificationSender.TYPE_GROUP_ADDED)){
+          destinationIntent.putExtra("groupId",bundle.getString("sourceId"));
         }else{
           destinationIntent.putExtra("destinationBundle", bundle);
         }
 
-        if (sourceType.equals("privateMessaging") || sourceType.equals("groupMessaging") ||
-                sourceType.equals("meetingStarted") || sourceType.equals("zoomMeeting")) {
+        if (sourceType.equals(FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE)
+                || sourceType.equals(FirestoreNotificationSender.TYPE_MEETING_MESSAGE) ||
+                sourceType.equals("meetingStarted") || sourceType.equals("zoomMeeting") ||
+                sourceType.equals(FirestoreNotificationSender.TYPE_GROUP_ADDED)) {
 
           final SharedPreferences sharedPreferences =
                   context.getSharedPreferences(context.getResources().getString(R.string.app_name),
@@ -85,15 +93,22 @@ public class NotificationClickReceiver extends BroadcastReceiver {
         }else{
 
         }
-        destinationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        destinationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(destinationIntent);
         Log.d("ttt", "clicked notificaiton while app is running");
       } else {
 
-        context.startActivity(new Intent(context, MainActivity.class)
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                .putExtra("destinationBundle",
-                        intent.getBundleExtra("destinationBundle")));
+        Intent intent1 = new Intent(context, MainActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+//        if(sourceType.equals(FirestoreNotificationSender.TYPE_GROUP_ADDED)){
+//          intent1.putExtra("groupId",bundle.getString("sourceId"));
+//        }else{
+          intent1.putExtra("destinationBundle",
+                  intent.getBundleExtra("destinationBundle"));
+//        }
+
+        context.startActivity(intent1);
 
         Log.d("ttt", "clicked notificaiton while app isn't running");
       }

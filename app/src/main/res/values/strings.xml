@@ -345,10 +345,8 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="Chooset_profile_photo">Choose your  profile photo</string>
     <string name="fill_the_felids">All field are required</string>
     <string name="important_post">Important post</string>
-        <string name="Reporting">Reporting</string>
     <string name="Limit_Messgae">The max of Bio is 160 Character</string>
     <string name="Reporting">Reporting</string>
-    <string name="Limit_Messgae">The max of Bio is 160 Charachter</string>
     <string name="Email_Verfiy_Message">You need to verify your email in order to Sign in!</string>
     <string name="Login_By_facebook">Logging in with facebook</string>
     <string name="Fail_Login">Fail log in operation</string>
@@ -358,9 +356,12 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="added_to_group">added you to a new group</string>
     <string name="creating_group">Creating group</string>
     <string name="group_already_exists">A group with this name and these specified members already exists! Please try a different name</string>
-    <string name="Dleteing">Deleting ...</string>
+    <string name="Dleteing">Deleting …</string>
     <string name="Repored">Report post Done</string>
     <string name="PostRepored">Post Reported</string>
     <string name="ReportedPosts">Reported Posts</string>
+    <string name="add_an_attachment_warning">You need to add an attachment to your post!</string>
+    <string name="no_new_notifications">No new notifications</string>
+    <string name="creating_account">Creating account!</string>
 
 </resources>

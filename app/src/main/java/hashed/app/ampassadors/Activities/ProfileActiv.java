@@ -223,19 +223,16 @@ FirebaseFirestore fStore;
             fStore.collection("Users").document(id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    bio_txt=documentSnapshot.getString("Bio");
-                    if (bio_txt.isEmpty()){
-                        bio.setVisibility(View.GONE);
-                        Picasso.get().load(userimg).fit().into(imageView);
+                    bio_txt = documentSnapshot.getString("Bio");
 
-                        username.setText(usernam);
+                    if (bio_txt == null || bio_txt.isEmpty()){
+                        bio.setVisibility(View.GONE);
                     }else {
                         bio_txt = documentSnapshot.getString("Bio");
                         bio.setText(bio_txt);
-                        Picasso.get().load(userimg).fit().into(imageView);
-                        username.setText(usernam);
-
                     }
+                    Picasso.get().load(userimg).fit().into(imageView);
+                    username.setText(usernam);
                 }
             });
                    }

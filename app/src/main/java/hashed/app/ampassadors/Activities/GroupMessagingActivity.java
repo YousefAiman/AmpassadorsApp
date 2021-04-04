@@ -1304,12 +1304,12 @@ public class GroupMessagingActivity extends AppCompatActivity
   }
 
   @Override
-  public void playVideo(String url) {
+  public void playVideo(String url,String fileName) {
 
     pickerFrameLayout.setVisibility(View.VISIBLE);
 
     getSupportFragmentManager().beginTransaction().replace(pickerFrameLayout.getId(),
-            new VideoFullScreenFragment(url)).commit();
+            new VideoFullScreenFragment(url,fileName)).commit();
 
   }
 
@@ -1531,9 +1531,9 @@ public class GroupMessagingActivity extends AppCompatActivity
   }
 
   @Override
-  public void showImage(String url) {
+  public void showImage(String url,String fileName) {
 
-    showFullScreenFragment(new ImageFullScreenFragment(url));
+    showFullScreenFragment(new ImageFullScreenFragment(url,fileName));
 
   }
 
@@ -1723,7 +1723,7 @@ public class GroupMessagingActivity extends AppCompatActivity
               currentGroupName,
               currentGroupImage,
               "Group Messages",
-              "groupMessaging",
+              FirestoreNotificationSender.TYPE_MEETING_MESSAGE,
               groupId
       );
 
@@ -1759,7 +1759,7 @@ public class GroupMessagingActivity extends AppCompatActivity
   private void sendBothNotifs(String body, String userId) {
 
     FirestoreNotificationSender.sendFirestoreNotification(userId,
-            FirestoreNotificationSender.TYPE_GROUP_MESSAGE, body,
+            FirestoreNotificationSender.TYPE_MEETING_MESSAGE, body,
             currentGroupName, groupId);
 
     CloudMessagingNotificationsSender.sendNotification(userId, data);

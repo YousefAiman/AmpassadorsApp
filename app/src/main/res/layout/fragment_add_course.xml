@@ -58,8 +58,8 @@
 <!--            app:layout_constraintTop_toBottomOf="@+id/courseNameEd" />-->
 <!--        -->
 
-        <TextView
-            android:id="@+id/courseTutorNameTv"
+           <EditText
+            android:id="@+id/courseTutorNameEd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/add_course_ed_back"
@@ -72,16 +72,30 @@
             android:layout_marginTop="27dp"
             app:layout_constraintTop_toBottomOf="@+id/courseNameEd"/>
 
-           <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/tutorPickerRv"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:visibility="gone"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintEnd_toEndOf="@+id/courseTutorNameTv"
-            app:layout_constraintStart_toStartOf="@+id/courseTutorNameTv"
-            app:layout_constraintTop_toBottomOf="@+id/courseTutorNameTv" />
+<!--        <TextView-->
+<!--            android:id="@+id/courseTutorNameTv"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@drawable/add_course_ed_back"-->
+<!--            android:fontFamily="@font/segoe_ui"-->
+<!--            android:paddingVertical="10dp"-->
+<!--            android:paddingHorizontal="15dp"-->
+<!--            android:hint="Click to choose tutor"-->
+<!--            android:textColor="@color/black_transparent"-->
+<!--            android:textSize="16sp"-->
+<!--            android:layout_marginTop="27dp"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/courseNameEd"/>-->
+
+<!--           <androidx.recyclerview.widget.RecyclerView-->
+<!--            android:id="@+id/tutorPickerRv"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@color/white"-->
+<!--            android:visibility="gone"-->
+<!--            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
+<!--            app:layout_constraintEnd_toEndOf="@+id/courseTutorNameEd"-->
+<!--            app:layout_constraintStart_toStartOf="@+id/courseTutorNameEd"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/courseTutorNameEd" />-->
 
 
         <TextView
@@ -95,9 +109,9 @@
             android:text="@string/tutor_name_hint"
             android:textColor="@color/black_transparent"
             android:textSize="14sp"
-            app:layout_constraintBottom_toTopOf="@+id/courseTutorNameTv"
-            app:layout_constraintStart_toStartOf="@+id/courseTutorNameTv"
-            app:layout_constraintTop_toTopOf="@+id/courseTutorNameTv" />
+            app:layout_constraintBottom_toTopOf="@+id/courseTutorNameEd"
+            app:layout_constraintStart_toStartOf="@+id/courseTutorNameEd"
+            app:layout_constraintTop_toTopOf="@+id/courseTutorNameEd" />
 
 
         <TextView
@@ -111,7 +125,7 @@
             android:textColor="@color/black_transparent"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/courseTutorNameTv" />
+            app:layout_constraintTop_toBottomOf="@+id/courseTutorNameEd" />
 
 
         <TextView

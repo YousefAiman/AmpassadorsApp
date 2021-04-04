@@ -27,6 +27,7 @@ import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
 import hashed.app.ampassadors.Activities.VideoWelcomeActivity;
 import hashed.app.ampassadors.Activities.WelcomeActivity;
 import hashed.app.ampassadors.Fragments.PostsFragment;
+import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.Services.FirebaseMessagingService;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.WifiUtil;
@@ -55,8 +56,15 @@ public class MainActivity extends AppCompatActivity {
 
     if(!sharedPreferences.contains("firstTime")){
 
-      startActivity(new Intent(this, VideoWelcomeActivity.class)
-              .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+      new Handler().postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          startActivity(new Intent(MainActivity.this, VideoWelcomeActivity.class)
+                  .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+          finish();
+        }
+      },1000);
+
 
       sharedPreferences.edit().putBoolean("firstTime",false).apply();
 
@@ -76,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
                   addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
+
                       GlobalVariables.setRole(documentSnapshot.getString("Role"));
                       if(documentSnapshot.contains("token")){
                         GlobalVariables.setCurrentToken(documentSnapshot.getString("token"));
@@ -95,15 +104,20 @@ public class MainActivity extends AppCompatActivity {
                   Intent intent = null;
 
                   switch (sourceType) {
-                    case "privateMessaging":
-                      intent = startPrivateMessagingActivity(sourceId);
+                    case FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE:
+                      intent = startPrivateMessagingActivity("messagingId",sourceId);
                       break;
-                    case "groupMessaging":
+                    case FirestoreNotificationSender.TYPE_MEETING_MESSAGE:
                       intent = startGroupMessagingActivity(sourceId);
                       break;
-                    case "meetingStarted":
+                    case FirestoreNotificationSender.TYPE_MEETING_STARTED:
                       intent = startMeetingsHomeActivity();
                       break;
+
+                      case FirestoreNotificationSender.TYPE_GROUP_ADDED:
+                        intent = startPrivateMessagingActivity("groupId",sourceId);
+                      break;
+
                     default:
                       startHomeActivity();
                       break;
@@ -172,9 +186,9 @@ public class MainActivity extends AppCompatActivity {
     }, 800);
   }
 
-  private Intent startPrivateMessagingActivity(String userId) {
+  private Intent startPrivateMessagingActivity(String key,String messagingId) {
     return new Intent(MainActivity.this,
-            PrivateMessagingActivity.class).putExtra("messagingUid", userId);
+            PrivateMessagingActivity.class).putExtra(key, messagingId);
   }
 
   private Intent startGroupMessagingActivity(String groupId) {

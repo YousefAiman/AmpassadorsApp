@@ -1,5 +1,6 @@
 package hashed.app.ampassadors.Activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -69,7 +70,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
   private Bitmap videoThumbnailBitmap;
   private SimpleExoPlayer simpleExoPlayer;
   private Map<UploadTask, StorageTask<UploadTask.TaskSnapshot>> uploadTaskMap;
-  private int attachmentType = 1;
+  private int attachmentType = Files.TEXT;
   private String documentName;
   private double documentSize;
   CheckBox checkBox ;
@@ -93,7 +94,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
 
   private void setupToolbar() {
     final Toolbar toolbar = findViewById(R.id.toolbar);
-    toolbar.setNavigationOnClickListener(v -> finish());
+    toolbar.setNavigationOnClickListener(v -> onBackPressed());
   }
 
 
@@ -165,11 +166,12 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
         return;
       }
 
-//      if (attachmentUri == null) {
-//        Toast.makeText(this, R.string.Message_Attchent_post
-//                , Toast.LENGTH_SHORT).show();
-//        return;
-//      }
+
+      if (attachmentUri == null && !getIntent().hasExtra("justForUser")) {
+        Toast.makeText(this, R.string.add_an_attachment_warning
+                , Toast.LENGTH_SHORT).show();
+        return;
+      }
 
       publishBtn.setClickable(false);
 
@@ -198,9 +200,8 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
           break;
 
         case Files.TEXT:
-          uploadDocument(title, description, progressDialog);
+          publishPost(title,description,null,null,progressDialog);
           break;
-
       }
 
 
@@ -234,8 +235,8 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
       dataMap.put("important",important);
     }
     dataMap.put("isReported",false);
+    dataMap.put("attachmentType", attachmentType);
     if(attachmentUrl != null){
-      dataMap.put("attachmentType", attachmentType);
       dataMap.put("attachmentUrl", attachmentUrl);
     }
 
@@ -617,6 +618,34 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     simpleExoPlayer.setPlayWhenReady(true);
 
     return simpleExoPlayer;
+  }
+
+  @Override
+  public void onBackPressed() {
+
+    if(!descriptionEd.getText().toString().trim().isEmpty()
+            || !titleEd.getText().toString().trim().isEmpty()
+            || attachmentUri!=null){
+
+      AlertDialog.Builder alert = new AlertDialog.Builder(this);
+      alert.setTitle("Do you want to leave without creating this post?");
+      alert.setMessage("Leaving will discard this post");
+
+      alert.setPositiveButton("Leave", (dialogInterface, i) -> {
+        if (uploadTaskMap != null && !uploadTaskMap.isEmpty()) {
+          cancelUploadTasks();
+          dialogInterface.dismiss();
+        }
+        finish();
+      });
+
+      alert.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+      alert.create().show();
+
+    } else {
+      super.onBackPressed();
+    }
+
   }
 
 

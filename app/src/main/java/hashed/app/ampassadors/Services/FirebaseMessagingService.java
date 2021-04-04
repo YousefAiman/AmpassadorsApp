@@ -57,9 +57,13 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
   public void onNewToken(@NonNull String s) {
     super.onNewToken(s);
 
-    FirebaseFirestore.getInstance().collection("Users").document(
-            FirebaseAuth.getInstance().getCurrentUser().getUid())
-            .update("token", s);
+    FirebaseAuth auth = FirebaseAuth.getInstance();
+
+    if(auth.getCurrentUser()!=null && !auth.getCurrentUser().isAnonymous()){
+      FirebaseFirestore.getInstance().collection("Users")
+              .document(auth.getCurrentUser().getUid()).update("token", s);
+    }
+
 
     GlobalVariables.setCurrentToken(s);
     Log.d("ttt", "new token: " + s);

@@ -78,7 +78,8 @@ public class UserSearchActivity extends AppCompatActivity implements
     userRv.setAdapter(pickerAdapter);
 
 
-    usersRef.orderBy("username",Query.Direction.ASCENDING)
+    usersRef.whereEqualTo("isEmailVerified",true)
+            .orderBy("username",Query.Direction.ASCENDING)
             .limit(100).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
       @Override
       public void onSuccess(QuerySnapshot snapshots) {
@@ -162,7 +163,7 @@ public class UserSearchActivity extends AppCompatActivity implements
   @Override
   public void onBackPressed() {
 
-    if (pickerAdapter.selectedUserIds != null && !pickerAdapter.selectedUserIds.isEmpty()) {
+    if (pickerAdapter.selectedUserIds != null) {
       setResult(3, new Intent().putExtra("previousSearchSelectedUserIdsList"
               , pickerAdapter.selectedUserIds));
     }

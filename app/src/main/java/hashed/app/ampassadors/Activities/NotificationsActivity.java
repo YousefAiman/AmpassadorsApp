@@ -5,12 +5,15 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -48,9 +51,8 @@ public class NotificationsActivity extends AppCompatActivity implements
   private NotificationsAdapter newerAdapter;
 //  private NotificationsAdapter olderAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
-
+  private TextView emptyTv;
   private List<ListenerRegistration> listenerRegistrationList;
-  private String currentUserId;
   private Query mainQuery;
   private DocumentSnapshot lastDocSnapshot;
   private RecyclerView newestNotificationsRv;
@@ -62,15 +64,39 @@ public class NotificationsActivity extends AppCompatActivity implements
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_notifications);
 
-    currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     setupToolbar();
 
     newestNotificationsRv = findViewById(R.id.newestNotificationsRv);
     swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+    emptyTv = findViewById(R.id.emptyTv);
 
     swipeRefreshLayout.setOnRefreshListener(this);
     listenerRegistrationList = new ArrayList<>();
+
+    newestNotificationsRv.setLayoutManager(new LinearLayoutManager(this,
+            RecyclerView.VERTICAL, false) {
+      @Override
+      public void onItemsRemoved(@NonNull RecyclerView recyclerView,
+                                 int positionStart, int itemCount) {
+        if (itemCount == 0) {
+          emptyTv.setVisibility(View.VISIBLE);
+          recyclerView.setVisibility(View.INVISIBLE);
+        }
+      }
+
+      @Override
+      public void onItemsAdded(@NonNull RecyclerView recyclerView,
+                               int positionStart, int itemCount) {
+        super.onItemsAdded(recyclerView, positionStart, itemCount);
+        if (recyclerView.getVisibility() == View.INVISIBLE) {
+          emptyTv.setVisibility(View.GONE);
+          recyclerView.setVisibility(View.VISIBLE);
+        }
+      }
+    });
+
 
     newerNotifications = new ArrayList<>();
 
@@ -127,6 +153,10 @@ public class NotificationsActivity extends AppCompatActivity implements
 
         if (task.getResult().size() == NOTIFICATIONS_LIMIT && scrollListener == null) {
           newestNotificationsRv.addOnScrollListener(scrollListener = new ScrollListener());
+        }
+
+        if(newerNotifications.isEmpty()){
+          emptyTv.setVisibility(View.VISIBLE);
         }
 
       } else {

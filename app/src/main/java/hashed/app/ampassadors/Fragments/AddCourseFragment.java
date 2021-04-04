@@ -80,10 +80,10 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
   public static final int TUTOR_REQUEST = 1;
   //views
   private EditText courseNameEd,courseDurationEd;
-  private TextView courseDateSetterTv,courseTimeSetterTv,courseTutorNameTv;
+  private TextView courseDateSetterTv,courseTimeSetterTv,courseTutorNameEd;
   private ImageView settingsIv1,settingsIv2;
   private Button coursePublishBtn;
-  private RecyclerView tutorPickerRv;
+//  private RecyclerView tutorPickerRv;
 
   //time
   private final Integer[] meetingStartTime = new Integer[5];
@@ -126,8 +126,8 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
     }
 
     courseNameEd = view.findViewById(R.id.courseNameEd);
-    courseTutorNameTv = view.findViewById(R.id.courseTutorNameTv);
-    tutorPickerRv = view.findViewById(R.id.tutorPickerRv);
+    courseTutorNameEd = view.findViewById(R.id.courseTutorNameEd);
+//    tutorPickerRv = view.findViewById(R.id.tutorPickerRv);
     courseDateSetterTv = view.findViewById(R.id.courseDateSetterTv);
     courseTimeSetterTv = view.findViewById(R.id.courseTimeSetterTv);
     courseDurationEd = view.findViewById(R.id.courseDurationEd);
@@ -161,7 +161,7 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
 //      }
 //    });
 
-    courseTutorNameTv.setOnClickListener(this);
+//    courseTutorNameEd.setOnClickListener(this);
     courseDateSetterTv.setOnClickListener(this);
     courseTimeSetterTv.setOnClickListener(this);
 //    courseDurationTv.setOnClickListener(this);
@@ -185,7 +185,7 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
       }
 
       final String name = courseNameEd.getText().toString().trim();
-      final String tutor = courseTutorNameTv.getText().toString().trim();
+      final String tutor = courseTutorNameEd.getText().toString().trim();
       final int duration = Integer.parseInt(courseDurationEd.getText().toString());
 
       if (!name.isEmpty() && !tutor.isEmpty() && duration > 0) {
@@ -221,21 +221,22 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
 
       getMeetingTime();
 
-    }else if(view.getId() == courseTutorNameTv.getId()){
-//      if(usersAdapter == null){
-//
-//      }
-//
-//      tutorPickerRv.setVisibility(View.VISIBLE);
-
-//      Intent intent = new Intent(requireContext(), UserMessageSearchActivity.class);
-//      intent.putStringArrayListExtra("selectedUserIds", pickerAdapter.selectedUserIds);
-//      startActivityForResult(intent, 3);
-//
-    getActivity().startActivityForResult(new Intent(requireContext(), UserMessageSearchActivity.class)
-            .putExtra("isForCourse",true),TUTOR_REQUEST);
-
     }
+//    else if(view.getId() == courseTutorNameTv.getId()){
+////      if(usersAdapter == null){
+////
+////      }
+////
+////      tutorPickerRv.setVisibility(View.VISIBLE);
+//
+////      Intent intent = new Intent(requireContext(), UserMessageSearchActivity.class);
+////      intent.putStringArrayListExtra("selectedUserIds", pickerAdapter.selectedUserIds);
+////      startActivityForResult(intent, 3);
+////
+//    getActivity().startActivityForResult(new Intent(requireContext(), UserMessageSearchActivity.class)
+//            .putExtra("isForCourse",true),TUTOR_REQUEST);
+//
+//    }
 
   }
 
@@ -424,9 +425,6 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
                             ((CoursesActivity)requireActivity())
                                     .addCourseToList(new Course(courseMap));
 
-
-
-
                           }
                         }).addOnFailureListener(new OnFailureListener() {
                   @Override
@@ -504,7 +502,7 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
       @Override
       public void onSuccess(DocumentSnapshot snapshot) {
        if(snapshot.exists()){
-         courseTutorNameTv.setText(snapshot.getString("username"));
+         courseTutorNameEd.setText(snapshot.getString("username"));
        }
       }
     });
@@ -516,8 +514,9 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
   public void backPressing(){
 
     if(!courseNameEd.getText().toString().trim().isEmpty()
+            || !courseTutorNameEd.getText().toString().trim().isEmpty()
             || !courseDurationEd.getText().toString().trim().isEmpty()
-            || pickedTutorId != null || timeWasSelected || dateWasSelected){
+            || timeWasSelected || dateWasSelected){
 
       final AlertDialog.Builder alert = new AlertDialog.Builder(requireContext());
       alert.setTitle("Do you want to leave without creating this course?");

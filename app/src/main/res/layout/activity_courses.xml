@@ -22,7 +22,6 @@
         app:navigationIcon="@drawable/back_arrow_icon"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:title="@string/Courses"
-        app:menu="@menu/courses_menu"
         app:titleTextAppearance="@style/ToolbarTitleAppearance"
         app:titleTextColor="@color/white"/>
 

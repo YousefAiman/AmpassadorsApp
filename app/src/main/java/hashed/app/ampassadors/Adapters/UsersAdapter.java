@@ -29,10 +29,9 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         implements Filterable {
 
   private final int itemLayout;
-  private ArrayList<UserPreview> users;
+  private final ArrayList<UserPreview> users;
   private ArrayList<UserPreview> filteredUsers;
   private UserAdapterClicker userAdapterClicker;
-  private String currentUid;
 
   public interface UserAdapterClicker {
     void clickUser(String userId);
@@ -50,7 +49,6 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     this.filteredUsers = users;
     this.userAdapterClicker = userAdapterClicker;
     this.itemLayout = itemLayout;
-    currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
   }
 
   @Override
@@ -94,7 +92,7 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
   @Override
   public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
-    if(holder.getItemViewType() ==1){
+    if(holder.getItemViewType() == 1){
       ((UserMeetingContributorsVh) holder).bindChat(users.get(position));
     }else {
       if (itemLayout == R.layout.user_item_layout) {
@@ -207,7 +205,7 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
       statusIv = itemView.findViewById(R.id.statusIv);
     }
 
-    private void bindChat(UserPreview user) {
+    private void bindChat(final UserPreview user) {
       imageIv.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {

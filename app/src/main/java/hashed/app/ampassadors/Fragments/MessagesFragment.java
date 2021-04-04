@@ -409,19 +409,8 @@ public class MessagesFragment extends Fragment{
       public void onDataChange(@NonNull DataSnapshot snapshot) {
         if (snapshot.exists()) {
 
-          Log.d("ttt", "last seen changed");
           if (!chatItems.contains(chatItem)) {
-
-            Log.d("ttt", "!chatItems.contains(chatItem)");
-//            chatItem.setSeen(Long.parseLong(snapshot.getValue(String.class)) >=
-//                    chatItem.getMessageKey());
-
-            Log.d("ttt", "chatItem.getseen: " +
-                    chatItem.isSeen());
-
             final String lastSeen = snapshot.getValue(String.class);
-
-            Log.d("ttt","last seen key: "+lastSeen);
 
             if(isAnEmptyGroupMessage){
 
@@ -431,14 +420,9 @@ public class MessagesFragment extends Fragment{
 
             }else{
               if (addToFirst) {
-//                chatItems.add(0, chatItem);
-//              adapter.notifyItemInserted(0);
                 calculateUnseenCount(lastSeen,chatItem,0,
                         ADD__TYPE);
               } else {
-
-//                chatItems.add(chatItem);
-//              adapter.notifyItemInserted(chatItems.size());
                 final int index = chatItems.size();
                 calculateUnseenCount(lastSeen,chatItem,index,
                         ADD__TYPE);
@@ -450,22 +434,10 @@ public class MessagesFragment extends Fragment{
             }
 
           } else {
-
-            Log.d("ttt", "chatItems.contains(chatItem)");
-
             final int index = chatItems.indexOf(chatItem);
-
-//            int index = 0;
-//            for (int i = 0; i < chatItems.size(); i++) {
-//              if (chatItems.get(i).getMessagingDocId().equals(chatItem.getMessagingDocId())) {
-//                index = i;
-//                break;
-//              }
-//            }
             final ChatItem chatItem1 = chatItems.get(index);
             final String lastSeen = snapshot.getValue(String.class);
             calculateUnseenCount(lastSeen,chatItem1,index,UPDATE_TYPE);
-
           }
         }
       }
@@ -483,16 +455,20 @@ public class MessagesFragment extends Fragment{
   private void calculateUnseenCount(String lastSeen,ChatItem chatItem,int index,
                                     int updateType){
 
-    messagesRef.child(chatItem.getMessagingDocId()).child("messages").orderByKey().startAt(lastSeen)
+    messagesRef.child(chatItem.getMessagingDocId()).child("messages").orderByKey()
+            .startAt(lastSeen+1)
             .addListenerForSingleValueEvent(new ValueEventListener() {
               @Override
               public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
-                  chatItem.setUnSeenCount(snapshot.getChildrenCount()-1);
 
+                if(snapshot.exists()){
+                  chatItem.setUnSeenCount(snapshot.getChildrenCount());
+                }else{
+                  chatItem.setUnSeenCount(0);
+                }
 //                  final boolean wasSeen = chatItem.isSeen();
 
-                  chatItem.setSeen(Long.parseLong(lastSeen) >=
+                  chatItem.setSeen(Long.parseLong(lastSeen) ==
                           chatItem.getMessageKey());
 
                   Log.d("ttt", "chatItems.get(position),getseen: " +
@@ -514,9 +490,6 @@ public class MessagesFragment extends Fragment{
                     adapter.notifyItemInserted(chatItems.size());
                   }
 
-                }else{
-//                  adapter.notifyItemInserted(chatItems.size());
-                }
               }
 
               @Override

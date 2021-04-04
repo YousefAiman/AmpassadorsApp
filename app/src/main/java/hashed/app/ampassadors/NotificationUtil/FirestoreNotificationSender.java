@@ -15,6 +15,7 @@ public class FirestoreNotificationSender {
           TYPE_GROUP_MESSAGE = "groupMessaging",
           TYPE_LIKE = "postLike",TYPE_COMMENT = "postComment",TYPE_ZOOM = "zoomMeeting",
           TYPE_MEETING_ADDED = "meetingAdded",TYPE_MEETING_STARTED = "meetingStarted",
+          TYPE_MEETING_MESSAGE = "meetingMessaging",
           TYPE_GROUP_ADDED = "groupAdded";
 
 
@@ -48,6 +49,7 @@ public class FirestoreNotificationSender {
       } else {
 
         if (type.equals(FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE)
+        || type.equals(FirestoreNotificationSender.TYPE_MEETING_MESSAGE)
         || type.equals(FirestoreNotificationSender.TYPE_GROUP_MESSAGE)) {
           documentSnapshot.getReference().update("timeCreated",
                   System.currentTimeMillis(), "content", body);

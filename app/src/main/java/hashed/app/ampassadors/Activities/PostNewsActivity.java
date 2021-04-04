@@ -55,7 +55,8 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
     //views
     private CardView cardView;
-    private TextView usernameTv, dateTv, titleTv, descriptionTv, likesTv, commentsTv, likeTv, commentTv, newsTitleTv;
+    private TextView usernameTv, dateTv, titleTv, descriptionTv, likesTv,
+            commentsTv, likeTv, commentTv, newsTitleTv;
     private ImageView newsIv, userIv, attachmentImage, playIv;
     private FrameLayout frameLayout;
     ProgressDialog progressDialog;
@@ -359,7 +360,8 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
             getSupportFragmentManager().beginTransaction().remove(
                     getSupportFragmentManager().getFragments().get(0)).commit();
             frameLayout.setVisibility(View.GONE);
-        } else {
+
+        }else {
             super.onBackPressed();
         }
 

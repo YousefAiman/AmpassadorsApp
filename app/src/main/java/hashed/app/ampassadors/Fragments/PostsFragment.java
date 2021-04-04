@@ -148,7 +148,7 @@ public class  PostsFragment extends Fragment implements Toolbar.OnMenuItemClickL
 
     if(!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
         if (GlobalVariables.getRole().equals("Admin") ||
-              GlobalVariables.getRole().equals("Publisher")){
+                GlobalVariables.getRole().equals("Publisher")){
         floatingButton.setVisibility(View.VISIBLE);
       }
     }

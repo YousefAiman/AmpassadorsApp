@@ -173,9 +173,9 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
               GlobalVariables.getRole().equals("Coordinator")){
 
         floatingButton.setVisibility(View.VISIBLE);
-        deleteMeetingsBtn.setVisibility(View.VISIBLE);
+//        deleteMeetingsBtn.setVisibility(View.VISIBLE);
         floatingButton.setOnClickListener(this);
-        deleteMeetingsBtn.setOnClickListener(this);
+//        deleteMeetingsBtn.setOnClickListener(this);
       }
     }
 

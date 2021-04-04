@@ -98,9 +98,9 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
 
     PhoneNumberUtil phoneNumberUtil;
     List<String> spinnerArray;
-    String defaultCode;
-    String defaultSpinnerChoice;
-    String Role = "Ambassador";
+//    String defaultCode;
+//    String defaultSpinnerChoice;
+//    String Role = "Ambassador";
 
 
     @Override
@@ -257,7 +257,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                           String country, String city, String phone  , int day  , int year , int month) {
 
         ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage(getString(R.string.create_new_account));
+        progressDialog.setMessage(getString(R.string.creating_account));
         progressDialog.setCancelable(false);
         progressDialog.show();
         String bio  = "";
@@ -284,6 +284,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                 hashMap.put("imageUrl", imageUrl);
                 hashMap.put("status", true);
                 hashMap.put("Year",year);
+                hashMap.put("isEmailVerified",false);
                 hashMap.put("Month'", month);
                 hashMap.put("Day", day);
                 hashMap.put("Role", "Ambassador");
@@ -398,7 +399,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
 
         // CAMERA
         if (requestCode == 2 && resultCode == RESULT_OK) {
-            mProgressDialog.setMessage(getString(R.string.Download));
+            mProgressDialog.setMessage(getString(R.string.creating_account));
             mProgressDialog.show();
             Uri uri = data.getData();
             StorageReference filepath = sreference.child("Profile img").child(uri.getLastPathSegment());
@@ -425,7 +426,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
         } else if (requestCode == CAMERA_REQUEST_CODE) {
             /// GALLERY
             uploading = true;
-            mProgressDialog.setMessage(getString(R.string.Download));
+            mProgressDialog.setMessage(getString(R.string.creating_account));
             mProgressDialog.show();
             filePath = Uri.parse("file://" + cameraImageFilePath);
             sreference = FirebaseStorage.getInstance().getReference().child("Profile img/" + UUID.randomUUID().toString());

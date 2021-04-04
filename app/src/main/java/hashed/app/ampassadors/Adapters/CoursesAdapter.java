@@ -85,7 +85,6 @@ public class CoursesAdapter extends RecyclerView.Adapter<CoursesAdapter.CoursesV
       courseTutorNameTv.setText(itemView.getResources().getString(R.string.tutor_name) + " " +
               course.getTutorName());
 
-
       courseStartTimeTv.setText(itemView.getResources().getString(R.string.start_time) + " " +
               TimeFormatter.formatWithPattern(course.getStartTime(),
               TimeFormatter.MONTH_DAY_YEAR_HOUR_MINUTE));
@@ -127,8 +126,8 @@ public class CoursesAdapter extends RecyclerView.Adapter<CoursesAdapter.CoursesV
               public void onSuccess(Void aVoid) {
                 itemView.getContext().startActivity(
                         new Intent(itemView.getContext(), GroupMessagingActivity.class)
-                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("messagingUid",
-                                courseId));
+                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                .putExtra("messagingUid", courseId));
               }
             });
           });
