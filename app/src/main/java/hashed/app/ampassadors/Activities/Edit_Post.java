@@ -62,7 +62,7 @@ import hashed.app.ampassadors.Fragments.PostsFragment;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
 
-public class Edit_Post extends AppCompatActivity implements View.OnClickListener,  Toolbar.OnMenuItemClickListener {
+public class Edit_Post extends AppCompatActivity implements View.OnClickListener, Toolbar.OnMenuItemClickListener {
     CircleImageView userimage;
     EditText title;
     EditText desvEd;
@@ -83,6 +83,10 @@ public class Edit_Post extends AppCompatActivity implements View.OnClickListener
     private double documentSize;
     String postid;
     String videoThumbnailUrl;
+    String imageURK ;
+    String[] titlepost;
+    String[] text_desc;
+    String[] attachment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,27 +96,26 @@ public class Edit_Post extends AppCompatActivity implements View.OnClickListener
         setClickListeners();
         getUserInfo();
 
-        final String[] titlepost = new String[1];
-        final String[] text_desc = new String[1];
-        final String[] attachment = new String[1];
+        titlepost = new String[1];
+        text_desc = new String[1];
+        attachment = new String[1];
         Intent intent = getIntent();
         postid = intent.getStringExtra("postID");
         if (intent.hasExtra("postID")) {
-            firebaseFirestore.collection("Posts").document(postid)
-                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            firebaseFirestore.collection("Posts").document(postid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     if (documentSnapshot.exists()) {
                         titlepost[0] = documentSnapshot.getString("title");
                         text_desc[0] = documentSnapshot.getString("description");
                         attachment[0] = documentSnapshot.getString("attachmentUrl");
-
+                        imageURK = documentSnapshot.getString("attachmentUrl");
                     }
                 }
             }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()){
+                    if (task.isSuccessful()) {
 
                         title.setText(titlepost[0]);
                         desvEd.setText(text_desc[0]);
@@ -150,12 +153,12 @@ public class Edit_Post extends AppCompatActivity implements View.OnClickListener
         videoPlayIv = findViewById(R.id.videoPlayIv);
     }
 
-    private void UpdatePost(String txt_title, String txt_desc, String attachment, String videoThumbnailUrl, int attachmentType,ProgressDialog progressDialog) {
+    private void UpdatePost(String txt_title, String txt_desc, String attachment, String videoThumbnailUrl, int attachmentType, ProgressDialog progressDialog) {
         final DocumentReference df = FirebaseFirestore.getInstance().collection("Posts")
                 .document(postid);
         df.update("description", txt_desc,
                 "title", txt_title,
-                "attachmentUrl", attachment , "attachmentType",attachmentType).addOnSuccessListener(new OnSuccessListener<Void>() {
+                "attachmentUrl", attachment, "attachmentType", attachmentType).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 if (attachment != null && !attachment.isEmpty()) {
@@ -171,6 +174,17 @@ public class Edit_Post extends AppCompatActivity implements View.OnClickListener
                         }
                     });
                 } else {
+                    firebaseFirestore.collection("Posts").document(postid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            if (documentSnapshot.exists()) {
+                                imageURK = documentSnapshot.getString("attachmentUrl");
+                                titlepost[0] = documentSnapshot.getString("title");
+                                text_desc[0] = documentSnapshot.getString("description");
+                            }
+                        }
+
+                    });
                     progressDialog.dismiss();
                     edit.setClickable(true);
                     Intent intent = new Intent(Edit_Post.this, Profile.class);
@@ -182,9 +196,9 @@ public class Edit_Post extends AppCompatActivity implements View.OnClickListener
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(Edit_Post.this, R.string.Error_UpdateFail+"  "+e.getMessage()
+                Toast.makeText(Edit_Post.this, R.string.Error_UpdateFail + "  " + e.getMessage()
                         , Toast.LENGTH_SHORT).show();
-                Log.d("eee",e.getMessage());
+                Log.d("eee", e.getMessage());
                 progressDialog.dismiss();
                 edit.setClickable(true);
             }
@@ -485,7 +499,7 @@ public class Edit_Post extends AppCompatActivity implements View.OnClickListener
 
                         final String attachmentUrl = uri1.toString();
 
-                        UpdatePost(txt_title, txt_desc, attachmentUrl, null,attachmentType, progressDialog);
+                        UpdatePost(txt_title, txt_desc, attachmentUrl, null, attachmentType, progressDialog);
 
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -526,7 +540,7 @@ public class Edit_Post extends AppCompatActivity implements View.OnClickListener
 
                         final String attachmentUrl = uri1.toString();
 
-                        UpdatePost(title, description, attachmentUrl, null,attachmentType, progressDialog);
+                        UpdatePost(title, description, attachmentUrl, null, attachmentType, progressDialog);
 
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -586,7 +600,7 @@ public class Edit_Post extends AppCompatActivity implements View.OnClickListener
                                         Log.d("ttt", "videoThumbnailUrl: " + videoThumbnailUrl);
 
                                         UpdatePost(title, description, attachmentUrl,
-                                                videoThumbnailUrl,attachmentType, progressDialog);
+                                                videoThumbnailUrl, attachmentType, progressDialog);
 
                                     }).addOnFailureListener(new OnFailureListener() {
                                         @Override
@@ -673,16 +687,17 @@ public class Edit_Post extends AppCompatActivity implements View.OnClickListener
                                 result.addOnSuccessListener(new OnSuccessListener<Uri>() {
                                     @Override
                                     public void onSuccess(Uri uri) {
-                                        imageUrl = uri.toString();
-                                        UpdatePost(texttitle, textdesc,imageUrl ,null,attachmentType, progressDialog);
+                                        imageUrl = attachmentUri.toString();
+
+                                        UpdatePost(texttitle, textdesc, imageUrl, null, attachmentType, progressDialog);
                                     }
                                 });
                             }
                         });
 
             } else {
-                UpdatePost(texttitle, textdesc,imageUrl,null,attachmentType, progressDialog);;
-
+                UpdatePost(texttitle, textdesc, imageUrl, videoThumbnailUrl, attachmentType, progressDialog);
+                ;
             }
 
         }

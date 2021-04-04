@@ -11,6 +11,20 @@
         android:id="@+id/home_activity_toolbar"
         layout="@layout/home_toolbar"/>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:contentDescription="@string/add_group"
+        android:src="@drawable/feather_icon"
+        app:fabSize="normal"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="14dp"
+        android:visibility="gone"
+        app:maxImageSize="40dp"
+        app:tint="@color/white" />
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
@@ -55,20 +69,6 @@
 
 
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:contentDescription="@string/add_group"
-        android:src="@drawable/feather_icon"
-        app:fabSize="normal"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="14dp"
-        android:visibility="gone"
-        app:maxImageSize="40dp"
-        app:tint="@color/white" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </RelativeLayout>

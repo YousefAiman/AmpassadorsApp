@@ -330,12 +330,13 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
             Intent intent = new Intent(PostNewsActivity.this, Edit_Post.class);
             intent.putExtra("postID",postData.getPostId());
-            intent.putExtra("publisheName",postData.getPublisherName());
-            intent.putExtra("publisherimage",postData.getPublisherImage());
+//            intent.putExtra("publisheName",postData.getPublisherName());
+//            intent.putExtra("publisherimage",postData.getPublisherImage());
             intent.putExtra("userid",postData.getPublisherId());
             startActivity(intent);
             finish();
         } else if (item.getItemId() == R.id.delete) {
+            
             progressDialog.setMessage(getString(R.string.Dleteing));
             progressDialog.show();
             FirebaseFirestore.getInstance().collection("Posts")

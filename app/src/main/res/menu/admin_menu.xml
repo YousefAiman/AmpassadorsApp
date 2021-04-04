@@ -10,7 +10,7 @@
                 android:title="@string/Reporting"
                 android:icon="@drawable/ic_baseline_report"
                 />
-            <item android:id="@+id/delete"
+                <item android:id="@+id/delete"
                 android:title="@string/delete"
                 android:icon="@drawable/ic_baseline_delete_post"
                 />

@@ -73,8 +73,7 @@ public class  PostsFragment extends Fragment implements Toolbar.OnMenuItemClickL
   private LinearLayout dotsLinear;
   private Toolbar toolbar;
   private FloatingActionButton floatingButton;
-
-  //header Pager
+ //header Pager
   private Handler handler;
   private Runnable pagerRunnable;
   private HomeNewsHeaderViewPagerAdapter pagerAdapter;
@@ -145,7 +144,7 @@ public class  PostsFragment extends Fragment implements Toolbar.OnMenuItemClickL
             .setIcon(GlobalVariables.getNotificationsCount() > 0 ?
                     R.drawable.notification_indicator_icon :
                     R.drawable.notification_icon);
-
+    Log.d("tttt", GlobalVariables.getRole());
     if(!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
         if (GlobalVariables.getRole().equals("Admin") ||
               GlobalVariables.getRole().equals("Publisher")){
