@@ -681,7 +681,6 @@ public class Edit_Post extends AppCompatActivity implements View.OnClickListener
 
             } else {
                 UpdatePost(texttitle, textdesc,imageUrl,null,attachmentType, progressDialog);;
-
             }
 
         }
