@@ -65,7 +65,6 @@ public class profile_edit extends AppCompatActivity {
     FirebaseFirestore fStore;
     String userid;
     ImageView imageView;
-
     ProgressDialog mProgressDialog;
     String imageUrl;
     StorageReference sreference;

@@ -347,8 +347,7 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="important_post">Important post</string>
         <string name="Reporting">Reporting</string>
     <string name="Limit_Messgae">The max of Bio is 160 Character</string>
-    <string name="Reporting">Reporting</string>
-    <string name="Limit_Messgae">The max of Bio is 160 Charachter</string>
+
     <string name="Email_Verfiy_Message">You need to verify your email in order to Sign in!</string>
     <string name="Login_By_facebook">Logging in with facebook</string>
     <string name="Fail_Login">Fail log in operation</string>

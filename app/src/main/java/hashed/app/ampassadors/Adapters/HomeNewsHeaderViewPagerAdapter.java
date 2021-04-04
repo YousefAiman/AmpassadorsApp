@@ -57,8 +57,7 @@ public class HomeNewsHeaderViewPagerAdapter extends PagerAdapter implements View
 
         container.getContext().startActivity(
                 new Intent(container.getContext(), PostNewsActivity.class)
-                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("postId",
-                        postData.get(position).getPostId()));
+                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("postData",data));
 
       }
     });

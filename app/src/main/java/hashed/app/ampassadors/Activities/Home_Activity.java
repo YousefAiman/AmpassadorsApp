@@ -92,52 +92,52 @@ public class Home_Activity extends AppCompatActivity implements
       }
     }
 
-
-    DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("PrivateMessages");
-
-    FirebaseFirestore.getInstance().collection("PrivateMessages")
-            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-      @Override
-      public void onSuccess(QuerySnapshot snapshots) {
-
-        for(DocumentSnapshot snapshot:snapshots.getDocuments()){
-
-          final HashMap<String, String> usersLastSeenMap = new HashMap<>();
-          final List<String> users = (List<String>) snapshot.get("users");
-
-          ref.child(snapshot.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-              if(snapshot.exists()){
-                  for(String user:users){
-//                    if(snapshot.hasChild("LastSeenMessage:"+user)){
-//                      usersLastSeenMap.put(user,snapshot.child("LastSeenMessage:"+user)
-//                              .getValue(String.class));
 //
-//                      snapshot.child("LastSeenMessage:"+user).getRef().removeValue();
+//    DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("PrivateMessages");
 //
-//                    }else{
-                      usersLastSeenMap.put(user,"0");
+//    FirebaseFirestore.getInstance().collection("PrivateMessages")
+//            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//      @Override
+//      public void onSuccess(QuerySnapshot snapshots) {
+//
+//        for(DocumentSnapshot snapshot:snapshots.getDocuments()){
+//
+//          final HashMap<String, String> usersLastSeenMap = new HashMap<>();
+//          final List<String> users = (List<String>) snapshot.get("users");
+//
+//          ref.child(snapshot.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//
+//              if(snapshot.exists()){
+//                  for(String user:users){
+////                    if(snapshot.hasChild("LastSeenMessage:"+user)){
+////                      usersLastSeenMap.put(user,snapshot.child("LastSeenMessage:"+user)
+////                              .getValue(String.class));
+////
+////                      snapshot.child("LastSeenMessage:"+user).getRef().removeValue();
+////
+////                    }else{
+//                      usersLastSeenMap.put(user,"0");
+////                    }
+//
+//                    if(users.indexOf(user) == users.size()-1){
+//
+//                      //last user loop
+//
+//                      snapshot.getRef().child("UsersLastSeenMessages").setValue(usersLastSeenMap);
 //                    }
-
-                    if(users.indexOf(user) == users.size()-1){
-
-                      //last user loop
-
-                      snapshot.getRef().child("UsersLastSeenMessages").setValue(usersLastSeenMap);
-                    }
-                  }
-              }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-          });
-        }
-      }
-    });
+//                  }
+//              }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//            }
+//          });
+//        }
+//      }
+//    });
 
 
     OnClickButtons();

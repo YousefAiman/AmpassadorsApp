@@ -59,7 +59,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
     private ImageView newsIv, userIv, attachmentImage, playIv;
     private FrameLayout frameLayout;
     ProgressDialog progressDialog;
-
+    Toolbar toolbar;
     //data
     private PostData postData;
     private BroadcastReceiver downloadCompleteReceiver;
@@ -89,9 +89,10 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
     private void setupToolbar() {
 
-        final Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(v -> finish());
         toolbar.setOnMenuItemClickListener(this);
+
 
 
     }
@@ -128,6 +129,15 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
     private void getPostData() {
 
         postData = (PostData) getIntent().getSerializableExtra("postData");
+        if (postData.getPublisherId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
+            toolbar.inflateMenu(R.menu.post_menu);
+
+        }else if (GlobalVariables.getRole().equals("Admin")){
+            toolbar.inflateMenu(R.menu.admin_menu);
+        }else {
+            toolbar.inflateMenu(R.menu.users_post_menu);
+
+        }
 
         if (postData.getAttachmentType() == Files.IMAGE) {
             Picasso.get().load(postData.getAttachmentUrl()).fit().centerCrop().into(newsIv);

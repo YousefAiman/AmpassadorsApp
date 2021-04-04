@@ -98,7 +98,8 @@ public class Edit_Post extends AppCompatActivity implements View.OnClickListener
         Intent intent = getIntent();
         postid = intent.getStringExtra("postID");
         if (intent.hasExtra("postID")) {
-            firebaseFirestore.collection("Posts").document(postid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            firebaseFirestore.collection("Posts").document(postid)
+                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     if (documentSnapshot.exists()) {
@@ -111,14 +112,14 @@ public class Edit_Post extends AppCompatActivity implements View.OnClickListener
             }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()){
+                    if (task.isSuccessful()){
 
-                    title.setText(titlepost[0]);
-                    desvEd.setText(text_desc[0]);
-                    if (attachment[0] != null && !attachment[0].isEmpty()) {
-                        Picasso.get().load(attachment[0]).fit().into(attachmentIv);
+                        title.setText(titlepost[0]);
+                        desvEd.setText(text_desc[0]);
+                        if (attachment[0] != null && !attachment[0].isEmpty()) {
+                            Picasso.get().load(attachment[0]).fit().into(attachmentIv);
+                        }
                     }
-                }
                 }
             });
             edit.setOnClickListener(new View.OnClickListener() {
@@ -580,7 +581,7 @@ public class Edit_Post extends AppCompatActivity implements View.OnClickListener
                                     uploadTaskMap.remove(thumbnailUploadTask);
                                     thumbnailReference.getDownloadUrl().addOnSuccessListener(uri -> {
 
-                                       videoThumbnailUrl = uri.toString();
+                                        videoThumbnailUrl = uri.toString();
 
                                         Log.d("ttt", "videoThumbnailUrl: " + videoThumbnailUrl);
 
@@ -645,7 +646,7 @@ public class Edit_Post extends AppCompatActivity implements View.OnClickListener
 
         String texttitle = title.getText().toString();
         String textdesc = desvEd.getText().toString();
-//        Picasso.get().load(attachmentUri).fit().into(attachmentIv);
+        Picasso.get().load(attachmentUri).fit().into(attachmentIv);
 
         if (TextUtils.isEmpty(texttitle)
                 || TextUtils.isEmpty(texttitle) || TextUtils.isEmpty(textdesc)) {

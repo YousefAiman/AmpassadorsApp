@@ -88,7 +88,9 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     getUserInfo();
 
     setClickListeners();
-
+    if (getIntent().hasExtra("justForUser")) {
+      checkBox.setVisibility(View.GONE);
+    }
   }
 
   private void setupToolbar() {
@@ -578,10 +580,10 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         if (videoThumbnailBitmap != null) {
-          attachmentIv.setScaleType(ImageView.ScaleType.CENTER_CROP);
           attachmentIv.post(new Runnable() {
             @Override
             public void run() {
+              attachmentIv.setScaleType(ImageView.ScaleType.CENTER_CROP);
               attachmentIv.setImageBitmap(videoThumbnailBitmap);
             }
           });
