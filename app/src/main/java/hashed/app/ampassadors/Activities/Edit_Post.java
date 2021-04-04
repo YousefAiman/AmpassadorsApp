@@ -62,7 +62,7 @@ import hashed.app.ampassadors.Fragments.PostsFragment;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
 
-public class Edit_Post extends AppCompatActivity implements View.OnClickListener, Toolbar.OnMenuItemClickListener {
+public class Edit_Post extends AppCompatActivity implements View.OnClickListener,  Toolbar.OnMenuItemClickListener {
     CircleImageView userimage;
     EditText title;
     EditText desvEd;
@@ -660,7 +660,7 @@ public class Edit_Post extends AppCompatActivity implements View.OnClickListener
 
         String texttitle = title.getText().toString();
         String textdesc = desvEd.getText().toString();
-        Picasso.get().load(attachmentUri).fit().into(attachmentIv);
+//        Picasso.get().load(attachmentUri).fit().into(attachmentIv);
 
         if (TextUtils.isEmpty(texttitle)
                 || TextUtils.isEmpty(texttitle) || TextUtils.isEmpty(textdesc)) {
@@ -687,16 +687,15 @@ public class Edit_Post extends AppCompatActivity implements View.OnClickListener
                                 result.addOnSuccessListener(new OnSuccessListener<Uri>() {
                                     @Override
                                     public void onSuccess(Uri uri) {
-                                        imageUrl = attachmentUri.toString();
-
-                                        UpdatePost(texttitle, textdesc, imageUrl, null, attachmentType, progressDialog);
+                                        imageUrl = uri.toString();
+                                        UpdatePost(texttitle, textdesc,imageUrl ,null,attachmentType, progressDialog);
                                     }
                                 });
                             }
                         });
 
             } else {
-                UpdatePost(texttitle, textdesc, imageUrl, videoThumbnailUrl, attachmentType, progressDialog);
+                UpdatePost(texttitle, textdesc,imageUrl,null,attachmentType, progressDialog);;
                 ;
             }
 

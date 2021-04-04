@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -75,8 +76,8 @@ public class AdminAdapter extends RecyclerView.Adapter<AdminAdapter.AdminHolder>
     }
 
     private void bind(UserApprovment userApprovment){
-      email.setText("Email: "+userApprovment.getEmail());
-      password.setText("Name: "+userApprovment.getUsername());
+      email.setText(userApprovment.getEmail());
+      password.setText(userApprovment.getUsername());
       delete_account.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -104,6 +105,7 @@ public class AdminAdapter extends RecyclerView.Adapter<AdminAdapter.AdminHolder>
                     public void onSuccess(Void aVoid) {
 //                      data.remove(userApprovment);
 //                      notifyItemRemoved(getAdapterPosition());
+                      Toast.makeText(context, "Validity Confirmation Is deleted", Toast.LENGTH_SHORT).show();
                     }
                   });
         }

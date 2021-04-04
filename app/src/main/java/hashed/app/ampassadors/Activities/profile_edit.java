@@ -369,7 +369,6 @@ public class profile_edit extends AppCompatActivity {
                                     progressDialog.dismiss();
                                     save.setClickable(true);
                                     Intent intent = new Intent(profile_edit.this, Profile.class);
-                                    startActivity(intent);
                                     finish();
                                 }
                             });
@@ -377,7 +376,6 @@ public class profile_edit extends AppCompatActivity {
                             progressDialog.dismiss();
                             save.setClickable(true);
                             Intent intent = new Intent(profile_edit.this, Profile.class);
-                            startActivity(intent);
                             finish();
                         }
                     }
