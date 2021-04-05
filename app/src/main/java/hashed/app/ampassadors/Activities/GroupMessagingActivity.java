@@ -124,9 +124,9 @@ public class GroupMessagingActivity extends AppCompatActivity
   private final DateFormat secondMinuteFormat =
           new SimpleDateFormat("mm:ss", Locale.getDefault());
   private DatabaseReference currentMessagingRef;
-  private String firstKeyRef;
-  private String lastKeyRef;
+  private String firstKeyRef,lastKeyRef;
   private DocumentReference firebaseMessageDocRef;
+
   //event listeners
   private Map<DatabaseReference, ChildEventListener> childEventListeners;
   private Map<DatabaseReference, ValueEventListener> valueEventListeners;
@@ -139,10 +139,7 @@ public class GroupMessagingActivity extends AppCompatActivity
 
   //views
   private RecyclerView privateMessagingRv;
-  private ImageView messageSendIv;
-  private ImageView messageAttachIv;
-  private ImageView micIv;
-  private ImageView cancelIv;
+  private ImageView messageSendIv,messageAttachIv,micIv,cancelIv;
   private EditText messagingEd;
   private ProgressBar messagesProgressBar;
   private FrameLayout pickerFrameLayout;
@@ -204,6 +201,7 @@ public class GroupMessagingActivity extends AppCompatActivity
   private void setUpToolBarAndActions() {
 
     final Toolbar toolbar = findViewById(R.id.privateMessagingTb);
+//    if(currentUid.equals())
     toolbar.inflateMenu(R.menu.group_messaging_toolbar_menu);
     toolbar.setNavigationOnClickListener(v -> onBackPressed());
     toolbar.setOnMenuItemClickListener(this);
