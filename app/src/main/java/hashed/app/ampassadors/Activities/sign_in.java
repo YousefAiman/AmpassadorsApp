@@ -28,6 +28,7 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -385,8 +386,14 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
         if(requestCode == GOOGLE_REQUEST){
 //            if(resultCode ==RESULT_OK){
                 Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-                task.addOnSuccessListener(googleSignInAccount -> {
-                    try {
+
+
+
+            task.addOnSuccessListener(googleSignInAccount -> {
+
+
+
+                try {
                         final GoogleSignInAccount account = task.getResult(ApiException.class);
                         firebaseAuthWithGoogle(account);
                     } catch (ApiException e) {
@@ -419,7 +426,16 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                 .requestEmail()
                 .build();
 
-        Intent googleIntent = GoogleSignIn.getClient(this, gso).getSignInIntent();
+        final GoogleSignInClient client = GoogleSignIn.getClient(this, gso);
+
+//        if (client.asGoogleApiClient() != null && client.asGoogleApiClient().isConnected()) {
+//            client.asGoogleApiClient().clearDefaultAccountAndReconnect();
+//        }
+
+
+        Intent googleIntent = client.getSignInIntent();
+
+
         startActivityForResult(googleIntent, GOOGLE_REQUEST);
 
     }
@@ -474,6 +490,11 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                                             .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                                     finish();
                                 }else{
+
+                                    addUserToFirestore(account.getDisplayName(),account.getEmail()
+                                            , auth.getCurrentUser().getUid(),
+                                            account.getPhotoUrl().toString());
+
                                     Log.d("ttt","task isn't succesffuly or " +
                                             "snapshot doesn't eixits");
                                 }
