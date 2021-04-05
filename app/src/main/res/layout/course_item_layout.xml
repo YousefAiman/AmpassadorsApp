@@ -36,7 +36,6 @@
         android:layout_marginTop="20dp"
         android:textColor="@color/black_transparent"
         android:textSize="14sp"
-        android:text="@string/tutor_name"
         android:singleLine="true"
         android:ellipsize="marquee" />
 
@@ -48,7 +47,6 @@
         android:layout_marginTop="15dp"
         android:textColor="@color/black_transparent"
         android:textSize="14sp"
-        android:text="@string/start_time"
         android:singleLine="true"
         android:ellipsize="marquee" />
 
@@ -61,7 +59,6 @@
         android:layout_marginTop="15dp"
         android:textColor="@color/black_transparent"
         android:textSize="14sp"
-        android:text="@string/course_duration"
         android:singleLine="true"
         android:ellipsize="marquee" />
 

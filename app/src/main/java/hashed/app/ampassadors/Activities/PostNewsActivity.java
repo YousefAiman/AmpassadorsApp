@@ -74,7 +74,6 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_news);
 
-
         setupToolbar();
 
         getViews();
@@ -89,13 +88,9 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
 
     private void setupToolbar() {
-
         toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(v -> finish());
         toolbar.setOnMenuItemClickListener(this);
-
-
-
     }
 
 
@@ -228,7 +223,6 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-
     private void getUserInfo() {
 
 
@@ -288,8 +282,8 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
     private String getFileName() {
         if (fileName == null) {
-            fileName =
-                    FirebaseStorage.getInstance().getReferenceFromUrl(postData.getAttachmentUrl()).getName();
+            fileName = FirebaseStorage.getInstance().getReferenceFromUrl(
+                            postData.getAttachmentUrl()).getName();
         }
         return fileName;
     }
@@ -329,11 +323,12 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
         if (item.getItemId() == R.id.edit) {
 
-            Intent intent = new Intent(PostNewsActivity.this, Edit_Post.class);
-            intent.putExtra("postID",postData.getPostId());
-//            intent.putExtra("publisheName",postData.getPublisherName());
+            Intent intent = new Intent(PostNewsActivity.this, PostNewActivity.class);
+//            intent.putExtra("postID",postData.getPostId());
+            intent.putExtra("postData",postData);
+            intent.putExtra("isForEditing",true);
 //            intent.putExtra("publisherimage",postData.getPublisherImage());
-            intent.putExtra("userid",postData.getPublisherId());
+//            intent.putExtra("userid",postData.getPublisherId());
             startActivity(intent);
             finish();
         } else if (item.getItemId() == R.id.delete) {

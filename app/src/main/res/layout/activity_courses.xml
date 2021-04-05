@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/dark_green"
     android:layout_height="match_parent"
+    android:background="@color/dark_green"
     tools:context=".Activities.CoursesActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -18,12 +17,13 @@
         android:textAlignment="center"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:layout_constraintTop_toTopOf="parent"
+        app:menu="@menu/courses_menu"
         app:navigationContentDescription="navigate back"
         app:navigationIcon="@drawable/back_arrow_icon"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:title="@string/Courses"
         app:titleTextAppearance="@style/ToolbarTitleAppearance"
-        app:titleTextColor="@color/white"/>
+        app:titleTextColor="@color/white" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
@@ -35,11 +35,11 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/coursesRv"
             android:layout_width="match_parent"
-            android:paddingTop="20dp"
-            android:paddingBottom="15dp"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:visibility="invisible"/>
+            android:paddingTop="20dp"
+            android:paddingBottom="15dp"
+            android:visibility="invisible" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
@@ -49,9 +49,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:fontFamily="@font/segoe_ui"
+        android:text="@string/no_current_courses"
         android:textColor="@color/white"
         android:textSize="24sp"
-        android:text="@string/no_current_courses"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -63,14 +63,14 @@
         android:id="@+id/addCourseBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:contentDescription="@string/add_group"
-        android:src="@drawable/add_course_icon"
-        app:fabSize="normal"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="14dp"
+        android:contentDescription="@string/add_group"
+        android:src="@drawable/add_course_icon"
         android:visibility="gone"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:maxImageSize="40dp"
         app:tint="@color/white" />
 

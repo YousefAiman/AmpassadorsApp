@@ -17,8 +17,8 @@ public class Course implements Serializable {
   private String creatorId;
   @PropertyName("title")
   private String title;
-  @PropertyName("tutorName")
-  private String tutorName;
+  @PropertyName("tutorNames")
+  private List<String> tutorNames;
   @PropertyName("tutorId")
   private String tutorId;
   @PropertyName("startTime")
@@ -41,7 +41,7 @@ public class Course implements Serializable {
     this.courseId = (String) postMap.get("courseId");
     this.creatorId = (String) postMap.get("creatorId");
     this.title = (String) postMap.get("title");
-    this.tutorName = (String) postMap.get("tutorName");
+    this.tutorNames = (List<String>) postMap.get("tutorNames");
     this.startTime = (long) postMap.get("startTime");
     this.createdTime = (long) postMap.get("createdTime");
     this.duration = (int) postMap.get("duration");
@@ -89,14 +89,6 @@ public class Course implements Serializable {
     this.hasEnded = hasEnded;
   }
 
-  public String getTutorName() {
-    return tutorName;
-  }
-
-  public void setTutorName(String tutorName) {
-    this.tutorName = tutorName;
-  }
-
   public String getCourseId() {
     return courseId;
   }
@@ -127,5 +119,13 @@ public class Course implements Serializable {
 
   public void setHasStarted(boolean hasStarted) {
     this.hasStarted = hasStarted;
+  }
+
+  public List<String> getTutorNames() {
+    return tutorNames;
+  }
+
+  public void setTutorNames(List<String> tutorNames) {
+    this.tutorNames = tutorNames;
   }
 }

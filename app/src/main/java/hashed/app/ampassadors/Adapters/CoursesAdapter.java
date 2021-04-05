@@ -82,16 +82,39 @@ public class CoursesAdapter extends RecyclerView.Adapter<CoursesAdapter.CoursesV
     private void bindItem(Course course) {
 
       courseNameTv.setText(course.getTitle());
-      courseTutorNameTv.setText(itemView.getResources().getString(R.string.tutor_name) + " " +
-              course.getTutorName());
+
+      if(course.getTutorNames().size() > 1){
+        String tutorNames = itemView.getResources().getString(R.string.course_tutors)+" ";
+
+        for(String name:course.getTutorNames()){
+          String concat = "";
+          if(course.getTutorNames().indexOf(name) != course.getTutorNames().size()-1){
+            concat = name+", ";
+          }else{
+            concat = name;
+          }
+          tutorNames = tutorNames.concat(concat);
+        }
+
+        courseTutorNameTv.setText(tutorNames);
+      }else{
+        courseTutorNameTv.setText(itemView.getResources().getString(R.string.tutor_name)+" "+
+                course.getTutorNames().get(0));
+      }
+
+//      courseTutorNameTv.setText(itemView.getResources().getString(R.string.tutor_name) + " " +
+//              course.getTutorName());
 
       courseStartTimeTv.setText(itemView.getResources().getString(R.string.start_time) + " " +
               TimeFormatter.formatWithPattern(course.getStartTime(),
               TimeFormatter.MONTH_DAY_YEAR_HOUR_MINUTE));
 
+//      courseDurationTv.setText(itemView.getResources().getString(R.string.course_duration) + " " +
+//              String.format(Locale.getDefault(),"%d:%d", course.getDuration() / 60
+//                      , course.getDuration() % 60));
+
       courseDurationTv.setText(itemView.getResources().getString(R.string.course_duration) + " " +
-              String.format(Locale.getDefault(),"%d:%d", course.getDuration() / 60
-                      , course.getDuration() % 60));
+      course.getDuration()+" "+itemView.getResources().getString(R.string.hours));
 
       itemView.setOnClickListener(this);
     }

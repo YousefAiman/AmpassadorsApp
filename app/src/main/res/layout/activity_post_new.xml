@@ -171,6 +171,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="36dp"
+                android:visibility="gone"
                 android:text="@string/important_post"
                 app:layout_constraintBottom_toBottomOf="@+id/titleEd"
                 app:layout_constraintEnd_toEndOf="@+id/edit_btn"

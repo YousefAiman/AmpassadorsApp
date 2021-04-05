@@ -364,5 +364,7 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="add_an_attachment_warning">You need to add an attachment to your post!</string>
     <string name="no_new_notifications">No new notifications</string>
     <string name="creating_account">Creating account!</string>
+    <string name="edit_post">Edit Post</string>
+    <string name="course_tutors">Course tutors:</string>
 
 </resources>

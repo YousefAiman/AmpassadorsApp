@@ -59,10 +59,15 @@ import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import hashed.app.ampassadors.Fragments.PostsFragment;
+import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
+import hashed.app.ampassadors.Utils.GlobalVariables;
+import hashed.app.ampassadors.Utils.TimeFormatter;
 
-public class Edit_Post extends AppCompatActivity implements View.OnClickListener,  Toolbar.OnMenuItemClickListener {
+public class Edit_Post extends AppCompatActivity implements View.OnClickListener,
+        Toolbar.OnMenuItemClickListener {
+
     CircleImageView userimage;
     EditText title;
     EditText desvEd;
@@ -87,6 +92,8 @@ public class Edit_Post extends AppCompatActivity implements View.OnClickListener
     String[] titlepost;
     String[] text_desc;
     String[] attachment;
+
+    private PostData postData;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,9 +107,45 @@ public class Edit_Post extends AppCompatActivity implements View.OnClickListener
         text_desc = new String[1];
         attachment = new String[1];
         Intent intent = getIntent();
+
+        postData = (PostData) intent.getSerializableExtra("postData");
+
+        title.setText(postData.getTitle());
+        desvEd.setText(postData.getDescription());
+
+//        if (postData.getAttachmentType() == Files.IMAGE) {
+//            Picasso.get().load(postData.getAttachmentUrl()).fit().centerCrop().into(newsIv);
+//        } else if (postData.getAttachmentType() == Files.VIDEO) {
+//            Picasso.get().load(postData.getVideoThumbnailUrl()).fit().centerInside().into(newsIv);
+//        }
+
+//        titleTv.setText(postData.getTitle());
+//        descriptionTv.setText(postData.getDescription());
+//        newsTitleTv.setText(postData.getDocumentName());
+//        likesTv.setText(String.valueOf(postData.getLikes()));
+//        commentsTv.setText(String.valueOf(postData.getComments()));
+//        dateTv.setText(TimeFormatter.formatWithPattern(postData.getPublishTime(),
+//                TimeFormatter.MONTH_DAY_YEAR_HOUR_MINUTE));
+//
+//        likeTv.setTextColor(getResources().getColor(
+//                GlobalVariables.getLikesList().contains(postData.getPostId()) ? R.color.red :
+//                        R.color.black));
+//
+//        getNewsType();
+
+
+
+
+
+        if (postData != null && !attachment[0].isEmpty()) {
+            Picasso.get().load(attachment[0]).fit().into(attachmentIv);
+        }
+
+
         postid = intent.getStringExtra("postID");
         if (intent.hasExtra("postID")) {
-            firebaseFirestore.collection("Posts").document(postid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            firebaseFirestore.collection("Posts").document(postid).get()
+                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     if (documentSnapshot.exists()) {

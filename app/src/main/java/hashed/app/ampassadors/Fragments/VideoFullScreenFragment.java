@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -32,7 +33,7 @@ import hashed.app.ampassadors.Utils.FileDownloadUtil;
 import hashed.app.ampassadors.Utils.VideoCache;
 import hashed.app.ampassadors.Utils.VideoDataSourceFactory;
 
-public class VideoFullScreenFragment extends Fragment {
+public class VideoFullScreenFragment extends DialogFragment {
 
 //  private static final boolean AUTO_HIDE = true;
 //

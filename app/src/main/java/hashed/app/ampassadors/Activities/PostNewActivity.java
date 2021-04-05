@@ -8,13 +8,16 @@ import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +41,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -52,9 +56,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import hashed.app.ampassadors.Fragments.VideoFullScreenFragment;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.FileDownloadUtil;
 import hashed.app.ampassadors.Utils.Files;
+import hashed.app.ampassadors.Utils.TimeFormatter;
 
 
 public class PostNewActivity extends AppCompatActivity implements View.OnClickListener {
@@ -73,8 +80,12 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
   private int attachmentType = Files.TEXT;
   private String documentName;
   private double documentSize;
-  CheckBox checkBox ;
-  boolean  important  = false;
+  private CheckBox checkBox ;
+  boolean important  = false;
+
+  //editing
+  private PostData postData;
+  private boolean isForEditing;
 
 
   @Override
@@ -82,21 +93,33 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_post_new);
 
+    isForEditing = getIntent().hasExtra("isForEditing");
+
     setupToolbar();
 
     getViews();
 
-    getUserInfo();
+    if(isForEditing){
+      fillPostData();
+    }else{
+      getUserInfo(currentUid);
+    }
 
     setClickListeners();
     if (getIntent().hasExtra("justForUser")) {
       checkBox.setVisibility(View.GONE);
+    }else{
+      checkBox.setVisibility(View.VISIBLE);
     }
+
   }
 
   private void setupToolbar() {
     final Toolbar toolbar = findViewById(R.id.toolbar);
     toolbar.setNavigationOnClickListener(v -> onBackPressed());
+    if(isForEditing){
+      toolbar.setTitle(getResources().getString(R.string.edit_post));
+    }
   }
 
 
@@ -116,9 +139,14 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     playerView = findViewById(R.id.playerView);
     attachmentTv = findViewById(R.id.attachmentTv);
     checkBox = findViewById(R.id.checkbox);
+
+    if(isForEditing){
+      publishBtn.setText(getResources().getString(R.string.edit));
+    }
   }
 
   private void setClickListeners() {
+
 
     publishBtn.setOnClickListener(this);
     pdfIv.setOnClickListener(this);
@@ -127,11 +155,76 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
 
   }
 
-  private void getUserInfo() {
+  private void fillPostData(){
 
+    postData = (PostData) getIntent().getSerializableExtra("postData");
+
+    getUserInfo(postData.getPublisherId());
+
+    attachmentType = postData.getAttachmentType();
+    checkBox.setChecked(postData.isImportant());
+
+//    if (postData.getAttachmentType() == Files.IMAGE) {
+//      Picasso.get().load(postData.getAttachmentUrl()).fit().centerCrop().into(attachmentIv);
+//    } else if (postData.getAttachmentType() == Files.VIDEO) {
+//      Picasso.get().load(postData.getVideoThumbnailUrl()).fit().centerInside().into(attachmentIv);
+//    } else if (postData.getAttachmentType() == Files.VIDEO) {
+//      Picasso.get().load(postData.getVideoThumbnailUrl()).fit().centerInside().into(attachmentIv);
+//    }
+
+    titleEd.setText(postData.getTitle());
+
+    descriptionEd.setText(postData.getDescription());
+
+    switch (postData.getAttachmentType()) {
+
+      case Files.IMAGE:
+        Picasso.get().load(postData.getAttachmentUrl()).fit().centerCrop().into(attachmentIv);
+        break;
+
+      case Files.VIDEO:
+
+        Picasso.get().load(postData.getVideoThumbnailUrl()).fit().centerInside().into(attachmentIv);
+
+        videoPlayIv.setVisibility(View.VISIBLE);
+
+        attachmentIv.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+            attachmentIv.setOnClickListener(null);
+            attachmentIv.setImageBitmap(null);
+            attachmentIv.setVisibility(View.GONE);
+            videoPlayIv.setVisibility(View.GONE);
+            playerView.setVisibility(View.VISIBLE);
+            playerView.setPlayer(SetupPlayer(postData.getAttachmentUrl()));
+          }
+        });
+
+        break;
+
+      case Files.DOCUMENT:
+
+        attachmentTv.setVisibility(View.VISIBLE);
+        attachmentIv.setImageResource(R.drawable.document_icon);
+        attachmentIv.setScaleType(ImageView.ScaleType.CENTER);
+
+//        FirebaseStorage.getInstance().getReferenceFromUrl(postData.getAttachmentUrl())
+//                .getFile()
+        documentName = postData.getDocumentName();
+//        documentSize = (double) fileMap.get("fileSize");
+        attachmentTv.setText(documentName);
+
+        break;
+
+    }
+
+
+  }
+
+  private void getUserInfo(String id) {
 
     FirebaseFirestore.getInstance().collection("Users")
-            .document(currentUid).get().addOnSuccessListener(snapshot -> {
+            .document(id).get().addOnSuccessListener(snapshot -> {
       if (snapshot.exists()) {
 
         final String imageUrl = snapshot.getString("imageUrl");
@@ -147,63 +240,15 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
 
   }
 
-
   @Override
   public void onClick(View view) {
 
     if (view.getId() == publishBtn.getId()) {
 
-      final String title = titleEd.getText().toString().trim();
-      final String description = descriptionEd.getText().toString().trim();
-
-      if (title.isEmpty()) {
-        Toast.makeText(this, R.string.Message_Fill_title
-                , Toast.LENGTH_SHORT).show();
-        return;
-      }
-
-      if (description.isEmpty()) {
-        Toast.makeText(this, R.string.Message_Fill_descr
-                , Toast.LENGTH_SHORT).show();
-        return;
-      }
-
-
-      if (attachmentUri == null && !getIntent().hasExtra("justForUser")) {
-        Toast.makeText(this, R.string.add_an_attachment_warning
-                , Toast.LENGTH_SHORT).show();
-        return;
-      }
-
-      publishBtn.setClickable(false);
-
-      if (simpleExoPlayer != null && simpleExoPlayer.getPlayWhenReady()) {
-        simpleExoPlayer.setPlayWhenReady(false);
-      }
-
-      final ProgressDialog progressDialog = new ProgressDialog(this);
-      progressDialog.setMessage(getString(R.string.Publish));
-      progressDialog.setCancelable(false);
-      progressDialog.show();
-
-      uploadTaskMap = new HashMap<>();
-
-      switch (attachmentType) {
-        case Files.IMAGE:
-          uploadImage(title, description, progressDialog);
-          break;
-
-        case Files.VIDEO:
-          uploadVideo(title, description, progressDialog);
-          break;
-
-        case Files.DOCUMENT:
-          uploadDocument(title, description, progressDialog);
-          break;
-
-        case Files.TEXT:
-          publishPost(title,description,null,null,progressDialog);
-          break;
+      if(isForEditing){
+        updatePost();
+      }else{
+        startPostPublishing();
       }
 
 
@@ -222,6 +267,192 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     }
   }
 
+  private void updatePost(){
+
+    final String title = titleEd.getText().toString().trim();
+    final String description = descriptionEd.getText().toString().trim();
+
+
+    final ProgressDialog progressDialog = new ProgressDialog(this);
+    progressDialog.setMessage("Editing post");
+    progressDialog.setCancelable(false);
+    progressDialog.show();
+
+
+    if(attachmentUri!=null){
+
+      uploadTaskMap = new HashMap<>();
+
+      switch (attachmentType) {
+        case Files.IMAGE:
+
+          uploadImage(title, description, progressDialog);
+
+          break;
+
+        case Files.VIDEO:
+
+          uploadVideo(title, description, progressDialog);
+
+          break;
+
+        case Files.DOCUMENT:
+
+          uploadDocument(title, description, progressDialog);
+
+          break;
+
+        case Files.TEXT:
+          publishPostUpdate(title, description,null,null,progressDialog);
+          break;
+      }
+
+    }else{
+      publishPostUpdate(title, description,null,null,progressDialog);
+    }
+
+  }
+
+  private void publishPostUpdate(String title, String description, String attachmentUrl,
+                                 String videoThumbnailUrl, ProgressDialog progressDialog){
+
+    Map<String, Object> updateMap = new HashMap<>();
+
+    if(!title.equals(postData.getTitle())){
+      updateMap.put("title",title);
+    }
+
+    if(!description.equals(postData.getDescription())){
+      updateMap.put("description",description);
+    }
+
+    if(attachmentType != postData.getAttachmentType()){
+      updateMap.put("attachmentType",attachmentType);
+    }
+
+    if(attachmentUri!=null && attachmentType == Files.DOCUMENT){
+      updateMap.put("documentName",documentName);
+      updateMap.put("documentSize",documentSize);
+    }
+
+    if(checkBox.isChecked() != postData.isImportant()){
+      updateMap.put("important",checkBox.isChecked());
+    }
+
+    if(attachmentUrl!=null){
+      updateMap.put("attachmentUrl",attachmentUrl);
+    }
+
+    if(videoThumbnailUrl!=null){
+      updateMap.put("videoThumbnailUrl",videoThumbnailUrl);
+    }
+
+    final DocumentReference documentReference =
+            FirebaseFirestore.getInstance().collection("Posts")
+                    .document(postData.getPostId());
+
+
+    if(postData.getAttachmentUrl()!=null){
+
+      FirebaseStorage storage = FirebaseStorage.getInstance();
+      storage.getReferenceFromUrl(postData.getAttachmentUrl()).delete();
+
+      if(postData.getAttachmentType() == Files.VIDEO){
+
+        documentReference.update("videoThumbnailUrl", FieldValue.delete());
+
+        storage.getReferenceFromUrl(postData.getVideoThumbnailUrl()).delete();
+
+      }else if(postData.getAttachmentType() == Files.DOCUMENT){
+
+        documentReference.update("documentName", FieldValue.delete(),
+                "documentSize",FieldValue.delete());
+
+      }
+    }
+
+
+    documentReference.update(updateMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+      @Override
+      public void onSuccess(Void aVoid) {
+        Toast.makeText(PostNewActivity.this, "Successfully updated post",
+                Toast.LENGTH_SHORT).show();
+        progressDialog.dismiss();
+
+        finish();
+
+      }
+    }).addOnFailureListener(new OnFailureListener() {
+      @Override
+      public void onFailure(@NonNull Exception e) {
+
+        Toast.makeText(PostNewActivity.this, "Updating this post failed",
+                Toast.LENGTH_SHORT).show();
+        progressDialog.dismiss();
+      }
+    });
+
+  }
+
+  private void startPostPublishing(){
+    final String title = titleEd.getText().toString().trim();
+    final String description = descriptionEd.getText().toString().trim();
+
+    if (title.isEmpty()) {
+      Toast.makeText(this, R.string.Message_Fill_title
+              , Toast.LENGTH_SHORT).show();
+      return;
+    }
+
+    if (description.isEmpty()) {
+      Toast.makeText(this, R.string.Message_Fill_descr
+              , Toast.LENGTH_SHORT).show();
+      return;
+    }
+
+
+    if (attachmentUri == null && !getIntent().hasExtra("justForUser")) {
+      Toast.makeText(this, R.string.add_an_attachment_warning
+              , Toast.LENGTH_SHORT).show();
+      return;
+    }
+
+    publishBtn.setClickable(false);
+
+    if (simpleExoPlayer != null && simpleExoPlayer.getPlayWhenReady()) {
+      simpleExoPlayer.setPlayWhenReady(false);
+    }
+
+    final ProgressDialog progressDialog = new ProgressDialog(this);
+    progressDialog.setMessage(getString(R.string.Publish));
+    progressDialog.setCancelable(false);
+    progressDialog.show();
+
+    uploadTaskMap = new HashMap<>();
+
+
+
+    switch (attachmentType) {
+        case Files.IMAGE:
+          uploadImage(title, description, progressDialog);
+          break;
+
+        case Files.VIDEO:
+          uploadVideo(title, description, progressDialog);
+          break;
+
+        case Files.DOCUMENT:
+          uploadDocument(title, description, progressDialog);
+          break;
+
+        case Files.TEXT:
+          publishPost(title,description,null,null,progressDialog);
+          break;
+      }
+
+
+
+  }
 
   private void publishPost(String title, String description, String attachmentUrl,
                            String videoThumbnailUrl, ProgressDialog progressDialog) {
@@ -331,8 +562,11 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
 
                 final String attachmentUrl = uri1.toString();
 
-                publishPost(title, description, attachmentUrl, null, progressDialog);
-
+                if(isForEditing){
+                  publishPostUpdate(title,description,attachmentUrl,null,progressDialog);
+                }else{
+                  publishPost(title, description, attachmentUrl, null, progressDialog);
+                }
               }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
@@ -373,7 +607,11 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
 
                 final String attachmentUrl = uri1.toString();
 
-                publishPost(title, description, attachmentUrl, null, progressDialog);
+                if(isForEditing){
+                  publishPostUpdate(title,description,attachmentUrl,null,progressDialog);
+                }else{
+                  publishPost(title, description, attachmentUrl, null, progressDialog);
+                }
 
               }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -432,8 +670,15 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
 
                             Log.d("ttt", "videoThumbnailUrl: " + videoThumbnailUrl);
 
-                            publishPost(title, description, attachmentUrl,
-                                    videoThumbnailUrl, progressDialog);
+                            if(isForEditing){
+                              publishPostUpdate(title,description,attachmentUrl,
+                                      videoThumbnailUrl,progressDialog);
+                            }else{
+                              publishPost(title, description, attachmentUrl,
+                                      videoThumbnailUrl, progressDialog);
+                            }
+
+
 
                           }).addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -512,13 +757,25 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
       switch (requestCode) {
 
         case Files.PICK_IMAGE:
+
           attachmentType = Files.IMAGE;
+
+          videoPlayIv.setVisibility(View.GONE);
+          attachmentIv.setOnClickListener(null);
+
+          attachmentTv.setVisibility(View.GONE);
+          attachmentTv.setText("");
+
           Picasso.get().load(attachmentUri).fit().centerCrop().into(attachmentIv);
           break;
 
         case Files.PICK_VIDEO:
           attachmentType = Files.VIDEO;
           getVideoThumbnail();
+
+          attachmentTv.setVisibility(View.GONE);
+          attachmentTv.setText("");
+
           videoPlayIv.setVisibility(View.VISIBLE);
 
           attachmentIv.setOnClickListener(new View.OnClickListener() {
@@ -529,13 +786,17 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
               attachmentIv.setVisibility(View.GONE);
               videoPlayIv.setVisibility(View.GONE);
               playerView.setVisibility(View.VISIBLE);
-              playerView.setPlayer(SetupPlayer());
+              playerView.setPlayer(SetupPlayer(null));
             }
           });
 
           break;
 
         case Files.PICK_FILE:
+
+
+          videoPlayIv.setVisibility(View.GONE);
+          attachmentIv.setOnClickListener(null);
 
           attachmentType = Files.DOCUMENT;
           attachmentTv.setVisibility(View.VISIBLE);
@@ -594,32 +855,38 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
   }
 
 
-  private SimpleExoPlayer SetupPlayer() {
+  private SimpleExoPlayer SetupPlayer(String url) {
 
-    simpleExoPlayer = new SimpleExoPlayer.Builder(this,
-            new DefaultRenderersFactory(this)).build();
+    if(url!=null){
+      new VideoFullScreenFragment(url).show(getSupportFragmentManager(),"video");
+    }else{
+      simpleExoPlayer = new SimpleExoPlayer.Builder(this,
+              new DefaultRenderersFactory(this)).build();
 
-    DataSpec dataSpec = new DataSpec(attachmentUri);
-    final FileDataSource fileDataSource = new FileDataSource();
-    try {
-      fileDataSource.open(dataSpec);
-    } catch (FileDataSource.FileDataSourceException e) {
-      e.printStackTrace();
+      DataSpec dataSpec = new DataSpec(attachmentUri);
+      final FileDataSource fileDataSource = new FileDataSource();
+      try {
+        fileDataSource.open(dataSpec);
+      } catch (FileDataSource.FileDataSourceException e) {
+        e.printStackTrace();
+      }
+
+
+      DataSource.Factory dataSourceFactory =
+              new DefaultDataSourceFactory(this, Util.getUserAgent(this,
+                      "simpleExoPlayer"));
+
+      MediaSource firstSource = new ProgressiveMediaSource.Factory(dataSourceFactory)
+              .createMediaSource(fileDataSource.getUri());
+
+      simpleExoPlayer.prepare(firstSource, true, true);
+
+      simpleExoPlayer.setPlayWhenReady(true);
+      return simpleExoPlayer;
     }
 
+return null;
 
-    DataSource.Factory dataSourceFactory =
-            new DefaultDataSourceFactory(this, Util.getUserAgent(this,
-                    "simpleExoPlayer"));
-
-    MediaSource firstSource = new ProgressiveMediaSource.Factory(dataSourceFactory)
-            .createMediaSource(fileDataSource.getUri());
-
-    simpleExoPlayer.prepare(firstSource, true, true);
-
-    simpleExoPlayer.setPlayWhenReady(true);
-
-    return simpleExoPlayer;
   }
 
   @Override

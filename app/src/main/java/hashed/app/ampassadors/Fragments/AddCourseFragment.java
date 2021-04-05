@@ -4,13 +4,16 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,6 +32,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -50,9 +54,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
@@ -80,7 +86,8 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
   public static final int TUTOR_REQUEST = 1;
   //views
   private EditText courseNameEd,courseDurationEd;
-  private TextView courseDateSetterTv,courseTimeSetterTv,courseTutorNameEd;
+  private TextView courseDateSetterTv,courseTimeSetterTv,addTutorTv;
+  private LinearLayout courseTutorNamesLinear;
   private ImageView settingsIv1,settingsIv2;
   private Button coursePublishBtn;
 //  private RecyclerView tutorPickerRv;
@@ -126,7 +133,6 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
     }
 
     courseNameEd = view.findViewById(R.id.courseNameEd);
-    courseTutorNameEd = view.findViewById(R.id.courseTutorNameEd);
 //    tutorPickerRv = view.findViewById(R.id.tutorPickerRv);
     courseDateSetterTv = view.findViewById(R.id.courseDateSetterTv);
     courseTimeSetterTv = view.findViewById(R.id.courseTimeSetterTv);
@@ -134,6 +140,8 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
     settingsIv1 = view.findViewById(R.id.settingsIv1);
     settingsIv2 = view.findViewById(R.id.settingsIv2);
     coursePublishBtn = view.findViewById(R.id.coursePublishBtn);
+    courseTutorNamesLinear = view.findViewById(R.id.courseTutorNamesLinear);
+    addTutorTv = view.findViewById(R.id.addTutorTv);
 
     return view;
   }
@@ -168,8 +176,8 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
     coursePublishBtn.setOnClickListener(this);
     settingsIv1.setOnClickListener(this);
     settingsIv2.setOnClickListener(this);
-
-    courseDurationEd.setFilters(new InputFilter[]{new NumberMaxAndMinFilter("1","200")});
+    addTutorTv.setOnClickListener(this);
+    courseDurationEd.setFilters(new InputFilter[]{new NumberMaxAndMinFilter("1", "200")});
 
   }
 
@@ -178,17 +186,28 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
 
     if(view.getId() == coursePublishBtn.getId()){
 
-      if(pickedTutorId == null){
+
+      List<String> tutorNames = new ArrayList<>();
+      for(int i=0;i<courseTutorNamesLinear.getChildCount() - 1;i++){
+        Log.d("ttt","id for ed: "+courseTutorNamesLinear.getChildAt(i).getId());
+        String tutorName = ((EditText)courseTutorNamesLinear.getChildAt(i)).getText().toString().trim();
+        if(!tutorName.isEmpty()){
+          tutorNames.add(tutorName);
+        }
+      }
+
+
+      if(tutorNames.size() == 0){
         Toast.makeText(requireContext(),
-                "Please pick a tutor for this course!", Toast.LENGTH_SHORT).show();
+                "Please Enter at least one tutor for this course!", Toast.LENGTH_SHORT).show();
         return;
       }
 
-      final String name = courseNameEd.getText().toString().trim();
-      final String tutor = courseTutorNameEd.getText().toString().trim();
-      final int duration = Integer.parseInt(courseDurationEd.getText().toString());
 
-      if (!name.isEmpty() && !tutor.isEmpty() && duration > 0) {
+      final String courseName = courseNameEd.getText().toString().trim();
+      final String duration = courseDurationEd.getText().toString().trim();
+
+      if (!courseName.isEmpty() &&  !duration.isEmpty()) {
 
         if((!timeWasSelected || !dateWasSelected)){
           Toast.makeText(requireContext(), "Please select the course's start time!",
@@ -196,7 +215,7 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
           return;
         }
 
-        requestCourseCreation(name,tutor,duration);
+        requestCourseCreation(courseName,tutorNames,Integer.parseInt(duration));
 
       } else {
 
@@ -221,6 +240,8 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
 
       getMeetingTime();
 
+    } else if (view.getId() == addTutorTv.getId()) {
+      addNewTutorEd();
     }
 //    else if(view.getId() == courseTutorNameTv.getId()){
 ////      if(usersAdapter == null){
@@ -240,10 +261,32 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
 
   }
 
+  private void addNewTutorEd(){
 
-  private class NumberMaxAndMinFilter implements InputFilter {
+    if(courseTutorNamesLinear.getChildCount() + 1 == 4){
+      addTutorTv.setVisibility(View.GONE);
+      addTutorTv.setOnClickListener(null);
+    }
 
-    private int min, max;
+    EditText tutorEd = (EditText)
+            LayoutInflater.from(requireContext()).inflate(R.layout.course_tutor_ed_item_layout,
+                    null);
+
+    tutorEd.setHint("tutor "+(courseTutorNamesLinear.getChildCount()));
+
+    final int marginTop = (int) (10*getResources().getDisplayMetrics().density);
+
+    courseTutorNamesLinear.addView(tutorEd,courseTutorNamesLinear.getChildCount()-1);
+
+    LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)tutorEd.getLayoutParams();
+    params.setMargins(0, marginTop, 0, 0);
+    tutorEd.setLayoutParams(params);
+    tutorEd.requestLayout();
+  }
+
+  private static class NumberMaxAndMinFilter implements InputFilter {
+
+    private final int min,max;
 
     public NumberMaxAndMinFilter(int min, int max) {
       this.min = min;
@@ -376,7 +419,7 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
 
   }
 
-  private void requestCourseCreation(String title, String tutor,int duration) {
+  private void requestCourseCreation(String title, List<String> tutorNames,int duration) {
 
     final ProgressDialog courseDialog = new ProgressDialog(getContext());
     courseDialog.setTitle("Creating course!");
@@ -390,7 +433,7 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
     courseMap.put("courseId", courseId);
     courseMap.put("creatorId", currentUid);
     courseMap.put("title", title);
-    courseMap.put("tutorName", tutor);
+    courseMap.put("tutorNames", tutorNames);
     courseMap.put("tutorId", pickedTutorId);
     courseMap.put("startTime", scheduleTime);
     courseMap.put("createdTime", System.currentTimeMillis());
@@ -481,40 +524,39 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
 //
 //  }
 
-  @Override
-  public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-
-    Log.d("ttt",requestCode+ " :requestCode");
-//    Log.d("ttt",resultCode+ " :resultCode");
-//    if(data!=null){
-//      Log.d("ttt",data.toString());
-//    }else{
-//      Log.d("ttt","data is null");
+//  @Override
+//  public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//    super.onActivityResult(requestCode, resultCode, data);
+//
+//    Log.d("ttt",requestCode+ " :requestCode");
+////    Log.d("ttt",resultCode+ " :resultCode");
+////    if(data!=null){
+////      Log.d("ttt",data.toString());
+////    }else{
+////      Log.d("ttt","data is null");
+////    }
+//
+//    if(requestCode == TUTOR_REQUEST && data!=null && data.hasExtra("userId")){
+//
+//      pickedTutorId = data.getStringExtra("userId");
+//      FirebaseFirestore.getInstance().collection("Users")
+//              .document(pickedTutorId).get()
+//              .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//      @Override
+//      public void onSuccess(DocumentSnapshot snapshot) {
+//       if(snapshot.exists()){
+//         courseTutorNameEd.setText(snapshot.getString("username"));
+//       }
+//      }
+//    });
+//
 //    }
-
-    if(requestCode == TUTOR_REQUEST && data!=null && data.hasExtra("userId")){
-
-      pickedTutorId = data.getStringExtra("userId");
-      FirebaseFirestore.getInstance().collection("Users")
-              .document(pickedTutorId).get()
-              .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-      @Override
-      public void onSuccess(DocumentSnapshot snapshot) {
-       if(snapshot.exists()){
-         courseTutorNameEd.setText(snapshot.getString("username"));
-       }
-      }
-    });
-
-    }
-
-  }
+//
+//  }
 
   public void backPressing(){
 
     if(!courseNameEd.getText().toString().trim().isEmpty()
-            || !courseTutorNameEd.getText().toString().trim().isEmpty()
             || !courseDurationEd.getText().toString().trim().isEmpty()
             || timeWasSelected || dateWasSelected){
 

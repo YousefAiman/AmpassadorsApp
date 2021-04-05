@@ -294,9 +294,7 @@ public class Home_Activity extends AppCompatActivity implements
 
   public void replaceFragment(Fragment fragment) {
 
-    getSupportFragmentManager().beginTransaction().replace(
-            homeFrameLayout.getId(), fragment
-    ).commit();
+    getSupportFragmentManager().beginTransaction().replace(R.id.homeFrameLayout, fragment).commit();
 
   }
   @Override
