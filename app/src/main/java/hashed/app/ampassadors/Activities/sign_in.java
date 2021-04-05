@@ -439,14 +439,15 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                                 account.getPhotoUrl().toString());
                     } else {
 
+                        Log.d("ttt","not a new user");
                         FirebaseFirestore.getInstance().collection("Users")
-                                .document(authResult.getUser().getUid())
+                                .document(auth.getCurrentUser().getUid())
                                 .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                             @Override
                             public void onSuccess(DocumentSnapshot snapshot) {
 
                                 if(snapshot.exists()){
-
+                                    Log.d("ttt","nsnapshot.exists()");
                                     FirebaseMessaging.getInstance().getToken().addOnSuccessListener(s -> {
                                         snapshot.getReference().update("token", s);
                                     });
@@ -455,18 +456,27 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
 
                                     FirebaseMessagingService.
                                             startMessagingService(sign_in.this);
-
-                                    googleProgressDialog.dismiss();
-
-                                    startActivity(new Intent(getApplicationContext(),
-                                            Home_Activity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                                    finish();
-
                                 }else{
-
-                                    googleProgressDialog.dismiss();
+                                    Log.d("ttt","nsnapshot doesn't exists()");
                                 }
 
+                            }
+                        }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                googleProgressDialog.dismiss();
+                                if(task.isSuccessful() && task.getResult().exists()){
+
+                                    Log.d("ttt","task.getResult().exists()");
+
+                                    startActivity(new Intent(getApplicationContext(),
+                                            Home_Activity.class)
+                                            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                    finish();
+                                }else{
+                                    Log.d("ttt","task isn't succesffuly or " +
+                                            "snapshot doesn't eixits");
+                                }
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override

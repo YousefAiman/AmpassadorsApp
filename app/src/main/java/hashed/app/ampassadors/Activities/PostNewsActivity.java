@@ -125,15 +125,19 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
     private void getPostData() {
 
         postData = (PostData) getIntent().getSerializableExtra("postData");
-        if (postData.getPublisherId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
-            toolbar.inflateMenu(R.menu.post_menu);
 
-        }else if (GlobalVariables.getRole().equals("Admin")){
-            toolbar.inflateMenu(R.menu.admin_menu);
-        }else {
-            toolbar.inflateMenu(R.menu.users_post_menu);
+        if(!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
+            if (postData.getPublisherId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                toolbar.inflateMenu(R.menu.post_menu);
 
+            }else if (GlobalVariables.getRole().equals("Admin")){
+                toolbar.inflateMenu(R.menu.admin_menu);
+            }else {
+                toolbar.inflateMenu(R.menu.users_post_menu);
+
+            }
         }
+
 
         if (postData.getAttachmentType() == Files.IMAGE) {
             Picasso.get().load(postData.getAttachmentUrl()).fit().centerCrop().into(newsIv);
