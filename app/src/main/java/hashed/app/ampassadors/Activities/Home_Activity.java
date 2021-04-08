@@ -20,6 +20,10 @@ import androidx.fragment.app.Fragment;
 
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
@@ -363,8 +367,31 @@ public class Home_Activity extends AppCompatActivity implements
           LoginManager.getInstance().logOut();
         }
 
-
         auth.signOut();
+
+        GoogleSignIn.getClient(
+                this,
+                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()).signOut();
+
+
+//        if(auth.getCurrentUser().getProviderId()){
+//
+//          GoogleSignInOptions gso = new GoogleSignInOptions
+//                  .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//                  .requestIdToken(getString(R.string.web_client_id))
+//                  .requestEmail()
+//                  .build();
+//          final GoogleSignInClient client = GoogleSignIn.getClient(this, gso);
+//
+//          client.revokeAccess();
+//        if (client.asGoogleApiClient() != null && client.asGoogleApiClient().isConnected()) {
+//            client.asGoogleApiClient().clearDefaultAccountAndReconnect();
+//        }
+//
+//
+//        }
+
+
 
                     getPackageManager().setComponentEnabledSetting(
                             new ComponentName(Home_Activity.this, FirebaseMessagingService.class),
