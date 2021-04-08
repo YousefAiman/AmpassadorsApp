@@ -18,11 +18,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -41,6 +43,7 @@ import java.util.List;
 import hashed.app.ampassadors.Adapters.PostAdapter;
 import hashed.app.ampassadors.BroadcastReceivers.NotificationIndicatorReceiver;
 import hashed.app.ampassadors.BuildConfig;
+import hashed.app.ampassadors.Fragments.ImageFullScreenFragment;
 import hashed.app.ampassadors.Fragments.PostsProfileFragment;
 import hashed.app.ampassadors.Fragments.ProfileFragment;
 import hashed.app.ampassadors.Objects.PostData;
@@ -70,8 +73,11 @@ FirebaseFirestore fStore;
     Toolbar toolbar;
         TextView bio;
     String bio_txt;
+    CollectionReference collectionReference;
+    private FrameLayout frameLayout;
     private NotificationIndicatorReceiver notificationIndicatorReceiver;
-
+    Intent userimage;
+    String id;
     public ProfileActiv() {
         // Required empty public constructor
     }
@@ -89,8 +95,34 @@ FirebaseFirestore fStore;
         bio = findViewById(R.id.textView15);
         imageView = findViewById(R.id.profile_picture);
         swipeRefresh = findViewById(R.id.swipeRefreshLayout);
+        frameLayout = findViewById(R.id.frameLayout);
+        collectionReference = FirebaseFirestore.getInstance().collection("Users");
         swipeRefresh.setOnRefreshListener(this);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                collectionReference.document(id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        String image = documentSnapshot.get("imageUrl").toString();
+//                        Toolbar toolbar1 = view.findViewById(R.id.fullScreenToolbar);
+
+                        toolbar.setVisibility(View.GONE);
+                        frameLayout.setVisibility(View.VISIBLE);
+                        getSupportFragmentManager().beginTransaction().replace(frameLayout.getId(),
+                                new ImageFullScreenFragment(image), "FullScreen")
+                                .commit();
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(ProfileActiv.this, "Empty image", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
         Intent id = getIntent();
         if (id.hasExtra("userId")) {
 
@@ -217,7 +249,7 @@ FirebaseFirestore fStore;
         if (userimage.hasExtra("username") && userimage.hasExtra("ImageUrl")) {
             String userimg = userimage.getStringExtra("ImageUrl");
             String usernam = userimage.getStringExtra("username");
-            String id  = userimage.getStringExtra("userId");
+             id  = userimage.getStringExtra("userId");
 
             fStore.collection("Users").document(id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override

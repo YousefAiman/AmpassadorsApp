@@ -90,7 +90,7 @@ public class ImageFullScreenFragment extends DialogFragment {
     }
   };
 
-  public ImageFullScreenFragment(String imageUrl) {
+    public ImageFullScreenFragment(String imageUrl) {
     this.imageUrl = imageUrl;
   }
 

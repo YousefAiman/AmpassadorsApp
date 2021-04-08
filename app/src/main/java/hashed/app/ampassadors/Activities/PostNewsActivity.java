@@ -1,44 +1,30 @@
 package hashed.app.ampassadors.Activities;
 
-import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Configuration;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
-
-import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
-
 import hashed.app.ampassadors.Fragments.CommentsFragment;
 import hashed.app.ampassadors.Fragments.ImageFullScreenFragment;
 import hashed.app.ampassadors.Fragments.VideoFullScreenFragment;
@@ -51,7 +37,7 @@ import hashed.app.ampassadors.Utils.SigninUtil;
 import hashed.app.ampassadors.Utils.TimeFormatter;
 
 public class PostNewsActivity extends AppCompatActivity implements View.OnClickListener,
-            Toolbar.OnMenuItemClickListener {
+        Toolbar.OnMenuItemClickListener {
 
     //views
     private CardView cardView;
@@ -126,13 +112,13 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
         postData = (PostData) getIntent().getSerializableExtra("postData");
 
-        if(!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
-            if (postData.getPublisherId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+        if (!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
+            if (postData.getPublisherId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                 toolbar.inflateMenu(R.menu.post_menu);
 
-            }else if (GlobalVariables.getRole().equals("Admin")){
+            } else if (GlobalVariables.getRole().equals("Admin")) {
                 toolbar.inflateMenu(R.menu.admin_menu);
-            }else {
+            } else {
                 toolbar.inflateMenu(R.menu.users_post_menu);
 
             }
@@ -191,8 +177,6 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
                 lp2.gravity = Gravity.TOP;
                 final float density = getResources().getDisplayMetrics().density;
                 lp2.setMargins((int) (4 * density), (int) (4 * density), 0, 0);
-
-
                 newsIv.setScaleType(ImageView.ScaleType.CENTER);
                 newsIv.setImageResource(R.drawable.pdf_icon);
 
@@ -215,21 +199,15 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
                     }
                 });
-
                 cardView.addView(attachmentImage);
-
                 break;
 
             case Files.TEXT:
                 cardView.setVisibility(View.GONE);
                 break;
         }
-
     }
-
     private void getUserInfo() {
-
-
         FirebaseFirestore.getInstance().collection("Users")
                 .document(postData.getPublisherId()).get().addOnSuccessListener(snapshot -> {
             if (snapshot.exists()) {
@@ -242,8 +220,6 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
                 usernameTv.setText(snapshot.getString("username"));
             }
         });
-
-
     }
 
     @Override
@@ -291,7 +267,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
     private String getFileName() {
         if (fileName == null) {
             fileName = FirebaseStorage.getInstance().getReferenceFromUrl(
-                            postData.getAttachmentUrl()).getName();
+                    postData.getAttachmentUrl()).getName();
         }
         return fileName;
     }
@@ -330,32 +306,66 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
     public boolean onMenuItemClick(MenuItem item) {
 
         if (item.getItemId() == R.id.edit) {
-
             Intent intent = new Intent(PostNewsActivity.this, PostNewActivity.class);
+            intent.putExtra("postData", postData);
+            intent.putExtra("isForEditing", true);
 //            intent.putExtra("postID",postData.getPostId());
-            intent.putExtra("postData",postData);
-            intent.putExtra("isForEditing",true);
-//            intent.putExtra("publisherimage",postData.getPublisherImage());
-//            intent.putExtra("userid",postData.getPublisherId());
-            startActivity(intent);
-            finish();
+            String id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                FirebaseFirestore.getInstance().collection("Users").
+                        document(postData.getPublisherId()).collection("UserPosts")
+                        .document(postData.getPostId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                       if (documentSnapshot.exists()){
+                           intent.putExtra("justForUser", "justForUser");
+
+                       }
+                        startActivity(intent);
+                        finish();
+                    }
+                });
         } else if (item.getItemId() == R.id.delete) {
-            
             progressDialog.setMessage(getString(R.string.Dleteing));
             progressDialog.show();
-            FirebaseFirestore.getInstance().collection("Posts")
-                    .document(postData.getPostId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                progressDialog.dismiss();
-                    Toast.makeText(PostNewsActivity.this, R.string.Delete_success, Toast.LENGTH_SHORT).show();
-                }
-            });
+                FirebaseFirestore.getInstance().collection("Users").
+                        document(postData.getPublisherId()).collection("UserPosts")
+                        .document(postData.getPostId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()){
+                            documentSnapshot.getReference().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    progressDialog.dismiss();
+                                    finish();
+                                    Toast.makeText(PostNewsActivity.this, R.string.Delete_success, Toast.LENGTH_SHORT).show();
+                                }
+                            });
 
-        } else if (item.getItemId() == R.id.Reporting) {
+                        }else {
+                            FirebaseFirestore.getInstance().collection("Posts")
+                                    .document(postData.getPostId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(PostNewsActivity.this, R.string.Delete_success, Toast.LENGTH_SHORT).show();
+                                    finish();
+                                }
+                            });
+                        }
+
+                    }
+                });
+
+
+
+
+
+    } else if (item.getItemId() == R.id.Reporting) {
 
             FirebaseFirestore.getInstance().collection("Posts").
-                    document(postData.getPostId()).update("isReported",true).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    document(postData.getPostId()).update("isReported", true).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
                     Toast.makeText(PostNewsActivity.this, R.string.Repored, Toast.LENGTH_SHORT).show();
@@ -375,7 +385,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
                     getSupportFragmentManager().getFragments().get(0)).commit();
             frameLayout.setVisibility(View.GONE);
 
-        }else {
+        } else {
             super.onBackPressed();
         }
 

@@ -79,8 +79,8 @@ public class List_Sug_Activity extends AppCompatActivity implements Toolbar.OnMe
     updatedQuery.get().addOnSuccessListener(queryDocumentSnapshots -> {
       if (!queryDocumentSnapshots.isEmpty()) {
 
-        lastDocSnap = queryDocumentSnapshots.getDocuments().get(
-                queryDocumentSnapshots.size() - 1
+          lastDocSnap = queryDocumentSnapshots.getDocuments().get(
+                  queryDocumentSnapshots.size() - 1
         );
 
         if(isInitial){

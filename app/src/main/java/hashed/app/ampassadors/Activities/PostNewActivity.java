@@ -58,6 +58,7 @@ import java.util.UUID;
 
 import hashed.app.ampassadors.Fragments.VideoFullScreenFragment;
 import hashed.app.ampassadors.Objects.PostData;
+import hashed.app.ampassadors.Objects.UserPostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.FileDownloadUtil;
 import hashed.app.ampassadors.Utils.Files;
@@ -82,8 +83,9 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
   private String documentName;
   private double documentSize;
   private CheckBox checkBox;
-  boolean important = false;
+  private boolean important = false;
 
+  private UserPostData userPostData;
   //editing
   private PostData postData;
   private boolean isForEditing;
@@ -275,7 +277,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
 
 
     final ProgressDialog progressDialog = new ProgressDialog(this);
-    progressDialog.setMessage("Editing post");
+    progressDialog.setMessage(getString(R.string.EditingMessage));
     progressDialog.setCancelable(false);
     progressDialog.show();
 
@@ -304,93 +306,106 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
           break;
 
         case Files.TEXT:
-          publishPostUpdate(title, description, null, null, progressDialog);
+          publishPostUpdate(title, description,null,null,progressDialog);
           break;
       }
 
-    } else {
-      publishPostUpdate(title, description, null, null, progressDialog);
+    }else{
+      publishPostUpdate(title, description,null,null,progressDialog);
     }
 
   }
 
   private void publishPostUpdate(String title, String description, String attachmentUrl,
-                                 String videoThumbnailUrl, ProgressDialog progressDialog) {
+                                 String videoThumbnailUrl, ProgressDialog progressDialog){
 
     Map<String, Object> updateMap = new HashMap<>();
 
-    if (!title.equals(postData.getTitle())) {
-      updateMap.put("title", title);
+    if(!title.equals(postData.getTitle())){
+      updateMap.put("title",title);
     }
 
-    if (!description.equals(postData.getDescription())) {
-      updateMap.put("description", description);
+    if(!description.equals(postData.getDescription())){
+      updateMap.put("description",description);
     }
 
-    if (attachmentType != postData.getAttachmentType()) {
-      updateMap.put("attachmentType", attachmentType);
+    if(attachmentType != postData.getAttachmentType()){
+      updateMap.put("attachmentType",attachmentType);
     }
 
-    if (attachmentUri != null && attachmentType == Files.DOCUMENT) {
-      updateMap.put("documentName", documentName);
-      updateMap.put("documentSize", documentSize);
+    if(attachmentUri!=null && attachmentType == Files.DOCUMENT){
+      updateMap.put("documentName",documentName);
+      updateMap.put("documentSize",documentSize);
     }
 
-    if (checkBox.isChecked() != postData.isImportant()) {
-      updateMap.put("important", checkBox.isChecked());
+    if(checkBox.isChecked() != postData.isImportant()){
+      updateMap.put("important",checkBox.isChecked());
     }
 
-    if (attachmentUrl != null) {
-      updateMap.put("attachmentUrl", attachmentUrl);
+    if(attachmentUrl!=null){
+      updateMap.put("attachmentUrl",attachmentUrl);
     }
 
-    if (videoThumbnailUrl != null) {
-      updateMap.put("videoThumbnailUrl", videoThumbnailUrl);
+    if(videoThumbnailUrl!=null){
+      updateMap.put("videoThumbnailUrl",videoThumbnailUrl);
     }
 
-    final DocumentReference documentReference =
-            FirebaseFirestore.getInstance().collection("Posts")
-                    .document(postData.getPostId());
+     DocumentReference documentReference ;
+    if (getIntent().hasExtra("justForUser")) {
 
+      documentReference = FirebaseFirestore.getInstance().collection("Users")
+              .document(postData.getPublisherId())
+              .collection("UserPosts")
+              .document(postData.getPostId());
+    }else {
 
-    if (postData.getAttachmentUrl() != null) {
+        documentReference =
+              FirebaseFirestore.getInstance().collection("Posts")
+                      .document(postData.getPostId());
 
-      FirebaseStorage storage = FirebaseStorage.getInstance();
-      storage.getReferenceFromUrl(postData.getAttachmentUrl()).delete();
-
-      if (postData.getAttachmentType() == Files.VIDEO) {
-
-        documentReference.update("videoThumbnailUrl", FieldValue.delete());
-
-        storage.getReferenceFromUrl(postData.getVideoThumbnailUrl()).delete();
-
-      } else if (postData.getAttachmentType() == Files.DOCUMENT) {
-
-        documentReference.update("documentName", FieldValue.delete(),
-                "documentSize", FieldValue.delete());
-
-      }
     }
+      if(postData.getAttachmentUrl()!=null){
 
-    documentReference.update(updateMap).addOnSuccessListener(new OnSuccessListener<Void>() {
-      @Override
-      public void onSuccess(Void aVoid) {
-        Toast.makeText(PostNewActivity.this, "Successfully updated post",
-                Toast.LENGTH_SHORT).show();
-        progressDialog.dismiss();
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        storage.getReferenceFromUrl(postData.getAttachmentUrl()).delete();
 
-        finish();
+        if(postData.getAttachmentType() == Files.VIDEO){
 
-      }
-    }).addOnFailureListener(new OnFailureListener() {
-      @Override
-      public void onFailure(@NonNull Exception e) {
+          documentReference.update("videoThumbnailUrl", FieldValue.delete());
 
-        Toast.makeText(PostNewActivity.this, "Updating this post failed",
-                Toast.LENGTH_SHORT).show();
-        progressDialog.dismiss();
-      }
-    });
+          storage.getReferenceFromUrl(postData.getVideoThumbnailUrl()).delete();
+
+        }else if(postData.getAttachmentType() == Files.DOCUMENT){
+
+          documentReference.update("documentName", FieldValue.delete(),
+                  "documentSize",FieldValue.delete());
+
+        }
+
+
+
+      documentReference.update(updateMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+        @Override
+        public void onSuccess(Void aVoid) {
+          Toast.makeText(PostNewActivity.this, "Successfully updated post",
+                  Toast.LENGTH_SHORT).show();
+          progressDialog.dismiss();
+
+          finish();
+
+        }
+      }).addOnFailureListener(new OnFailureListener() {
+        @Override
+        public void onFailure(@NonNull Exception e) {
+
+          Toast.makeText(PostNewActivity.this, R.string.Error_UpdateFail,
+                  Toast.LENGTH_SHORT).show();
+          progressDialog.dismiss();
+          Log.d("qqq",e.getMessage());
+        }
+      });
+
+    }
 
   }
 
@@ -444,10 +459,11 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
         uploadDocument(title, description, progressDialog);
         break;
 
-      case Files.TEXT:
-        publishPost(title, description, null, null, progressDialog);
-        break;
-    }
+        case Files.TEXT:
+          publishPost(title,description,null,null,progressDialog);
+          break;
+      }
+
 
 
   }
@@ -515,6 +531,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
           progressDialog.dismiss();
         }
       });
+
 
 
     } else {
@@ -676,6 +693,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
                             }
 
 
+
                           }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
@@ -810,6 +828,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
       }
     }
   }
+
 
 
   private void getVideoThumbnail() {

@@ -12,6 +12,8 @@ import androidx.core.view.GravityCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -21,15 +23,18 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -75,16 +80,17 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
     TextView username;
     FirebaseAuth fAuth;
     FirebaseFirestore fStore;
-    String userid ;
+    String userid;
     ImageView imageView;
     boolean status;
     FloatingActionButton floatingButton;
     Toolbar toolbar;
     TextView biotext;
-
+    private FrameLayout frameLayout;
     private NotificationIndicatorReceiver notificationIndicatorReceiver;
     private TextView roleTv;
     private ListenerRegistration listenerRegistration;
+    CollectionReference collectionReference = FirebaseFirestore.getInstance().collection("Users");
 
     public PostsProfileFragment() {
         // Required empty public constructor
@@ -95,15 +101,44 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_posts_profile, container,
                 false);
-
+        frameLayout = view.findViewById(R.id.frameLayout);
         floatingButton = view.findViewById(R.id.floatingbtn);
         username = view.findViewById(R.id.textView6);
         imageView = view.findViewById(R.id.profile_picture);
         swipeRefresh = view.findViewById(R.id.swipeRefreshLayout);
         swipeRefresh.setOnRefreshListener(this);
         biotext = view.findViewById(R.id.bio_profile);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-        if(FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
+                collectionReference.document(userid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        String image = documentSnapshot.get("imageUrl").toString();
+//                        Toolbar toolbar1 = view.findViewById(R.id.fullScreenToolbar);
+                        floatingButton.setVisibility(View.GONE);
+                        toolbar.setVisibility(View.GONE);
+                        frameLayout.setVisibility(View.VISIBLE);
+                        getFragmentManager().beginTransaction().replace(frameLayout.getId(),
+                                new ImageFullScreenFragment(image), "FullScreen")
+                                .commit();
+//                        toolbar1.setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                replaceFragment(new PostsProfileFragment());
+//                            }
+//                        });
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getContext(), "Empty image", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+        if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
 //            roleTv.setText(getResources().getString(R.string.guest));
 //        }else if(GlobalVariables.getRole()!=null){
 //            roleTv.setText(GlobalVariables.getRole());
@@ -117,7 +152,7 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
             public void onClick(View view) {
 
                 Intent dsfs = new Intent(requireContext(), PostNewActivity.class);
-                dsfs.putExtra("justForUser",true);
+                dsfs.putExtra("justForUser", true);
                 startActivity(dsfs);
 
             }
@@ -164,11 +199,11 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
     @Override
     public boolean onMenuItemClick(MenuItem item) {
 
-        if(item.getItemId() == R.id.action_online){
+        if (item.getItemId() == R.id.action_online) {
 
             DocumentReference reference = fStore.collection("Users").document(userid);
 
-            if (status){
+            if (status) {
                 reference.update("status", false).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -176,7 +211,7 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
                         toolbar.getMenu().findItem(R.id.action_online).setTitle("online");
                     }
                 });
-            }else{
+            } else {
                 reference.update("status", true).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -185,20 +220,21 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
                     }
                 });
             }
-        }else if(item.getItemId() == R.id.action_online){
-            ((Home_Activity)requireActivity()).replaceFragment(new ProfileFragment());
+        } else if (item.getItemId() == R.id.action_online) {
+            ((Home_Activity) requireActivity()).replaceFragment(new ProfileFragment());
 
-        }else if(item.getItemId() == R.id.action_about){
+        } else if (item.getItemId() == R.id.action_about) {
 
             Intent mapIntent = new Intent(getActivity(), Profile.class);
             startActivity(mapIntent);
-        }else  if (item.getItemId() == R.id.action_notifications) {
+        } else if (item.getItemId() == R.id.action_notifications) {
             startActivity(new Intent(getContext(), NotificationsActivity.class)
                     .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         }
 
         return false;
     }
+
     @Override
     public void onRefresh() {
 
@@ -216,7 +252,7 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
                     !recyclerView.canScrollVertically(1) &&
                     newState == RecyclerView.SCROLL_STATE_IDLE) {
 
-                Log.d("ttt","is at bottom man");
+                Log.d("ttt", "is at bottom man");
 
                 ReadPost(false);
 
@@ -236,7 +272,7 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 if (!queryDocumentSnapshots.isEmpty()) {
                     lastDocSnap = queryDocumentSnapshots.getDocuments().get(
-                            queryDocumentSnapshots.size()-1
+                            queryDocumentSnapshots.size() - 1
                     );
                     postData.addAll(queryDocumentSnapshots.toObjects(PostData.class));
                 }
@@ -244,10 +280,10 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(isInitial){
+                if (isInitial) {
                     adapter.notifyDataSetChanged();
-                }else{
-                    adapter.notifyItemRangeInserted((postData.size()-task.getResult().size())-1,
+                } else {
+                    adapter.notifyItemRangeInserted((postData.size() - task.getResult().size()) - 1,
                             task.getResult().size());
                 }
                 swipeRefresh.setRefreshing(false);
@@ -284,7 +320,7 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         if (notificationIndicatorReceiver != null) {
             requireContext().unregisterReceiver(notificationIndicatorReceiver);
         }
-        if(listenerRegistration!=null){
+        if (listenerRegistration != null) {
             listenerRegistration.remove();
         }
     }
@@ -302,7 +338,7 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         toolbar.setOnMenuItemClickListener(this);
     }
 
-    private void getUserNaImg(){
+    private void getUserNaImg() {
         fAuth = FirebaseAuth.getInstance();
         userid = fAuth.getCurrentUser().getUid();
         fStore = FirebaseFirestore.getInstance();
@@ -312,15 +348,16 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
                     @Override
                     public void onEvent(@Nullable DocumentSnapshot value,
                                         @Nullable FirebaseFirestoreException error) {
-                        Log.d("ttt","value change");
+                        Log.d("ttt", "value change");
 
-                            username.setText(value.getString("username"));
-                            biotext.setText(value.getString("Bio"));
-                         Picasso.get().load(value.getString("imageUrl")).fit().into(imageView);
+                        username.setText(value.getString("username"));
+                        biotext.setText(value.getString("Bio"));
+                        Picasso.get().load(value.getString("imageUrl")).fit().into(imageView);
                     }
                 });
     }
-    private void drawer(){
+
+    private void drawer() {
         final DrawerLayout drawerLayout_b = getView().findViewById(R.id.drawer_layout);
         getView().findViewById(R.id.profile_toolbara).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -330,5 +367,7 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         });
     }
 
-
+    public void replaceFragment(Fragment fragment) {
+        getFragmentManager().beginTransaction().replace(R.id.frameLayout, fragment).commit();
+    }
 }

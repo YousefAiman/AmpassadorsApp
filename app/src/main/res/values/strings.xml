@@ -1,5 +1,6 @@
 <resources>
 
+
     <string name="web_client_id" translatable="false">76276922541-09csge1004nnptjognm1am0t5gv240kb.apps.googleusercontent.com</string>
 
     <string name="facebook_app_id" translatable="false">278409073993872</string>
@@ -379,5 +380,6 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="set_as_an_admin">Set as an admin</string>
     <string name="remove_from_admins">Remove user from admins</string>
     <string name="remove_from_group">Remove user from group</string>
+    <string name="EditingMessage">Editing post</string>
 
 </resources>

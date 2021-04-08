@@ -38,6 +38,7 @@
             android:layout_width="125dp"
             android:layout_height="125dp"
             android:layout_marginTop="40dp"
+            android:scaleType="centerCrop"
             android:background="@drawable/profile_background"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline52"
@@ -182,5 +183,10 @@
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintGuide_percent="0.85" />
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
