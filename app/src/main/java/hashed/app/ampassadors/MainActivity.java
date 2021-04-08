@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
   private Intent startGroupMessagingActivity(String groupId) {
     return new Intent(MainActivity.this,
             GroupMessagingActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            .putExtra("messagingUid", groupId);
+            .putExtra("messagingUid", groupId).putExtra("type","meeting");
 
   }
 

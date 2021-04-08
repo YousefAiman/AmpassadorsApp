@@ -157,7 +157,7 @@ public class PostData implements Serializable {
                         final String username = snapshot.getString("username");
                         final String imageUrl = snapshot.getString("imageUrl");
 
-                          final String message = username + context.getResources()
+                          final String message = username + " " + context.getResources()
                                   .getString(R.string.liked_post);
 
                         FirestoreNotificationSender.sendFirestoreNotification(

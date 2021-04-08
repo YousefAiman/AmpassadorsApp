@@ -49,8 +49,8 @@ public class NotificationsActivity extends AppCompatActivity implements
   private final int NOTIFICATIONS_LIMIT = 10;
   private ArrayList<Notification> newerNotifications;
   private NotificationsAdapter newerAdapter;
-//  private NotificationsAdapter olderAdapter;
-    private SwipeRefreshLayout swipeRefreshLayout;
+  //private NotificationsAdapter olderAdapter;
+  private SwipeRefreshLayout swipeRefreshLayout;
   private TextView emptyTv;
   private List<ListenerRegistration> listenerRegistrationList;
   private Query mainQuery;
@@ -64,7 +64,7 @@ public class NotificationsActivity extends AppCompatActivity implements
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_notifications);
 
-    String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+//    String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     setupToolbar();
 
@@ -80,7 +80,7 @@ public class NotificationsActivity extends AppCompatActivity implements
       @Override
       public void onItemsRemoved(@NonNull RecyclerView recyclerView,
                                  int positionStart, int itemCount) {
-        if (itemCount == 0) {
+        if (newerNotifications.size() == 0) {
           emptyTv.setVisibility(View.VISIBLE);
           recyclerView.setVisibility(View.INVISIBLE);
         }
@@ -115,11 +115,10 @@ public class NotificationsActivity extends AppCompatActivity implements
             .orderBy("timeCreated", Query.Direction.DESCENDING)
             .whereLessThan("timeCreated",System.currentTimeMillis())
             .whereEqualTo("receiverId", FirebaseAuth.getInstance().getCurrentUser().getUid())
-    .limit(NOTIFICATIONS_LIMIT);
-
-
+            .limit(NOTIFICATIONS_LIMIT);
 
     getNotifications(true);
+
   }
 
 
@@ -128,17 +127,21 @@ public class NotificationsActivity extends AppCompatActivity implements
     isLoadingNotifications = true;
     swipeRefreshLayout.setRefreshing(true);
 
-    Query query = mainQuery;
+    Query query = FirebaseFirestore.getInstance().collection("Notifications")
+            .orderBy("timeCreated", Query.Direction.DESCENDING)
+            .whereLessThan("timeCreated", System.currentTimeMillis())
+            .whereEqualTo("receiverId", FirebaseAuth.getInstance().getCurrentUser().getUid())
+            .limit(NOTIFICATIONS_LIMIT);
+
     if(!isInitial && lastDocSnapshot!=null){
-      query = mainQuery.startAfter(lastDocSnapshot);
+      query = query.startAfter(lastDocSnapshot);
     }
 
     query.get().addOnSuccessListener(queryDocumentSnapshots -> {
       if (!queryDocumentSnapshots.isEmpty()) {
 
         lastDocSnapshot = queryDocumentSnapshots.getDocuments().get(
-                queryDocumentSnapshots.size() - 1
-        );
+                queryDocumentSnapshots.size() - 1);
 
         if(isInitial){
           newerNotifications.addAll(queryDocumentSnapshots.toObjects(Notification.class));
@@ -173,19 +176,25 @@ public class NotificationsActivity extends AppCompatActivity implements
       swipeRefreshLayout.setRefreshing(false);
 
       isLoadingNotifications = false;
-    });
 
-    if(isInitial){
+      if(isInitial){
 
-      addNotificationChangeAndRemoveListener();
+//      addNotificationChangeAndRemoveListener();
 
-      Query newNotifsQuery = FirebaseFirestore.getInstance().collection("Notifications")
-              .whereGreaterThan("timeCreated",System.currentTimeMillis())
-              .whereEqualTo("receiverId", FirebaseAuth.getInstance().getCurrentUser().getUid());
-      addNotificationsListenerForQuery(newNotifsQuery);
+        addNotificationChangeAndRemoveListener();
+
+        Query newNotifsQuery = FirebaseFirestore.getInstance().collection("Notifications")
+                .whereGreaterThan("timeCreated",System.currentTimeMillis())
+                .whereEqualTo("receiverId", FirebaseAuth.getInstance().getCurrentUser().getUid());
+        addNotificationsListenerForQuery(newNotifsQuery);
 
 //      newestNotificationsRv.addOnScrollListener(scrollListener = new ScrollListener());
-    }
+      }
+
+
+    });
+
+
 
 //    initialQuery.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
 //      @Override
@@ -310,8 +319,8 @@ public class NotificationsActivity extends AppCompatActivity implements
 
   }
 
-  private Notification findNotification(ArrayList<Notification> notifications, String documentId) {
-    for (Notification notification : notifications) {
+  private Notification findNotification(String documentId) {
+    for (Notification notification : newerNotifications) {
       final String notificationPath = notification.getSenderId() + "_" +
               notification.getDestinationId() + "_" + notification.getType();
       if (documentId.equals(notificationPath)) {
@@ -378,6 +387,7 @@ public class NotificationsActivity extends AppCompatActivity implements
       for(ListenerRegistration listenerRegistration:listenerRegistrationList){
         listenerRegistration.remove();
       }
+      listenerRegistrationList.clear();
     }
 
     newerNotifications.clear();
@@ -435,8 +445,7 @@ public class NotificationsActivity extends AppCompatActivity implements
 
   private void deleteNotificationFromFirestore(DocumentChange dc){
 
-    Notification notification = findNotification(newerNotifications,
-            dc.getDocument().getId());
+    Notification notification = findNotification(dc.getDocument().getId());
 
     if (notification == null) {
       return;
@@ -480,37 +489,41 @@ public class NotificationsActivity extends AppCompatActivity implements
 
                 for (DocumentChange dc : value.getDocumentChanges()) {
 
-                  switch (dc.getType()) {
-
-                    case REMOVED:
-                      deleteNotificationFromFirestore(dc);
-                      break;
-
-                    case MODIFIED:
-
-                      final Notification modifiedNotification = findNotification(newerNotifications,
-                              dc.getDocument().getId());
-
-                      if (modifiedNotification == null) {
-                        return;
-                      }
-
-                      int index = newerNotifications.indexOf(modifiedNotification);
-
-                      modifiedNotification.setTimeCreated(dc.getDocument().getLong("timeCreated"));
-                      modifiedNotification.setContent(dc.getDocument().getString("content"));
-                      if(index == 0){
-                        newerAdapter.notifyItemChanged(index);
-                      }else{
-
-                        newerNotifications.remove(index);
-                        newerAdapter.notifyItemRemoved(index);
-                        newerNotifications.add(0, modifiedNotification);
-                        newerAdapter.notifyItemInserted(0);
-                      }
-
-                      break;
+                  if(dc.getType() == DocumentChange.Type.REMOVED){
+                    deleteNotificationFromFirestore(dc);
                   }
+
+//                  switch (dc.getType()) {
+//
+//                    case REMOVED:
+//                      deleteNotificationFromFirestore(dc);
+//                      break;
+//
+//                    case MODIFIED:
+//
+//                      final Notification modifiedNotification = findNotification(
+//                              dc.getDocument().getId());
+//
+//                      if (modifiedNotification == null) {
+//                        return;
+//                      }
+//
+//                      int index = newerNotifications.indexOf(modifiedNotification);
+//
+//                      modifiedNotification.setTimeCreated(dc.getDocument().getLong("timeCreated"));
+//                      modifiedNotification.setContent(dc.getDocument().getString("content"));
+//                      if(index == 0){
+//                        newerAdapter.notifyItemChanged(index);
+//                      }else{
+//
+//                        newerNotifications.remove(index);
+//                        newerAdapter.notifyItemRemoved(index);
+//                        newerNotifications.add(0, modifiedNotification);
+//                        newerAdapter.notifyItemInserted(0);
+//                      }
+//
+//                      break;
+//                  }
 
 
                 }
@@ -535,55 +548,50 @@ public class NotificationsActivity extends AppCompatActivity implements
 
         for (DocumentChange dc : value.getDocumentChanges()) {
 
-          switch (dc.getType()) {
+          if(dc.getType() == DocumentChange.Type.ADDED ||
+                  dc.getType() == DocumentChange.Type.MODIFIED){
 
-            case ADDED:
-              lastDocSnapshot = dc.getDocument();
+            final Notification modifiedNotification = findNotification(dc.getDocument().getId());
+
+            if (modifiedNotification == null) {
+
+//              lastDocSnapshot = dc.getDocument();
               addNotification(dc);
-              break;
 
-            case REMOVED:
-              deleteNotificationFromFirestore(dc);
-              break;
+            }else{
 
-            case MODIFIED:
+              final int index = newerNotifications.indexOf(modifiedNotification);
+              modifyMessage(dc.getDocument(),index);
+            }
 
-              final Notification modifiedNotification = findNotification(newerNotifications,
-                      dc.getDocument().getId());
-
-              if (modifiedNotification == null) {
-                return;
-              }
-
-              int index = newerNotifications.indexOf(modifiedNotification);
-
-              modifiedNotification.setTimeCreated(dc.getDocument().getLong("timeCreated"));
-              modifiedNotification.setContent(dc.getDocument().getString("content"));
-              if(index == 0){
-                newerAdapter.notifyItemChanged(index);
-              }else{
-
-                newerNotifications.remove(index);
-                newerAdapter.notifyItemRemoved(index);
-                newerNotifications.add(0, modifiedNotification);
-                newerAdapter.notifyItemInserted(0);
-
-//                Collections.swap(newerNotifications, index, 0);
-//                newerAdapter.notifyItemMoved(index, 0);
-              }
-
-              break;
+          }else{
+            deleteNotificationFromFirestore(dc);
           }
-
-
         }
-
-
       }
     }));
 
   }
 
+  private void modifyMessage(DocumentSnapshot documentSnapshot,int index){
+
+
+    Notification notification = newerNotifications.get(index);
+
+    notification.setTimeCreated(documentSnapshot.getLong("timeCreated"));
+    notification.setContent(documentSnapshot.getString("content"));
+    if(index == 0){
+      newerAdapter.notifyItemChanged(index);
+    }else{
+
+      newerNotifications.remove(index);
+      newerAdapter.notifyItemRemoved(index);
+      newerNotifications.add(0, notification);
+      newerAdapter.notifyItemInserted(0);
+
+    }
+
+  }
   private class ScrollListener extends RecyclerView.OnScrollListener {
     @Override
     public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {

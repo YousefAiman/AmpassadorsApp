@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -61,7 +62,9 @@ public class UserMessageSearchActivity extends AppCompatActivity implements
     usersAdapter = new UsersAdapter(users, R.layout.user_item_layout, this);
     userRv.setAdapter(usersAdapter);
 
-    usersRef.orderBy("username")
+    usersRef.orderBy("userId")
+            .whereEqualTo("isEmailVerified",true)
+            .orderBy("username",Query.Direction.ASCENDING)
             .limit(100).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
       @Override
       public void onSuccess(QuerySnapshot snapshots) {
@@ -115,7 +118,8 @@ public class UserMessageSearchActivity extends AppCompatActivity implements
 
       progressBar.setVisibility(View.VISIBLE);
 
-      usersRef.whereEqualTo("username", query.trim())
+      usersRef.whereEqualTo("isEmailVerified",true)
+              .whereEqualTo("username", query.trim())
               .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
         @Override
         public void onSuccess(QuerySnapshot snapshots) {

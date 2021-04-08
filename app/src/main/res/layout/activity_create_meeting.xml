@@ -44,9 +44,9 @@
         android:background="@drawable/create_meeting_ed_underline_back"
         android:hint="@string/enter_group_name_here"
         android:inputType="text"
-        android:paddingTop="15dp"
+        android:paddingTop="5dp"
         android:paddingHorizontal="2dp"
-        android:paddingBottom="15dp"
+        android:paddingBottom="2dp"
         android:fontFamily="@font/segoe_ui"
         android:maxLength="150"
         android:layout_marginStart="22dp"
@@ -195,116 +195,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            android:paddingHorizontal="10dp"
             android:overScrollMode="never"
-            android:paddingHorizontal="15dp"
-
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:spanCount="5" />
 
     </LinearLayout>
 
-    <!--    <androidx.core.widget.NestedScrollView-->
-<!--        android:id="@+id/nestedScrollView"-->
-<!--        android:layout_width="match_parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/groupIv"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        android:layout_height="0dp">-->
-
-<!--    <LinearLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:orientation="vertical">-->
-
-<!--    <EditText-->
-<!--        android:id="@+id/descreptionEd"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:background="#fff"-->
-<!--        android:elevation="2dp"-->
-<!--        android:layout_marginEnd="20dp"-->
-<!--        android:layout_marginStart="20dp"-->
-<!--        android:paddingTop="15dp"-->
-<!--        android:gravity="top"-->
-<!--        android:paddingBottom="15dp"-->
-<!--        android:textSize="16sp"-->
-<!--        android:layout_marginTop="15dp"-->
-<!--        android:minLines="3"-->
-<!--        android:textColor="#000"-->
-<!--        android:textColorHint="#CDCED2"-->
-<!--        android:hint="Meeting description *"-->
-<!--        android:inputType="textMultiLine"-->
-<!--        android:paddingStart="20dp"/>-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/meetingTimeTv"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:background="#fff"-->
-<!--        android:elevation="2dp"-->
-<!--        android:paddingTop="15dp"-->
-<!--        android:paddingBottom="15dp"-->
-<!--        android:textColor="#000"-->
-<!--        android:textSize="16sp"-->
-<!--        android:textColorHint="#CDCED2"-->
-<!--        android:hint="Meeting time *"-->
-<!--        android:layout_marginEnd="20dp"-->
-<!--        android:layout_marginStart="20dp"-->
-<!--        android:layout_marginTop="15dp"-->
-<!--        android:paddingStart="20dp" />-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/usersEd"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:background="#fff"-->
-<!--        android:elevation="2dp"-->
-<!--        android:paddingTop="15dp"-->
-<!--        android:paddingBottom="15dp"-->
-<!--        android:textColor="#000"-->
-<!--        android:hint="Meeting Members *"-->
-<!--        android:textSize="16sp"-->
-<!--        android:textColorHint="#CDCED2"-->
-<!--        android:layout_marginEnd="20dp"-->
-<!--        android:layout_marginStart="20dp"-->
-<!--        android:layout_marginTop="15dp"-->
-<!--        android:paddingStart="20dp" />-->
-
-
-
-<!--    <Button-->
-<!--        android:id="@+id/doneButton"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:textColor="@color/white"-->
-<!--        android:text="Done"-->
-<!--        android:layout_marginEnd="20dp"-->
-<!--        android:layout_marginStart="20dp"-->
-<!--        android:layout_marginTop="15dp"-->
-<!--        android:layout_gravity="bottom"-->
-<!--        android:importantForAutofill="no" />-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/showSelectedUsersTv"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:visibility="gone"-->
-<!--            android:text="Show selected users"-->
-<!--            android:layout_marginHorizontal="20dp"-->
-<!--            android:layout_marginTop="15dp"-->
-<!--            app:drawableEndCompat="@drawable/down_arrow" />-->
-
-<!--        <androidx.recyclerview.widget.RecyclerView-->
-<!--            android:id="@+id/selectedUserRv"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:visibility="gone"-->
-<!--            android:overScrollMode="never"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="20dp"-->
-<!--            android:layout_marginHorizontal="20dp" />-->
-
-
-<!--    </LinearLayout>-->
-
-<!--    </androidx.core.widget.NestedScrollView>-->
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

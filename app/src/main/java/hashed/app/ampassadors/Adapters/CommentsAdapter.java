@@ -103,8 +103,6 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     private final TextView addCommentTv;
     private final RecyclerView repliesRv;
 
-
-
     public CommentHolder(@NonNull View itemView) {
       super(itemView);
       usernameTv = itemView.findViewById(R.id.usernameTv);
@@ -141,10 +139,14 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
         checkUserLikedComment(comment.getCommentId(), likesTv, comment);
       }
 
-
       if (comment.getReplies() > 0) {
         showRepliesTv.setVisibility(View.VISIBLE);
-        showRepliesTv.setText("عرض " + comment.getReplies() + " من التعليقات");
+
+        showRepliesTv.setText(itemView.getResources().getString(R.string.show)
+                +" "+comment.getReplies()+" "+(comment.getReplies()>1?
+                itemView.getResources().getString(R.string.replies):
+                itemView.getResources().getString(R.string.reply)));
+
         showRepliesTv.setOnClickListener(this);
       } else {
         showRepliesTv.setVisibility(View.GONE);

@@ -139,46 +139,102 @@ public class MessagesFragment extends Fragment{
   private void getAllChats() {
 
     Query query = messagesCollectionRef.whereArrayContains("users", currentUid)
+            .whereLessThan("latestMessageTime",System.currentTimeMillis())
             .orderBy("latestMessageTime", Query.Direction.DESCENDING);
 
-    query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-      @Override
-      public void onSuccess(QuerySnapshot snapshots) {
 
-        valueEventListeners = new HashMap<>();
-        final List<DocumentSnapshot> docs = snapshots.getDocuments();
+    valueEventListeners = new HashMap<>();
 
-        if (docs.isEmpty()) {
-          return;
-        }
+    listenerRegistrations = new ArrayList<>();
 
-        for (int i = 0; i < docs.size(); i++) {
-          getMessageFromSnapshot(docs.get(i), false);
-          Log.d("ttt", "snapshot: " + docs.get(i).getId());
 
-        }
-      }
-    }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-      @Override
-      public void onComplete(@NonNull Task<QuerySnapshot> task) {
+    listenerRegistrations.add(
 
-        if (task.isSuccessful() && task.getResult() != null) {
-          if(task.getResult().isEmpty()){
+      query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        @Override
+        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+
+          if(value!=null){
+            if(!value.getDocumentChanges().isEmpty()) {
+              for (DocumentChange dc : value.getDocumentChanges()) {
+
+                switch (dc.getType()) {
+
+                  case ADDED:
+//                  for (int i = 0; i < docs.size(); i++) {
+                    Log.d("ttt","ADDED: "+dc.getDocument().getId());
+                    getMessageFromSnapshot(dc.getDocument(), false);
+//                    Log.d("ttt", "snapshot: " + docs.get(i).getId());
+//                  }
+
+                    break;
+
+                  case REMOVED:
+
+                    Log.d("ttt","removed: "+dc.getDocument().getId());
+                    removeMessage(dc);
+
+                    break;
+
+                  case MODIFIED:
+
+                    Log.d("ttt","MODIFIED: "+dc.getDocument().getId());
+
+                    break;
+                }
+
+              }
+
+              addNewMessagesListener();
+
+            }else{
+              progressBar.setVisibility(View.GONE);
+            }
+          }else{
             progressBar.setVisibility(View.GONE);
           }
-        }else{
-          progressBar.setVisibility(View.GONE);
+
         }
+      })
 
-        addNewMessagesListener();
-
-      }
-    }).addOnFailureListener(new OnFailureListener() {
-      @Override
-      public void onFailure(@NonNull Exception e) {
-        progressBar.setVisibility(View.GONE);
-      }
-    });
+    );
+//    query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//      @Override
+//      public void onSuccess(QuerySnapshot snapshots) {
+//
+//        valueEventListeners = new HashMap<>();
+//        final List<DocumentSnapshot> docs = snapshots.getDocuments();
+//
+//        if (docs.isEmpty()) {
+//          return;
+//        }
+//
+//        for (int i = 0; i < docs.size(); i++) {
+//          getMessageFromSnapshot(docs.get(i), false);
+//          Log.d("ttt", "snapshot: " + docs.get(i).getId());
+//        }
+//      }
+//    }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//      @Override
+//      public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//
+//        if (task.isSuccessful() && task.getResult() != null) {
+//          if(task.getResult().isEmpty()){
+//            progressBar.setVisibility(View.GONE);
+//          }
+//        }else{
+//          progressBar.setVisibility(View.GONE);
+//        }
+//
+//        addNewMessagesListener();
+//
+//      }
+//    }).addOnFailureListener(new OnFailureListener() {
+//      @Override
+//      public void onFailure(@NonNull Exception e) {
+//        progressBar.setVisibility(View.GONE);
+//      }
+//    });
 
   }
 
@@ -347,7 +403,7 @@ public class MessagesFragment extends Fragment{
 //                                  chatItems.add(chatItem);
 //                                  adapter.notifyItemInserted(chatItems.size());
 
-                        checkMessageSeenAndAddSeenListener(chatItem, false,
+                        checkMessageSeenAndAddSeenListener(chatItem, addToFirst,
                                 true);
 
                       }
@@ -486,8 +542,14 @@ public class MessagesFragment extends Fragment{
                     adapter.notifyItemInserted(0);
 
                   }else{
-                    chatItems.add(chatItem);
-                    adapter.notifyItemInserted(chatItems.size());
+//                    if(index == 0){
+//                      chatItems.add(index,chatItem);
+//                      adapter.notifyItemInserted(index);
+//                    }else{
+                      chatItems.add(chatItem);
+                      adapter.notifyItemInserted(chatItems.size());
+//                    }
+
                   }
 
               }
@@ -546,9 +608,9 @@ public class MessagesFragment extends Fragment{
 
   private void addNewMessagesListener() {
 
-    if (listenerRegistrations == null) {
-      listenerRegistrations = new ArrayList<>();
-    }
+//    if (listenerRegistrations == null) {
+//      listenerRegistrations = new ArrayList<>();
+//    }
 
     final Query query = messagesCollectionRef
             .whereArrayContains("users", currentUid)
@@ -582,20 +644,56 @@ public class MessagesFragment extends Fragment{
                             getMessageFromSnapshot(dc.getDocument(), true);
                           }
                         }
-
                       }
-
-
                       Log.d("ttt", "added a message after time: " +
                               dc.getDocument().getId());
-
 //              getMessageFromSnapshot(dc.getDocument());
 
+                    }else if(dc.getType() == DocumentChange.Type.REMOVED){
+                      removeMessage(dc);
                     }
                   }
                 }
               }
             }));
+
+  }
+
+
+  private void removeMessage(DocumentChange dc){
+    for (int i = 0; i < chatItems.size(); i++) {
+
+      if (chatItems.get(i).getMessagingDocId().equals(dc.getDocument()
+              .getString("databaseRefId"))) {
+
+        final ChatItem chatItem = chatItems.get(i);
+
+        chatItems.remove(i);
+        adapter.notifyItemRemoved(i);
+
+        final com.google.firebase.database.Query reference =
+                messagesRef.child(chatItem.getMessagingDocId())
+                        .child("messages").orderByKey().limitToLast(1);
+
+        reference.removeEventListener(
+                Objects.requireNonNull(valueEventListeners.get(
+                        reference.getRef())));
+
+        valueEventListeners.remove(reference.getRef());
+
+        DatabaseReference lastSeenRef =
+                messagesRef.child(chatItem.getMessagingDocId())
+                        .child("UsersLastSeenMessages").child(currentUid);
+
+        lastSeenRef.removeEventListener(
+                Objects.requireNonNull(valueEventListeners.get(
+                        lastSeenRef.getRef())));
+
+        valueEventListeners.remove(lastSeenRef.getRef());
+
+        break;
+      }
+    }
 
   }
 

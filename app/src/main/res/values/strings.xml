@@ -1,13 +1,11 @@
 <resources>
 
-
     <string name="web_client_id" translatable="false">76276922541-09csge1004nnptjognm1am0t5gv240kb.apps.googleusercontent.com</string>
 
     <string name="facebook_app_id" translatable="false">278409073993872</string>
     <string name="fb_login_protocol_scheme" translatable="false">fb485863972787866</string>
 
-
-    <string name="app_name">TheNationalMainstream</string>
+    <string name="app_name">The National Mainstream</string>
     <string name="more">More</string>
     <string name="notification_indicator">notification indicator</string>
     <string name="notifications">notifications</string>
@@ -119,9 +117,8 @@
 
     <string name="About_us">About us</string>
     <string name="logout">Logout</string>
-
-
     <string name="Error_message_defname">Enter your name pleas</string>
+
     <!--Notifications-->
     <string name="new_message">New message from </string>
     <string name="fullscreen_image">Fullscreen image</string>
@@ -140,9 +137,7 @@
     <string name="commented_post"> Commented on your post</string>
     <string name="replied_comment"> Replied to your comment</string>
 
-
     <!-- ٍ Spinner persons -->
-
     <string-array name="persons_array">
         <item>Ambassador</item>
         <item>Publisher</item>
@@ -311,7 +306,7 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="Rejcetet_Message">You have been rejected by the admin!</string>
     <string name="Appromvent_Message">You haven\'t been approved by the admin!</string>
     <string name="Error_Auth">"Error Authentication!: "</string>
-    <string name="Update_Message">Updating info...</string>
+    <string name="Update_Message">Updating info…</string>
     <string name="Update_Error_Message">Info update error</string>
     <string name="Error">"Error.....   "</string>
     <string name="Warring_Group_Message">You need to add at least two people to this group!</string>
@@ -366,5 +361,23 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="creating_account">Creating account!</string>
     <string name="edit_post">Edit Post</string>
     <string name="course_tutors">Course tutors:</string>
+    <string name="attendees">Attendees</string>
+    <string name="no_current_attendees">There aren\'t any users currently registered in this course</string>
+    <string name="show">Show</string>
+    <string name="replies">Replies</string>
+    <string name="reply">reply</string>
+    <string name="leave_group">Leave group</string>
+    <string name="online_users">Online</string>
+    <string name="message">Messages</string>
+    <string name="edit_group">Edit group</string>
+    <string name="new_group_name">Enter new group name…</string>
+    <string name="group_admin">Group admin</string>
+    <string name="participants">Participants</string>
+    <string name="add_participants">Add participants</string>
+    <string name="message_user">Message User</string>
+    <string name="show_user_profile">Show user profile</string>
+    <string name="set_as_an_admin">Set as an admin</string>
+    <string name="remove_from_admins">Remove user from admins</string>
+    <string name="remove_from_group">Remove user from group</string>
 
 </resources>

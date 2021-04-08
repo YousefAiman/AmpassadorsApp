@@ -511,16 +511,9 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
       Log.d("ttt","clicked");
 
-      timeClickListener.hideTime(getAdapterPosition());
+//      timeClickListener.hideTime(getAdapterPosition());
 
-       if (timeTv.getVisibility() == View.GONE) {
-         timeTv.setText(TimeFormatter.formatTime(privateMessages
-                 .get(getAdapterPosition()).getTime()));
-
-         timeTv.setVisibility(View.VISIBLE);
-       } else {
-         timeTv.setVisibility(View.GONE);
-       }
+      showOrHideTime(timeTv,getAdapterPosition());
 
     }
 
@@ -530,7 +523,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
   static class PrivateMessagingImageVh extends RecyclerView.ViewHolder
           implements View.OnLongClickListener, View.OnClickListener {
 
-    private final TextView messageTv;
+    private final TextView messageTv,timeTv;
     private final ImageView imageIv;
     private final Picasso picasso = Picasso.get();
     private TextView senderTv;
@@ -538,6 +531,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
     public PrivateMessagingImageVh(@NonNull View itemView) {
       super(itemView);
       messageTv = itemView.findViewById(R.id.messageTv);
+      timeTv = itemView.findViewById(R.id.timeTv);
       imageIv = itemView.findViewById(R.id.imageIv);
       if (isForGroup) {
         senderTv = itemView.findViewById(R.id.senderTv);
@@ -562,6 +556,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
       imageIv.setOnClickListener(this);
 
+      itemView.setOnClickListener(this);
       if (message.getSender().equals(currentUid)) {
         itemView.setOnLongClickListener(this);
       }
@@ -582,6 +577,8 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
           imageMessageListener.showImage(privateMessages.get(getAdapterPosition()).getAttachmentUrl(),
                   privateMessages.get(getAdapterPosition()).getFileName());
         }
+      }else{
+        showOrHideTime(timeTv,getAdapterPosition());
       }
 
     }
@@ -599,6 +596,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
     private MediaPlayer lastMediaPlayer;
     private int lastClicked = -1;
     private TextView senderTv;
+    private final TextView timeTv;
 //
 //    private AnimatedVectorDrawable playToPauseDrawable;
 //    private AnimatedVectorDrawable pauseToPlayDrawable;
@@ -606,6 +604,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
     public PrivateMessagingAudioVh(@NonNull View itemView) {
       super(itemView);
       audioProgressSlider = itemView.findViewById(R.id.audioProgressSlider);
+      timeTv = itemView.findViewById(R.id.timeTv);
 //      imageIv = itemView.findViewById(R.id.imageIv);
       playIv = itemView.findViewById(R.id.playIv);
       if (isForGroup) {
@@ -649,6 +648,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
         getUserName(message.getSender(), senderTv);
       }
 
+      itemView.setOnClickListener(this);
       if (message.getSender().equals(currentUid)) {
         itemView.setOnLongClickListener(this);
       }
@@ -744,6 +744,8 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         }
 
+      }else{
+        showOrHideTime(timeTv,getAdapterPosition());
       }
 
     }
@@ -761,9 +763,8 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
   static class PrivateMessagingVideoVh extends RecyclerView.ViewHolder
           implements View.OnLongClickListener, View.OnClickListener {
 
-    private final TextView messageTv;
-    private final ImageView imageIv;
-    private final ImageView playIv;
+    private final TextView messageTv,timeTv;
+    private final ImageView imageIv,playIv;
     private final Picasso picasso = Picasso.get();
     private final ProgressBar videoProgressBar;
     private TextView senderTv;
@@ -771,6 +772,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
     public PrivateMessagingVideoVh(@NonNull View itemView) {
       super(itemView);
       messageTv = itemView.findViewById(R.id.messageTv);
+      timeTv = itemView.findViewById(R.id.timeTv);
       imageIv = itemView.findViewById(R.id.imageIv);
       playIv = itemView.findViewById(R.id.playIv);
       videoProgressBar = itemView.findViewById(R.id.videoProgressBar);
@@ -811,8 +813,10 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
 
       } else {
-        itemView.setOnClickListener(null);
+        imageIv.setOnClickListener(null);
       }
+
+      itemView.setOnClickListener(this);
 
       if (message.getSender().equals(currentUid)) {
         itemView.setOnLongClickListener(this);
@@ -830,8 +834,13 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
     @Override
     public void onClick(View view) {
 
-      videoMessageListener.playVideo(privateMessages.get(getAdapterPosition()).getAttachmentUrl(),
-              privateMessages.get(getAdapterPosition()).getFileName());
+      if(view.getId() == imageIv.getId()){
+
+        videoMessageListener.playVideo(privateMessages.get(getAdapterPosition()).getAttachmentUrl(),
+                privateMessages.get(getAdapterPosition()).getFileName());
+      }else{
+        showOrHideTime(timeTv,getAdapterPosition());
+      }
 
     }
 
@@ -988,11 +997,13 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
     private final ProgressBar downloadProgressBar;
     private boolean isDownloading;
     private TextView senderTv;
+    private final TextView timeTv;
 
     //    private DownloadReceiver downloadReceiver;
     public PrivateMessagingDocumentVh(@NonNull View itemView) {
       super(itemView);
       messageTv = itemView.findViewById(R.id.messageTv);
+      timeTv = itemView.findViewById(R.id.timeTv);
       documentNameTv = itemView.findViewById(R.id.documentNameTv);
       downloadIv = itemView.findViewById(R.id.downloadIv);
       downloadProgressBar = itemView.findViewById(R.id.downloadProgressBar);
@@ -1014,6 +1025,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
       if (bindUsername && !message.getSender().equals(currentUid)) {
         getUserName(message.getSender(), senderTv);
       }
+      itemView.setOnClickListener(this);
       if (message.getAttachmentUrl() != null) {
 
         downloadIv.setOnClickListener(this);
@@ -1060,26 +1072,39 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
     @Override
     public void onClick(View view) {
 
+      if(view.getId() == downloadIv.getId()) {
+        final PrivateMessage message = privateMessages.get(getAdapterPosition());
 
-      final PrivateMessage message = privateMessages.get(getAdapterPosition());
+        if (message.getUploadTask() != null &&
+                message.getUploadTask().isDownloading()) {
 
-      if (message.getUploadTask() != null &&
-              message.getUploadTask().isDownloading()) {
+          if (!documentMessageListener.cancelDownload(
+                  getAdapterPosition(), message.getUploadTask().getDownloadId())) {
+            Toast.makeText(context, "Failed to cancel download!", Toast.LENGTH_SHORT).show();
+          }
 
-        if (!documentMessageListener.cancelDownload(
-                getAdapterPosition(), message.getUploadTask().getDownloadId())) {
-          Toast.makeText(context, "Failed to cancel download!", Toast.LENGTH_SHORT).show();
+        } else {
+          documentMessageListener.startDownload(
+                  getAdapterPosition(),
+                  message.getAttachmentUrl(),
+                  message.getFileName());
+
         }
-
-      } else {
-        documentMessageListener.startDownload(
-                getAdapterPosition(),
-                message.getAttachmentUrl(),
-                message.getFileName());
-
+      }else{
+        showOrHideTime(timeTv,getAdapterPosition());
       }
 
+    }
 
+  }
+  private static void showOrHideTime(TextView timeTv,int position){
+    if (timeTv.getVisibility() == View.GONE) {
+      timeTv.setText(TimeFormatter.formatTime(privateMessages
+              .get(position).getTime()));
+
+      timeTv.setVisibility(View.VISIBLE);
+    } else {
+      timeTv.setVisibility(View.GONE);
     }
 
   }

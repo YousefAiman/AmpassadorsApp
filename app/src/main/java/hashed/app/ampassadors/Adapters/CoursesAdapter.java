@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
+import hashed.app.ampassadors.Activities.CourseActivity;
 import hashed.app.ampassadors.Activities.GroupMessagingActivity;
 import hashed.app.ampassadors.Objects.Course;
 import hashed.app.ampassadors.Objects.Meeting;
@@ -37,12 +38,12 @@ import hashed.app.ampassadors.Utils.TimeFormatter;
 
 public class CoursesAdapter extends RecyclerView.Adapter<CoursesAdapter.CoursesVh> {
 
-  private static ArrayList<Course> courses;
+  private final ArrayList<Course> courses;
   private static CollectionReference coursesRef;
   private static String currentUid;
 
   public CoursesAdapter(ArrayList<Course> courses) {
-    CoursesAdapter.courses = courses;
+    this.courses = courses;
     coursesRef = FirebaseFirestore.getInstance().collection("Courses");
     currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
   }
@@ -148,9 +149,9 @@ public class CoursesAdapter extends RecyclerView.Adapter<CoursesAdapter.CoursesV
               @Override
               public void onSuccess(Void aVoid) {
                 itemView.getContext().startActivity(
-                        new Intent(itemView.getContext(), GroupMessagingActivity.class)
-                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                .putExtra("messagingUid", courseId));
+                        new Intent(itemView.getContext(), CourseActivity.class)
+                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("course",
+                                course));
               }
             });
           });
@@ -161,10 +162,9 @@ public class CoursesAdapter extends RecyclerView.Adapter<CoursesAdapter.CoursesV
         }else{
 
           itemView.getContext().startActivity(
-                  new Intent(itemView.getContext(), GroupMessagingActivity.class)
-                          .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("messagingUid",
-                          courseId));
-
+                  new Intent(itemView.getContext(), CourseActivity.class)
+                          .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("course",
+                          course));
         }
         return;
       }
@@ -184,9 +184,9 @@ public class CoursesAdapter extends RecyclerView.Adapter<CoursesAdapter.CoursesV
             }
 
             itemView.getContext().startActivity(
-                    new Intent(itemView.getContext(), GroupMessagingActivity.class)
-                            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("messagingUid",
-                            courseId));
+                    new Intent(itemView.getContext(), CourseActivity.class)
+                            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("course",
+                            course));
 
           }else{
 

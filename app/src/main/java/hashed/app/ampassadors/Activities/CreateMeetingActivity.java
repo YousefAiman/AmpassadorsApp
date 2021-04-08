@@ -56,6 +56,7 @@ import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
 import hashed.app.ampassadors.Utils.TimeFormatter;
+import hashed.app.ampassadors.Utils.UploadTaskUtil;
 
 public class CreateMeetingActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -497,20 +498,6 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
   }
 
 
-  private void cancelUploadTasks() {
-
-    final UploadTask uploadTask = uploadTaskMap.keySet().iterator().next();
-
-    uploadTask.removeOnSuccessListener(
-            (OnSuccessListener<? super UploadTask.TaskSnapshot>) uploadTaskMap.get(uploadTask));
-
-    uploadTask.addOnSuccessListener(taskSnapshot ->
-            uploadTask.getSnapshot().getStorage().delete()
-                    .addOnSuccessListener(v -> Log.d("ttt", "ref delete sucess")).
-                    addOnFailureListener(e -> Log.d("ttt", "ref delete failed: " +
-                            e.getMessage())));
-
-  }
 
 
   @Override
@@ -526,11 +513,10 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
       alert.setMessage("Leaving will discard this meeting");
 
       alert.setPositiveButton("Leave", (dialogInterface, i) -> {
-        if (uploadTaskMap != null && !uploadTaskMap.isEmpty()) {
-          cancelUploadTasks();
-          dialogInterface.dismiss();
-          finish();
-        }});
+          UploadTaskUtil.cancelUploadTasks(uploadTaskMap);
+        dialogInterface.dismiss();
+        finish();
+      });
 
         alert.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
         alert.create().show();

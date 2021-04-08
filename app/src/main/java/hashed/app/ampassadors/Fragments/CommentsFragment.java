@@ -251,7 +251,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                     });
 
 
-            sendCommentNotification(getResources().getString(R.string.commented_post));
+            sendCommentNotification(comment);
 
           }
         }).addOnFailureListener(new OnFailureListener() {
@@ -301,17 +301,13 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                   final String currentUid =FirebaseAuth.getInstance().getCurrentUser().getUid();
 
                   FirestoreNotificationSender.sendFirestoreNotification(
-                          creatorId,
-                          FirestoreNotificationSender.TYPE_COMMENT,
-                          "Commented on your post: "+ message,
-                          username,
-                          postId
-                  );
+                          creatorId, FirestoreNotificationSender.TYPE_COMMENT, message,
+                          username + " Commented on your post", postId);
 
                   final Data data = new Data(
                           currentUid,
-                          username + " commented: " + message,
-                          postTitle,
+                          message,
+                          username + " Commented on your post",
                           null,
                           "Post Comment",
                           FirestoreNotificationSender.TYPE_COMMENT,

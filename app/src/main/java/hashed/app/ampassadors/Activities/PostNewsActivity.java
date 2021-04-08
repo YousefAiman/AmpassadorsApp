@@ -264,12 +264,16 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
             if (postData.getAttachmentUrl() != null) {
                 if (postData.getAttachmentType() == Files.IMAGE) {
 
-                    frameLayout.setVisibility(View.VISIBLE);
+//                    frameLayout.setVisibility(View.VISIBLE);
+//                    getSupportFragmentManager().beginTransaction().replace(frameLayout.getId(),
+//                            new ImageFullScreenFragment(postData.getAttachmentUrl(),
+//                                    getFileName()), "FullScreen")
+//                            .commit();
 
-                    getSupportFragmentManager().beginTransaction().replace(frameLayout.getId(),
-                            new ImageFullScreenFragment(postData.getAttachmentUrl(),
-                                    getFileName()), "FullScreen")
-                            .commit();
+                    new ImageFullScreenFragment(postData.getAttachmentUrl(),
+                            getFileName()).show(getSupportFragmentManager(),
+                            "fullScreen");
+
 
                 } else if (postData.getAttachmentType() == Files.VIDEO) {
 

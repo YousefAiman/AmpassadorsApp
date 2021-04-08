@@ -2,8 +2,10 @@ package hashed.app.ampassadors.Activities;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.DownloadManager;
 import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,6 +22,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,7 +43,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.common.collect.Iterables;
 import com.google.firebase.auth.FirebaseAuth;
@@ -54,7 +60,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
@@ -64,6 +72,7 @@ import com.squareup.picasso.Picasso;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -87,6 +96,8 @@ import hashed.app.ampassadors.Objects.PrivateMessage;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
 import hashed.app.ampassadors.Utils.GlobalVariables;
+import hashed.app.ampassadors.Utils.MessagingUtil;
+import hashed.app.ampassadors.Utils.UploadTaskUtil;
 
 public class PrivateMessagingActivity extends AppCompatActivity
         implements Toolbar.OnMenuItemClickListener, PrivateMessagingAdapter.DeleteMessageListener,
@@ -134,6 +145,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
   private FrameLayout pickerFrameLayout;
   private ImageView messagingTbProfileIv;
   private TextView messagingTbNameTv;
+  private Toolbar toolbar;
   //attachments
   private int messageAttachmentUploadedIndex = -1;
   private BroadcastReceiver downloadCompleteReceiver;
@@ -209,9 +221,12 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
   private void setUpToolBarAndActions() {
 
-    final Toolbar toolbar = findViewById(R.id.privateMessagingTb);
-    toolbar.inflateMenu(R.menu.private_messaging_toolbar_menu);
-
+    toolbar = findViewById(R.id.privateMessagingTb);
+//    if(isGroupMessaging){
+//      toolbar.inflateMenu(R.menu.group_user_menu);
+//    }else{
+////      toolbar.inflateMenu(R.menu.private_messaging_toolbar_menu);
+//    }
 
     toolbar.setNavigationOnClickListener(v -> onBackPressed());
     toolbar.setOnMenuItemClickListener(this);
@@ -222,9 +237,79 @@ public class PrivateMessagingActivity extends AppCompatActivity
   public boolean onMenuItemClick(MenuItem item) {
     if (item.getItemId() == R.id.action_delete) {
       deleteMessageDocument();
+    }else if (item.getItemId() == R.id.action_leave_group) {
+
+      MessagingUtil.leaveGroup(this,currentUid,messagingUid,firebaseMessageDocRef,
+              currentMessagingRef);
+
+    }else if (item.getItemId() == R.id.action_edit_group) {
+
+      startActivity(new Intent(PrivateMessagingActivity.this,GroupEditingActivity.class)
+      .putExtra("firebaseMessageDocRefId", firebaseMessageDocRef.getId())
+      .putExtra("groupType","messagingGroup")
+      .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+
     }
     return false;
   }
+
+//  public void leaveGroup(){
+//
+//    final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+//    alert.setTitle("Are you sure you want to leave this group?");
+//    alert.setPositiveButton("Leave", (dialog, which) -> {
+//
+//      final ProgressDialog progressDialog = new ProgressDialog(this);
+//      progressDialog.setMessage("Leaving group!");
+//      progressDialog.setCancelable(false);
+//      progressDialog.show();
+//
+//      firebaseMessageDocRef.update("users", FieldValue.arrayRemove(currentUid))
+//      .addOnSuccessListener(new OnSuccessListener<Void>() {
+//        @Override
+//        public void onSuccess(Void v) {
+//          currentMessagingRef.child("UsersLastSeenMessages").child(currentUid).removeValue(
+//                  (error, ref) -> {
+//                    if(error!=null){
+//                      Toast.makeText(PrivateMessagingActivity.this,
+//                              "Failed to leave group! Please try again",
+//                              Toast.LENGTH_SHORT).show();
+//                    }else{
+//
+//                      FirebaseFirestore.getInstance().collection("Notifications")
+//                              .whereEqualTo("receiverId",currentUid)
+//                              .whereEqualTo("destinationId",messagingUid)
+//                              .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//                        @Override
+//                        public void onSuccess(QuerySnapshot snapshots) {
+//                          if(!snapshots.isEmpty()){
+//                            for(DocumentSnapshot snapshot:snapshots){
+//                              snapshot.getReference().delete();
+//                            }
+//                          }
+//                        }
+//                      }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                          lastKeyRef = null;
+//                          finish();
+//                        }
+//                      });
+//                    }
+//          });
+//        }
+//      }).addOnFailureListener(new OnFailureListener() {
+//        @Override
+//        public void onFailure(@NonNull Exception e) {
+//          progressDialog.dismiss();
+//          Toast.makeText(PrivateMessagingActivity.this, "Failed to leave group!" +
+//                  " Please try again", Toast.LENGTH_SHORT).show();
+//        }
+//      });
+//    });
+//    alert.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());
+//    alert.create().show();
+//  }
 
   //get messaging user id
   private void getMessagingUid() {
@@ -258,6 +343,14 @@ public class PrivateMessagingActivity extends AppCompatActivity
         @Override
         public void onSuccess(DocumentSnapshot snapshot) {
          if(snapshot.exists()){
+
+           final String creatorId = snapshot.getString("creatorId");
+
+           if(creatorId!=null && creatorId.equals(currentUid)){
+             toolbar.inflateMenu(R.menu.group_admin_menu);
+           }else{
+             toolbar.inflateMenu(R.menu.group_user_menu);
+           }
 
            if (snapshot.contains("imageUrl")) {
              final String imageUrl = snapshot.getString("imageUrl");
@@ -370,7 +463,6 @@ public class PrivateMessagingActivity extends AppCompatActivity
         body = message;
     }
 
-
     usersRef.document(messagingUid)
             .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
       @Override
@@ -380,11 +472,11 @@ public class PrivateMessagingActivity extends AppCompatActivity
           final String messaging = documentSnapshot.getString("ActivelyMessaging");
           if (messaging == null || !messaging.equals(currentUid)) {
             Log.d("ttt", "sendBothNotifs");
-            sendBothNotifs(body);
+            sendBothNotifs(body,messagingUid);
           }
         } else {
           Log.d("ttt", "sendBothNotifs");
-          sendBothNotifs(body);
+          sendBothNotifs(body,messagingUid);
         }
 
       }
@@ -392,20 +484,18 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
   }
 
-  private void sendBothNotifs(String message) {
+  private void sendBothNotifs(String message,String userId) {
 
     if(isGroupMessaging){
-      FirestoreNotificationSender.sendFirestoreNotification(messagingUid,
+      FirestoreNotificationSender.sendFirestoreNotification(userId,
               FirestoreNotificationSender.TYPE_GROUP_MESSAGE,
               currentUserName+": "+message, groupName, messagingUid);
     }else{
-      FirestoreNotificationSender.sendFirestoreNotification(messagingUid,
+      FirestoreNotificationSender.sendFirestoreNotification(userId,
               FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE,
               message, getResources().getString(R.string.new_message)+" "+currentUserName,
               currentUid);
     }
-
-
     sendCloudNotification(message);
 
   }
@@ -431,6 +521,23 @@ public class PrivateMessagingActivity extends AppCompatActivity
       data.setBody(currentUserName+": "+message);
     }
 
+    final List<String> groupUsers = new ArrayList<>();
+      firebaseMessageDocRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        @Override
+        public void onSuccess(DocumentSnapshot snapshot) {
+          if(snapshot.exists()){
+            groupUsers.addAll((List<String>) snapshot.get("users"));
+          }
+        }
+      }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        @Override
+        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+          if(task.isSuccessful() && !groupUsers.isEmpty()){
+            sendNotificationsToMembers(currentUserName+": "+message,groupUsers);
+          }
+        }
+      });
+
 
     }else{
 
@@ -449,11 +556,30 @@ public class PrivateMessagingActivity extends AppCompatActivity
     } else {
       data.setBody(message);
     }
-
+      CloudMessagingNotificationsSender.sendNotification(messagingUid, data);
     }
+  }
 
 
-    CloudMessagingNotificationsSender.sendNotification(messagingUid, data);
+  private void sendNotificationsToMembers(String body,List<String> groupUsers) {
+
+    for (String userId : groupUsers) {
+
+      usersRef.document(userId).get().addOnSuccessListener(documentSnapshot -> {
+        if (documentSnapshot.exists()) {
+          if (documentSnapshot.contains("ActivelyMessaging")) {
+            final String messaging = documentSnapshot.getString("ActivelyMessaging");
+            if (messaging == null || !messaging.equals(messagingUid)) {
+              Log.d("ttt", "sendBothNotifs");
+              sendBothNotifs(body,userId);
+            }
+          } else {
+            Log.d("ttt", "sendBothNotifs");
+            sendBothNotifs(body,userId);
+          }
+        }
+      });
+    }
 
   }
 
@@ -732,7 +858,9 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
   @Override
   public void showImage(String url,String fileName) {
-    showFullScreenFragment(new ImageFullScreenFragment(url,fileName));
+    new ImageFullScreenFragment(url,fileName).show(getSupportFragmentManager(),"fullScreen");
+//    showFullScreenFragment(new ImageFullScreenFragment(url,fileName));
+//    new ImageFullScreenFragment(postData.getAttachmentUrl(), getFileName()).show();
   }
 
   //messaging methods
@@ -1218,52 +1346,6 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
   }
 
-  private void cancelUploadTasks() {
-
-    if (uploadTasks != null && !uploadTasks.isEmpty()) {
-      for (UploadTask uploadTask : uploadTasks.keySet()) {
-
-        if (uploadTask.isComplete()) {
-
-//complete so doing nothing
-
-//          Log.d("ttt","task complete so deleting from ref");
-//          uploadTask.getSnapshot().getStorage().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-//            @Override
-//            public void onSuccess(Void aVoid) {
-//              Log.d("ttt","ref delete sucess");
-//            }
-//          }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//              Log.d("ttt","ref delete failed: "+e.getMessage());
-//            }
-//          });
-
-        } else {
-
-          Log.d("ttt", "task not complete so adding new listener, " +
-                  "and trying to cancel: " + uploadTask.cancel());
-
-          if (uploadTasks.containsKey(uploadTask)) {
-
-            uploadTask.removeOnSuccessListener(
-                    (OnSuccessListener<? super UploadTask.TaskSnapshot>) uploadTasks.get(uploadTask));
-
-          }
-
-          uploadTask.addOnSuccessListener(taskSnapshot ->
-                  uploadTask.getSnapshot().getStorage().delete()
-                          .addOnSuccessListener(v -> Log.d("ttt", "ref delete sucess")).
-                          addOnFailureListener(e -> Log.d("ttt", "ref delete failed: " +
-                                  e.getMessage())));
-
-        }
-      }
-    }
-
-
-  }
 
   private void scrollToBottom() {
     privateMessagingRv.post(() ->
@@ -1567,7 +1649,6 @@ public class PrivateMessagingActivity extends AppCompatActivity
   protected void onPause() {
     super.onPause();
     if (progressHandle != null && progressRunnable != null) {
-
       stopAudioRecorder(null, 0, true);
       progressHandle.removeCallbacks(progressRunnable);
     }
@@ -1598,7 +1679,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
       alert.setMessage("leaving will cancel the message!");
 
       alert.setPositiveButton("Yes", (dialogInterface, i) -> {
-        cancelUploadTasks();
+        UploadTaskUtil.cancelUploadTasks(uploadTasks);
         dialogInterface.dismiss();
         finish();
       });
@@ -1618,6 +1699,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
     getSupportFragmentManager().beginTransaction().replace(pickerFrameLayout.getId(),
             fragment, "fullScreen").commit();
+
 
   }
 

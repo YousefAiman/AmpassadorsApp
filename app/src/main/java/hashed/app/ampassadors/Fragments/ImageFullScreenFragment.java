@@ -2,12 +2,15 @@ package hashed.app.ampassadors.Fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,8 +19,11 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,7 +39,7 @@ import hashed.app.ampassadors.Activities.PostNewsActivity;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.FileDownloadUtil;
 
-public class ImageFullScreenFragment extends Fragment {
+public class ImageFullScreenFragment extends DialogFragment {
 
   private static final boolean AUTO_HIDE = true;
 
@@ -99,9 +105,51 @@ public class ImageFullScreenFragment extends Fragment {
 
 
   @Override
+  public void onStart() {
+    super.onStart();
+  }
+
+  @Override
+  public int getTheme() {
+    return R.style.FullScreenDialog;
+  }
+
+//  @NonNull
+//  @Override
+//  public Dialog onCreateDialog(final Bundle savedInstanceState) {
+//
+//    // the content
+//    final FrameLayout root = new FrameLayout(getActivity());
+//    root.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+//            ViewGroup.LayoutParams.MATCH_PARENT));
+//
+//    // creating the fullscreen dialog
+//    final Dialog dialog = new Dialog(getActivity());
+//    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//    dialog.setContentView(root);
+//    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//    dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,
+//            ViewGroup.LayoutParams.MATCH_PARENT);
+//
+//    return dialog;
+//  }
+
+  @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+//    Dialog dialog = getDialog();
+//    if (dialog != null) {
+//      int width = ViewGroup.LayoutParams.MATCH_PARENT;
+//      int height = ViewGroup.LayoutParams.MATCH_PARENT;
+//      dialog.getWindow().setLayout(width, height);
+//
+////      dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+////              WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//
+//    }
 //    setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialogTheme);
+
   }
 
   @Nullable
@@ -114,6 +162,7 @@ public class ImageFullScreenFragment extends Fragment {
 //
 //    Objects.requireNonNull(getDialog()).getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,
 //            ViewGroup.LayoutParams.MATCH_PARENT);
+
 
 
     fullScreenIv = view.findViewById(R.id.fullScreenIv);

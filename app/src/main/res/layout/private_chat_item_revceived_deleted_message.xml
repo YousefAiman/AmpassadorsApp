@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@drawable/chat_item_received_text_message_back"
-    android:fontFamily="@font/segoe_ui"
-    android:layout_gravity="start"
-    android:elevation="4dp"
-    android:text="@string/message_deleted"
-    android:layout_marginStart="15dp"
-    android:layout_marginTop="25dp"
-    android:paddingVertical="6dp"
-    android:paddingEnd="40dp"
-    android:paddingStart="30dp"
-    android:textColor="@color/white"
-    android:textSize="18sp"/>
+<LinearLayout android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:gravity="start"
+    android:paddingTop="25dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/chat_item_received_text_message_back"
+        android:elevation="3dp"
+        android:text="@string/message_deleted"
+        android:layout_marginStart="15dp"
+        android:fontFamily="@font/segoe_ui"
+        android:paddingVertical="5dp"
+        android:paddingHorizontal="20dp"
+        android:layout_marginBottom="3dp"
+        android:textColor="@color/white"
+        android:textSize="18sp"/>
+</LinearLayout>

@@ -63,6 +63,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
@@ -98,6 +99,7 @@ import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.TimeFormatter;
+import hashed.app.ampassadors.Utils.UploadTaskUtil;
 import hashed.app.ampassadors.Utils.WorkRequester;
 import hashed.app.ampassadors.Workers.ZoomMeetingWorker;
 
@@ -268,27 +270,66 @@ public class GroupMessagingActivity extends AppCompatActivity
   //firestore user data
   private void getGroupData() {
 
-    meetingsRef.document(groupId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-      @Override
-      public void onSuccess(DocumentSnapshot ds) {
-        if (ds.exists()) {
 
-          if (ds.contains("imageUrl")) {
-            currentGroupImage = ds.getString("imageUrl");
+    if(getIntent().hasExtra("type") && getIntent().getStringExtra("type").equals("course")){
+      messagingTbProfileIv.setVisibility(View.GONE);
+      final DocumentReference documentReference =
+              FirebaseFirestore.getInstance().collection("Courses").document(groupId);
+
+      documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        @Override
+        public void onSuccess(DocumentSnapshot ds) {
+          if (ds.exists()) {
+            messagingTbNameTv.setText(currentGroupName = ds.getString("title"));
+            groupMembers = new ArrayList<>();
+
+            final String creatorId = ds.getString("creatorId");
+
+            if(!currentUid.equals(creatorId)){
+              groupMembers.add(creatorId);
+            }
+
+            documentReference.collection("Attendees").get()
+                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+              @Override
+              public void onSuccess(QuerySnapshot snapshots) {
+               if(!snapshots.isEmpty()){
+                 for(DocumentSnapshot snapshot:snapshots){
+                   groupMembers.add(snapshot.getId());
+                 }
+               }
+              }
+            });
           }
-          currentGroupName = ds.getString("title");
-          groupMembers = (List<String>) ds.get("members");
         }
-      }
-    }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-      @Override
-      public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-        if (task.isSuccessful()) {
-          Picasso.get().load(currentGroupImage).fit().into(messagingTbProfileIv);
-          messagingTbNameTv.setText(currentGroupName);
+      });
+
+    }else{
+      meetingsRef.document(groupId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        @Override
+        public void onSuccess(DocumentSnapshot ds) {
+          if (ds.exists()) {
+            if (ds.contains("imageUrl")) {
+              currentGroupImage = ds.getString("imageUrl");
+            }
+            currentGroupName = ds.getString("title");
+            groupMembers = (List<String>) ds.get("members");
+          }
         }
-      }
-    });
+      }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        @Override
+        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+          if (task.isSuccessful()) {
+            if(currentGroupImage!=null && !currentGroupImage.isEmpty()){
+              Picasso.get().load(currentGroupImage).fit().into(messagingTbProfileIv);
+            }
+            messagingTbNameTv.setText(currentGroupName);
+          }
+        }
+      });
+    }
+
+
 
   }
 
@@ -1117,65 +1158,6 @@ public class GroupMessagingActivity extends AppCompatActivity
     return false;
   }
 
-  private void cancelUploadTasks() {
-
-    if (uploadTasks != null && !uploadTasks.isEmpty()) {
-      for (UploadTask uploadTask : uploadTasks.keySet()) {
-
-        if (uploadTask.isComplete()) {
-
-//complete so doing nothing
-
-//          Log.d("ttt","task complete so deleting from ref");
-//          uploadTask.getSnapshot().getStorage().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-//            @Override
-//            public void onSuccess(Void aVoid) {
-//              Log.d("ttt","ref delete sucess");
-//            }
-//          }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//              Log.d("ttt","ref delete failed: "+e.getMessage());
-//            }
-//          });
-
-        } else {
-
-          Log.d("ttt", "task not complete so adding new listener, " +
-                  "and trying to cancel: " + uploadTask.cancel());
-
-          if (uploadTasks.containsKey(uploadTask)) {
-
-            uploadTask.removeOnSuccessListener(
-                    (OnSuccessListener<? super UploadTask.TaskSnapshot>) uploadTasks.get(uploadTask));
-
-          }
-
-          uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-              uploadTask.getSnapshot().getStorage().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                  Log.d("ttt", "ref delete sucess");
-                }
-              }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                  Log.d("ttt", "ref delete failed: " + e.getMessage());
-                }
-              });
-
-            }
-          });
-
-        }
-      }
-    }
-
-
-  }
 
   private void scrollToBottom() {
     privateMessagingRv.post(() ->
@@ -1255,7 +1237,7 @@ public class GroupMessagingActivity extends AppCompatActivity
   @Override
   public void deleteMessage(PrivateMessage message, DialogInterface dialog) {
 
-    currentMessagingRef.child("messages")
+    currentMessagingRef.child("Messages")
             .orderByChild("time").equalTo(message.getTime()).limitToFirst(1)
             .addListenerForSingleValueEvent(new ValueEventListener() {
               @Override
@@ -1468,7 +1450,7 @@ public class GroupMessagingActivity extends AppCompatActivity
       alert.setMessage(getString(R.string.Leaving_Message));
 
       alert.setPositiveButton(R.string.YES, (dialogInterface, i) -> {
-        cancelUploadTasks();
+        UploadTaskUtil.cancelUploadTasks(uploadTasks);
         dialogInterface.dismiss();
         finish();
       });
@@ -1490,6 +1472,8 @@ public class GroupMessagingActivity extends AppCompatActivity
 
     getSupportFragmentManager().beginTransaction().replace(pickerFrameLayout.getId(),
             fragment, "fullScreen").commit();
+
+
 
   }
 
@@ -1531,8 +1515,9 @@ public class GroupMessagingActivity extends AppCompatActivity
   @Override
   public void showImage(String url,String fileName) {
 
-    showFullScreenFragment(new ImageFullScreenFragment(url,fileName));
-
+    new ImageFullScreenFragment(url,fileName).show(getSupportFragmentManager(),"fullScreen");
+//    showFullScreenFragment(new ImageFullScreenFragment(url,fileName));
+//    new ImageFullScreenFragment(url,fileName).show();
   }
 
   @Override
@@ -1729,7 +1714,21 @@ public class GroupMessagingActivity extends AppCompatActivity
       data.setBody(body);
     }
 
-    sendNotificationsToMembers(body);
+
+    if(groupMembers == null || groupMembers.isEmpty()){
+      sendNotificationsToMembers(body);
+
+//      if(getIntent().getStringExtra("type").equals("course")){
+//        FirebaseFirestore.getInstance().collection("Courses")
+//                .document(groupId).collection("Attendees")
+//                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//          @Override
+//          public void onSuccess(QuerySnapshot snapshots) {
+//
+//          }
+//        })
+//      }
+    }
 
   }
 

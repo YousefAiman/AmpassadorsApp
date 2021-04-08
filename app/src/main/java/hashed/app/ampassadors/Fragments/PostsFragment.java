@@ -3,6 +3,7 @@ package hashed.app.ampassadors.Fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -54,6 +55,7 @@ import hashed.app.ampassadors.Objects.MeetingPreview;
 import hashed.app.ampassadors.Objects.PollOption;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.Files;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.TimeFormatter;
 
@@ -503,4 +505,8 @@ public class  PostsFragment extends Fragment implements Toolbar.OnMenuItemClickL
       }
     }
   }
+
+
+
+
 }

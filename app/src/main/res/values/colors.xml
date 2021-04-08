@@ -17,6 +17,7 @@
     <color name="white_grey">#F2F2F2</color>
     <color name="light_medium_grey">#E0E0E0</color>
     <color name="medium_grey">#707070</color>
+    <color name="dark_grey">#474545</color>
     <color name="red">#E50707</color>
     <color name="messages_red">#C80000</color>
     <color name="pink_red">#CE1125</color>
@@ -31,5 +32,6 @@
     <color name="blue_notifications">#2644C4A1</color>
     <color name="light_white_green">#F2F8F5</color>
     <color name="black_overlay">#66000000</color>
+
 
 </resources>

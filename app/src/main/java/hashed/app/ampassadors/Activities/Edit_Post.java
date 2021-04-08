@@ -64,6 +64,7 @@ import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.TimeFormatter;
+import hashed.app.ampassadors.Utils.UploadTaskUtil;
 
 public class Edit_Post extends AppCompatActivity implements View.OnClickListener,
         Toolbar.OnMenuItemClickListener {
@@ -388,7 +389,7 @@ public class Edit_Post extends AppCompatActivity implements View.OnClickListener
     protected void onDestroy() {
         super.onDestroy();
 
-        cancelUploadTasks();
+        UploadTaskUtil.cancelUploadTasks(uploadTaskMap);
 
         if (simpleExoPlayer != null) {
             playerView.setPlayer(null);
@@ -500,30 +501,6 @@ public class Edit_Post extends AppCompatActivity implements View.OnClickListener
 
             }
         });
-    }
-
-    private void cancelUploadTasks() {
-
-        if (uploadTaskMap != null && !uploadTaskMap.isEmpty()) {
-            for (UploadTask uploadTask : uploadTaskMap.keySet()) {
-                if (uploadTaskMap.containsKey(uploadTask)) {
-
-                    uploadTask.removeOnSuccessListener(
-                            (OnSuccessListener<? super UploadTask.TaskSnapshot>)
-                                    uploadTaskMap.get(uploadTask));
-
-                }
-
-                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        uploadTask.getSnapshot().getStorage().delete();
-                    }
-                });
-            }
-        }
-
-
     }
 
 

@@ -49,7 +49,8 @@ public class ChattingFragment extends Fragment implements MenuItem.OnMenuItemCli
     super.onCreate(savedInstanceState);
 
     final Fragment[] fragments = {new OnlineUsersFragment(), new MessagesFragment()};
-    final String[] titles = {"Online", "Messages"};
+    final String[] titles = {getResources().getString(R.string.online_users),
+            getResources().getString(R.string.message)};
 
     tabAdapterTitle = new TabAdapterTitle(getChildFragmentManager(),
             FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, fragments, titles);
@@ -80,16 +81,12 @@ public class ChattingFragment extends Fragment implements MenuItem.OnMenuItemCli
                     R.drawable.notification_indicator_icon :
                     R.drawable.notification_icon);
 
-
     setupNotificationReceiver();
-
 
     chattingViewPager.setAdapter(tabAdapterTitle);
     chattingTabLayout.setupWithViewPager(chattingViewPager);
 
     searchTv.setOnClickListener(this);
-//    chattingSearchView.setOnClickListener(this);
-//    chattingSearchView.setOnSearchClickListener(this);
 
   }
 

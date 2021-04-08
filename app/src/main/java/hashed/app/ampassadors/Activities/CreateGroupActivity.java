@@ -30,6 +30,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -58,9 +59,9 @@ import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
 import hashed.app.ampassadors.Utils.TimeFormatter;
+import hashed.app.ampassadors.Utils.UploadTaskUtil;
 
-public class CreateGroupActivity extends AppCompatActivity implements View.OnClickListener {
-
+  public class CreateGroupActivity extends AppCompatActivity implements View.OnClickListener {
 
   //database
   private CollectionReference groupsRef;
@@ -218,6 +219,7 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
 
       final Map<String, Object> groupMap = new HashMap<>();
       groupMap.put("creatorId", currentUid);
+      groupMap.put("groupAdmins", FieldValue.arrayUnion(currentUid));
       groupMap.put("groupName", name);
       groupMap.put("createdTime", System.currentTimeMillis());
       groupMap.put("users", selectedUserIdsList);
@@ -302,9 +304,11 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
                                             public void onSuccess(DocumentSnapshot snapshot) {
                                               if(snapshot.exists()){
 
+                                                final String username  =
+                                                        snapshot.getString("username");
                                                 final Data data = new Data(
                                                         currentUid,
-                                                        snapshot.getString("username")+" "+
+                                                        username+" "+
                                                                 getResources().getString(R.string.added_to_group),
                                                         groupNameEd.getText().toString().trim(),
                                                         meetingImageUrl,
@@ -318,7 +322,7 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
                                                   CloudMessagingNotificationsSender.sendNotification(userId, data);
                                                   FirestoreNotificationSender.sendFirestoreNotification(
                                                           userId, FirestoreNotificationSender.TYPE_GROUP_ADDED,
-                                                          name +" "+
+                                                          username +" "+
                                                                   getResources()
                                                                           .getString(R.string.added_to_group),
                                                           name, groupId);
@@ -374,20 +378,6 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
   }
 
 
-  private void cancelUploadTasks() {
-
-    final UploadTask uploadTask = uploadTaskMap.keySet().iterator().next();
-
-    uploadTask.removeOnSuccessListener(
-            (OnSuccessListener<? super UploadTask.TaskSnapshot>) uploadTaskMap.get(uploadTask));
-
-    uploadTask.addOnSuccessListener(taskSnapshot ->
-            uploadTask.getSnapshot().getStorage().delete()
-                    .addOnSuccessListener(v -> Log.d("ttt", "ref delete sucess")).
-                    addOnFailureListener(e -> Log.d("ttt", "ref delete failed: " +
-                            e.getMessage())));
-
-  }
 
   @Override
   public void onBackPressed() {
@@ -401,11 +391,10 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
       alert.setMessage("Leaving will discard this group");
 
       alert.setPositiveButton("Leave", (dialogInterface, i) -> {
-        if (uploadTaskMap != null && !uploadTaskMap.isEmpty()) {
-          cancelUploadTasks();
+          UploadTaskUtil.cancelUploadTasks(uploadTaskMap);
           dialogInterface.dismiss();
           finish();
-        }});
+      });
 
         alert.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
         alert.create().show();

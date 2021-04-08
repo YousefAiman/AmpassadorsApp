@@ -62,12 +62,13 @@ import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.FileDownloadUtil;
 import hashed.app.ampassadors.Utils.Files;
 import hashed.app.ampassadors.Utils.TimeFormatter;
+import hashed.app.ampassadors.Utils.UploadTaskUtil;
 
 
 public class PostNewActivity extends AppCompatActivity implements View.OnClickListener {
 
   private final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-  private ImageView userIv, pdfIv,  videoIv, imageIv, attachmentIv, videoPlayIv;
+  private ImageView userIv, pdfIv, videoIv, imageIv, attachmentIv, videoPlayIv;
   private Button publishBtn;
   private TextView usernameTv, attachmentTv;
   private EditText titleEd, descriptionEd;
@@ -80,8 +81,8 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
   private int attachmentType = Files.TEXT;
   private String documentName;
   private double documentSize;
-  private CheckBox checkBox ;
-  boolean important  = false;
+  private CheckBox checkBox;
+  boolean important = false;
 
   //editing
   private PostData postData;
@@ -99,16 +100,16 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
 
     getViews();
 
-    if(isForEditing){
+    if (isForEditing) {
       fillPostData();
-    }else{
+    } else {
       getUserInfo(currentUid);
     }
 
     setClickListeners();
     if (getIntent().hasExtra("justForUser")) {
       checkBox.setVisibility(View.GONE);
-    }else{
+    } else {
       checkBox.setVisibility(View.VISIBLE);
     }
 
@@ -117,7 +118,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
   private void setupToolbar() {
     final Toolbar toolbar = findViewById(R.id.toolbar);
     toolbar.setNavigationOnClickListener(v -> onBackPressed());
-    if(isForEditing){
+    if (isForEditing) {
       toolbar.setTitle(getResources().getString(R.string.edit_post));
     }
   }
@@ -140,7 +141,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     attachmentTv = findViewById(R.id.attachmentTv);
     checkBox = findViewById(R.id.checkbox);
 
-    if(isForEditing){
+    if (isForEditing) {
       publishBtn.setText(getResources().getString(R.string.edit));
     }
   }
@@ -155,7 +156,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
 
   }
 
-  private void fillPostData(){
+  private void fillPostData() {
 
     postData = (PostData) getIntent().getSerializableExtra("postData");
 
@@ -245,9 +246,9 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
 
     if (view.getId() == publishBtn.getId()) {
 
-      if(isForEditing){
+      if (isForEditing) {
         updatePost();
-      }else{
+      } else {
         startPostPublishing();
       }
 
@@ -267,7 +268,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     }
   }
 
-  private void updatePost(){
+  private void updatePost() {
 
     final String title = titleEd.getText().toString().trim();
     final String description = descriptionEd.getText().toString().trim();
@@ -279,7 +280,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     progressDialog.show();
 
 
-    if(attachmentUri!=null){
+    if (attachmentUri != null) {
 
       uploadTaskMap = new HashMap<>();
 
@@ -303,48 +304,48 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
           break;
 
         case Files.TEXT:
-          publishPostUpdate(title, description,null,null,progressDialog);
+          publishPostUpdate(title, description, null, null, progressDialog);
           break;
       }
 
-    }else{
-      publishPostUpdate(title, description,null,null,progressDialog);
+    } else {
+      publishPostUpdate(title, description, null, null, progressDialog);
     }
 
   }
 
   private void publishPostUpdate(String title, String description, String attachmentUrl,
-                                 String videoThumbnailUrl, ProgressDialog progressDialog){
+                                 String videoThumbnailUrl, ProgressDialog progressDialog) {
 
     Map<String, Object> updateMap = new HashMap<>();
 
-    if(!title.equals(postData.getTitle())){
-      updateMap.put("title",title);
+    if (!title.equals(postData.getTitle())) {
+      updateMap.put("title", title);
     }
 
-    if(!description.equals(postData.getDescription())){
-      updateMap.put("description",description);
+    if (!description.equals(postData.getDescription())) {
+      updateMap.put("description", description);
     }
 
-    if(attachmentType != postData.getAttachmentType()){
-      updateMap.put("attachmentType",attachmentType);
+    if (attachmentType != postData.getAttachmentType()) {
+      updateMap.put("attachmentType", attachmentType);
     }
 
-    if(attachmentUri!=null && attachmentType == Files.DOCUMENT){
-      updateMap.put("documentName",documentName);
-      updateMap.put("documentSize",documentSize);
+    if (attachmentUri != null && attachmentType == Files.DOCUMENT) {
+      updateMap.put("documentName", documentName);
+      updateMap.put("documentSize", documentSize);
     }
 
-    if(checkBox.isChecked() != postData.isImportant()){
-      updateMap.put("important",checkBox.isChecked());
+    if (checkBox.isChecked() != postData.isImportant()) {
+      updateMap.put("important", checkBox.isChecked());
     }
 
-    if(attachmentUrl!=null){
-      updateMap.put("attachmentUrl",attachmentUrl);
+    if (attachmentUrl != null) {
+      updateMap.put("attachmentUrl", attachmentUrl);
     }
 
-    if(videoThumbnailUrl!=null){
-      updateMap.put("videoThumbnailUrl",videoThumbnailUrl);
+    if (videoThumbnailUrl != null) {
+      updateMap.put("videoThumbnailUrl", videoThumbnailUrl);
     }
 
     final DocumentReference documentReference =
@@ -352,25 +353,24 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
                     .document(postData.getPostId());
 
 
-    if(postData.getAttachmentUrl()!=null){
+    if (postData.getAttachmentUrl() != null) {
 
       FirebaseStorage storage = FirebaseStorage.getInstance();
       storage.getReferenceFromUrl(postData.getAttachmentUrl()).delete();
 
-      if(postData.getAttachmentType() == Files.VIDEO){
+      if (postData.getAttachmentType() == Files.VIDEO) {
 
         documentReference.update("videoThumbnailUrl", FieldValue.delete());
 
         storage.getReferenceFromUrl(postData.getVideoThumbnailUrl()).delete();
 
-      }else if(postData.getAttachmentType() == Files.DOCUMENT){
+      } else if (postData.getAttachmentType() == Files.DOCUMENT) {
 
         documentReference.update("documentName", FieldValue.delete(),
-                "documentSize",FieldValue.delete());
+                "documentSize", FieldValue.delete());
 
       }
     }
-
 
     documentReference.update(updateMap).addOnSuccessListener(new OnSuccessListener<Void>() {
       @Override
@@ -394,7 +394,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
 
   }
 
-  private void startPostPublishing(){
+  private void startPostPublishing() {
     final String title = titleEd.getText().toString().trim();
     final String description = descriptionEd.getText().toString().trim();
 
@@ -431,25 +431,23 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     uploadTaskMap = new HashMap<>();
 
 
-
     switch (attachmentType) {
-        case Files.IMAGE:
-          uploadImage(title, description, progressDialog);
-          break;
+      case Files.IMAGE:
+        uploadImage(title, description, progressDialog);
+        break;
 
-        case Files.VIDEO:
-          uploadVideo(title, description, progressDialog);
-          break;
+      case Files.VIDEO:
+        uploadVideo(title, description, progressDialog);
+        break;
 
-        case Files.DOCUMENT:
-          uploadDocument(title, description, progressDialog);
-          break;
+      case Files.DOCUMENT:
+        uploadDocument(title, description, progressDialog);
+        break;
 
-        case Files.TEXT:
-          publishPost(title,description,null,null,progressDialog);
-          break;
-      }
-
+      case Files.TEXT:
+        publishPost(title, description, null, null, progressDialog);
+        break;
+    }
 
 
   }
@@ -463,13 +461,13 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     dataMap.put("title", title);
     dataMap.put("description", description);
     dataMap.put("publisherId", currentUid);
-    if (checkBox.isChecked()){
-      important= true;
-      dataMap.put("important",important);
+    if (checkBox.isChecked()) {
+      important = true;
+      dataMap.put("important", important);
     }
-    dataMap.put("isReported",false);
+    dataMap.put("isReported", false);
     dataMap.put("attachmentType", attachmentType);
-    if(attachmentUrl != null){
+    if (attachmentUrl != null) {
       dataMap.put("attachmentUrl", attachmentUrl);
     }
 
@@ -486,7 +484,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     if (documentSize != 0) {
       dataMap.put("documentSize", documentSize);
     }
-    dataMap.put("important",  important);
+    dataMap.put("important", important);
     dataMap.put("publishTime", System.currentTimeMillis());
     dataMap.put("likes", 0);
     dataMap.put("comments", 0);
@@ -495,7 +493,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
 
     if (getIntent().hasExtra("justForUser")) {
 
-     DocumentReference reference = FirebaseFirestore.getInstance().collection("Users")
+      DocumentReference reference = FirebaseFirestore.getInstance().collection("Users")
               .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
               .collection("UserPosts").document(postId);
 
@@ -517,7 +515,6 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
           progressDialog.dismiss();
         }
       });
-
 
 
     } else {
@@ -562,9 +559,9 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
 
                 final String attachmentUrl = uri1.toString();
 
-                if(isForEditing){
-                  publishPostUpdate(title,description,attachmentUrl,null,progressDialog);
-                }else{
+                if (isForEditing) {
+                  publishPostUpdate(title, description, attachmentUrl, null, progressDialog);
+                } else {
                   publishPost(title, description, attachmentUrl, null, progressDialog);
                 }
               }).addOnFailureListener(new OnFailureListener() {
@@ -607,9 +604,9 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
 
                 final String attachmentUrl = uri1.toString();
 
-                if(isForEditing){
-                  publishPostUpdate(title,description,attachmentUrl,null,progressDialog);
-                }else{
+                if (isForEditing) {
+                  publishPostUpdate(title, description, attachmentUrl, null, progressDialog);
+                } else {
                   publishPost(title, description, attachmentUrl, null, progressDialog);
                 }
 
@@ -670,14 +667,13 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
 
                             Log.d("ttt", "videoThumbnailUrl: " + videoThumbnailUrl);
 
-                            if(isForEditing){
-                              publishPostUpdate(title,description,attachmentUrl,
-                                      videoThumbnailUrl,progressDialog);
-                            }else{
+                            if (isForEditing) {
+                              publishPostUpdate(title, description, attachmentUrl,
+                                      videoThumbnailUrl, progressDialog);
+                            } else {
                               publishPost(title, description, attachmentUrl,
                                       videoThumbnailUrl, progressDialog);
                             }
-
 
 
                           }).addOnFailureListener(new OnFailureListener() {
@@ -816,7 +812,6 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
   }
 
 
-
   private void getVideoThumbnail() {
 
     new Thread(new Runnable() {
@@ -857,9 +852,9 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
 
   private SimpleExoPlayer SetupPlayer(String url) {
 
-    if(url!=null){
-      new VideoFullScreenFragment(url).show(getSupportFragmentManager(),"video");
-    }else{
+    if (url != null) {
+      new VideoFullScreenFragment(url).show(getSupportFragmentManager(), "video");
+    } else {
       simpleExoPlayer = new SimpleExoPlayer.Builder(this,
               new DefaultRenderersFactory(this)).build();
 
@@ -885,26 +880,24 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
       return simpleExoPlayer;
     }
 
-return null;
+    return null;
 
   }
 
   @Override
   public void onBackPressed() {
 
-    if(!descriptionEd.getText().toString().trim().isEmpty()
+    if (!descriptionEd.getText().toString().trim().isEmpty()
             || !titleEd.getText().toString().trim().isEmpty()
-            || attachmentUri!=null){
+            || attachmentUri != null) {
 
       AlertDialog.Builder alert = new AlertDialog.Builder(this);
       alert.setTitle("Do you want to leave without creating this post?");
       alert.setMessage("Leaving will discard this post");
 
       alert.setPositiveButton("Leave", (dialogInterface, i) -> {
-        if (uploadTaskMap != null && !uploadTaskMap.isEmpty()) {
-          cancelUploadTasks();
-          dialogInterface.dismiss();
-        }
+        UploadTaskUtil.cancelUploadTasks(uploadTaskMap);
+        dialogInterface.dismiss();
         finish();
       });
 
@@ -939,7 +932,7 @@ return null;
   protected void onDestroy() {
     super.onDestroy();
 
-    cancelUploadTasks();
+    UploadTaskUtil.cancelUploadTasks(uploadTaskMap);
 
     if (simpleExoPlayer != null) {
       playerView.setPlayer(null);
@@ -947,31 +940,6 @@ return null;
       simpleExoPlayer.release();
       simpleExoPlayer = null;
     }
-
-  }
-
-
-  private void cancelUploadTasks() {
-
-    if (uploadTaskMap != null && !uploadTaskMap.isEmpty()) {
-      for (UploadTask uploadTask : uploadTaskMap.keySet()) {
-        if (uploadTaskMap.containsKey(uploadTask)) {
-
-          uploadTask.removeOnSuccessListener(
-                  (OnSuccessListener<? super UploadTask.TaskSnapshot>)
-                          uploadTaskMap.get(uploadTask));
-
-        }
-
-        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-          @Override
-          public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-            uploadTask.getSnapshot().getStorage().delete();
-          }
-        });
-      }
-    }
-
 
   }
 

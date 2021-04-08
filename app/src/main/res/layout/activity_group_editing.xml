@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".Activities.GroupEditingActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/dark_green"
+        app:navigationIcon="@drawable/back_arrow_icon"
+        app:layout_constraintTop_toTopOf="@id/toolbar"
+        app:subtitleTextAppearance="@style/CreateMeetingToolbarSubtitle"
+        app:subtitleTextColor="@color/white"
+        app:titleTextColor="@color/white"
+        app:titleTextAppearance="@style/CreateMeetingToolbar" />
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/groupIv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintWidth_percent=".16"
+        app:layout_constraintDimensionRatio="1"
+        android:src="@color/white"
+        android:layout_marginStart="17dp"
+        android:layout_marginTop="20dp"
+        app:civ_border_color="@color/medium_green"
+        app:civ_border_width="2dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+    <ImageView
+        android:id="@+id/changeImageIv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/change_image_icon"
+        app:layout_constraintBottom_toBottomOf="@+id/groupIv"
+        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintEnd_toEndOf="@+id/groupIv"
+        app:layout_constraintWidth_percent=".06" />
+
+
+
+    <EditText
+        android:id="@+id/groupNameEd"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/create_meeting_ed_underline_back"
+        android:hint="@string/new_group_name"
+        android:inputType="text"
+        android:paddingTop="5dp"
+        android:paddingHorizontal="2dp"
+        android:paddingBottom="2dp"
+        android:fontFamily="@font/segoe_ui"
+        android:maxLength="150"
+        android:layout_marginStart="22dp"
+        android:layout_marginEnd="36dp"
+        android:textColor="#000"
+        android:textColorHint="#CDCED2"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/groupIv"
+        app:layout_constraintStart_toEndOf="@+id/groupIv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/groupIv" />
+
+
+    <View
+        android:id="@+id/view10"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="40dp"
+        android:background="@color/white_grey"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/groupIv" />
+
+    <TextView
+        android:id="@+id/contributorsTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="12dp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/segoe_ui"
+        android:textSize="14sp"
+        android:text="@string/participants"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/view10" />
+
+    <TextView
+        android:id="@+id/addParticipantsTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/segoe_ui"
+        android:text="@string/add_participants"
+        android:textColor="@color/black_transparent"
+        android:textSize="18sp"
+        android:visibility="gone"
+        android:layout_marginStart="50dp"
+        app:layout_constraintBottom_toBottomOf="@+id/addMemberIv"
+        app:layout_constraintStart_toEndOf="@+id/addMemberIv"
+        app:layout_constraintTop_toTopOf="@+id/addMemberIv" />
+
+
+    <ImageView
+        android:id="@+id/addMemberIv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/add_person_icon"
+        android:background="@drawable/green_circular_border_back"
+        android:scaleType="centerInside"
+        android:layout_marginTop="17dp"
+        android:adjustViewBounds="true"
+        android:visibility="gone"
+        app:layout_constraintDimensionRatio="1"
+        android:padding="8dp"
+        app:layout_constraintStart_toStartOf="@+id/contributorsTv"
+        app:layout_constraintTop_toBottomOf="@+id/contributorsTv"
+        app:layout_constraintWidth_percent=".16" />
+
+
+
+
+
+    <View
+        android:id="@+id/view11"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="6.5dp"
+        android:background="#4D707070"
+        app:layout_constraintTop_toBottomOf="@+id/addMemberIv" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/groupMembersRv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:paddingTop="10dp"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view11" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

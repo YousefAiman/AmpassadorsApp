@@ -3,9 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:background="?attr/fullscreenBackgroundColor"
-    android:theme="@style/ThemeOverlay.AmpassadorsApp.FullscreenContainer"
+    android:background="@color/black_transparent"
     tools:context=".Fragments.ImageFullScreenFragment">
 
     <ImageView

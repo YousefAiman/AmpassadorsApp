@@ -84,8 +84,7 @@ public class Home_Activity extends AppCompatActivity implements
   @Override
   protected void onPause() {
     super.onPause();
-    FirebaseFirestore.getInstance().collection("Users")
-            .document(userid).update("status",false);
+
   }
 
   @Override
@@ -100,6 +99,11 @@ public class Home_Activity extends AppCompatActivity implements
     firebaseFirestore = FirebaseFirestore.getInstance();
 
     replaceFragment(new PostsFragment());
+
+    if(nav_btom.getSelectedItemId()!=R.id.home){
+      nav_btom.setSelectedItemId(R.id.home);
+    }
+
 
     if(auth.getCurrentUser().isAnonymous()){
       navigationview.inflateMenu(R.menu.menu_nav);
@@ -188,7 +192,6 @@ public class Home_Activity extends AppCompatActivity implements
 //        }
 //      }
 //    });
-
 
     OnClickButtons();
     createUserLikesListener();
@@ -343,6 +346,10 @@ public class Home_Activity extends AppCompatActivity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+      FirebaseFirestore.getInstance().collection("Users")
+              .document(userid).update("status",false);
+
         if(listenerRegistrations!=null && !listenerRegistrations.isEmpty()){
             for(ListenerRegistration listenerRegistration:listenerRegistrations){
                 listenerRegistration.remove();

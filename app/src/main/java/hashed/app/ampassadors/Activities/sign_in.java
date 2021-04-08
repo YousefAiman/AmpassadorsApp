@@ -388,10 +388,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                 Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
 
 
-
             task.addOnSuccessListener(googleSignInAccount -> {
-
-
 
                 try {
                         final GoogleSignInAccount account = task.getResult(ApiException.class);
@@ -399,12 +396,18 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                     } catch (ApiException e) {
                         googleProgressDialog.dismiss();
 
+                    Toast.makeText(this,
+                            "Failed to sign in using your Gmail account!" +
+                                    "Please try again", Toast.LENGTH_SHORT).show();
+
                         Log.d("ttt","ApiException google: "+e.getMessage());
 
-                        Log.w("ttt", "Google sign in failed" + e.getMessage());
                     }
                 }).addOnFailureListener(e -> {
 
+                Toast.makeText(this,
+                        "Failed to sign in using your Gmail account!" +
+                                "Please try again", Toast.LENGTH_SHORT).show();
                     Log.d("ttt","task google: "+e.toString());
                     googleProgressDialog.dismiss();
                 });
@@ -422,7 +425,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
 
         GoogleSignInOptions gso = new GoogleSignInOptions
                 .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.web_client_id))
+                .requestIdToken(getResources().getString(R.string.web_client_id))
                 .requestEmail()
                 .build();
 

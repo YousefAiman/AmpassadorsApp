@@ -69,6 +69,7 @@ public class MeetingActivity extends AppCompatActivity implements View.OnClickLi
   private void setUpToolbar(){
     final Toolbar meetingToolbar = findViewById(R.id.meetingToolbar);
     meetingToolbar.setNavigationOnClickListener(v->finish());
+    meetingToolbar.setTitle(meeting.getTitle());
   }
 
   private void getViews(){
@@ -134,7 +135,7 @@ public class MeetingActivity extends AppCompatActivity implements View.OnClickLi
   }
 
 
-  void getUsers(List<String> userIdsList) {
+  private void getUsers(List<String> userIdsList) {
 
     isLoadingUsers = true;
     final int previousSize = userPreviews.size();
@@ -167,7 +168,7 @@ public class MeetingActivity extends AppCompatActivity implements View.OnClickLi
 
      startActivity(new Intent(MeetingActivity.this, GroupMessagingActivity.class)
                       .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("messagingUid",
-                      meeting.getMeetingId()));
+                      meeting.getMeetingId()).putExtra("type","meeting"));
 
      finish();
     }
@@ -191,8 +192,6 @@ public class MeetingActivity extends AppCompatActivity implements View.OnClickLi
           if (meetingUserIds.size() > userPreviews.size()) {
             getUsers(meetingUserIds.subList(userPreviews.size(), meetingUserIds.size()));
           }
-
-
         }
 
       }

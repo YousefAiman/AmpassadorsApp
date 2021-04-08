@@ -264,7 +264,7 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
       }
   }
 
-  public static class UserMeetingContributorsVh
+  public class UserMeetingContributorsVh
           extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     private final ImageView contributorImageIv;
@@ -295,7 +295,11 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public void onClick(View view) {
 
-
+      final UserPreview user = users.get(getAdapterPosition());
+      itemView.getContext().startActivity(new Intent(itemView.getContext(),
+              ProfileActiv.class).putExtra("userId",user.getUserId())
+              .putExtra("ImageUrl", user.getImageUrl())
+              .putExtra("username",user.getUsername()));
     }
   }
 

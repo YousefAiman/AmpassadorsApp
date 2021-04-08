@@ -113,7 +113,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
       @Override
       public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-        if (task.isSuccessful() && notification.getImageUrl() != null) {
+        if (task.isSuccessful() && notification.getImageUrl() != null &&
+                !notification.getImageUrl().isEmpty()) {
           Picasso.get().load(notification.getImageUrl()).fit().into(imageView);
         }
       }
@@ -244,7 +245,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
                   view.getContext().startActivity(new Intent(view.getContext(),
                           GroupMessagingActivity.class)
-                          .putExtra("messagingUid", notification.getDestinationId()));
+                          .putExtra("messagingUid", notification.getDestinationId())
+                          .putExtra("type","meeting"));
                 }
 
               }

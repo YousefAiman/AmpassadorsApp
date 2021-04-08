@@ -9,7 +9,6 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
@@ -22,14 +21,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AmpassadorsApp">
-
-        <activity android:name=".Activities.MeetingActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Activities.CreateGroupActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Activities.RepostedPosts"
-            android:screenOrientation="portrait"
-            />
+        <activity android:name=".Activities.GroupEditingActivity"></activity>
+        <activity
+            android:name=".Activities.MeetingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.CourseActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.CreateGroupActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.RepostedPosts"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.CoursesActivity"
             android:screenOrientation="portrait" />

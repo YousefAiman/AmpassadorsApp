@@ -22,6 +22,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import hashed.app.ampassadors.Adapters.UsersPickerAdapter;
 import hashed.app.ampassadors.Objects.UserPreview;
@@ -37,6 +38,8 @@ public class UserSearchActivity extends AppCompatActivity implements
   private ArrayList<String> previousSelectedUserIdsList;
   private CollectionReference usersRef;
   private boolean wasFound = false;
+  private boolean excludePreviousUsers;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -46,14 +49,7 @@ public class UserSearchActivity extends AppCompatActivity implements
     RecyclerView userRv = findViewById(R.id.userRv);
     searchUserSearchView = findViewById(R.id.searchUserSearchView);
 
-    pickUserToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-
-    onBackPressed();
-
-      }
-    });
+    pickUserToolbar.setNavigationOnClickListener(v -> onBackPressed());
 
     searchUserSearchView.setOnClickListener(v -> searchUserSearchView.onActionViewCollapsed());
 
@@ -73,18 +69,48 @@ public class UserSearchActivity extends AppCompatActivity implements
 
     users = new ArrayList<>();
 
-    pickerAdapter = new UsersPickerAdapter(users, previousSelectedUserIdsList,
+    pickerAdapter = new UsersPickerAdapter(users,
+            previousSelectedUserIdsList!=null? new ArrayList<>(previousSelectedUserIdsList):
+            new ArrayList<>(),
             true);
     userRv.setAdapter(pickerAdapter);
 
-
-    usersRef.whereEqualTo("isEmailVerified",true)
+    Query query = usersRef.orderBy("userId")
+            .whereEqualTo("isEmailVerified",true)
             .orderBy("username",Query.Direction.ASCENDING)
-            .limit(100).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            .limit(100);
+
+    if(getIntent().hasExtra("excludePreviousUsers") &&
+            getIntent().getBooleanExtra("excludePreviousUsers",false)){
+
+      excludePreviousUsers = true;
+
+      if(previousSelectedUserIdsList.size() > 10){
+
+        final List<String> remainingUsers = previousSelectedUserIdsList.subList(0,10);
+        query = query.whereNotIn("userId",remainingUsers);
+        previousSelectedUserIdsList.removeAll(remainingUsers);
+      }else{
+        query = query.whereNotIn("userId",previousSelectedUserIdsList);
+
+      }
+
+
+    }
+
+    query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
       @Override
       public void onSuccess(QuerySnapshot snapshots) {
         if(!snapshots.isEmpty()){
-          users.addAll(snapshots.toObjects(UserPreview.class));
+          if(excludePreviousUsers && !previousSelectedUserIdsList.isEmpty()){
+            for(DocumentSnapshot snapshot:snapshots.getDocuments()){
+              if(!previousSelectedUserIdsList.contains(snapshot.getId())){
+                users.add(snapshot.toObject(UserPreview.class));
+              }
+            }
+          }else{
+            users.addAll(snapshots.toObjects(UserPreview.class));
+          }
         }
       }
     }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -131,12 +157,35 @@ public class UserSearchActivity extends AppCompatActivity implements
 
     if (!alreadyExists) {
 
-      usersRef.whereEqualTo("username", query.trim())
-              .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+      Query searchQuery = usersRef
+              .whereEqualTo("isEmailVerified",true)
+              .whereEqualTo("username", query.trim());
+
+      if(excludePreviousUsers){
+
+        if(previousSelectedUserIdsList.size() > 10){
+          final List<String> remainingUsers = previousSelectedUserIdsList.subList(0,10);
+          searchQuery = searchQuery.whereNotIn("userId",remainingUsers);
+          previousSelectedUserIdsList.removeAll(remainingUsers);
+        }else{
+          searchQuery = searchQuery.whereNotIn("userId",previousSelectedUserIdsList);
+        }
+      }
+
+
+      searchQuery.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
         @Override
         public void onSuccess(QuerySnapshot snapshots) {
           if (!snapshots.isEmpty()) {
-            users.addAll(snapshots.toObjects(UserPreview.class));
+            if(excludePreviousUsers && !previousSelectedUserIdsList.isEmpty()){
+              for(DocumentSnapshot snapshot:snapshots.getDocuments()){
+                if(!previousSelectedUserIdsList.contains(snapshot.getId())){
+                  users.add(snapshot.toObject(UserPreview.class));
+                }
+              }
+            }else{
+              users.addAll(snapshots.toObjects(UserPreview.class));
+            }
           }
         }
       }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -164,8 +213,19 @@ public class UserSearchActivity extends AppCompatActivity implements
   public void onBackPressed() {
 
     if (pickerAdapter.selectedUserIds != null) {
-      setResult(3, new Intent().putExtra("previousSearchSelectedUserIdsList"
-              , pickerAdapter.selectedUserIds));
+
+      if(excludePreviousUsers && !previousSelectedUserIdsList.isEmpty()){
+        pickerAdapter.selectedUserIds.removeAll(previousSelectedUserIdsList);
+      }
+
+      if(!pickerAdapter.selectedUserIds.isEmpty()){
+
+        setResult(3, new Intent().putExtra("previousSearchSelectedUserIdsList"
+                , pickerAdapter.selectedUserIds));
+
+
+      }
+
     }
 
     finish();

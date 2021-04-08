@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
@@ -27,6 +28,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.EventListener;
+
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.VideoCache;
 import hashed.app.ampassadors.Utils.VideoDataSourceFactory;
@@ -36,7 +39,7 @@ public class VideoWelcomeActivity extends AppCompatActivity implements View.OnCl
 
   private static final String videoUrl = "https://firebasestorage.googleapis.com/v0/b/ambassadors-app-93583.appspot.com/o/info_video%2FWhatsApp%20Video%202021-03-23%20at%201.17.37%20AM.mp4?alt=media&token=e2ab5de5-8044-44d7-9bb9-bcd11fe7ff5a";
 
-  private Drawable playDrawable,pauseDrawable;
+//  private Drawable playDrawable,pauseDrawable;
 
   //views
   private PlayerView playerView;
@@ -86,7 +89,7 @@ public class VideoWelcomeActivity extends AppCompatActivity implements View.OnCl
   private void initializePlayer(){
 
     final DefaultTrackSelector trackSelector = new DefaultTrackSelector(this);
-    trackSelector.setParameters(trackSelector.buildUponParameters().setMaxVideoSizeSd());
+//    trackSelector.setParameters(trackSelector.buildUponParameters().setMaxVideoSizeSd());
     exoPlayer = new SimpleExoPlayer.Builder(this)
             .setTrackSelector(trackSelector).build();
 
@@ -96,6 +99,16 @@ public class VideoWelcomeActivity extends AppCompatActivity implements View.OnCl
 
     exoPlayer.setPlayWhenReady(true);
     exoPlayer.prepare(mediaSource);
+
+    exoPlayer.addListener(new Player.EventListener() {
+      @Override
+      public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+        if (playbackState == SimpleExoPlayer.STATE_ENDED) {
+          playIv.setImageResource(R.drawable.replay_icon_white);
+          playIv.setVisibility(View.VISIBLE);
+        }
+      }
+    });
 
     playerView.setPlayer(exoPlayer);
 
@@ -108,28 +121,22 @@ public class VideoWelcomeActivity extends AppCompatActivity implements View.OnCl
     if(view.getId() == playerView.getVideoSurfaceView().getId()){
 
       if(exoPlayer!=null){
-        if(exoPlayer.getPlayWhenReady()){
 
-          exoPlayer.setPlayWhenReady(false);
+        if (exoPlayer.getPlaybackState() == SimpleExoPlayer.STATE_ENDED) {
 
-          playIv.setImageDrawable(getPlayDrawable());
+          Log.d("videoPager","videos state ended");
 
-          playIv.setVisibility(View.VISIBLE);
+          exoPlayer.seekTo(0);
+
+          playVideo();
+
+        }else if(exoPlayer.getPlayWhenReady()){
+
+          pauseVideo();
 
         }else{
 
-          exoPlayer.setPlayWhenReady(true);
-
-          playIv.setImageDrawable(getPauseDrawable());
-
-          playIv.setVisibility(View.VISIBLE);
-
-          new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-              playIv.setVisibility(View.INVISIBLE);
-            }
-          },800);
+          playVideo();
 
         }
 
@@ -154,21 +161,44 @@ public class VideoWelcomeActivity extends AppCompatActivity implements View.OnCl
   }
 
 
-  private Drawable getPlayDrawable(){
-    if(playDrawable == null){
-      playDrawable = ResourcesCompat.getDrawable(getResources(),R.drawable.play_icon_new,
-              null);
-    }
-    return playDrawable;
+  private void pauseVideo(){
+    exoPlayer.setPlayWhenReady(false);
+    playIv.setImageResource(R.drawable.play_icon_new);
+    playIv.setVisibility(View.VISIBLE);
   }
 
-  private Drawable getPauseDrawable(){
-    if(pauseDrawable == null){
-      pauseDrawable = ResourcesCompat.getDrawable(getResources(),R.drawable.pause_icon,
-              null);
-    }
-    return pauseDrawable;
+
+  private void playVideo(){
+    exoPlayer.setPlayWhenReady(true);
+
+    playIv.setImageResource(R.drawable.pause_icon);
+
+    playIv.setVisibility(View.VISIBLE);
+
+    new Handler().postDelayed(new Runnable() {
+      @Override
+      public void run() {
+        playIv.setVisibility(View.INVISIBLE);
+      }
+    },800);
+
   }
+//
+//  private Drawable getPlayDrawable(){
+//    if(playDrawable == null){
+//      playDrawable = ResourcesCompat.getDrawable(getResources(),R.drawable.play_icon_new,
+//              null);
+//    }
+//    return playDrawable;
+//  }
+//
+//  private Drawable getPauseDrawable(){
+//    if(pauseDrawable == null){
+//      pauseDrawable = ResourcesCompat.getDrawable(getResources(),R.drawable.pause_icon,
+//              null);
+//    }
+//    return pauseDrawable;
+//  }
 
   private void enterAsGuest(){
     guestBtn.setClickable(false);
@@ -194,16 +224,18 @@ public class VideoWelcomeActivity extends AppCompatActivity implements View.OnCl
   @Override
   public void onPause() {
     super.onPause();
-    if (exoPlayer != null) {
+    if (exoPlayer != null && exoPlayer.getPlayWhenReady()) {
       exoPlayer.setPlayWhenReady(false);
+      pauseVideo();
     }
   }
 
   @Override
   public void onResume() {
     super.onResume();
-    if (exoPlayer != null) {
+    if (exoPlayer != null && !exoPlayer.getPlayWhenReady()) {
       exoPlayer.setPlayWhenReady(true);
+      playVideo();
     }
   }
 
