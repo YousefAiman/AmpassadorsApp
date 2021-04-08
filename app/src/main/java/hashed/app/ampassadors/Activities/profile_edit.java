@@ -2,10 +2,13 @@ package hashed.app.ampassadors.Activities;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -55,6 +58,7 @@ import java.util.UUID;
 
 import hashed.app.ampassadors.Objects.UserInfo;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.FileDownloadUtil;
 
 public class profile_edit extends AppCompatActivity {
 
@@ -76,13 +80,33 @@ public class profile_edit extends AppCompatActivity {
     private ImageView updateImageIV;
     int counter;
     TextView counterTV;
-
+    private BroadcastReceiver downloadCompleteReceiver;
+    private FileDownloadUtil fileDownloadUtil;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_edit);
         //  updatedata();
         init();
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+//                if (fileDownloadUtil == null) {
+//                    fileDownloadUtil = new FileDownloadUtil(profile_edit.this,imageUrl,
+//                            postData.getDocumentName(), imageView);
+//                }
+
+//                fileDownloadUtil.showDownloadAlert();
+
+                if (downloadCompleteReceiver == null) {
+                    setUpDownloadReceiver();
+                }
+
+            }
+
+        });
 // toolbar
         final Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(v -> {
@@ -413,4 +437,28 @@ public class profile_edit extends AppCompatActivity {
             }
         });
     }
-}
+    private void setUpDownloadReceiver() {
+
+        downloadCompleteReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+
+                if (id != -1) {
+                    imageView.setImageResource(R.drawable.download_icon);
+                    imageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            fileDownloadUtil.showDownloadAlert();
+                        }
+                    });
+                }
+
+            }
+        };
+
+        registerReceiver(downloadCompleteReceiver,
+                new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+
+    }}

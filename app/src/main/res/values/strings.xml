@@ -366,5 +366,6 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="creating_account">Creating account!</string>
     <string name="edit_post">Edit Post</string>
     <string name="course_tutors">Course tutors:</string>
+    <string name="EditingMessage">Editing post</string>
 
 </resources>

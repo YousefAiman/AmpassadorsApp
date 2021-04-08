@@ -44,7 +44,6 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
   private final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
   private final Context context;
   public List<Integer> loadingItems = new ArrayList<>();
-
   public PostAdapter(List<PostData> posts, Context context) {
     this.posts = posts;
     this.context = context;

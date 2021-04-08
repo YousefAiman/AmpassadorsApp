@@ -58,6 +58,7 @@ import java.util.UUID;
 
 import hashed.app.ampassadors.Fragments.VideoFullScreenFragment;
 import hashed.app.ampassadors.Objects.PostData;
+import hashed.app.ampassadors.Objects.UserPostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.FileDownloadUtil;
 import hashed.app.ampassadors.Utils.Files;
@@ -82,7 +83,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
   private double documentSize;
   private CheckBox checkBox ;
   boolean important  = false;
-
+  UserPostData userPostData;
   //editing
   private PostData postData;
   private boolean isForEditing;
@@ -139,6 +140,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     playerView = findViewById(R.id.playerView);
     attachmentTv = findViewById(R.id.attachmentTv);
     checkBox = findViewById(R.id.checkbox);
+    userPostData = new UserPostData();
 
     if(isForEditing){
       publishBtn.setText(getResources().getString(R.string.edit));
@@ -274,7 +276,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
 
 
     final ProgressDialog progressDialog = new ProgressDialog(this);
-    progressDialog.setMessage("Editing post");
+    progressDialog.setMessage(getString(R.string.EditingMessage));
     progressDialog.setCancelable(false);
     progressDialog.show();
 
@@ -347,50 +349,62 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
       updateMap.put("videoThumbnailUrl",videoThumbnailUrl);
     }
 
-    final DocumentReference documentReference =
-            FirebaseFirestore.getInstance().collection("Posts")
-                    .document(postData.getPostId());
+     DocumentReference documentReference ;
+    if (getIntent().hasExtra("justForUser")) {
 
+      documentReference = FirebaseFirestore.getInstance().collection("Users")
+              .document(postData.getPublisherId())
+              .collection("UserPosts")
+              .document(postData.getPostId());
+    }else {
 
-    if(postData.getAttachmentUrl()!=null){
+        documentReference =
+              FirebaseFirestore.getInstance().collection("Posts")
+                      .document(postData.getPostId());
 
-      FirebaseStorage storage = FirebaseStorage.getInstance();
-      storage.getReferenceFromUrl(postData.getAttachmentUrl()).delete();
-
-      if(postData.getAttachmentType() == Files.VIDEO){
-
-        documentReference.update("videoThumbnailUrl", FieldValue.delete());
-
-        storage.getReferenceFromUrl(postData.getVideoThumbnailUrl()).delete();
-
-      }else if(postData.getAttachmentType() == Files.DOCUMENT){
-
-        documentReference.update("documentName", FieldValue.delete(),
-                "documentSize",FieldValue.delete());
-
-      }
     }
+      if(postData.getAttachmentUrl()!=null){
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        storage.getReferenceFromUrl(postData.getAttachmentUrl()).delete();
+
+        if(postData.getAttachmentType() == Files.VIDEO){
+
+          documentReference.update("videoThumbnailUrl", FieldValue.delete());
+
+          storage.getReferenceFromUrl(postData.getVideoThumbnailUrl()).delete();
+
+        }else if(postData.getAttachmentType() == Files.DOCUMENT){
+
+          documentReference.update("documentName", FieldValue.delete(),
+                  "documentSize",FieldValue.delete());
+
+        }
 
 
-    documentReference.update(updateMap).addOnSuccessListener(new OnSuccessListener<Void>() {
-      @Override
-      public void onSuccess(Void aVoid) {
-        Toast.makeText(PostNewActivity.this, "Successfully updated post",
-                Toast.LENGTH_SHORT).show();
-        progressDialog.dismiss();
 
-        finish();
+      documentReference.update(updateMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+        @Override
+        public void onSuccess(Void aVoid) {
+          Toast.makeText(PostNewActivity.this, "Successfully updated post",
+                  Toast.LENGTH_SHORT).show();
+          progressDialog.dismiss();
 
-      }
-    }).addOnFailureListener(new OnFailureListener() {
-      @Override
-      public void onFailure(@NonNull Exception e) {
+          finish();
 
-        Toast.makeText(PostNewActivity.this, "Updating this post failed",
-                Toast.LENGTH_SHORT).show();
-        progressDialog.dismiss();
-      }
-    });
+        }
+      }).addOnFailureListener(new OnFailureListener() {
+        @Override
+        public void onFailure(@NonNull Exception e) {
+
+          Toast.makeText(PostNewActivity.this, R.string.Error_UpdateFail,
+                  Toast.LENGTH_SHORT).show();
+          progressDialog.dismiss();
+          Log.d("qqq",e.getMessage());
+        }
+      });
+
+    }
 
   }
 

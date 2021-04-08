@@ -50,7 +50,7 @@ public class NumberPickerDialogFragment extends DialogFragment implements View.O
     TextView cancelTv = view.findViewById(R.id.cancelTv);
     TextView setTv = view.findViewById(R.id.setTv);
 
-    dayPicker.setMaxValue(7);
+    dayPicker.setMaxValue(30);
     dayPicker.setMinValue(0);
 
 

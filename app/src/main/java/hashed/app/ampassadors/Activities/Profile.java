@@ -5,28 +5,43 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
+import hashed.app.ampassadors.Fragments.ImageFullScreenFragment;
 import hashed.app.ampassadors.Objects.UserInfo;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.FileDownloadUtil;
+import hashed.app.ampassadors.Utils.Files;
 
 public class Profile extends AppCompatActivity {
 
@@ -34,7 +49,13 @@ public class Profile extends AppCompatActivity {
     TextView username, email, country, city, phone, bio;
     Button edit_profile;
     ImageView imageView;
+    private FrameLayout frameLayout;
+    private BroadcastReceiver downloadCompleteReceiver;
+    private FileDownloadUtil fileDownloadUtil;
     private ListenerRegistration listenerRegistration;
+    String userid = FirebaseAuth.getInstance().getUid();
+    UserInfo userInfo ;
+    CollectionReference collectionReference = FirebaseFirestore.getInstance().collection("Users");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +63,7 @@ public class Profile extends AppCompatActivity {
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
-
+        frameLayout = findViewById(R.id.frameLayout);
         edit_profile = findViewById(R.id.edit_data);
         username = findViewById(R.id.in_username);
         email = findViewById(R.id.in_email);
@@ -51,7 +72,30 @@ public class Profile extends AppCompatActivity {
         phone = findViewById(R.id.in_phone);
         imageView = findViewById(R.id.profile_picture);
         bio = findViewById(R.id.bio_text);
-
+        userInfo = new UserInfo();
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            userInfo.setUserId(userid);
+            collectionReference.document(userid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                  String image = documentSnapshot.get("imageUrl").toString();
+                  edit_profile.setVisibility(View.GONE);
+                  toolbar.setVisibility(View.GONE);
+                    frameLayout.setVisibility(View.VISIBLE);
+                    getSupportFragmentManager().beginTransaction().replace(frameLayout.getId(),
+                            new ImageFullScreenFragment(image), "FullScreen")
+                            .commit();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(Profile.this, "Empty image", Toast.LENGTH_SHORT).show();
+                }
+            });
+                }
+        });
         final UserInfo[] userInfo = new UserInfo[1];
         listenerRegistration =  FirebaseFirestore.getInstance().collection("Users")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -108,5 +152,30 @@ public class Profile extends AppCompatActivity {
         if(listenerRegistration!=null){
             listenerRegistration.remove();
         }
+    }
+    private void setUpDownloadReceiver() {
+
+        downloadCompleteReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+
+                if (id != -1) {
+                    imageView.setImageResource(R.drawable.download_icon);
+                    imageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            fileDownloadUtil.showDownloadAlert();
+                        }
+                    });
+                }
+
+            }
+        };
+
+        registerReceiver(downloadCompleteReceiver,
+                new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+
     }
 }

@@ -80,6 +80,7 @@
                     android:layout_width="130dp"
                     android:layout_height="130dp"
                     android:background="@drawable/profile_background"
+                    android:scaleType="centerCrop"
                     app:layout_constraintBottom_toBottomOf="@+id/view8"
                     app:layout_constraintDimensionRatio="1"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -164,5 +165,9 @@
         </androidx.core.widget.NestedScrollView>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 </RelativeLayout>
