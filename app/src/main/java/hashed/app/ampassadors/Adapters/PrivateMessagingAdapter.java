@@ -544,7 +544,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
         return;
 
       if (message.getAttachmentUrl() != null) {
-        picasso.load(message.getAttachmentUrl()).fit().into(imageIv);
+        picasso.load(message.getAttachmentUrl()).fit().centerCrop().into(imageIv);
       }
 
       if (bindUsername && !message.getSender().equals(currentUid)) {
@@ -795,7 +795,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
       if (message.getVideoThumbnail() != null) {
 
-        picasso.load(message.getVideoThumbnail()).fit().into(imageIv, new Callback() {
+        picasso.load(message.getVideoThumbnail()).fit().centerCrop().into(imageIv, new Callback() {
           @Override
           public void onSuccess() {
             videoProgressBar.setVisibility(View.GONE);

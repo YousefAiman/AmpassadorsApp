@@ -21,12 +21,11 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import hashed.app.ampassadors.Activities.ConnectionActivity;
-import hashed.app.ampassadors.Activities.GroupMessagingActivity;
+import hashed.app.ampassadors.Activities.MessagingActivities.GroupMessagingActivity;
 import hashed.app.ampassadors.Activities.Home_Activity;
-import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
+import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity;
+import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity2;
 import hashed.app.ampassadors.Activities.VideoWelcomeActivity;
-import hashed.app.ampassadors.Activities.WelcomeActivity;
-import hashed.app.ampassadors.Fragments.PostsFragment;
 import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.Services.FirebaseMessagingService;
 import hashed.app.ampassadors.Utils.GlobalVariables;
@@ -105,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
                   switch (sourceType) {
                     case FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE:
-                      intent = startPrivateMessagingActivity("messagingId",sourceId);
+                      intent = startPrivateMessagingActivity("messagingUid",sourceId);
                       break;
                     case FirestoreNotificationSender.TYPE_MEETING_MESSAGE:
                       intent = startGroupMessagingActivity(sourceId);
@@ -188,13 +187,14 @@ public class MainActivity extends AppCompatActivity {
 
   private Intent startPrivateMessagingActivity(String key,String messagingId) {
     return new Intent(MainActivity.this,
-            PrivateMessagingActivity.class).putExtra(key, messagingId);
+            PrivateMessagingActivity2.class)
+            .putExtra(key, messagingId);
   }
 
   private Intent startGroupMessagingActivity(String groupId) {
     return new Intent(MainActivity.this,
             GroupMessagingActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            .putExtra("messagingUid", groupId).putExtra("type","meeting");
+            .putExtra("messagingUid", groupId).putExtra("type","meetingMessaging");
 
   }
 

@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,12 +26,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
 
 import hashed.app.ampassadors.Activities.CourseActivity;
-import hashed.app.ampassadors.Activities.GroupMessagingActivity;
 import hashed.app.ampassadors.Objects.Course;
-import hashed.app.ampassadors.Objects.Meeting;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.TimeFormatter;
 
@@ -150,8 +146,8 @@ public class CoursesAdapter extends RecyclerView.Adapter<CoursesAdapter.CoursesV
               public void onSuccess(Void aVoid) {
                 itemView.getContext().startActivity(
                         new Intent(itemView.getContext(), CourseActivity.class)
-                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("course",
-                                course));
+                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                .putExtra("course", course));
               }
             });
           });
@@ -163,8 +159,8 @@ public class CoursesAdapter extends RecyclerView.Adapter<CoursesAdapter.CoursesV
 
           itemView.getContext().startActivity(
                   new Intent(itemView.getContext(), CourseActivity.class)
-                          .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("course",
-                          course));
+                          .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                          .putExtra("course", course));
         }
         return;
       }
@@ -185,8 +181,8 @@ public class CoursesAdapter extends RecyclerView.Adapter<CoursesAdapter.CoursesV
 
             itemView.getContext().startActivity(
                     new Intent(itemView.getContext(), CourseActivity.class)
-                            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("course",
-                            course));
+                            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            .putExtra("course", course));
 
           }else{
 

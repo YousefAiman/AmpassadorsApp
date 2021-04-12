@@ -1,9 +1,7 @@
 package hashed.app.ampassadors.Adapters;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,10 +26,11 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import hashed.app.ampassadors.Activities.GroupMessagingActivity;
+import hashed.app.ampassadors.Activities.MessagingActivities.GroupMessagingActivity;
+import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity2;
 import hashed.app.ampassadors.Activities.PostNewsActivity;
 import hashed.app.ampassadors.Activities.PostPollActivity;
-import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
+import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity;
 import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.Objects.Notification;
 import hashed.app.ampassadors.Objects.PostData;
@@ -181,15 +180,18 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
           notificationDeleter.deleteNotification(notification);
 
           final Intent intent = new Intent(view.getContext(),
-                  PrivateMessagingActivity.class);
+                  PrivateMessagingActivity2.class);
 
           if(notification.getType().equals(FirestoreNotificationSender.TYPE_GROUP_MESSAGE)
                   || notification.getType().equals(FirestoreNotificationSender.TYPE_GROUP_ADDED)){
-            intent.putExtra("groupId", notification.getDestinationId());
-          }else{
-            intent.putExtra("messagingUid", notification.getDestinationId());
-          }
 
+            intent = new Intent(view.getContext(),
+                    PrivateMessagingActivity2.class);
+            intent.putExtra("type", "groupMessaging");
+          }else{
+            intent.putExtra("type", "privateMessaging");
+          }
+          intent.putExtra("messagingUid", notification.getDestinationId());
           view.getContext().startActivity(intent);
 
           break;
@@ -233,20 +235,18 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
                 notificationDeleter.deleteNotification(notification);
                 if(notification.getType().equals(FirestoreNotificationSender.TYPE_ZOOM)){
-                  final Bundle destinationBundle = new Bundle();
-                  destinationBundle.putString("sourceId",notification.getDestinationId());
-                  destinationBundle.putString("sourceType",notification.getType());
 
                   view.getContext().startActivity(new Intent(view.getContext(),
                           GroupMessagingActivity.class)
-                          .putExtra("destinationBundle",destinationBundle));
+                          .putExtra("messagingUid", notification.getDestinationId())
+                          .putExtra("type","zoomMeeting"));
 
                 }else{
 
                   view.getContext().startActivity(new Intent(view.getContext(),
                           GroupMessagingActivity.class)
                           .putExtra("messagingUid", notification.getDestinationId())
-                          .putExtra("type","meeting"));
+                          .putExtra("type","meetingMessaging"));
                 }
 
               }

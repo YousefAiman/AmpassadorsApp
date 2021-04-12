@@ -1,16 +1,11 @@
 package hashed.app.ampassadors.Adapters;
 
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
@@ -19,8 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
-import hashed.app.ampassadors.Activities.ProfileActiv;
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
 
@@ -28,7 +21,7 @@ public class GroupMembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
   private final ArrayList<UserPreview> users;
   private final GroupMemberClickListener groupMemberClickListener;
-  private final List<String> adminIds;
+  private List<String> adminIds;
   public interface GroupMemberClickListener {
     void clickUser(String userId);
   }
@@ -38,6 +31,14 @@ public class GroupMembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     this.users = users;
     this.adminIds = adminIds;
     this.groupMemberClickListener = groupMemberClickListener;
+  }
+
+  public void setAdminIds(List<String> newAdminsIds){
+    this.adminIds = newAdminsIds;
+  }
+
+  public List<String> getAdminIds(){
+    return adminIds;
   }
 
   @Override

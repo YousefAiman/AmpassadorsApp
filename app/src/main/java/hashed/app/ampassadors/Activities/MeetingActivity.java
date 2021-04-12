@@ -7,16 +7,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.Query;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -25,7 +22,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+import hashed.app.ampassadors.Activities.MessagingActivities.MeetingMessagingActivity;
 import hashed.app.ampassadors.Adapters.UsersAdapter;
+import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.Objects.Meeting;
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
@@ -166,9 +165,10 @@ public class MeetingActivity extends AppCompatActivity implements View.OnClickLi
   public void onClick(View view) {
     if(view.getId() == joinBtn.getId()){
 
-     startActivity(new Intent(MeetingActivity.this, GroupMessagingActivity.class)
+     startActivity(new Intent(MeetingActivity.this, MeetingMessagingActivity.class)
                       .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("messagingUid",
-                      meeting.getMeetingId()).putExtra("type","meeting"));
+                      meeting.getMeetingId())
+             .putExtra("type", FirestoreNotificationSender.TYPE_MEETING_MESSAGE));
 
      finish();
     }

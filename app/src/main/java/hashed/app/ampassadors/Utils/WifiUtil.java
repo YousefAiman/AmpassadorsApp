@@ -40,7 +40,9 @@ public class WifiUtil {
 
 
     builder.addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR);
+            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+            .addTransportType(NetworkCapabilities.TRANSPORT_VPN)
+            .addTransportType(NetworkCapabilities.TRANSPORT_ETHERNET);
 
 
     ConnectivityManager.NetworkCallback networkCallback;
@@ -140,7 +142,8 @@ public class WifiUtil {
       if (capabilities != null &&
               (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
                       || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-                      || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))) {
+                      || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+                      || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_VPN))) {
 
         registerNetworkCallback(cm);
 

@@ -4,11 +4,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.util.Log;
 
-import hashed.app.ampassadors.Activities.GroupMessagingActivity;
-import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
+import hashed.app.ampassadors.Activities.MessagingActivities.CourseMessagingActivity;
+import hashed.app.ampassadors.Activities.MessagingActivities.GroupMessagingActivity2;
+import hashed.app.ampassadors.Activities.MessagingActivities.MeetingMessagingActivity;
+import hashed.app.ampassadors.Activities.MessagingActivities.MessagingActivity;
+import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity2;
 import hashed.app.ampassadors.MainActivity;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.GlobalVariables;
@@ -18,100 +20,85 @@ public class NotificationClickReceiver extends BroadcastReceiver {
   @Override
   public void onReceive(Context context, Intent intent) {
 
-    if (intent.hasExtra("destinationBundle")) {
+    if (intent.hasExtra("sourceId") && intent.hasExtra("sourceType")) {
 
-      Bundle bundle = intent.getBundleExtra("destinationBundle");
 
-      String sourceType = bundle.getString("sourceType");
+      String sourceType = intent.getStringExtra("sourceType");
+      String sourceId = intent.getStringExtra("sourceId");
 
       if (GlobalVariables.isAppIsRunning()) {
 
         Intent destinationIntent;
 
-        if (sourceType.equals(FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE)) {
-          Log.d("ttt", "sourceType privateMessaging");
+        switch (sourceType){
 
-          destinationIntent = new Intent(context, PrivateMessagingActivity.class);
+          case FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE:
+            destinationIntent = new Intent(context, PrivateMessagingActivity2.class);
+            break;
 
-        } else if (sourceType.equals(FirestoreNotificationSender.TYPE_MEETING_MESSAGE)) {
+          case FirestoreNotificationSender.TYPE_GROUP_MESSAGE:
+            destinationIntent = new Intent(context, GroupMessagingActivity2.class);
+            break;
+          case FirestoreNotificationSender.TYPE_COURSE_MESSAGE:
+            destinationIntent = new Intent(context, CourseMessagingActivity.class);
+            break;
+          case FirestoreNotificationSender.TYPE_MEETING_MESSAGE:
+            destinationIntent = new Intent(context, MeetingMessagingActivity.class);
+            break;
 
-          destinationIntent = new Intent(context, GroupMessagingActivity.class);
+//          destinationIntent.putExtra("messagingUid",sourceId);
 
-        } else if (sourceType.equals("meetingCreated")) {
+          case FirestoreNotificationSender.TYPE_MEETING_ADDED:
+          case FirestoreNotificationSender.TYPE_MEETING_STARTED:
+          case FirestoreNotificationSender.TYPE_LIKE:
+          case FirestoreNotificationSender.TYPE_COMMENT:
+          case FirestoreNotificationSender.TYPE_COURSE_STARTED:
+          case FirestoreNotificationSender.TYPE_GROUP_ADDED:
 
-          destinationIntent = new Intent(context, MainActivity.class);
+            destinationIntent = new Intent(context, MainActivity.class)
+                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        }else if(sourceType.equals(FirestoreNotificationSender.TYPE_GROUP_ADDED)){
+            destinationIntent.putExtra("destinationId",sourceId);
 
-          destinationIntent = new Intent(context, PrivateMessagingActivity.class);
+            break;
 
-        } else {
+          default:
 
-          destinationIntent = new Intent(context, MainActivity.class);
-
-        }
-
-        if (sourceType.equals(FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE)){
-          destinationIntent.putExtra("messagingUid", bundle.getString("sourceId"));
-        }else if(sourceType.equals(FirestoreNotificationSender.TYPE_GROUP_ADDED)){
-          destinationIntent.putExtra("groupId",bundle.getString("sourceId"));
-        }else{
-          destinationIntent.putExtra("destinationBundle", bundle);
-        }
-
-        if (sourceType.equals(FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE)
-                || sourceType.equals(FirestoreNotificationSender.TYPE_MEETING_MESSAGE) ||
-                sourceType.equals("meetingStarted") || sourceType.equals("zoomMeeting") ||
-                sourceType.equals(FirestoreNotificationSender.TYPE_GROUP_ADDED)) {
-
-          final SharedPreferences sharedPreferences =
-                  context.getSharedPreferences(context.getResources().getString(R.string.app_name),
-                          Context.MODE_PRIVATE);
-
-          if (sharedPreferences.contains("currentlyMessagingUid")) {
-            if (bundle.getString("sourceId")
-                    .equals(sharedPreferences.getString("currentlyMessagingUid", ""))) {
-
-              Log.d("ttt", "this messaging activity is already open man");
-              destinationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP |
-                      Intent.FLAG_ACTIVITY_NEW_TASK);
-
-            } else {
-              Log.d("ttt", "current messaging is not this");
-              destinationIntent.setFlags(
-                      Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                              Intent.FLAG_ACTIVITY_NEW_TASK);
-            }
-          } else {
-            Log.d("ttt", "no current messaging in shared");
-            destinationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-          }
-
-        } else if (sourceType.equals("meetingCreated")) {
-
-
-        }else{
+            destinationIntent = new Intent(context, MainActivity.class)
+                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         }
-//        destinationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
         context.startActivity(destinationIntent);
-        Log.d("ttt", "clicked notificaiton while app is running");
-      } else {
-
-        Intent intent1 = new Intent(context, MainActivity.class)
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-//        if(sourceType.equals(FirestoreNotificationSender.TYPE_GROUP_ADDED)){
-//          intent1.putExtra("groupId",bundle.getString("sourceId"));
-//        }else{
-          intent1.putExtra("destinationBundle",
-                  intent.getBundleExtra("destinationBundle"));
-//        }
-
-        context.startActivity(intent1);
 
         Log.d("ttt", "clicked notificaiton while app isn't running");
       }
     }
+  }
+
+  private void checkCurrentMessagingActivity(Context context,Intent destinationIntent,
+                                             String sourceId){
+    final SharedPreferences sharedPreferences =
+            context.getSharedPreferences(context.getResources().getString(R.string.app_name),
+                    Context.MODE_PRIVATE);
+
+    if (sharedPreferences.contains("currentlyMessagingUid")) {
+      if (sourceId.equals(sharedPreferences.getString("currentlyMessagingUid", ""))) {
+
+        Log.d("ttt", "this messaging activity is already open man");
+        destinationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP |
+                Intent.FLAG_ACTIVITY_NEW_TASK);
+
+      } else {
+        Log.d("ttt", "current messaging is not this");
+        destinationIntent.setFlags(
+                Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                        Intent.FLAG_ACTIVITY_NEW_TASK);
+      }
+    } else {
+      Log.d("ttt", "no current messaging in shared");
+      destinationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    }
+
   }
 }

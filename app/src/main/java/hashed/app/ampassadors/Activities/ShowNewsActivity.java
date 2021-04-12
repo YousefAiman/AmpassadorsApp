@@ -24,11 +24,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import hashed.app.ampassadors.Adapters.PostAdapter;
-import hashed.app.ampassadors.B_Fragment;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 
-import static hashed.app.ampassadors.Objects.PostData.TYPE_NEWS;
 import static hashed.app.ampassadors.Objects.PostData.TYPE_POLL;
 
 public class ShowNewsActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener,

@@ -331,7 +331,7 @@
         <string name="leave_group">الخروج من المجموعة</string>
         <string name="online_users">المتصلين</string>
         <string name="message">الرسائل</string>
-        <string name="edit_group">تعديل المجموعة</string>
+        <string name="edit_group">تعديل معلومات المجموعة</string>
         <string name="new_group_name">ادخل اسم المجموعة الجديد…</string>
         <string name="group_admin">ادمن المجموعة</string>
         <string name="participants">المشاركين</string>
@@ -341,5 +341,14 @@
         <string name="set_as_an_admin">تعيين كادمن للمجموعة</string>
         <string name="remove_from_admins">ازالة صلاحية الادمن</string>
         <string name="remove_from_group">ازالة المستخدم من المجموعة</string>
+        <string name="send_messages">ارسال الرسائل</string>
+        <string name="only_admin_messages">وحدهم <font color="#CC44C4A1">المشرفون</font> يستطيعون ارسال الرسائل</string>
+        <string name="who_can_message">حدد من يمكنه ارسال الرسائل في هذه المجموعة.</string>
+        <string name="admins">المشرفون</string>
+        <string name="all_members">جميع الاعضاء</string>
+        <string name="confirm">تأكيد</string>
+        <string name="end_meeting">انهاء الاجتماع</string>
+        <string name="end_course">انهاء الدورة</string>
+        <string name="group_info">تفاصيل المجموعة</string>
 
     </resources>

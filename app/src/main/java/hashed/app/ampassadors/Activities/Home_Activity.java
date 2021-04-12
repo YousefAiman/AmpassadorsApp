@@ -115,6 +115,20 @@ public class Home_Activity extends AppCompatActivity implements
       }
     }
 
+
+    FirebaseFirestore.getInstance().collection("Posts")
+            .whereEqualTo("important",true)
+            .limit(5)
+            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+      @Override
+      public void onSuccess(QuerySnapshot snapshots) {
+
+
+
+
+      }
+    });
+
 //    FirebaseFirestore.getInstance().collection("Users")
 //          .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
 //      @Override

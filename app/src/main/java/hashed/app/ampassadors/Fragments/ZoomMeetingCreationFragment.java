@@ -31,7 +31,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import hashed.app.ampassadors.Activities.GroupMessagingActivity;
+import hashed.app.ampassadors.Activities.MessagingActivities.GroupMessagingActivity;
 import hashed.app.ampassadors.Objects.ZoomMeeting;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.ZoomUtil;

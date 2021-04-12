@@ -20,7 +20,6 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
 import hashed.app.ampassadors.R;
 
 public class MessagingUtil {

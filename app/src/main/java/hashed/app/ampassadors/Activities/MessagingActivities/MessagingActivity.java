@@ -1,11 +1,9 @@
-package hashed.app.ampassadors.Activities;
+package hashed.app.ampassadors.Activities.MessagingActivities;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.DownloadManager;
 import android.app.NotificationManager;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,16 +13,13 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -43,36 +38,27 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.common.collect.Iterables;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -89,116 +75,148 @@ import hashed.app.ampassadors.Fragments.ImageFullScreenFragment;
 import hashed.app.ampassadors.Fragments.VideoFullScreenFragment;
 import hashed.app.ampassadors.Fragments.VideoPickerPreviewFragment;
 import hashed.app.ampassadors.NotificationUtil.BadgeUtil;
-import hashed.app.ampassadors.NotificationUtil.CloudMessagingNotificationsSender;
 import hashed.app.ampassadors.NotificationUtil.Data;
-import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.Objects.PrivateMessage;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
 import hashed.app.ampassadors.Utils.GlobalVariables;
-import hashed.app.ampassadors.Utils.MessagingUtil;
 import hashed.app.ampassadors.Utils.UploadTaskUtil;
 
-public class PrivateMessagingActivity extends AppCompatActivity
+public abstract class MessagingActivity extends AppCompatActivity
         implements Toolbar.OnMenuItemClickListener, PrivateMessagingAdapter.DeleteMessageListener,
         PrivateMessagingAdapter.VideoMessageListener, PrivateMessagingAdapter.DocumentMessageListener,
         View.OnClickListener, RecyclerView.OnLayoutChangeListener,
         PrivateMessagingAdapter.ImageMessageListener ,PrivateMessagingAdapter.TimeClickListener{
 
-  public static final int RECORD_AUDIO_REQUEST = 30;
   //constants
-  private static final String TAG = "privateMessaging";
-  private static final int MESSAGES_PAGE_SIZE = 25;
-  //database
-  private static final DatabaseReference databaseReference
-          = FirebaseDatabase.getInstance().getReference().child("PrivateMessages").getRef();
+  static final String ADMINS = "admins", MEMBERS = "members";
+  static final String TAG = "Messaging";
+  private static final int MESSAGES_PAGE_SIZE = 25,RECORD_AUDIO_REQUEST = 30;
 
-  private static final CollectionReference usersRef
-          = FirebaseFirestore.getInstance().collection("Users");
-  private final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+  //database
+  public DatabaseReference messagingDatabaseRef;
+  public CollectionReference usersRef;
+  public String messagingUid,currentUid;
+  public DatabaseReference currentMessagingRef;
+  public DatabaseReference databaseMessagesRef;
+  String firstKeyRef,lastKeyRef;
+  public DocumentReference firebaseMessageDocRef;
+
   //messages
-  private final ArrayList<PrivateMessage> privateMessages = new ArrayList<>();
-  private final DateFormat secondMinuteFormat =
-          new SimpleDateFormat("mm:ss", Locale.getDefault());
-  private DatabaseReference currentMessagingRef;
-  private String firstKeyRef;
-  private String lastKeyRef;
-  private DocumentReference firebaseMessageDocRef;
+  ArrayList<PrivateMessage> privateMessages;
+  PrivateMessagingAdapter adapter;
+  private boolean isLoadingMessages;
+  private ScrollListener currentScrollListener;
+
+
   //event listeners
   private Map<DatabaseReference, ChildEventListener> childEventListeners;
   private Map<DatabaseReference, ValueEventListener> valueEventListeners;
-  private String messagingUid;
-  private PrivateMessagingAdapter adapter;
-  private toTopScrollListener currentScrollListener;
   private Map<UploadTask, StorageTask<UploadTask.TaskSnapshot>> uploadTasks;
-  private boolean isLoadingMessages;
 
 
   //views
-  private RecyclerView privateMessagingRv;
-  private ImageView messageSendIv;
-  private ImageView messageAttachIv;
-  private ImageView micIv;
-  private ImageView cancelIv;
-  private EditText messagingEd;
-  private ProgressBar messagesProgressBar;
-  private FrameLayout pickerFrameLayout;
-  private ImageView messagingTbProfileIv;
-  private TextView messagingTbNameTv;
-  private Toolbar toolbar;
+  public Toolbar toolbar;
+  public TextView messagingTbNameTv;
+  public ImageView messagingTbProfileIv;
+  RecyclerView privateMessagingRv;
+  ProgressBar messagesProgressBar;
+  EditText messagingEd;
+  ImageView messageSendIv,messageAttachIv,micIv,cancelIv;
+  FrameLayout pickerFrameLayout;
+
   //attachments
   private int messageAttachmentUploadedIndex = -1;
   private BroadcastReceiver downloadCompleteReceiver;
+
+
   //audio messages
+  private DateFormat secondMinuteFormat;
   private MediaRecorder mediaRecorder;
   private Handler progressHandle;
   private Runnable progressRunnable;
-  //  int lastVisiblePosition;
-  private int previousSelected = -1;
+
 
   //notifications
   private SharedPreferences sharedPreferences;
-  private Data data;
-  private String currentUserName;
-  private String currentImageUrl;
+  public Data data;
+  String currentUserName,currentImageUrl;
 
+//  //groups
+//  private boolean isGroupMessaging;
+//  private String groupImageUrl;
+//  private String groupName;
 
-  //groups
-  private boolean isGroupMessaging;
-  private String groupImageUrl;
-  private String groupName;
+  abstract void getMessagingUid();
+  abstract void getUserData();
+  abstract void createMessagingDocument(PrivateMessage privateMessage);
+  abstract void showMessageOptionsBottomSheet();
+  abstract void sendMessage(PrivateMessage privateMessage);
+  abstract void fetchPreviousMessages();
 
   @Override
-  protected void onCreate(Bundle savedInstanceState) {
+  protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_private_messaging);
 
-    //getting the messaging user id
     getMessagingUid();
 
-    //setting up toolbar and its actions
-    setUpToolBarAndActions();
+    initializeValues();
 
-    //initializing Views
     initializeViews();
 
-    //handling notification is it exists
-    handleNotification();
+    getUserData();
 
     //getting current user data
     getMyData();
 
-    //getting messaging userInfo
-    getUserData();
-
-    //fetching previous messages and listen to new
     fetchPreviousMessages();
-
 
   }
 
-  //Activity actions and views
-  private void initializeViews() {
+  public void handleNotification(String type) {
+
+    sharedPreferences = getSharedPreferences(getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
+
+    sharedPreferences.edit()
+            .putString("currentlyMessagingUid", messagingUid).apply();
+
+    if (GlobalVariables.getMessagesNotificationMap() != null) {
+
+      String title = messagingUid + type;
+
+      if (GlobalVariables.getMessagesNotificationMap().containsKey(title)) {
+        Log.d("ttt", "removing: " + title);
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        notificationManager.cancel(GlobalVariables.getMessagesNotificationMap().get(title));
+
+        GlobalVariables.getMessagesNotificationMap().remove(title);
+
+        if (Build.VERSION.SDK_INT < 26) {
+          BadgeUtil.decrementBadgeNum(this);
+        }
+
+      }
+    }
+
+  }
+
+
+  public void initializeValues(){
+
+    currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    usersRef = FirebaseFirestore.getInstance().collection("Users");
+    privateMessages = new ArrayList<>();
+    secondMinuteFormat = new SimpleDateFormat("mm:ss", Locale.getDefault());
+
+  }
+
+  void initializeViews() {
+
+    setUpToolBarAndActions();
 
     privateMessagingRv = findViewById(R.id.privateMessagingRv);
     messageSendIv = findViewById(R.id.messageSendIv);
@@ -220,186 +238,13 @@ public class PrivateMessagingActivity extends AppCompatActivity
   }
 
   private void setUpToolBarAndActions() {
-
     toolbar = findViewById(R.id.privateMessagingTb);
-//    if(isGroupMessaging){
-//      toolbar.inflateMenu(R.menu.group_user_menu);
-//    }else{
-////      toolbar.inflateMenu(R.menu.private_messaging_toolbar_menu);
-//    }
-
     toolbar.setNavigationOnClickListener(v -> onBackPressed());
     toolbar.setOnMenuItemClickListener(this);
-
   }
 
-  @Override
-  public boolean onMenuItemClick(MenuItem item) {
-    if (item.getItemId() == R.id.action_delete) {
-      deleteMessageDocument();
-    }else if (item.getItemId() == R.id.action_leave_group) {
 
-      MessagingUtil.leaveGroup(this,currentUid,messagingUid,firebaseMessageDocRef,
-              currentMessagingRef);
-
-    }else if (item.getItemId() == R.id.action_edit_group) {
-
-      startActivity(new Intent(PrivateMessagingActivity.this,GroupEditingActivity.class)
-      .putExtra("firebaseMessageDocRefId", firebaseMessageDocRef.getId())
-      .putExtra("groupType","messagingGroup")
-      .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-
-    }
-    return false;
-  }
-
-//  public void leaveGroup(){
-//
-//    final AlertDialog.Builder alert = new AlertDialog.Builder(this);
-//    alert.setTitle("Are you sure you want to leave this group?");
-//    alert.setPositiveButton("Leave", (dialog, which) -> {
-//
-//      final ProgressDialog progressDialog = new ProgressDialog(this);
-//      progressDialog.setMessage("Leaving group!");
-//      progressDialog.setCancelable(false);
-//      progressDialog.show();
-//
-//      firebaseMessageDocRef.update("users", FieldValue.arrayRemove(currentUid))
-//      .addOnSuccessListener(new OnSuccessListener<Void>() {
-//        @Override
-//        public void onSuccess(Void v) {
-//          currentMessagingRef.child("UsersLastSeenMessages").child(currentUid).removeValue(
-//                  (error, ref) -> {
-//                    if(error!=null){
-//                      Toast.makeText(PrivateMessagingActivity.this,
-//                              "Failed to leave group! Please try again",
-//                              Toast.LENGTH_SHORT).show();
-//                    }else{
-//
-//                      FirebaseFirestore.getInstance().collection("Notifications")
-//                              .whereEqualTo("receiverId",currentUid)
-//                              .whereEqualTo("destinationId",messagingUid)
-//                              .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-//                        @Override
-//                        public void onSuccess(QuerySnapshot snapshots) {
-//                          if(!snapshots.isEmpty()){
-//                            for(DocumentSnapshot snapshot:snapshots){
-//                              snapshot.getReference().delete();
-//                            }
-//                          }
-//                        }
-//                      }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                        @Override
-//                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                          lastKeyRef = null;
-//                          finish();
-//                        }
-//                      });
-//                    }
-//          });
-//        }
-//      }).addOnFailureListener(new OnFailureListener() {
-//        @Override
-//        public void onFailure(@NonNull Exception e) {
-//          progressDialog.dismiss();
-//          Toast.makeText(PrivateMessagingActivity.this, "Failed to leave group!" +
-//                  " Please try again", Toast.LENGTH_SHORT).show();
-//        }
-//      });
-//    });
-//    alert.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());
-//    alert.create().show();
-//  }
-
-  //get messaging user id
-  private void getMessagingUid() {
-
-    final Intent intent = getIntent();
-
-    if(isGroupMessaging = intent.hasExtra("groupId")){
-
-      messagingUid = intent.getStringExtra("groupId");
-
-    }else{
-      messagingUid = intent.getStringExtra("messagingUid");
-    }
-
-
-    if (intent.hasExtra("isFromNotification") && Build.VERSION.SDK_INT < 26) {
-      BadgeUtil.decrementBadgeNum(this);
-    }
-
-    usersRef.document(currentUid).update("ActivelyMessaging", messagingUid);
-
-  }
-
-  //firestore user data
-  private void getUserData() {
-
-    if(isGroupMessaging){
-
-      FirebaseFirestore.getInstance().collection("PrivateMessages")
-              .document(messagingUid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-        @Override
-        public void onSuccess(DocumentSnapshot snapshot) {
-         if(snapshot.exists()){
-
-           final String creatorId = snapshot.getString("creatorId");
-
-           if(creatorId!=null && creatorId.equals(currentUid)){
-             toolbar.inflateMenu(R.menu.group_admin_menu);
-           }else{
-             toolbar.inflateMenu(R.menu.group_user_menu);
-           }
-
-           if (snapshot.contains("imageUrl")) {
-             final String imageUrl = snapshot.getString("imageUrl");
-             if(imageUrl!=null && !imageUrl.isEmpty()){
-               Picasso.get().load(snapshot.getString("imageUrl")).fit().
-                       into(messagingTbProfileIv);
-             }
-           }
-
-           messagingTbNameTv.setText(snapshot.getString("groupName"));
-         }
-        }
-      });
-
-    }else{
-
-       usersRef.document(messagingUid).get().addOnSuccessListener(documentSnapshot -> {
-      if (documentSnapshot.exists()) {
-
-        if (documentSnapshot.contains("imageUrl")) {
-          groupImageUrl = documentSnapshot.getString("imageUrl");
-          if(groupImageUrl!=null && !groupImageUrl.isEmpty()){
-            Picasso.get().load(documentSnapshot.getString("imageUrl")).fit().
-                    into(messagingTbProfileIv);
-          }
-        }
-        messagingTbNameTv.setText(groupName = documentSnapshot.getString("username"));
-
-      }
-    });
-
-
-    }
-
-
-  }
-
-  private void getMyData() {
-//    messagingTbProfileIv.setOnClickListener(new View.OnClickListener() {
-//      @Override
-//      public void onClick(View view) {
-//        messagingTbProfileIv.getContext().startActivity(new Intent(PrivateMessagingActivity.this,
-//                ProfileActiv.class).putExtra("userId",data.getSourceId())
-//                .putExtra("ImageUrl", data.getSenderImageUrl())
-//                .putExtra("username",data.getTitle()));
-//      }
-//    });
-//
-
+  void getMyData() {
     usersRef.document(currentUid).get().addOnSuccessListener(documentSnapshot -> {
       if (documentSnapshot.exists()) {
         if (documentSnapshot.contains("imageUrl")) {
@@ -410,287 +255,11 @@ public class PrivateMessagingActivity extends AppCompatActivity
     });
   }
 
-
-  // remove messaging notifcation if one exists
-  private void handleNotification() {
-
-    sharedPreferences = getSharedPreferences(getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
-
-    sharedPreferences.edit()
-            .putString("currentlyMessagingUid", currentUid).apply();
-
-    if (GlobalVariables.getMessagesNotificationMap() != null) {
-
-      String title = messagingUid + FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE;
-      if (GlobalVariables.getMessagesNotificationMap().containsKey(title)) {
-        Log.d("ttt", "removing: " + title);
-
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-        notificationManager.cancel(GlobalVariables.getMessagesNotificationMap().get(title));
-
-        GlobalVariables.getMessagesNotificationMap().remove(title);
-      }
-    }
-
-  }
-
-  //notifcations methods
-  private void checkUserActivityAndSendNotifications(String message, int messageType) {
-
-    String body;
-    switch (messageType) {
-
-      case Files.IMAGE:
-        body = getString(R.string.sent_an_image);
-        break;
-
-      case Files.DOCUMENT:
-        body = getString(R.string.sent_an_attachment);
-        break;
-
-      case Files.AUDIO:
-        body = getString(R.string.sent_audio_message);
-        break;
-
-
-      case Files.VIDEO:
-        body = getString(R.string.sent_a_video);
-        break;
-
-      default:
-        body = message;
-    }
-
-    usersRef.document(messagingUid)
-            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-      @Override
-      public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-        if (documentSnapshot.contains("ActivelyMessaging")) {
-          final String messaging = documentSnapshot.getString("ActivelyMessaging");
-          if (messaging == null || !messaging.equals(currentUid)) {
-            Log.d("ttt", "sendBothNotifs");
-            sendBothNotifs(body,messagingUid);
-          }
-        } else {
-          Log.d("ttt", "sendBothNotifs");
-          sendBothNotifs(body,messagingUid);
-        }
-
-      }
-    });
-
-  }
-
-  private void sendBothNotifs(String message,String userId) {
-
-    if(isGroupMessaging){
-      FirestoreNotificationSender.sendFirestoreNotification(userId,
-              FirestoreNotificationSender.TYPE_GROUP_MESSAGE,
-              currentUserName+": "+message, groupName, messagingUid);
-    }else{
-      FirestoreNotificationSender.sendFirestoreNotification(userId,
-              FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE,
-              message, getResources().getString(R.string.new_message)+" "+currentUserName,
-              currentUid);
-    }
-    sendCloudNotification(message);
-
-  }
-
-  private void sendCloudNotification(String message) {
-    Log.d("ttt", "sending cloud notificaiton");
-
-    if(isGroupMessaging){
-
-    if (data == null) {
-
-      data = new Data(
-              currentUid,
-              currentUserName+": "+message,
-              groupName,
-              groupImageUrl!=null?groupImageUrl:currentImageUrl,
-              "Group Messages",
-              FirestoreNotificationSender.TYPE_GROUP_MESSAGE,
-              currentUid
-      );
-
-    } else {
-      data.setBody(currentUserName+": "+message);
-    }
-
-    final List<String> groupUsers = new ArrayList<>();
-      firebaseMessageDocRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-        @Override
-        public void onSuccess(DocumentSnapshot snapshot) {
-          if(snapshot.exists()){
-            groupUsers.addAll((List<String>) snapshot.get("users"));
-          }
-        }
-      }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-        @Override
-        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-          if(task.isSuccessful() && !groupUsers.isEmpty()){
-            sendNotificationsToMembers(currentUserName+": "+message,groupUsers);
-          }
-        }
-      });
-
-
-    }else{
-
-     if (data == null) {
-
-      data = new Data(
-              currentUid,
-              message,
-              getResources().getString(R.string.new_message) + " " + currentUserName,
-              currentImageUrl,
-              "Private Messages",
-              FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE,
-              currentUid
-      );
-
-    } else {
-      data.setBody(message);
-    }
-      CloudMessagingNotificationsSender.sendNotification(messagingUid, data);
-    }
-  }
-
-
-  private void sendNotificationsToMembers(String body,List<String> groupUsers) {
-
-    for (String userId : groupUsers) {
-
-      usersRef.document(userId).get().addOnSuccessListener(documentSnapshot -> {
-        if (documentSnapshot.exists()) {
-          if (documentSnapshot.contains("ActivelyMessaging")) {
-            final String messaging = documentSnapshot.getString("ActivelyMessaging");
-            if (messaging == null || !messaging.equals(messagingUid)) {
-              Log.d("ttt", "sendBothNotifs");
-              sendBothNotifs(body,userId);
-            }
-          } else {
-            Log.d("ttt", "sendBothNotifs");
-            sendBothNotifs(body,userId);
-          }
-        }
-      });
-    }
-
-  }
-
-
   //database messages functions
-  private void fetchPreviousMessages() {
 
+  void createMessagesListener() {
 
-    adapter = new PrivateMessagingAdapter(privateMessages, this,
-            this, this, this,
-            this, this, isGroupMessaging);
-
-    privateMessagingRv.setAdapter(adapter);
-
-    Log.d("privateMessaging", "start fetching");
-    if(isGroupMessaging){
-
-      databaseReference.child(messagingUid).addListenerForSingleValueEvent(new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot snapshot) {
-          if (snapshot.exists()) {
-            messagesProgressBar.setVisibility(View.VISIBLE);
-            fetchMessagesFromSnapshot(snapshot);
-          }
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-
-        }
-      });
-
-    }else{
-
-          databaseReference.child(currentUid + "-" + messagingUid)
-            .addListenerForSingleValueEvent(new ValueEventListener() {
-              @Override
-              public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                if (snapshot.exists()) {
-                  messagesProgressBar.setVisibility(View.VISIBLE);
-                  fetchMessagesFromSnapshot(snapshot);
-
-                } else {
-
-                  databaseReference.child(messagingUid + "-" + currentUid)
-                          .addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                              if (snapshot.exists()) {
-                                messagesProgressBar.setVisibility(View.VISIBLE);
-                                fetchMessagesFromSnapshot(snapshot);
-
-                              } else {
-
-                                currentMessagingRef = databaseReference.child(currentUid + "-" +
-                                        messagingUid);
-                                firebaseMessageDocRef = FirebaseFirestore.getInstance()
-                                        .collection("PrivateMessages")
-                                        .document(currentMessagingRef.getKey());
-
-                                messageSendIv.setOnClickListener(new FirstMessageClickListener());
-                                messageAttachIv.setClickable(true);
-                                micIv.setClickable(true);
-
-
-                              }
-
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-                              Log.d(TAG, "receiverUid - senderUid onCancelled:"
-                                      + error.getMessage());
-                            }
-                          });
-
-                }
-              }
-
-              @Override
-              public void onCancelled(@NonNull DatabaseError error) {
-                Log.d(TAG, "senderUid - receiverUid onCancelled:"
-                        + error.getMessage());
-              }
-            });
-    }
-
-
-  }
-
-
-  private void fetchMessagesFromSnapshot(DataSnapshot dataSnapshot) {
-
-    currentMessagingRef = dataSnapshot.getRef();
-
-    firebaseMessageDocRef = FirebaseFirestore.getInstance()
-            .collection("PrivateMessages")
-            .document(Objects.requireNonNull(currentMessagingRef.getKey()));
-
-    createMessagesListener();
-
-    messageAttachIv.setClickable(true);
-    micIv.setClickable(true);
-
-  }
-
-  private void createMessagesListener() {
-
-    currentMessagingRef.child("messages").orderByKey().limitToLast(MESSAGES_PAGE_SIZE)
+    databaseMessagesRef.orderByKey().limitToLast(MESSAGES_PAGE_SIZE)
             .addListenerForSingleValueEvent(new ValueEventListener() {
               @Override
               public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -725,7 +294,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
                 if (snapshot.getChildrenCount() == MESSAGES_PAGE_SIZE) {
                   privateMessagingRv.addOnScrollListener(
-                          currentScrollListener = new toTopScrollListener());
+                          currentScrollListener = new ScrollListener());
                 }
 
                 currentMessagingRef.child("UsersLastSeenMessages")
@@ -739,7 +308,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
               @Override
               public void onCancelled(@NonNull DatabaseError error) {
                 messagesProgressBar.setVisibility(View.GONE);
-                Toast.makeText(PrivateMessagingActivity.this,
+                Toast.makeText(MessagingActivity.this,
                         R.string.message_load_failed, Toast.LENGTH_SHORT).show();
               }
             });
@@ -751,7 +320,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
     ChildEventListener childEventListener;
 
-    final Query query = currentMessagingRef.child("messages").orderByKey()
+    final Query query = databaseMessagesRef.orderByKey()
             .startAt(String.valueOf(System.currentTimeMillis()));
 
     query.addChildEventListener(childEventListener = new ChildEventListener() {
@@ -763,11 +332,6 @@ public class PrivateMessagingActivity extends AppCompatActivity
         lastKeyRef = snapshot.getKey();
 
         final PrivateMessage message = snapshot.getValue(PrivateMessage.class);
-
-//        if(message.getType() == Files.IMAGE && message.getAttachmentUrl() == null) {
-//          addFileMessageUploadListener(snapshot.child("attachmentUrl").getRef()
-//                  ,privateMessages.size());
-//        }
 
         if (messageAttachmentUploadedIndex != -1 &&
                 message.getSender().equals(currentUid) &&
@@ -782,10 +346,6 @@ public class PrivateMessagingActivity extends AppCompatActivity
           adapter.notifyItemInserted(privateMessages.size());
           scrollToBottom();
         }
-
-//        if(message != null && message.getSender().equals(currentUid)){
-//
-//        }
 
       }
 
@@ -856,170 +416,15 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
   }
 
-  @Override
-  public void showImage(String url,String fileName) {
-    new ImageFullScreenFragment(url,fileName).show(getSupportFragmentManager(),"fullScreen");
-//    showFullScreenFragment(new ImageFullScreenFragment(url,fileName));
-//    new ImageFullScreenFragment(postData.getAttachmentUrl(), getFileName()).show();
-  }
-
   //messaging methods
-  private void createMessagingDocument(PrivateMessage privateMessage) {
 
-    final Map<String, Object> messagingDocumentMap = new HashMap<>();
-
-//    messagingDocumentMap.put("LastSeenMessage:" + currentUid, "0");
-//    messagingDocumentMap.put("LastSeenMessage:" + messagingUid, "0");
-    messagingDocumentMap.put("DeletedFor:" + currentUid, false);
-    messagingDocumentMap.put("DeletedFor:" + messagingUid, false);
-
-
-    final Map<String, PrivateMessage> messages = new HashMap<>();
-    messages.put(String.valueOf(System.currentTimeMillis()), privateMessage);
-
-    messagingDocumentMap.put("messages", messages);
-    
-
-            
-    currentMessagingRef.setValue(messagingDocumentMap).addOnSuccessListener(v -> {
-        
-        HashMap<String, String> lastSeenMap = new HashMap<>();
-        lastSeenMap.put(currentUid,"0");
-        lastSeenMap.put(messagingUid,"0");
-        currentMessagingRef.child("UsersLastSeenMessages").setValue(lastSeenMap);
-
-      final Map<String, Object> messageDocumentPreviewMap = new HashMap<>();
-
-      final List<String> users = new ArrayList<>();
-      users.add(currentUid);
-      users.add(messagingUid);
-
-      messageDocumentPreviewMap.put("users", users);
-      messageDocumentPreviewMap.put("databaseRefId", currentMessagingRef.getKey());
-      messageDocumentPreviewMap.put("latestMessageTime", privateMessage.getTime());
-
-      firebaseMessageDocRef =
-              FirebaseFirestore.getInstance().collection("PrivateMessages")
-                      .document(currentMessagingRef.getKey());
-
-      firebaseMessageDocRef.set(messageDocumentPreviewMap);
-
-//      privateMessages.add(privateMessage);
-//      adapter.notifyDataSetChanged();
-
-//      firstKeyRef = "0";
-//      lastKeyRef = "0";
-
-
-      createMessagesListener();
-
-      messageSendIv.setOnClickListener(new TextMessageSenderClickListener());
-      messageSendIv.setClickable(true);
-
-    }).addOnFailureListener(e -> {
-
-      Toast.makeText(this,
-              R.string.message_send_failed, Toast.LENGTH_SHORT).show();
-
-      messageSendIv.setClickable(true);
-
-    });
-
-  }
-
-  private void sendMessage(PrivateMessage privateMessage) {
-
-    messagingEd.setText("");
-    messagingEd.setClickable(false);
-
-    if (lastKeyRef == null && !isGroupMessaging) {
-        createMessagingDocument(privateMessage);
-      return;
-    }
-
-    final DatabaseReference childRef = currentMessagingRef.child("messages").
-            child(String.valueOf(System.currentTimeMillis()));
-
-    childRef.setValue(privateMessage)
-            .addOnSuccessListener(v -> {
-
-              checkUserActivityAndSendNotifications(privateMessage.getContent(),
-                      privateMessage.getType());
-
-              messageSendIv.setClickable(true);
-
-            }).addOnFailureListener(e -> {
-
-      Toast.makeText(PrivateMessagingActivity.this, R.string.message_send_failed,
-              Toast.LENGTH_SHORT).show();
-
-      messageSendIv.setClickable(true);
-
-    }).addOnCompleteListener(task -> {
-      if (task.isSuccessful()) {
-        firebaseMessageDocRef.update("latestMessageTime", privateMessage.getTime());
-      }
-    });
-
-  }
-
-  private boolean checkIsUploading(){
+  boolean checkIsUploading(){
     if (uploadTasks != null && !uploadTasks.isEmpty()) {
       Toast.makeText(this, "Please wait while your previous attachment is being sent!"
               , Toast.LENGTH_SHORT).show();
       return true;
     }
     return false;
-  }
-  private void showMessageOptionsBottomSheet() {
-
-    messageAttachIv.setClickable(false);
-
-    final BottomSheetDialog bsd = new BottomSheetDialog(this, R.style.SheetDialog);
-    final View parentView = getLayoutInflater().inflate(R.layout.message_options_bsd, null);
-    parentView.setBackgroundColor(Color.TRANSPARENT);
-
-    parentView.findViewById(R.id.imageIv).setOnClickListener(view -> {
-
-      if (checkIsUploading()) {
-        return;
-      }
-
-      bsd.dismiss();
-
-      Files.startImageFetchIntent(PrivateMessagingActivity.this);
-    });
-
-    parentView.findViewById(R.id.audioIv).setOnClickListener(view -> {
-      if (checkIsUploading()) {
-        return;
-      }
-//        bsd.dismiss();
-//
-//        Files.startImageFetchIntent(PrivateMessagingActivity.this);
-    });
-
-    parentView.findViewById(R.id.videoIv).setOnClickListener(view -> {
-      if (checkIsUploading()) {
-        return;
-      }
-      bsd.dismiss();
-      Files.startVideoFetchIntent(PrivateMessagingActivity.this);
-    });
-
-    parentView.findViewById(R.id.documentIv).setOnClickListener(view -> {
-      if (checkIsUploading()) {
-        return;
-      }
-      bsd.dismiss();
-      Files.startDocumentFetchIntent(PrivateMessagingActivity.this);
-    });
-
-    bsd.setOnDismissListener(dialogInterface -> messageAttachIv.setClickable(true));
-
-    bsd.setContentView(parentView);
-    bsd.show();
-
   }
 
   private void startAudioRecording() {
@@ -1318,35 +723,6 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
   }
 
-  private void addFileMessageUploadListener(DatabaseReference attachmentRef,
-                                            int index) {
-
-    attachmentRef.addValueEventListener(new ValueEventListener() {
-      @Override
-      public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-        Log.d(TAG, "ATTACHMETN CAHNGED");
-
-        if (snapshot.exists()) {
-          final String url = snapshot.getValue(String.class);
-          if (url != null) {
-            privateMessages.get(index).setAttachmentUrl(url);
-            adapter.notifyItemChanged(index);
-          }
-        }
-
-        attachmentRef.removeEventListener(this);
-      }
-
-      @Override
-      public void onCancelled(@NonNull DatabaseError error) {
-
-      }
-    });
-
-  }
-
-
   private void scrollToBottom() {
     privateMessagingRv.post(() ->
             privateMessagingRv.scrollToPosition(privateMessages.size() - 1));
@@ -1355,9 +731,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
   private void getMoreTopMessages() {
 
-    currentMessagingRef
-            .child("messages")
-            .orderByKey()
+    databaseMessagesRef.orderByKey()
             .limitToLast(MESSAGES_PAGE_SIZE)
             .endAt(String.valueOf(Long.parseLong(firstKeyRef)-1))
             .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -1419,11 +793,12 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
   }
 
-  //adapter interfaces
+
+
   @Override
   public void deleteMessage(PrivateMessage message, DialogInterface dialog) {
 
-    currentMessagingRef.child("messages")
+    databaseMessagesRef
             .orderByChild("time").equalTo(message.getTime()).limitToFirst(1)
             .addListenerForSingleValueEvent(new ValueEventListener() {
               @Override
@@ -1451,7 +826,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
                               }).addOnFailureListener(e -> {
                         dialog.dismiss();
 
-                        Toast.makeText(PrivateMessagingActivity.this,
+                        Toast.makeText(MessagingActivity.this,
                                 "لقد فشل حذف الرسالة", Toast.LENGTH_SHORT).show();
 
                         Log.d("ttt", "failed: " + e.getMessage());
@@ -1640,7 +1015,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
   protected void onResume() {
     super.onResume();
 
-    if (currentUid != null) {
+    if (currentUid != null && messagingUid!=null) {
       usersRef.document(currentUid).update("ActivelyMessaging", messagingUid);
     }
   }
@@ -1856,7 +1231,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
       firebaseMessageDocRef.delete();
 
-      currentMessagingRef.child("messages")
+      databaseMessagesRef
               .get().addOnSuccessListener(snapshot -> {
 
         if (snapshot.exists() && snapshot.getChildrenCount() > 0) {
@@ -1881,37 +1256,15 @@ public class PrivateMessagingActivity extends AppCompatActivity
     }
   }
 
-
-  //click listeners
-  //click listeners
-  private class FirstMessageClickListener implements View.OnClickListener {
-
-    @Override
-    public void onClick(View view) {
-
-      final String content = messagingEd.getText().toString().trim();
-      if (!content.isEmpty()) {
-
-//        if (WifiUtil.checkWifiConnection(view.getContext())) {
-        messagingEd.setText("");
-        messagingEd.setClickable(false);
-
-        final PrivateMessage privateMessage = new PrivateMessage(
-                content,
-                System.currentTimeMillis(),
-                currentUid,
-                Files.TEXT);
-
-        createMessagingDocument(privateMessage);
-
-      } else {
-        Toast.makeText(view.getContext(),
-                R.string.message_send_empty, Toast.LENGTH_SHORT).show();
-      }
-    }
+  @Override
+  public void showImage(String url,String fileName) {
+    new ImageFullScreenFragment(url,fileName).show(getSupportFragmentManager(),"fullScreen");
   }
 
-  private class TextMessageSenderClickListener implements View.OnClickListener {
+
+  //click listeners
+
+  class TextMessageSenderClickListener implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 
@@ -1940,7 +1293,7 @@ public class PrivateMessagingActivity extends AppCompatActivity
   }
 
   //scroll methods
-  private class toTopScrollListener extends RecyclerView.OnScrollListener {
+  private class ScrollListener extends RecyclerView.OnScrollListener {
     @Override
     public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
       super.onScrollStateChanged(recyclerView, newState);
@@ -1960,6 +1313,116 @@ public class PrivateMessagingActivity extends AppCompatActivity
 
       }
     }
+  }
+
+
+  void showMessageSendingOptionsDialog(String currentMessagingSenders){
+
+    int chosenItem;
+    if(currentMessagingSenders !=null && currentMessagingSenders.equals(ADMINS)){
+      chosenItem = 0;
+    }else{
+      chosenItem = 1;
+    }
+
+    String[] messagingOptions = {getString(R.string.admins),getString(R.string.all_members)};
+    final String[] newSelectedStatus = new String[1];
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(MessagingActivity.this);
+    builder.setTitle(R.string.who_can_message);
+    builder.setSingleChoiceItems(messagingOptions, chosenItem, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialogInterface, int i) {
+        newSelectedStatus[0] = messagingOptions[i];
+
+      }
+    });
+    builder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialogInterface, int i) {
+
+        if(newSelectedStatus.length > 0){
+
+          if(newSelectedStatus[0].equals(getString(R.string.admins))
+                  && !currentMessagingSenders.equals(ADMINS)){
+
+            firebaseMessageDocRef.update("messagingSenders",ADMINS)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                      @Override
+                      public void onSuccess(Void aVoid) {
+                        dialogInterface.dismiss();
+                      }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                      @Override
+                      public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(MessagingActivity.this,
+                                "Changing group messages allowed senders failed!" +
+                                        "Please try again", Toast.LENGTH_SHORT).show();
+                      }
+                    });
+
+          }else if(newSelectedStatus[0].equals(getString(R.string.all_members))
+                  && !currentMessagingSenders.equals(MEMBERS)) {
+
+            firebaseMessageDocRef.update("messagingSenders", MEMBERS)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                      @Override
+                      public void onSuccess(Void aVoid) {
+                        dialogInterface.dismiss();
+                      }
+                    }).addOnFailureListener(new OnFailureListener() {
+              @Override
+              public void onFailure(@NonNull Exception e) {
+                Toast.makeText(MessagingActivity.this,
+                        "Changing group messages allowed senders failed!" +
+                                "Please try again", Toast.LENGTH_SHORT).show();
+              }
+            });
+
+
+          }
+        }else{
+          dialogInterface.dismiss();
+        }
+      }
+    });
+
+    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialogInterface, int i) {
+        dialogInterface.dismiss();
+      }
+    });
+
+    builder.show();
+
+  }
+
+  void changeMessagingStatus(String status,String currentMessagingSenders){
+
+
+
+      if(status.equals(ADMINS) && (currentMessagingSenders == null ||
+              !currentMessagingSenders.equals(ADMINS))){
+
+        findViewById(R.id.adminMessagingStatusRl).setVisibility(View.VISIBLE);
+        final View messagingEditText = findViewById(R.id.messagingEditText);
+        messagingEditText.setVisibility(View.INVISIBLE);
+        messagingEditText.setClickable(false);
+
+      }else if(status.equals(MEMBERS) && (currentMessagingSenders == null ||
+              !currentMessagingSenders.equals(MEMBERS))){
+
+        findViewById(R.id.adminMessagingStatusRl).setVisibility(View.GONE);
+        final View messagingEditText = findViewById(R.id.messagingEditText);
+        messagingEditText.setVisibility(View.VISIBLE);
+        messagingEditText.setClickable(true);
+
+      }
+
+
+
   }
 
 }

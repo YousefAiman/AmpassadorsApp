@@ -13,21 +13,17 @@ import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
+import hashed.app.ampassadors.Activities.MessagingActivities.GroupMessagingActivity2;
+import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity2;
 import hashed.app.ampassadors.Activities.ProfileActiv;
+import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.Objects.ChatItem;
 import hashed.app.ampassadors.Objects.PrivateMessagePreview;
 import hashed.app.ampassadors.R;
@@ -149,8 +145,9 @@ public class ChatsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onClick(View view) {
 
       itemView.getContext().startActivity(new Intent(itemView.getContext(),
-              PrivateMessagingActivity.class).putExtra("messagingUid",
-              chatItems.get(getAdapterPosition()).getMessagingUid()));
+              PrivateMessagingActivity2.class)
+              .putExtra("type", FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE)
+              .putExtra("messagingUid",chatItems.get(getAdapterPosition()).getMessagingUid()));
 
     }
 
@@ -237,12 +234,12 @@ public class ChatsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onClick(View view) {
 
       itemView.getContext().startActivity(new Intent(itemView.getContext(),
-              PrivateMessagingActivity.class).putExtra("groupId",
+              GroupMessagingActivity2.class)
+              .putExtra("type",FirestoreNotificationSender.TYPE_GROUP_MESSAGE)
+              .putExtra("messagingUid",
               chatItems.get(getAdapterPosition()).getMessagingUid()));
 
     }
-
-
 
 
   }

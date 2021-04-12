@@ -370,10 +370,12 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="leave_group">Leave group</string>
     <string name="online_users">Online</string>
     <string name="message">Messages</string>
-    <string name="edit_group">Edit group</string>
+    <string name="edit_group">Edit group info</string>
     <string name="new_group_name">Enter new group name…</string>
     <string name="group_admin">Group admin</string>
     <string name="participants">Participants</string>
+    <string name="only_admin_messages">Only <font color="#CC44C4A1">admins</font> can send messages</string>
+
     <string name="add_participants">Add participants</string>
     <string name="message_user">Message User</string>
     <string name="show_user_profile">Show user profile</string>
@@ -381,5 +383,13 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="remove_from_admins">Remove user from admins</string>
     <string name="remove_from_group">Remove user from group</string>
     <string name="EditingMessage">Editing post</string>
+    <string name="send_messages">Send messages</string>
+    <string name="who_can_message">Choose who can send messages in this group.</string>
+    <string name="admins">Admins</string>
+    <string name="all_members">All Members</string>
+    <string name="confirm">Confirm</string>
+    <string name="end_meeting">End Meeting</string>
+    <string name="end_course">End course</string>
+    <string name="group_info">Group info</string>
 
 </resources>

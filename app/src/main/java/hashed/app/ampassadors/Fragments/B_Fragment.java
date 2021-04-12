@@ -1,4 +1,4 @@
-package hashed.app.ampassadors;
+package hashed.app.ampassadors.Fragments;
 
 
 import android.os.Bundle;
@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import hashed.app.ampassadors.Activities.Home_Activity;
 import hashed.app.ampassadors.Adapters.PostAdapter;
 import hashed.app.ampassadors.Objects.PostData;
+import hashed.app.ampassadors.R;
 
 import static hashed.app.ampassadors.Objects.PostData.TYPE_NEWS;
 import static hashed.app.ampassadors.Objects.PostData.TYPE_POLL;

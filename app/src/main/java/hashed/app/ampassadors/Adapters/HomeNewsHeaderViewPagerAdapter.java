@@ -2,24 +2,19 @@ package hashed.app.ampassadors.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
 import java.util.ArrayList;
 
-import hashed.app.ampassadors.Activities.GroupMessagingActivity;
 import hashed.app.ampassadors.Activities.PostNewsActivity;
-import hashed.app.ampassadors.Objects.MeetingPreview;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
-import hashed.app.ampassadors.Utils.TimeFormatter;
 
 public class HomeNewsHeaderViewPagerAdapter extends PagerAdapter implements View.OnClickListener {
 

@@ -15,6 +15,12 @@
         android:title="@string/leave_group"
         app:showAsAction="ifRoom" />
 
+        <item
+                android:id="@+id/action_group_info"
+                android:title="@string/group_info"
+                app:showAsAction="ifRoom" />
+
+
         </menu>
 
     </item>

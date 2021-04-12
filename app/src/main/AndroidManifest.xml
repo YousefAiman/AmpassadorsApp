@@ -21,7 +21,27 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AmpassadorsApp">
-        <activity android:name=".Activities.GroupEditingActivity"></activity>
+
+        <activity android:name=".Activities.GroupInfoActivity"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".Activities.MessagingActivities.CourseMessagingActivity"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".Activities.MessagingActivities.MeetingMessagingActivity"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".Activities.MessagingActivities.GroupMessagingActivity2"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".Activities.MessagingActivities.PrivateMessagingActivity2"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".Activities.MessagingActivities.MessagingActivity"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".Activities.GroupEditingActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.MeetingActivity"
             android:screenOrientation="portrait" />
@@ -102,7 +122,7 @@
             android:name=".Activities.ConnectionActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activities.GroupMessagingActivity"
+            android:name=".Activities.MessagingActivities.GroupMessagingActivity"
             android:parentActivityName=".Activities.Home_Activity"
             android:screenOrientation="portrait" />
         <activity
@@ -137,7 +157,7 @@
             android:name=".Activities.SuggestionsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activities.PrivateMessagingActivity"
+            android:name=".Activities.MessagingActivities.PrivateMessagingActivity"
             android:parentActivityName=".Activities.Home_Activity"
             android:screenOrientation="portrait" />
         <activity

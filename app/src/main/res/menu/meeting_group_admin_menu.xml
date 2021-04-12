@@ -5,13 +5,15 @@
         android:icon="@drawable/dots_more_icon"
         app:showAsAction="always">
         <menu>
+            <item android:id="@+id/action_end_meeting"
+                android:title="@string/end_meeting"/>
+
             <item android:id="@+id/action_edit_group"
                 android:title="@string/edit_group"
                 android:icon="@drawable/ic_baseline_edit"/>
 
             <item android:id="@+id/action_send_messages"
-                android:title="@string/send_messages"
-                android:icon="@drawable/edit_icon_white"/>
+                android:title="@string/send_messages"/>
 
         </menu>
     </item>

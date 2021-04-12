@@ -189,11 +189,12 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
       final Intent newIntent = new Intent(this, NotificationClickReceiver.class);
       newIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-      final Bundle messagingBundle = new Bundle();
-      messagingBundle.putString("sourceId", data.get("sourceId"));
-      messagingBundle.putString("sourceType", data.get("sourceType"));
-      newIntent.putExtra("destinationBundle", messagingBundle);
-
+//      final Bundle messagingBundle = new Bundle();
+//      messagingBundle.putString("sourceId", data.get("sourceId"));
+//      messagingBundle.putString("sourceType", data.get("sourceType"));
+//      newIntent.putExtra("destinationBundle", messagingBundle);
+//      newIntent.putExtra("sourceId", data.get("sourceId"));
+      newIntent.putExtra("sourceType", data.get("sourceType"));
 
       if (type.equals("Group Messages") || type.equals("Private Messages")) {
 

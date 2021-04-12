@@ -18,8 +18,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.Map;
 
-import hashed.app.ampassadors.Activities.GroupMessagingActivity;
-import hashed.app.ampassadors.Activities.PrivateMessagingActivity;
+import hashed.app.ampassadors.Activities.MessagingActivities.GroupMessagingActivity;
+import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
 

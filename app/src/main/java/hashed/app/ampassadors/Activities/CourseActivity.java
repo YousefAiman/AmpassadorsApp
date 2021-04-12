@@ -2,7 +2,6 @@ package hashed.app.ampassadors.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -24,10 +23,10 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+import hashed.app.ampassadors.Activities.MessagingActivities.CourseMessagingActivity;
+import hashed.app.ampassadors.Activities.MessagingActivities.GroupMessagingActivity;
 import hashed.app.ampassadors.Adapters.UsersAdapter;
-import hashed.app.ampassadors.Fragments.OnlineUsersFragment;
 import hashed.app.ampassadors.Objects.Course;
-import hashed.app.ampassadors.Objects.Meeting;
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.TimeFormatter;
@@ -222,9 +221,9 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
   public void onClick(View view) {
     if(view.getId() == joinBtn.getId()){
 
-     startActivity(new Intent(CourseActivity.this, GroupMessagingActivity.class)
-                      .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("messagingUid",
-                      course.getCourseId()).putExtra("type","course"));
+     startActivity(new Intent(CourseActivity.this, CourseMessagingActivity.class)
+                      .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                      .putExtra("messagingUid", course.getCourseId()));
 
      finish();
     }

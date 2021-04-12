@@ -4,57 +4,33 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
-import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.android.volley.Response;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -64,20 +40,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import hashed.app.ampassadors.Activities.CoursesActivity;
-import hashed.app.ampassadors.Activities.GroupMessagingActivity;
-import hashed.app.ampassadors.Activities.UserMessageSearchActivity;
-import hashed.app.ampassadors.Activities.UserSearchActivity;
-import hashed.app.ampassadors.Activities.UsersPickerActivity;
-import hashed.app.ampassadors.Adapters.UsersAdapter;
-import hashed.app.ampassadors.NotificationUtil.CloudMessagingNotificationsSender;
-import hashed.app.ampassadors.NotificationUtil.Data;
-import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.Objects.Course;
-import hashed.app.ampassadors.Objects.UserPreview;
-import hashed.app.ampassadors.Objects.ZoomMeeting;
 import hashed.app.ampassadors.R;
-import hashed.app.ampassadors.Utils.TimeFormatter;
-import hashed.app.ampassadors.Utils.ZoomUtil;
 
 public class AddCourseFragment extends DialogFragment implements View.OnClickListener
 //        ,  HourMinutePickerDialogFragment.OnTimePass

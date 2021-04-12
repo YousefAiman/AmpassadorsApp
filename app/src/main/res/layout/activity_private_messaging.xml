@@ -118,10 +118,36 @@
             android:id="@+id/messagingEditText"
             layout="@layout/messaging_edittext"
             android:layout_width="match_parent"
+            android:visibility="visible"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             app:layout_constraintBottom_toBottomOf="parent" />
 
+
+    <LinearLayout
+        android:id="@+id/adminMessagingStatusRl"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:elevation="3dp"
+        android:visibility="gone"
+        android:background="@drawable/messaging_status_border_back"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/privateMessagingRv">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:fontFamily="@font/segoe_ui"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="12sp"
+            android:lines="1"
+            android:textSize="18sp"
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            android:text="@string/only_admin_messages"/>
+
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/pickerFrameLayout"

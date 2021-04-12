@@ -9,8 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -58,8 +56,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
+import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity;
+import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity2;
 import hashed.app.ampassadors.Adapters.GroupMembersAdapter;
-import hashed.app.ampassadors.Adapters.UsersAdapter;
 import hashed.app.ampassadors.NotificationUtil.CloudMessagingNotificationsSender;
 import hashed.app.ampassadors.NotificationUtil.Data;
 import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
@@ -92,7 +91,8 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
   private Uri imageUri;
   private ArrayList<String> newSelectedUserIdsList;
   private String creatorId;
-
+  private Dialog userUpdateDialog;
+  private String lastSelectedUserId;
 
   private CollectionReference usersRef;
   private ArrayList<UserPreview> userPreviews;
@@ -176,8 +176,6 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
                     .child(firebaseMessageDocRef.getId()).child("UsersLastSeenMessages");
 
 
-
-
     groupInfoListener = firebaseMessageDocRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
       @Override
       public void onEvent(@Nullable DocumentSnapshot value,
@@ -237,7 +235,83 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
             hasGottenInfo = true;
           }else{
 
-          }
+            if(value.contains("groupAdmins")) {
+
+              List<String> newAdmins = (List<String>) value.get("groupAdmins");
+
+              if(newAdmins == null){
+
+                Log.d("ttt","new admins is empty");
+                return;
+              }
+
+              Log.d("ttt","new admins is not empty");
+
+              List<String> removedAdmins = new ArrayList<>(adminsList);
+              removedAdmins.removeAll(newAdmins);
+
+
+              List<String> addedAdmins = new ArrayList<>(newAdmins);
+              addedAdmins.removeAll(adminsList);
+
+              if(!removedAdmins.isEmpty()){
+
+
+                adminsList.removeAll(removedAdmins);
+
+                for(String removedAdmin:removedAdmins){
+                  Log.d("ttt","removedAdmins: "+removedAdmin);
+                  updateItem(removedAdmin);
+                }
+
+              }else{
+                Log.d("ttt","no removedAdmins");
+              }
+
+               if(!addedAdmins.isEmpty()){
+
+                 adminsList.addAll(addedAdmins);
+
+                 for(String addAdmin:addedAdmins){
+                   Log.d("ttt","addAdmin: "+addAdmin);
+                   updateItem(addAdmin);
+                 }
+
+              }else{
+                 Log.d("ttt","no addedAdmins");
+               }
+
+
+//              if(!adminsList.containsAll(newAdmins)){
+//
+//                adminsList = newAdmins;
+//
+//                groupMembersAdapter.notifyDataSetChanged();
+//
+//
+//
+//                //admin list changed
+////                groupMembersAdapter.setAdminIds(newAdmins);
+////                for(String newAdmin:newAdmins) {
+////
+////                  for (UserPreview userPreview : userPreviews) {
+////                    if (userPreview.getUserId().equals(adminsList)) {
+////
+////
+////                    }
+////                  }
+////                }
+////
+//////                  int changedIndex = usersIds.indexOf(newAdmin);
+//////                  if(changedIndex!=-1){
+//////
+//////                  }
+////                }
+////
+//
+//              }
+            }
+            }
         }
       }
     });
@@ -275,39 +349,41 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
   @Override
   public void clickUser(String userId) {
 
+    lastSelectedUserId = userId;
     Log.d("ttt","clicekd user");
 
-    final Dialog dialog = new Dialog(this);
-    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-    dialog.setContentView(R.layout.group_user_options_dialog_layout);
+    userUpdateDialog = new Dialog(this);
+    userUpdateDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+    userUpdateDialog.setContentView(R.layout.admin_group_options_dialog_layout);
 
-    final TextView messageUserTv = dialog.findViewById(R.id.messageUserTv);
+    final TextView messageUserTv = userUpdateDialog.findViewById(R.id.messageUserTv);
     messageUserTv.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        dialog.cancel();
+        userUpdateDialog.cancel();
         startActivity(new Intent(GroupEditingActivity.this,
-                PrivateMessagingActivity.class).putExtra("messagingUid", userId)
+                PrivateMessagingActivity2.class)
+                .putExtra("messagingUid", userId)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
       }
     });
 
-    final TextView showUserTv = dialog.findViewById(R.id.showUserTv);
+    final TextView showUserTv = userUpdateDialog.findViewById(R.id.showUserTv);
     showUserTv.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        dialog.cancel();
+        userUpdateDialog.cancel();
         startActivity(new Intent(GroupEditingActivity.this,
                 ProfileActiv.class).putExtra("userId", userId));
       }
     });
 
 
-    final TextView changeAdminStatusTv = dialog.findViewById(R.id.changeAdminStatusTv);
+    final TextView changeAdminStatusTv = userUpdateDialog.findViewById(R.id.changeAdminStatusTv);
 
-    if(creatorId.equals(currentUid)){
+    if(!creatorId.equals(currentUid)){
 
-      dialog.findViewById(R.id.adminBottomSeparator).setVisibility(View.GONE);
+      userUpdateDialog.findViewById(R.id.adminBottomSeparator).setVisibility(View.GONE);
 
       changeAdminStatusTv.setVisibility(View.GONE);
 
@@ -321,23 +397,61 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
       changeAdminStatusTv.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-          dialog.cancel();
-          firebaseMessageDocRef.update("groupAdmins",
-                  ((adminsList!=null && !adminsList.isEmpty() && adminsList.contains(userId))?
-                          FieldValue.arrayRemove(userId): FieldValue.arrayUnion(userId)));
+          userUpdateDialog.cancel();
 
+          if (adminsList != null && !adminsList.isEmpty() && adminsList.contains(userId)) {
+
+            adminsList.remove(userId);
+
+            firebaseMessageDocRef.update("groupAdmins", FieldValue.arrayRemove(userId))
+            .addOnSuccessListener(new OnSuccessListener<Void>() {
+              @Override
+              public void onSuccess(Void aVoid) {
+//                groupMembersAdapter.getAdminIds().remove(userId);
+                updateItem(userId);
+              }
+            }).addOnFailureListener(new OnFailureListener() {
+              @Override
+              public void onFailure(@NonNull Exception e) {
+                adminsList.add(userId);
+              }
+            });;
+          } else {
+
+            if(adminsList == null){
+              adminsList = new ArrayList<>();
+            }
+
+
+            adminsList.add(userId);
+
+            firebaseMessageDocRef.update("groupAdmins", FieldValue.arrayUnion(userId))
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+              @Override
+              public void onSuccess(Void aVoid) {
+
+//                groupMembersAdapter.getAdminIds().add(userId);
+                updateItem(userId);
+              }
+            }).addOnFailureListener(new OnFailureListener() {
+              @Override
+              public void onFailure(@NonNull Exception e) {
+                adminsList.remove(userId);
+              }
+            });
+          }
         }
       });
     }
 
 
 
-    final TextView removeUserFromGroupTv = dialog.findViewById(R.id.removeUserFromGroupTv);
+    final TextView removeUserFromGroupTv = userUpdateDialog.findViewById(R.id.removeUserFromGroupTv);
 
     removeUserFromGroupTv.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        dialog.cancel();
+        userUpdateDialog.cancel();
 
         if(newSelectedUserIdsList!=null && newSelectedUserIdsList.contains(userId)){
 
@@ -354,6 +468,7 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
 
           if(adminsList.contains(userId)){
             firebaseMessageDocRef.update("groupAdmins", FieldValue.arrayRemove(userId));
+            adminsList.remove(userId);
           }
 
           MessagingUtil.leaveGroup(GroupEditingActivity.this,userId,
@@ -371,7 +486,7 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
       }
     });
 
-    dialog.show();
+    userUpdateDialog.show();
 
   }
 
@@ -452,8 +567,8 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
        usersIds.add(creatorId);
       }
       updateMap.put("users",usersIds);
-      usersIds.remove(currentUid);
-      usersIds.remove(creatorId);
+//      usersIds.remove(currentUid);
+//      usersIds.remove(creatorId);
     }else{
       Log.d("ttt","newSelectedUserIdsList is empty");
     }
@@ -524,6 +639,9 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
     userLastSeenDatabaseRef.updateChildren(lastSeenMap).addOnSuccessListener(new OnSuccessListener<Void>() {
        @Override
        public void onSuccess(Void aVoid) {
+
+         usersIds.remove(currentUid);
+         usersIds.remove(creatorId);
 
          Toast.makeText(GroupEditingActivity.this, "Group updated successfully!",
                  Toast.LENGTH_SHORT).show();
@@ -629,7 +747,6 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
     }
   }
 
-
   @Override
   public void onBackPressed() {
     super.onBackPressed();
@@ -682,7 +799,11 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
         Log.d("ttt","newAddedUsers: "+userId);
       }
 
+      newAddedUsers.remove(creatorId);
+      newAddedUsers.remove(currentUid);
+
       newSelectedUserIdsList.addAll(newAddedUsers);
+
 
       userPreviews.clear();
       groupMembersAdapter.notifyDataSetChanged();
@@ -740,7 +861,6 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
 
   }
 
-
   @Override
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                          @NonNull int[] grantResults) {
@@ -753,7 +873,11 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
   }
 
   private void removeUserFromList(String userId){
-    newSelectedUserIdsList.remove(userId);
+
+    if(newSelectedUserIdsList!=null){
+      newSelectedUserIdsList.remove(userId);
+    }
+
     usersIds.remove(userId);
 
     for(int i= 0;i<userPreviews.size();i++){
@@ -774,10 +898,13 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
       public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
         Log.d("ttt","last seen added: "+snapshot.getKey());
         if(snapshot.exists() && usersIds!=null){
-          if(!usersIds.contains(snapshot.getKey())){
+          final String userId = snapshot.getKey();
+          if(userId!=null && !usersIds.contains(userId) &&
+                  !userId.equals(currentUid) && !userId.equals(creatorId)){
 
             usersIds.add(snapshot.getKey());
-            if(userPreviews.size() > 10){
+
+            if(userPreviews.size() < 10){
               getUsers(usersIds.subList(usersIds.size()-1,usersIds.size()));
             }
           }
@@ -785,7 +912,7 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
       }
 
       @Override
-      public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+      public void onChildChanged(@NonNull DataSnapshot snapshot,@Nullable String previousChildName){
         Log.d("ttt","last seen changed: "+snapshot.getKey());
       }
 
@@ -793,6 +920,13 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
       public void onChildRemoved(@NonNull DataSnapshot snapshot) {
 
         if(snapshot.exists() && usersIds!=null){
+
+          if(lastSelectedUserId!=null && userUpdateDialog!=null && userUpdateDialog.isShowing()){
+            userUpdateDialog.cancel();
+            Toast.makeText(GroupEditingActivity.this,
+                    "This user was removed by another admin!", Toast.LENGTH_SHORT).show();
+          }
+
           if(usersIds.contains(snapshot.getKey())){
             removeUserFromList(snapshot.getKey());
           }
@@ -814,5 +948,14 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
 
     childEventListeners = new HashMap<>();
     childEventListeners.put(userLastSeenDatabaseRef, childEventListener);
+  }
+
+  private void updateItem(String userId){
+    for (UserPreview userPreview : userPreviews) {
+      if (userPreview.getUserId().equals(userId)) {
+        groupMembersAdapter.notifyItemChanged(userPreviews.indexOf(userPreview));
+        break;
+      }
+    }
   }
 }

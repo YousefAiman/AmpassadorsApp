@@ -1,4 +1,4 @@
-package hashed.app.ampassadors.Activities;
+package hashed.app.ampassadors.Activities.MessagingActivities;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -271,7 +271,8 @@ public class GroupMessagingActivity extends AppCompatActivity
   private void getGroupData() {
 
 
-    if(getIntent().hasExtra("type") && getIntent().getStringExtra("type").equals("course")){
+    if(getIntent().hasExtra("type") &&
+            getIntent().getStringExtra("type").equals("courseMessaging")){
       messagingTbProfileIv.setVisibility(View.GONE);
       final DocumentReference documentReference =
               FirebaseFirestore.getInstance().collection("Courses").document(groupId);
