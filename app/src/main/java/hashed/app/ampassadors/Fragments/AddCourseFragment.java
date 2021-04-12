@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -55,6 +56,7 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
   private ImageView settingsIv1,settingsIv2;
   private Button coursePublishBtn;
 //  private RecyclerView tutorPickerRv;
+private boolean important = false;
 
   //time
   private final Integer[] meetingStartTime = new Integer[5];
@@ -62,6 +64,7 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
   private long scheduleTime;
   private boolean timeWasSelected, dateWasSelected;
 
+  CheckBox checkBox ;
 
   //pick attendee
 //  private UsersAdapter usersAdapter;
@@ -106,6 +109,7 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
     coursePublishBtn = view.findViewById(R.id.coursePublishBtn);
     courseTutorNamesLinear = view.findViewById(R.id.courseTutorNamesLinear);
     addTutorTv = view.findViewById(R.id.addTutorTv);
+    checkBox = view.findViewById(R.id.checkBox);
 
     return view;
   }
@@ -404,7 +408,12 @@ public class AddCourseFragment extends DialogFragment implements View.OnClickLis
     courseMap.put("duration",duration);
     courseMap.put("hasEnded", false);
     courseMap.put("hasStarted", false);
-
+    if (checkBox.isChecked()) {
+      important = true;
+      courseMap.put("important", important);
+    }else {
+      courseMap.put("important", false);
+    }
     final DocumentReference courseRef = FirebaseFirestore.getInstance()
             .collection("Courses").document(courseId);
     courseRef.set(courseMap)

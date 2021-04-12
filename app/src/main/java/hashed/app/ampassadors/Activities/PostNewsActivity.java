@@ -38,7 +38,6 @@ import hashed.app.ampassadors.Utils.TimeFormatter;
 
 public class PostNewsActivity extends AppCompatActivity implements View.OnClickListener,
         Toolbar.OnMenuItemClickListener {
-
     //views
     private CardView cardView;
     private TextView usernameTv, dateTv, titleTv, descriptionTv, likesTv,
@@ -54,7 +53,6 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
     //download
     private FileDownloadUtil fileDownloadUtil;
     private String fileName;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,13 +70,11 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-
     private void setupToolbar() {
         toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(v -> finish());
         toolbar.setOnMenuItemClickListener(this);
     }
-
 
     private void getViews() {
 

@@ -53,7 +53,7 @@ public class List_Sug_Activity extends AppCompatActivity implements Toolbar.OnMe
     RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
     recyclerView.setLayoutManager(manager);
     adapter = new SuggestionsAdapter(List_Sug_Activity.this, suggestions);
-    recyclerView.setAdapter(adapter);
+      recyclerView.setAdapter(adapter);
     showSuggestions(true);
     setUpToolBarAndActions();
   }

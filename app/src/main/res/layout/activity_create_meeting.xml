@@ -107,19 +107,19 @@
         app:layout_constraintWidth_min="wrap"
         app:layout_constraintWidth_percent=".25" />
 
+
     <TextView
         android:id="@+id/timeTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:fontFamily="@font/segoe_ui"
         android:paddingVertical="8dp"
-        android:layout_marginStart="20dp"
         android:text="@string/time"
         android:textColor="@color/black_transparent"
         android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@+id/dateSetterTv"
         app:layout_constraintTop_toTopOf="@+id/dateSetterTv" />
-
 
     <TextView
         android:id="@+id/timeSetterTv"
@@ -201,5 +201,14 @@
             app:spanCount="5" />
 
     </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/checkBox3"
+        android:layout_width="69dp"
+        android:layout_height="31dp"
+        android:text="CheckBox"
+        app:layout_constraintBottom_toBottomOf="@+id/timeSetterTv"
+        app:layout_constraintStart_toEndOf="@+id/timeSetterTv"
+        app:layout_constraintTop_toTopOf="@+id/timeSetterTv" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

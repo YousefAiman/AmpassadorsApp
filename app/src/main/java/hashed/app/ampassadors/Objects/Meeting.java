@@ -31,7 +31,8 @@ public class Meeting implements Serializable {
   private boolean hasStarted;
   @PropertyName("imageUrl")
   private String imageUrl;
-
+  @PropertyName("important")
+  boolean important ;
   public Meeting() {
   }
 
@@ -105,5 +106,13 @@ public class Meeting implements Serializable {
 
   public void setImageUrl(String imageUrl) {
     this.imageUrl = imageUrl;
+  }
+
+  public boolean isImportant() {
+    return important;
+  }
+
+  public void setImportant(boolean important) {
+    this.important = important;
   }
 }
