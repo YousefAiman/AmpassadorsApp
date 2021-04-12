@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -47,7 +48,8 @@ public class CreatePollActivity extends AppCompatActivity implements View.OnClic
   private ArrayList<String> pollItems;
   private long pollDuration;
   private Integer[] durations;
-
+CheckBox  checkBox;
+  boolean  important;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -79,7 +81,7 @@ public class CreatePollActivity extends AppCompatActivity implements View.OnClic
     toolbar.setNavigationOnClickListener(v -> finish());
 
     TextView timeTv = findViewById(R.id.timeTv);
-
+    checkBox = findViewById(R.id.checkBox);
     timeTv.setOnClickListener(this);
     publishBtn.setOnClickListener(this);
 
@@ -160,7 +162,12 @@ public class CreatePollActivity extends AppCompatActivity implements View.OnClic
       map.put("comments", 0);
       map.put("pollEnded", false);
       map.put("totalVotes", 0);
-
+      if (checkBox.isChecked()) {
+        important = true;
+        map.put("important", important);
+      }else {
+        map.put("important", false);
+      }
       final DocumentReference pollRef = FirebaseFirestore.getInstance()
               .collection("Posts").document(postId);
 

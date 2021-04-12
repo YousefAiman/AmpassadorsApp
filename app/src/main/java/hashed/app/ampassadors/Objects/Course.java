@@ -31,6 +31,8 @@ public class Course implements Serializable {
   private boolean hasEnded;
   @PropertyName("hasStarted")
   private boolean hasStarted;
+    @PropertyName("important")
+  private boolean important;
 
 
   public Course() {
@@ -127,5 +129,13 @@ public class Course implements Serializable {
 
   public void setTutorNames(List<String> tutorNames) {
     this.tutorNames = tutorNames;
+  }
+
+  public boolean isImportant() {
+    return important;
+  }
+
+  public void setImportant(boolean important) {
+    this.important = important;
   }
 }

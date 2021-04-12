@@ -288,19 +288,31 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
+            android:layout_marginBottom="8dp"
             android:background="@drawable/course_publish_btn_back"
             android:fontFamily="@font/segoe_ui_bold"
             android:text="@string/Publish"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="14sp"
-            android:layout_marginBottom="54dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/courseDurationEd"
+            app:layout_constraintVertical_bias="1.0"
             app:layout_constraintWidth_min="wrap"
             app:layout_constraintWidth_percent="0.35" />
+
+        <CheckBox
+            android:id="@+id/checkBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/important_post"
+            app:layout_constraintEnd_toEndOf="@+id/textView9"
+            app:layout_constraintStart_toStartOf="@+id/textView9"
+            app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
