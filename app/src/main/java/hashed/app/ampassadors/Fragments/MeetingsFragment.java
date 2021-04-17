@@ -49,6 +49,8 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
         View.OnClickListener {
 
   private static final int MEETING_LIMIT = 10;
+  public static final int MEETING_RESULT = 5;
+  
   //views
   private RecyclerView meetingsRv;
   private TextView noMessagesTv;
@@ -315,7 +317,7 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
   @Override
   public void onClick(View view) {
     if (view.getId() == R.id.floatingButton) {
-      startActivity(new Intent(getContext(), UsersPickerActivity.class));
+      startActivityForResult(new Intent(getContext(), UsersPickerActivity.class), MEETING_RESULT);
     }else if (view.getId() == R.id.deleteMeetingsBtn) {
       FirebaseDeleteUtil.deleteAllMeetingsAndMessages();
     }
@@ -357,5 +359,21 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
 
       }
     }
+  }
+
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+    if(requestCode == MEETING_RESULT && data!=null && data.hasExtra("meeting")){
+
+     final Meeting meeting = (Meeting) data.getSerializableExtra("meeting");
+
+     if(meeting!=null){
+       meetings.add(0,meeting);
+       adapter.notifyItemInserted(0);
+       meetingsRv.scrollToPosition(0);
+     }
+    }
+
   }
 }

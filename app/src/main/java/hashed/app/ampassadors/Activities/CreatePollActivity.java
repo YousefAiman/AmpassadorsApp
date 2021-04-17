@@ -40,16 +40,15 @@ public class CreatePollActivity extends AppCompatActivity implements View.OnClic
 
 
   private ImageView userIv;
-  private TextView usernameTv;
+  private TextView usernameTv,timeTv;
   private EditText questionEd;
-  private TextView timeTv;
   private RecyclerView pollRv;
   private Button publishBtn;
+  private CheckBox importantPollCb;
   private ArrayList<String> pollItems;
   private long pollDuration;
   private Integer[] durations;
-CheckBox  checkBox;
-  boolean  important;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -74,6 +73,8 @@ CheckBox  checkBox;
     questionEd = findViewById(R.id.questionEd);
     timeTv = findViewById(R.id.timeTv);
     pollRv = findViewById(R.id.pollRv);
+    importantPollCb = findViewById(R.id.importantPollCb);
+
     NestedScrollView nestedScrollView = findViewById(R.id.nestedScrollView);
     nestedScrollView.setNestedScrollingEnabled(false);
 
@@ -81,7 +82,7 @@ CheckBox  checkBox;
     toolbar.setNavigationOnClickListener(v -> finish());
 
     TextView timeTv = findViewById(R.id.timeTv);
-    checkBox = findViewById(R.id.checkBox);
+
     timeTv.setOnClickListener(this);
     publishBtn.setOnClickListener(this);
 
@@ -162,12 +163,8 @@ CheckBox  checkBox;
       map.put("comments", 0);
       map.put("pollEnded", false);
       map.put("totalVotes", 0);
-      if (checkBox.isChecked()) {
-        important = true;
-        map.put("important", important);
-      }else {
-        map.put("important", false);
-      }
+      map.put("important", importantPollCb.isChecked());
+
       final DocumentReference pollRef = FirebaseFirestore.getInstance()
               .collection("Posts").document(postId);
 

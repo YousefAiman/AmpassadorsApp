@@ -1,6 +1,6 @@
 package hashed.app.ampassadors.Adapters;
 
-import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,7 +15,6 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
@@ -26,14 +25,13 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import hashed.app.ampassadors.Activities.MessagingActivities.CourseMessagingActivity;
 import hashed.app.ampassadors.Activities.MessagingActivities.GroupMessagingActivity;
-import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity2;
-import hashed.app.ampassadors.Activities.PostNewsActivity;
-import hashed.app.ampassadors.Activities.PostPollActivity;
+import hashed.app.ampassadors.Activities.MessagingActivities.MeetingMessagingActivity;
 import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity;
+import hashed.app.ampassadors.Activities.PostNewsActivity;
 import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.Objects.Notification;
-import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.TimeFormatter;
 
@@ -170,33 +168,34 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
       final Notification notification = notifications.get(getAdapterPosition());
 
+      notificationDeleter.deleteNotification(notification);
+
 
       switch (notification.getType()) {
 
+
         case FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE:
-        case FirestoreNotificationSender.TYPE_GROUP_MESSAGE:
-        case FirestoreNotificationSender.TYPE_GROUP_ADDED:
-
-          notificationDeleter.deleteNotification(notification);
-
-          final Intent intent = new Intent(view.getContext(),
-                  PrivateMessagingActivity2.class);
-
-          if(notification.getType().equals(FirestoreNotificationSender.TYPE_GROUP_MESSAGE)
-                  || notification.getType().equals(FirestoreNotificationSender.TYPE_GROUP_ADDED)){
-
-            intent = new Intent(view.getContext(),
-                    PrivateMessagingActivity2.class);
-            intent.putExtra("type", "groupMessaging");
-          }else{
-            intent.putExtra("type", "privateMessaging");
-          }
-          intent.putExtra("messagingUid", notification.getDestinationId());
-          view.getContext().startActivity(intent);
-
+          startMessagingActivity(new Intent(view.getContext(), PrivateMessagingActivity.class),
+                  notification.getDestinationId(),view.getContext());
           break;
 
         case FirestoreNotificationSender.TYPE_MEETING_MESSAGE:
+          startMessagingActivity(new Intent(view.getContext(), MeetingMessagingActivity.class),
+                  notification.getDestinationId(),view.getContext());
+          break;
+
+        case FirestoreNotificationSender.TYPE_COURSE_MESSAGE:
+          startMessagingActivity(new Intent(view.getContext(), CourseMessagingActivity.class),
+                  notification.getDestinationId(),view.getContext());
+          break;
+
+        case FirestoreNotificationSender.TYPE_GROUP_MESSAGE:
+        case FirestoreNotificationSender.TYPE_GROUP_ADDED:
+          startMessagingActivity(new Intent(view.getContext(), GroupMessagingActivity.class),
+                  notification.getDestinationId(),view.getContext());
+          break;
+
+
         case FirestoreNotificationSender.TYPE_MEETING_ADDED:
         case FirestoreNotificationSender.TYPE_ZOOM:
         case FirestoreNotificationSender.TYPE_MEETING_STARTED:
@@ -234,20 +233,15 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
               if (task.isSuccessful() && notifications.contains(notification)) {
 
                 notificationDeleter.deleteNotification(notification);
+                Intent intent = new Intent(view.getContext(),
+                        MeetingMessagingActivity.class)
+                        .putExtra("messagingUid", notification.getDestinationId());
+
                 if(notification.getType().equals(FirestoreNotificationSender.TYPE_ZOOM)){
-
-                  view.getContext().startActivity(new Intent(view.getContext(),
-                          GroupMessagingActivity.class)
-                          .putExtra("messagingUid", notification.getDestinationId())
-                          .putExtra("type","zoomMeeting"));
-
-                }else{
-
-                  view.getContext().startActivity(new Intent(view.getContext(),
-                          GroupMessagingActivity.class)
-                          .putExtra("messagingUid", notification.getDestinationId())
-                          .putExtra("type","meetingMessaging"));
+                        intent.putExtra("type","zoomMeeting");
                 }
+
+                view.getContext().startActivity(intent);
 
               }
             }
@@ -258,45 +252,51 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         case FirestoreNotificationSender.TYPE_LIKE:
         case FirestoreNotificationSender.TYPE_COMMENT:
 
-          final ProgressDialog progressDialog = new ProgressDialog(itemView.getContext());
-          progressDialog.show();
+          notificationDeleter.deleteNotification(notification);
 
-          final PostData[] postData = new PostData[1];
-          FirebaseFirestore.getInstance().collection("Posts")
-                  .document(notification.getDestinationId())
-                  .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot snapshot) {
-              if(snapshot.exists()){
-                postData[0] = snapshot.toObject(PostData.class);
-              }
-            }
-          }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-              if(task.isSuccessful() && postData[0] !=null){
+          view.getContext().startActivity(new Intent(view.getContext(), PostNewsActivity.class)
+                  .putExtra("postId", notification.getDestinationId())
+                  .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 
-                progressDialog.dismiss();
-                notificationDeleter.deleteNotification(notification);
-                if(postData[0].getType() == PostData.TYPE_POLL){
-                  view.getContext().startActivity(new Intent(view.getContext(),
-                          PostPollActivity.class)
-                          .putExtra("postData", postData[0]));
-                }else{
-                  view.getContext().startActivity(new Intent(view.getContext(),
-                          PostNewsActivity.class)
-                          .putExtra("postData", postData[0]));
-                }
-              }
-            }
-          }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-              Toast.makeText(itemView.getContext(),
-                      "An Error occurred! Please try again", Toast.LENGTH_SHORT).show();
-              progressDialog.dismiss();
-            }
-          });
+//          final ProgressDialog progressDialog = new ProgressDialog(itemView.getContext());
+//          progressDialog.show();
+//
+//          final PostData[] postData = new PostData[1];
+//          FirebaseFirestore.getInstance().collection("Posts")
+//                  .document(notification.getDestinationId())
+//                  .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//            @Override
+//            public void onSuccess(DocumentSnapshot snapshot) {
+//              if(snapshot.exists()){
+//                postData[0] = snapshot.toObject(PostData.class);
+//              }
+//            }
+//          }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//              if(task.isSuccessful() && postData[0] !=null){
+//
+//                progressDialog.dismiss();
+//                notificationDeleter.deleteNotification(notification);
+//                if(postData[0].getType() == PostData.TYPE_POLL){
+//                  view.getContext().startActivity(new Intent(view.getContext(),
+//                          PostPollActivity.class)
+//                          .putExtra("postData", postData[0]));
+//                }else{
+//                  view.getContext().startActivity(new Intent(view.getContext(),
+//                          PostNewsActivity.class)
+//                          .putExtra("postData", postData[0]));
+//                }
+//              }
+//            }
+//          }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//              Toast.makeText(itemView.getContext(),
+//                      "An Error occurred! Please try again", Toast.LENGTH_SHORT).show();
+//              progressDialog.dismiss();
+//            }
+//          });
 
           break;
 
@@ -310,5 +310,10 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
   }
 
+  private void startMessagingActivity(Intent intent, String id, Context context){
+    intent.putExtra("messagingUid",id);
+    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    context.startActivity(intent);
+  }
 
 }

@@ -7,7 +7,7 @@
         >
         <menu>
             <item android:id="@+id/Reporting"
-                android:title="@string/Reporting"
+                android:title="@string/report"
                 android:icon="@drawable/ic_baseline_report"
                 />
         </menu>

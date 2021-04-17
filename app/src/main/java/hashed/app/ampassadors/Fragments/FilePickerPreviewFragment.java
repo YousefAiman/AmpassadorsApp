@@ -18,8 +18,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.Map;
 
-import hashed.app.ampassadors.Activities.MessagingActivities.GroupMessagingActivity;
-import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity;
+import hashed.app.ampassadors.Activities.MessagingActivities.MessagingActivity;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
 
@@ -125,28 +124,39 @@ public class FilePickerPreviewFragment extends Fragment {
       final String content = messagingPickerEd.getText().toString();
       if (!content.isEmpty() && uri != null) {
 
-        if (getActivity() instanceof PrivateMessagingActivity) {
+        if(getActivity()!=null){
 
-          ((PrivateMessagingActivity) getActivity()).sendFileMessage(
+          ((MessagingActivity) getActivity()).sendFileMessage(
                   uri,
                   type,
                   content,
                   0,
                   fileName);
 
-        } else if (getActivity() instanceof GroupMessagingActivity) {
-
-          ((GroupMessagingActivity) getActivity()).sendFileMessage(
-                  uri,
-                  type,
-                  content,
-                  0,
-                  fileName);
-
+          getActivity().onBackPressed();
         }
 
+//        if (getActivity() instanceof PrivateMessagingActivity) {
+//
+//          ((MessagingActivity) getActivity()).sendFileMessage(
+//                  uri,
+//                  type,
+//                  content,
+//                  0,
+//                  fileName);
+//
+//        } else if (getActivity() instanceof GroupMessagingActivity) {
+//
+//          ((MessagingActivity) getActivity()).sendFileMessage(
+//                  uri,
+//                  type,
+//                  content,
+//                  0,
+//                  fileName);
+//
+//        }
 
-        getActivity().onBackPressed();
+
 
       } else {
 

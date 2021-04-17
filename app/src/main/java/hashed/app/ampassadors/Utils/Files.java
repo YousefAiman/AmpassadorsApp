@@ -64,7 +64,6 @@ public class Files {
       final Intent i = new Intent(Intent.ACTION_GET_CONTENT);
       i.setType("image/*");
       activity.startActivityForResult(Intent.createChooser(i, "Select Image"), PICK_IMAGE);
-
     }
 
   }

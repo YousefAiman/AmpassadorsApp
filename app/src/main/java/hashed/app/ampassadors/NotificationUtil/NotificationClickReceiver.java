@@ -6,16 +6,30 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.io.Serializable;
+
+import hashed.app.ampassadors.Activities.CourseActivity;
+import hashed.app.ampassadors.Activities.MeetingActivity;
 import hashed.app.ampassadors.Activities.MessagingActivities.CourseMessagingActivity;
-import hashed.app.ampassadors.Activities.MessagingActivities.GroupMessagingActivity2;
+import hashed.app.ampassadors.Activities.MessagingActivities.GroupMessagingActivity;
 import hashed.app.ampassadors.Activities.MessagingActivities.MeetingMessagingActivity;
-import hashed.app.ampassadors.Activities.MessagingActivities.MessagingActivity;
-import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity2;
-import hashed.app.ampassadors.MainActivity;
+import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity;
+import hashed.app.ampassadors.Activities.PostNewsActivity;
+import hashed.app.ampassadors.Objects.Course;
+import hashed.app.ampassadors.Objects.Meeting;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 
 public class NotificationClickReceiver extends BroadcastReceiver {
+
 
   @Override
   public void onReceive(Context context, Intent intent) {
@@ -23,55 +37,78 @@ public class NotificationClickReceiver extends BroadcastReceiver {
     if (intent.hasExtra("sourceId") && intent.hasExtra("sourceType")) {
 
 
+      Log.d("ttt","has both extras");
+
       String sourceType = intent.getStringExtra("sourceType");
       String sourceId = intent.getStringExtra("sourceId");
 
       if (GlobalVariables.isAppIsRunning()) {
 
-        Intent destinationIntent;
+        Log.d("ttt","AppIsRunning");
+        if(sourceType.equals(FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE)
+        || sourceType.equals(FirestoreNotificationSender.TYPE_GROUP_MESSAGE)
+        || sourceType.equals(FirestoreNotificationSender.TYPE_GROUP_ADDED)
+        || sourceType.equals(FirestoreNotificationSender.TYPE_COURSE_MESSAGE)
+        || sourceType.equals(FirestoreNotificationSender.TYPE_MEETING_MESSAGE)){
 
-        switch (sourceType){
+          Log.d("ttt","messaging type");
 
-          case FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE:
-            destinationIntent = new Intent(context, PrivateMessagingActivity2.class);
-            break;
+          Intent destinationIntent = null;
+          switch (sourceType) {
+            case FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE:
+              destinationIntent = new Intent(context, PrivateMessagingActivity.class);
+              break;
+            case FirestoreNotificationSender.TYPE_GROUP_MESSAGE:
+            case FirestoreNotificationSender.TYPE_GROUP_ADDED:
+              destinationIntent = new Intent(context, GroupMessagingActivity.class);
+              break;
+            case FirestoreNotificationSender.TYPE_COURSE_MESSAGE:
+              destinationIntent = new Intent(context, CourseMessagingActivity.class);
+              break;
+            case FirestoreNotificationSender.TYPE_MEETING_MESSAGE:
+              destinationIntent = new Intent(context, MeetingMessagingActivity.class);
+              break;
+          }
+          Log.d("ttt","sourceId: "+sourceId);
+          destinationIntent.putExtra("messagingUid", sourceId);
+          checkCurrentMessagingActivity(context,destinationIntent,sourceId);
 
-          case FirestoreNotificationSender.TYPE_GROUP_MESSAGE:
-            destinationIntent = new Intent(context, GroupMessagingActivity2.class);
-            break;
-          case FirestoreNotificationSender.TYPE_COURSE_MESSAGE:
-            destinationIntent = new Intent(context, CourseMessagingActivity.class);
-            break;
-          case FirestoreNotificationSender.TYPE_MEETING_MESSAGE:
-            destinationIntent = new Intent(context, MeetingMessagingActivity.class);
-            break;
+          context.startActivity(destinationIntent);
+          }else{
 
-//          destinationIntent.putExtra("messagingUid",sourceId);
+          switch (sourceType){
 
-          case FirestoreNotificationSender.TYPE_MEETING_ADDED:
-          case FirestoreNotificationSender.TYPE_MEETING_STARTED:
-          case FirestoreNotificationSender.TYPE_LIKE:
-          case FirestoreNotificationSender.TYPE_COMMENT:
-          case FirestoreNotificationSender.TYPE_COURSE_STARTED:
-          case FirestoreNotificationSender.TYPE_GROUP_ADDED:
+            case FirestoreNotificationSender.TYPE_MEETING_STARTED:
+            case FirestoreNotificationSender.TYPE_MEETING_ADDED:
 
-            destinationIntent = new Intent(context, MainActivity.class)
-                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+              fetchObjectAndStartIntent(MeetingActivity.class,context,"Meetings",
+                      Meeting.class,sourceId,"meeting");
 
-            destinationIntent.putExtra("destinationId",sourceId);
 
-            break;
+            case FirestoreNotificationSender.TYPE_LIKE:
+            case FirestoreNotificationSender.TYPE_COMMENT:
 
-          default:
+              Intent postIntent =
+                      new Intent(context, PostNewsActivity.class)
+                      .putExtra("postId",sourceId)
+                      .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-            destinationIntent = new Intent(context, MainActivity.class)
-                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+              context.startActivity(postIntent);
 
+            case FirestoreNotificationSender.TYPE_COURSE_STARTED:
+
+              fetchObjectAndStartIntent(CourseActivity.class,context,"Courses",
+                      Course.class,sourceId,"course");
+
+          }
         }
 
-        context.startActivity(destinationIntent);
+      }else{
 
-        Log.d("ttt", "clicked notificaiton while app isn't running");
+
+        Log.d("ttt","AppIs not Running");
+
+
       }
     }
   }
@@ -81,7 +118,7 @@ public class NotificationClickReceiver extends BroadcastReceiver {
     final SharedPreferences sharedPreferences =
             context.getSharedPreferences(context.getResources().getString(R.string.app_name),
                     Context.MODE_PRIVATE);
-
+    Log.d("ttt","checkCurrentMessagingActivity");
     if (sharedPreferences.contains("currentlyMessagingUid")) {
       if (sourceId.equals(sharedPreferences.getString("currentlyMessagingUid", ""))) {
 
@@ -99,6 +136,39 @@ public class NotificationClickReceiver extends BroadcastReceiver {
       Log.d("ttt", "no current messaging in shared");
       destinationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     }
+
+  }
+
+
+  private void fetchObjectAndStartIntent(Class<?> destinationClass,
+                                         Context context,
+                                         String collectionName,
+                                         Class<?> objectClass,
+                                         String id,
+                                         String extraName){
+
+    final Intent intent = new Intent(context, destinationClass)
+            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+    FirebaseFirestore.getInstance().collection(collectionName).document(id)
+            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+      @Override
+      public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+        if(documentSnapshot.exists()){
+          intent.putExtra(extraName,(Serializable) documentSnapshot.toObject(objectClass));
+        }
+
+      }
+    }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+      @Override
+      public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+        if(task.isSuccessful() && intent.hasExtra(extraName)){
+          context.startActivity(intent);
+        }
+      }
+    });
+
 
   }
 }

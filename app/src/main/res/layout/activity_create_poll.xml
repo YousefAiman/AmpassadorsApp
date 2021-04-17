@@ -83,7 +83,7 @@
 
             <EditText
                 android:id="@+id/questionEd"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
                 android:layout_marginTop="30dp"
@@ -92,7 +92,6 @@
                 android:inputType="text"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="5dp"
-                app:layout_constraintEnd_toStartOf="@+id/checkBox"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/userIv" />
 
@@ -100,14 +99,14 @@
                 android:id="@+id/poll_card"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="45dp"
+                android:layout_marginVertical="30dp"
                 app:cardBackgroundColor="#fff"
                 app:cardCornerRadius="30dp"
                 app:cardElevation="4dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/questionEd"
+                app:layout_constraintTop_toBottomOf="@+id/importantPollCb"
                 app:layout_constraintWidth_percent="0.75"
                 app:strokeColor="#7CB498"
                 app:strokeWidth="1.5dp">
@@ -167,14 +166,19 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <CheckBox
-                android:id="@+id/checkBox"
+            <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/importantPollCb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/important_post"
-                app:layout_constraintBottom_toBottomOf="@+id/questionEd"
-                app:layout_constraintEnd_toEndOf="@+id/edit_btn"
-                app:layout_constraintTop_toTopOf="@+id/questionEd" />
+                android:text="@string/important_poll"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/segoe_ui"
+                android:textSize="14sp"
+                android:paddingHorizontal="10dp"
+                android:button="@drawable/check_box_selector"
+                android:layout_marginStart="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/questionEd" />
 
             <!--            <ImageButton-->
             <!--                android:id="@+id/vedio_btn_post"-->

@@ -176,11 +176,11 @@
         android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="#F2F2F2"
-        android:layout_marginTop="15dp"
+        android:background="@color/white_grey"
         android:orientation="vertical"
+        android:layout_marginTop="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/timeSetterTv">
+        app:layout_constraintTop_toBottomOf="@+id/publicMeetingCb">
 
         <TextView
             android:id="@+id/contributorsTv"
@@ -195,20 +195,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:paddingHorizontal="10dp"
             android:overScrollMode="never"
+            android:paddingHorizontal="10dp"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:spanCount="5" />
 
     </LinearLayout>
 
-    <CheckBox
-        android:id="@+id/checkBox3"
-        android:layout_width="69dp"
-        android:layout_height="31dp"
-        android:text="CheckBox"
-        app:layout_constraintBottom_toBottomOf="@+id/timeSetterTv"
-        app:layout_constraintStart_toEndOf="@+id/timeSetterTv"
-        app:layout_constraintTop_toTopOf="@+id/timeSetterTv" />
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/publicMeetingCb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/important_meeting"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        android:fontFamily="@font/segoe_ui_bold"
+        android:textColor="@color/black_transparent"
+        android:textSize="14sp"
+        android:paddingHorizontal="10dp"
+        android:button="@drawable/check_box_selector"
+        app:layout_constraintStart_toStartOf="@+id/dateTv"
+        app:layout_constraintTop_toBottomOf="@+id/dateSetterTv"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

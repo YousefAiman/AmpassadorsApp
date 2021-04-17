@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import hashed.app.ampassadors.Activities.MessagingActivities.CourseMessagingActivity;
-import hashed.app.ampassadors.Activities.MessagingActivities.GroupMessagingActivity;
 import hashed.app.ampassadors.Adapters.UsersAdapter;
 import hashed.app.ampassadors.Objects.Course;
 import hashed.app.ampassadors.Objects.UserPreview;

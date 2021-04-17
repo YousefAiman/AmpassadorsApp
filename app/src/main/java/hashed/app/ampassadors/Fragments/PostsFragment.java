@@ -1,4 +1,4 @@
-package hashed.app.ampassadors.Fragments;
+  package hashed.app.ampassadors.Fragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -6,6 +6,7 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -23,12 +24,17 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -44,13 +50,16 @@ import hashed.app.ampassadors.Activities.Home_Activity;
 import hashed.app.ampassadors.Activities.NotificationsActivity;
 import hashed.app.ampassadors.Activities.PostNewActivity;
 import hashed.app.ampassadors.Activities.PostsSearchActivity;
+import hashed.app.ampassadors.Adapters.NewsAdapter;
 import hashed.app.ampassadors.Objects.HeaderItem;
-import hashed.app.ampassadors.Adapters.HomeNewsHeaderViewPagerAdapter;
+import hashed.app.ampassadors.Adapters.HomeHeaderViewPagerAdapter;
 import hashed.app.ampassadors.Adapters.PostAdapter;
 import hashed.app.ampassadors.BroadcastReceivers.NotificationIndicatorReceiver;
 import hashed.app.ampassadors.BuildConfig;
 import hashed.app.ampassadors.Objects.Course;
+import hashed.app.ampassadors.Objects.Meeting;
 import hashed.app.ampassadors.Objects.PostData;
+import hashed.app.ampassadors.Objects.PostNewsPreview;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 
@@ -59,8 +68,8 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
     private static final int POSTS_LIMIT = 10;
     private Query query;
-    private List<PostData> posts;
-    private PostAdapter adapter;
+    private List<PostNewsPreview> posts;
+    private NewsAdapter adapter;
     private RecyclerView post_list;
     private DocumentSnapshot lastDocSnap;
     private boolean isLoadingMessages;
@@ -73,47 +82,39 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     //header Pager
     private Handler handler;
     private Runnable pagerRunnable;
-    private HomeNewsHeaderViewPagerAdapter pagerAdapter;
-    HeaderItem courseAdapter;
-    private ArrayList<PostData> importantPost;
-    private ArrayList<Course> imporatantCourse;
+    private HomeHeaderViewPagerAdapter pagerAdapter;
+    private ArrayList<HeaderItem> headerItems;
     private NotificationIndicatorReceiver notificationIndicatorReceiver;
+    private boolean[] headerQueriesFinished;
+    private FirebaseFirestore firestore;
+    private ViewPager.OnPageChangeListener pageChangeListener;
+    private List<ListenerRegistration> listenerRegistrations;
 
     public PostsFragment() {
         // Required empty public constructor
-    }
-
-    static long remainingTime() {
-
-        Calendar calendar = new GregorianCalendar(Locale.getDefault());
-        calendar.setTime(new Date());
-
-        int totalMin = 1440 - 60 * calendar.get(Calendar.HOUR) - calendar.get(Calendar.MINUTE);
-
-        long timeLeftInMillis = totalMin * 60 * 1000;
-
-        return System.currentTimeMillis() + timeLeftInMillis;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        listenerRegistrations = new ArrayList<>();
 
-        importantPost = new ArrayList<>(10);
-        pagerAdapter = new HomeNewsHeaderViewPagerAdapter(importantPost);
+        headerItems = new ArrayList<>();
+        pagerAdapter = new HomeHeaderViewPagerAdapter(headerItems);
+        headerQueriesFinished = new boolean[4];
 
-        imporatantCourse = new ArrayList<>(10);
-        courseAdapter = new HeaderItem(imporatantCourse);
-        Log.d("ww","The size of Array is  ="+ imporatantCourse.size());
-        query = FirebaseFirestore.getInstance().collection("Posts")
+        posts = new ArrayList<>();
+        adapter = new NewsAdapter(posts, getContext());
+
+        firestore = FirebaseFirestore.getInstance();
+        query = firestore.collection("Posts")
                 .orderBy("publishTime", Query.Direction.DESCENDING)
                 .whereEqualTo("type", PostData.TYPE_NEWS)
                 .limit(POSTS_LIMIT);
 
-        posts = new ArrayList<>();
-        adapter = new PostAdapter(posts, getContext());
 
+        fetchHeaderItems();
     }
 
     @Override
@@ -157,7 +158,6 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
         headerViewPager.setAdapter(pagerAdapter);
         createHeaderPager();
-        createCourseHeader();
         post_list.setAdapter(adapter);
         ReadPost(true);
 
@@ -181,11 +181,16 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     public void onRefresh() {
 
         //header pager
-        importantPost.clear();
-        imporatantCourse.clear();
+        headerItems.clear();
+//        headerViewPager.removeAllViews();
         pagerAdapter.notifyDataSetChanged();
-        createHeaderPager();
-        createCourseHeader();
+        fetchHeaderItems();
+
+        if(pageChangeListener!=null){
+
+            headerViewPager.removeOnPageChangeListener(pageChangeListener);
+        }
+
         if (handler != null && pagerRunnable != null) {
             handler.removeCallbacks(pagerRunnable);
         }
@@ -244,50 +249,16 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                 );
 
                 if (isInitial) {
-                    posts.addAll(queryDocumentSnapshots.toObjects(PostData.class));
+                    posts.addAll(queryDocumentSnapshots.toObjects(PostNewsPreview.class));
                 } else {
-                    posts.addAll(posts.size(), queryDocumentSnapshots.toObjects(PostData.class));
+                    posts.addAll(posts.size(), queryDocumentSnapshots.toObjects(PostNewsPreview.class));
                 }
-//        addedCount.getAndIncrement();
-
-//        for (QueryDocumentSnapshot snapshot : queryDocumentSnapshots) {
-//
-//          if (snapshot.getLong("type") == PostData.TYPE_POLL) {
-//
-//            if (snapshot.getBoolean("pollEnded")) {
-//
-//              if (snapshot.getLong("totalVotes") > 0) {
-//                posts.add(snapshot.toObject(PostData.class));
-//                addedCount.getAndIncrement();
-//              }
-//            } else {
-//
-//              if (System.currentTimeMillis() >
-//                      snapshot.getLong("publishTime") +
-//                              snapshot.getLong("pollDuration")) {
-//
-//                snapshot.getReference().update("pollEnded", true);
-//                if (snapshot.getLong("totalVotes") > 0) {
-//
-//                  final PostData post = snapshot.toObject(PostData.class);
-//                  post.setPollEnded(true);
-//                  posts.add(post);
-//                  addedCount.getAndIncrement();
-//                }
-//
-//              } else {
-//                posts.add(snapshot.toObject(PostData.class));
-//                addedCount.getAndIncrement();
-//              }
-//            }
-//          } else {
-//            posts.add(snapshot.toObject(PostData.class));
-//            addedCount.getAndIncrement();
-//          }
-//        }
             }
         }).addOnCompleteListener(task -> {
             if (isInitial) {
+
+                addNewsDeleteListener();
+
                 adapter.notifyDataSetChanged();
 
                 if (task.getResult().size() == POSTS_LIMIT && scrollListener == null) {
@@ -320,8 +291,8 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
             bsd.dismiss();
             Intent intent = new Intent(getContext(), PostNewActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivityForResult(intent,3);
 
         });
         parentView.findViewById(R.id.new_poll).setOnClickListener(view -> {
@@ -335,203 +306,338 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         bsd.show();
     }
 
-    private void createHeaderPager() {
+//    private void createHeaderPager() {
+//
+//        FirebaseFirestore.getInstance().collection("Posts")
+//                .whereEqualTo("important", true)
+//                .orderBy("publishTime", Query.Direction.ASCENDING)
+//                .limit(10).get().addOnSuccessListener(snapshots -> {
+//            if (!snapshots.isEmpty()) {
+//                importantPost.addAll(snapshots.toObjects(PostData.class));
+//            }
+//        }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                if (task.isSuccessful() && importantPost.size() > 0) {
+//
+//                    if (headerViewPager.getVisibility() == View.GONE) {
+//                        headerViewPager.setVisibility(View.VISIBLE);
+//                        dotsLinear.setVisibility(View.VISIBLE);
+//                    }
+//                    pagerAdapter.notifyDataSetChanged();
+//
+//                    if (importantPost.size() > 1) {
+//                        final ImageView[] dots = new ImageView[importantPost.size()];
+//
+//                        final LinearLayout.LayoutParams params =
+//                                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+//                                        LinearLayout.LayoutParams.WRAP_CONTENT);
+//
+//                        float density;
+//                        if (getContext() != null) {
+//                            density = requireContext().getResources().getDisplayMetrics().density;
+//                        } else {
+//                            density = 1;
+//                        }
+//
+//                        for (int i = 0; i < importantPost.size(); i++) {
+//                            dots[i] = new ImageView(requireContext());
+//                            dots[i].setImageResource(R.drawable.indicator_inactive_icon);
+//                            params.setMargins((int) (5 * density), 0, (int) (5 * density), 0);
+//                            dotsLinear.addView(dots[i], params);
+//                        }
+//
+//                        dots[0].setImageResource(R.drawable.indicator_active_icon);
+//
+//                        headerViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+//                            int previousPage = 0;
+//
+//                            @Override
+//                            public void onPageScrolled(int position, float positionOffset,
+//                                                       int positionOffsetPixels) {
+//                            }
+//
+//                            @Override
+//                            public void onPageSelected(int position) {
+//
+//                                dots[previousPage].setImageResource(R.drawable.indicator_inactive_icon);
+//                                dots[position].setImageResource(R.drawable.indicator_active_icon);
+//
+//                                previousPage = position;
+//                            }
+//
+//                            @Override
+//                            public void onPageScrollStateChanged(int state) {
+//                            }
+//                        });
+//
+//                        handler = new Handler();
+//
+//                        pagerRunnable = new Runnable() {
+//                            int scrollPosition;
+//
+//                            @Override
+//                            public void run() {
+//
+//                                if (scrollPosition + 1 == importantPost.size()) {
+//                                    scrollPosition = 0;
+//                                } else {
+//                                    scrollPosition++;
+//                                }
+//
+//                                headerViewPager.setCurrentItem(scrollPosition, true);
+//
+//                                handler.postDelayed(this, 5000);
+//
+//                            }
+//                        };
+//
+//                        handler.postDelayed(pagerRunnable, 5000);
+//
+//                    }
+//                } else {
+//                    headerViewPager.setVisibility(View.GONE);
+//                    dotsLinear.setVisibility(View.GONE);
+//                }
+//            }
+//        });
+//    }
 
-        FirebaseFirestore.getInstance().collection("Posts")
-                .whereEqualTo("important", true)
-                .orderBy("publishTime", Query.Direction.ASCENDING)
-                .limit(10).get().addOnSuccessListener(snapshots -> {
-            if (!snapshots.isEmpty()) {
-                importantPost.addAll(snapshots.toObjects(PostData.class));
-            }
-        }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful() && importantPost.size() > 0) {
 
-
-                    if (headerViewPager.getVisibility() == View.GONE) {
-                        headerViewPager.setVisibility(View.VISIBLE);
-                        dotsLinear.setVisibility(View.VISIBLE);
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 3) {
+                if(data.hasExtra("postNewsPreview")){
+                    final PostNewsPreview postNewsPreview =
+                            (PostNewsPreview) data.getSerializableExtra("postNewsPreview");
+                    if(postNewsPreview!=null){
+                        posts.add(0, postNewsPreview);
+                        adapter.notifyItemInserted(0);
+                        post_list.scrollToPosition(0);
                     }
-                    pagerAdapter.notifyDataSetChanged();
+                }
+        }
+    }
 
-                    if (importantPost.size() > 1) {
-                        final ImageView[] dots = new ImageView[importantPost.size()];
+    private void fetchHeaderItems(){
 
-                        final LinearLayout.LayoutParams params =
-                                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                                        LinearLayout.LayoutParams.WRAP_CONTENT);
 
-                        float density;
-                        if (getContext() != null) {
-                            density = requireContext().getResources().getDisplayMetrics().density;
-                        } else {
-                            density = 1;
-                        }
+        firestore.collection("Posts")
+                .whereEqualTo("important",true)
+                .whereEqualTo("type",PostData.TYPE_NEWS)
+                .limit(5)
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot snapshots) {
+                for(DocumentSnapshot document:snapshots.getDocuments()){
+                    headerItems.add(new HeaderItem(document.getString("title"),
+                            "news",document.getId(),document.toObject(PostData.class)));
+                }
 
-                        for (int i = 0; i < importantPost.size(); i++) {
-                            dots[i] = new ImageView(requireContext());
-                            dots[i].setImageResource(R.drawable.indicator_inactive_icon);
-                            params.setMargins((int) (5 * density), 0, (int) (5 * density), 0);
-                            dotsLinear.addView(dots[i], params);
-                        }
+                Query pollsQuery = firestore.collection("Posts")
+                        .whereEqualTo("important",true)
+                        .whereEqualTo("type",PostData.TYPE_POLL)
+                        .whereEqualTo("pollEnded",false)
+                        .limit(5);
 
-                        dots[0].setImageResource(R.drawable.indicator_active_icon);
+                pollsQuery.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot snapshots) {
+                        for(DocumentSnapshot snapshot:snapshots.getDocuments()){
 
-                        headerViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                            int previousPage = 0;
+                            if (snapshot.getBoolean("pollEnded")) {
 
-                            @Override
-                            public void onPageScrolled(int position, float positionOffset,
-                                                       int positionOffsetPixels) {
-                            }
-
-                            @Override
-                            public void onPageSelected(int position) {
-
-                                dots[previousPage].setImageResource(R.drawable.indicator_inactive_icon);
-                                dots[position].setImageResource(R.drawable.indicator_active_icon);
-
-                                previousPage = position;
-                            }
-
-                            @Override
-                            public void onPageScrollStateChanged(int state) {
-                            }
-                        });
-
-                        handler = new Handler();
-
-                        pagerRunnable = new Runnable() {
-                            int scrollPosition;
-
-                            @Override
-                            public void run() {
-
-                                if (scrollPosition + 1 == importantPost.size()) {
-                                    scrollPosition = 0;
-                                } else {
-                                    scrollPosition++;
+                                if (snapshot.getLong("totalVotes") > 0) {
+                                    headerItems.add(new HeaderItem(snapshot.getString("title"),
+                                            "poll",snapshot.getId(),snapshot.toObject(PostData.class)));
                                 }
 
-                                headerViewPager.setCurrentItem(scrollPosition, true);
+                            } else {
 
-                                handler.postDelayed(this, 5000);
+                                if (System.currentTimeMillis() >
+                                        snapshot.getLong("publishTime") +
+                                                snapshot.getLong("pollDuration")) {
+
+                                    snapshot.getReference().update("pollEnded", true);
+
+                                    if (snapshot.getLong("totalVotes") > 0) {
+
+                                        final PostData post = snapshot.toObject(PostData.class);
+                                        post.setPollEnded(true);
+
+                                        headerItems.add(new HeaderItem(snapshot.getString("title"),
+                                                "poll",snapshot.getId(),snapshot.toObject(PostData.class)));
+
+                                    }
+
+                                } else {
+                                    headerItems.add(new HeaderItem(snapshot.getString("title"),
+                                            "poll",snapshot.getId(),snapshot.toObject(PostData.class)));
+                                }
 
                             }
-                        };
 
-                        handler.postDelayed(pagerRunnable, 5000);
+                        }
+
+                        firestore.collection("Meetings")
+                                .whereArrayContains("members",
+                                        FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .whereEqualTo("important",true)
+                                .whereGreaterThan("startTime",
+                                        System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS)
+                                .whereEqualTo("hasEnded",false)
+                                .limit(5)
+                                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot snapshots) {
+
+                                for(DocumentSnapshot document:snapshots.getDocuments()){
+                                    headerItems.add(new HeaderItem(document.getString("title"),
+                                            "meeting",document.getId(),document.toObject(Meeting.class)));
+                                }
+
+
+                                firestore.collection("Courses")
+                                        .whereEqualTo("important",true)
+                                        .whereGreaterThan("startTime",
+                                                System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS)
+                                        .whereEqualTo("hasEnded",false)
+                                        .limit(5)
+                                        .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onSuccess(QuerySnapshot snapshots) {
+                                        for(DocumentSnapshot document:snapshots.getDocuments()){
+                                            headerItems.add(new HeaderItem(document.getString("title"),
+                                                    "course",document.getId(),document.toObject(Course.class)));
+                                        }
+
+                                        createHeaderPager();
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                        listenerRegistrations.add(
+                        pollsQuery.whereEqualTo("deleting",true)
+                                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onEvent(@Nullable QuerySnapshot value,
+                                                        @Nullable FirebaseFirestoreException error) {
+                                        if(value!=null){
+                                            for(DocumentChange dc:value.getDocumentChanges()){
+                                                Log.d("ttt","change at: "+dc.getDocument().getId());
+                                                if(dc.getType().equals(DocumentChange.Type.REMOVED)){
+                                                    removeItemFromHeader(dc.getDocument().getId());
+                                                }
+                                            }
+                                        }
+                                    }
+                                }));
 
                     }
-                } else {
-                    headerViewPager.setVisibility(View.GONE);
-                    dotsLinear.setVisibility(View.GONE);
-                }
+                });
             }
         });
-
 
     }
 
-    private void createCourseHeader() {
+    private void createHeaderPager(){
 
-        FirebaseFirestore.getInstance().collection("Courses")
-                .whereEqualTo("important", true)
-                .orderBy("createdTime", Query.Direction.ASCENDING)
-                .limit(10).get().addOnSuccessListener(snapshots -> {
-            if (!snapshots.isEmpty()) {
-                imporatantCourse.addAll(snapshots.toObjects(Course.class));
+//        for(boolean hasFinished:headerQueriesFinished){
+//            if(!hasFinished)
+//                return;
+//        }
+
+        if (headerItems.size() > 0) {
+
+            if (headerViewPager.getVisibility() == View.GONE) {
+                headerViewPager.setVisibility(View.VISIBLE);
+                dotsLinear.setVisibility(View.VISIBLE);
             }
-        }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful() && imporatantCourse.size() > 0) {
+            pagerAdapter.notifyDataSetChanged();
 
+            if (headerItems.size() > 1) {
 
-                    if (headerViewPager.getVisibility() == View.GONE) {
-                        headerViewPager.setVisibility(View.VISIBLE);
-                        dotsLinear.setVisibility(View.VISIBLE);
-                    }
-                    pagerAdapter.notifyDataSetChanged();
+                headerViewPager.setCurrentItem(0);
 
-                    if (imporatantCourse.size() > 1) {
-                        final ImageView[] dots = new ImageView[imporatantCourse.size()];
+                final ImageView[] dots = new ImageView[headerItems.size()];
 
-                        final LinearLayout.LayoutParams params =
-                                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                final LinearLayout.LayoutParams params =
+                        new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT);
 
-                        float density;
-                        if (getContext() != null) {
-                            density = requireContext().getResources().getDisplayMetrics().density;
-                        } else {
-                            density = 1;
-                        }
-
-                        for (int i = 0; i < imporatantCourse.size(); i++) {
-                            dots[i] = new ImageView(requireContext());
-                            dots[i].setImageResource(R.drawable.indicator_inactive_icon);
-                            params.setMargins((int) (5 * density), 0, (int) (5 * density), 0);
-                            dotsLinear.addView(dots[i], params);
-                        }
-
-                        dots[0].setImageResource(R.drawable.indicator_active_icon);
-
-                        headerViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                            int previousPage = 0;
-
-                            @Override
-                            public void onPageScrolled(int position, float positionOffset,
-                                                       int positionOffsetPixels) {
-                            }
-
-                            @Override
-                            public void onPageSelected(int position) {
-
-                                dots[previousPage].setImageResource(R.drawable.indicator_inactive_icon);
-                                dots[position].setImageResource(R.drawable.indicator_active_icon);
-
-                                previousPage = position;
-                            }
-
-                            @Override
-                            public void onPageScrollStateChanged(int state) {
-                            }
-                        });
-
-                        handler = new Handler();
-
-                        pagerRunnable = new Runnable() {
-                            int scrollPosition;
-
-                            @Override
-                            public void run() {
-
-                                if (scrollPosition + 1 == imporatantCourse.size()) {
-                                    scrollPosition = 0;
-                                } else {
-                                    scrollPosition++;
-                                }
-
-                                headerViewPager.setCurrentItem(scrollPosition, true);
-
-                                handler.postDelayed(this, 5000);
-
-                            }
-                        };
-
-                        handler.postDelayed(pagerRunnable, 5000);
-
-                    }
+                float density;
+                if (getContext() != null) {
+                    density = requireContext().getResources().getDisplayMetrics().density;
                 } else {
-                    headerViewPager.setVisibility(View.GONE);
-                    dotsLinear.setVisibility(View.GONE);
+                    density = 1;
                 }
-            }
-        });
 
+                for (int i = 0; i < headerItems.size(); i++) {
+                    dots[i] = new ImageView(requireActivity());
+                    dots[i].setImageResource(R.drawable.indicator_inactive_icon);
+                    params.setMargins((int) (5 * density), 0, (int) (5 * density), 0);
+                    dotsLinear.addView(dots[i], params);
+                }
+
+                dots[0].setImageResource(R.drawable.indicator_active_icon);
+
+                headerViewPager.addOnPageChangeListener(pageChangeListener =
+                        new ViewPager.OnPageChangeListener() {
+                    int previousPage = 0;
+
+                    @Override
+                    public void onPageScrolled(int position, float positionOffset,
+                                               int positionOffsetPixels) {
+                    }
+
+                    @Override
+                    public void onPageSelected(int position) {
+
+                        dots[previousPage].setImageResource(R.drawable.indicator_inactive_icon);
+                        dots[position].setImageResource(R.drawable.indicator_active_icon);
+
+                        previousPage = position;
+                    }
+
+                    @Override
+                    public void onPageScrollStateChanged(int state) {
+                    }
+                });
+
+                handler = new Handler();
+
+                pagerRunnable = new Runnable() {
+                    int scrollPosition;
+
+                    @Override
+                    public void run() {
+
+                        if (scrollPosition + 1 == headerItems.size()) {
+                            scrollPosition = 0;
+                        } else {
+                            scrollPosition++;
+                        }
+
+                        headerViewPager.setCurrentItem(scrollPosition, true);
+
+                        handler.postDelayed(this, 5000);
+
+                    }
+                };
+
+                handler.postDelayed(pagerRunnable, 4000);
+
+            }
+        } else {
+            headerViewPager.setVisibility(View.GONE);
+            dotsLinear.setVisibility(View.GONE);
+        }
 
     }
 
@@ -588,12 +694,14 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         if (post_list != null && scrollListener != null) {
             post_list.removeOnScrollListener(scrollListener);
         }
+        if(listenerRegistrations!=null){
+            for(ListenerRegistration listenerRegistration:listenerRegistrations){
+                listenerRegistration.remove();
+            }
+        }
     }
 
-    public void addPostData(PostData post) {
-        posts.add(0, post);
-        adapter.notifyItemInserted(0);
-    }
+
 
     private class PostsBottomScrollListener extends RecyclerView.OnScrollListener {
         @Override
@@ -609,6 +717,104 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
             }
         }
+    }
+
+    private void addNewsDeleteListener(){
+        listenerRegistrations.add(
+        firestore.collection("Posts")
+                .whereEqualTo("type",PostData.TYPE_NEWS)
+                .whereEqualTo("deleting",true)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value,
+                                        @Nullable FirebaseFirestoreException error) {
+
+                        if (value!=null && posts!=null){
+                            for(DocumentChange dc:value.getDocumentChanges()){
+
+                                if(dc.getType().equals(DocumentChange.Type.ADDED)) {
+                                    final String documentId = dc.getDocument().getId();
+
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (documentId != null) {
+                                                for (PostNewsPreview post : posts) {
+                                                    if (post.getPostId().equals(documentId)) {
+                                                        int index = posts.indexOf(post);
+                                                        posts.remove(index);
+                                                        post_list.post(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                adapter.notifyItemRemoved(index);
+                                                            }
+                                                        });
+
+                                                        break;
+                                                    }
+                                                }
+
+                                            }
+                                        }
+                                    }).start();
+
+                                    removeItemFromHeader(documentId);
+
+                                }
+                            }
+                        }
+
+                    }
+                }));
+    }
+
+
+    private void removeItemFromHeader(String documentId){
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+        for (HeaderItem headerItem :headerItems) {
+
+            Log.d("ttt",
+                    "headerItem.getId(): "+ headerItem.getId()+ "documentId "+documentId);
+
+            if (headerItem.getId().equals(documentId)) {
+                int index = headerItems.indexOf(headerItem);
+
+                headerItems.remove(index);
+
+                Log.d("ttt","removing item at "+index);
+
+                headerViewPager.post(new Runnable() {
+                    @Override
+                    public void run() {
+
+//                        pagerAdapter.destroyItem(
+//                                headerViewPager,
+//                                index,
+//                                headerItem);
+
+                        dotsLinear.removeViewAt(index);
+                        if(dotsLinear.getChildCount() == 1){
+                            dotsLinear.setVisibility(View.GONE);
+                        }
+                        pagerAdapter.notifyDataSetChanged();
+
+                        if(headerItems.size() == 0){
+                            dotsLinear.setVisibility(View.GONE);
+                            headerViewPager.setVisibility(View.GONE);
+                        }
+
+                    }
+                });
+                break;
+            }
+        }
+            }
+        }).start();
+
     }
 
 

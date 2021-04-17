@@ -8,12 +8,11 @@
             <item android:id="@+id/action_end_meeting"
                 android:title="@string/end_meeting"/>
 
-            <item android:id="@+id/action_edit_group"
-                android:title="@string/edit_group"
-                android:icon="@drawable/ic_baseline_edit"/>
-
-            <item android:id="@+id/action_send_messages"
-                android:title="@string/send_messages"/>
+<!--            <item android:id="@+id/action_edit_group"-->
+<!--                android:title="@string/edit_group"-->
+<!--                android:icon="@drawable/ic_baseline_edit"/>-->
+<!--            <item android:id="@+id/action_send_messages"-->
+<!--                android:title="@string/send_messages"/>-->
 
         </menu>
     </item>

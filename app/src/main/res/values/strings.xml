@@ -391,5 +391,12 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="end_meeting">End Meeting</string>
     <string name="end_course">End course</string>
     <string name="group_info">Group info</string>
+    <string name="course">Course</string>
+    <string name="meeting">Meeting</string>
+    <string name="public_meeting">Public meeting</string>
+    <string name="important_poll">Important Poll</string>
+    <string name="important_meeting">Important meeting</string>
+    <string name="report">Report</string>
+    <string name="delete_group">Delete group</string>
 
 </resources>

@@ -350,5 +350,12 @@
         <string name="end_meeting">انهاء الاجتماع</string>
         <string name="end_course">انهاء الدورة</string>
         <string name="group_info">تفاصيل المجموعة</string>
+        <string name="course">دورة</string>
+        <string name="meeting">اجتماع</string>
+        <string name="public_meeting">اجتماع عام</string>
+        <string name="important_poll">استبيان مهم</string>
+        <string name="important_meeting">اجتماع هام</string>
+        <string name="report">ابلاغ</string>
+        <string name="delete_group">حذف المجموعة</string>
 
     </resources>

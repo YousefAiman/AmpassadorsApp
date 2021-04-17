@@ -5,6 +5,11 @@
         android:icon="@drawable/dots_more_icon"
         app:showAsAction="always">
         <menu>
+
+            <item android:id="@+id/action_delete_group"
+                android:title="@string/delete_group"
+                android:icon="@drawable/ic_baseline_delete_post"/>
+
             <item android:id="@+id/action_edit_group"
                 android:title="@string/edit_group"
                 android:icon="@drawable/ic_baseline_edit"/>

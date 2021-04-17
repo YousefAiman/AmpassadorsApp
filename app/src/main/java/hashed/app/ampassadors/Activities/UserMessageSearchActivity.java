@@ -24,7 +24,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 
 import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity;
-import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity2;
 import hashed.app.ampassadors.Adapters.UsersAdapter;
 import hashed.app.ampassadors.Fragments.AddCourseFragment;
 import hashed.app.ampassadors.Objects.UserPreview;
@@ -163,7 +162,7 @@ public class UserMessageSearchActivity extends AppCompatActivity implements
                 ,getIntent().putExtra("userId",userId));
     }else{
       startActivity(new Intent(UserMessageSearchActivity.this,
-              PrivateMessagingActivity2.class)
+              PrivateMessagingActivity.class)
               .putExtra("messagingUid", userId)
               .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 

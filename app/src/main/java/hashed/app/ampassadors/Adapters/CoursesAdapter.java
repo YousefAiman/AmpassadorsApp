@@ -122,97 +122,15 @@ public class CoursesAdapter extends RecyclerView.Adapter<CoursesAdapter.CoursesV
       final Course course = courses.get(getAdapterPosition());
 
       if(course.isHasEnded()){
-        Toast.makeText(itemView.getContext(),
-                "This Course has ended!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(itemView.getContext(), "This Course has ended!", Toast.LENGTH_SHORT).show();
         final int index = courses.indexOf(course);
         courses.remove(index);
         notifyItemRemoved(index);
         return;
       }
 
-      final String courseId = course.getCourseId();
+      Course.joinCourse(course,itemView.getContext());
 
-      if(currentUid.equals(course.getTutorId()) || currentUid.equals(course.getCreatorId())){
-        if (!course.isHasStarted()) {
-          //coordinator or tutor can start the course
-
-          final AlertDialog.Builder alert = new AlertDialog.Builder(itemView.getContext());
-          alert.setTitle("Do you want to start this course?");
-          alert.setPositiveButton("Start", (dialog, which) -> {
-            dialog.dismiss();
-            coursesRef.document(courseId).update("hasStarted",true)
-            .addOnSuccessListener(new OnSuccessListener<Void>() {
-              @Override
-              public void onSuccess(Void aVoid) {
-                itemView.getContext().startActivity(
-                        new Intent(itemView.getContext(), CourseActivity.class)
-                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                .putExtra("course", course));
-              }
-            });
-          });
-
-          alert.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());
-          alert.create().show();
-
-        }else{
-
-          itemView.getContext().startActivity(
-                  new Intent(itemView.getContext(), CourseActivity.class)
-                          .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                          .putExtra("course", course));
-        }
-        return;
-      }
-
-      coursesRef.document(courseId)
-              .collection("Attendees")
-              .document(currentUid).get().addOnSuccessListener(
-                      new OnSuccessListener<DocumentSnapshot>() {
-        @Override
-        public void onSuccess(DocumentSnapshot snapshot) {
-          if(snapshot.exists()){
-
-            if(!course.isHasStarted()){
-              Toast.makeText(itemView.getContext(),
-                      "This Course hasn't started yet!", Toast.LENGTH_SHORT).show();
-              return;
-            }
-
-            itemView.getContext().startActivity(
-                    new Intent(itemView.getContext(), CourseActivity.class)
-                            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            .putExtra("course", course));
-
-          }else{
-
-            if(!course.isHasEnded() && !course.isHasStarted()){
-
-              final AlertDialog.Builder alert = new AlertDialog.Builder(itemView.getContext());
-              alert.setTitle("Do you want to register for this course?");
-              alert.setPositiveButton("Register", (dialog, which) -> {
-                dialog.dismiss();
-                registerInCourse(courseId,itemView.getContext());
-              });
-
-              alert.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());
-              alert.create().show();
-
-            }else{
-
-              Toast.makeText(itemView.getContext(), "You can't register in this course!" +
-                      "the course already started", Toast.LENGTH_SHORT).show();
-              
-            }
-
-          }
-        }
-      }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-        @Override
-        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-          Log.d("ttt","complete course details");
-        }
-      });
 
     }
   }

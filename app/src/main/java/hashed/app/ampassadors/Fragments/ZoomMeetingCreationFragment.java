@@ -31,7 +31,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import hashed.app.ampassadors.Activities.MessagingActivities.GroupMessagingActivity;
+import hashed.app.ampassadors.Activities.MessagingActivities.CourseMessagingActivity;
+import hashed.app.ampassadors.Activities.MessagingActivities.MeetingMessagingActivity;
 import hashed.app.ampassadors.Objects.ZoomMeeting;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.ZoomUtil;
@@ -210,8 +211,13 @@ public class ZoomMeetingCreationFragment extends Fragment implements View.OnClic
 
         zoomDialog.dismiss();
 
-        ((GroupMessagingActivity) requireActivity()).sendZoomMessage(
-                messagingPickerEd.getText().toString(), zoomMeeting);
+        if(requireActivity() instanceof MeetingMessagingActivity){
+          ((MeetingMessagingActivity) requireActivity()).sendZoomMessage(
+                  messagingPickerEd.getText().toString(), zoomMeeting);
+        }else if(requireActivity() instanceof CourseMessagingActivity){
+          ((CourseMessagingActivity) requireActivity()).sendZoomMessage(
+                  messagingPickerEd.getText().toString(), zoomMeeting);
+        }
 
         requireActivity().onBackPressed();
       } catch (JSONException e) {

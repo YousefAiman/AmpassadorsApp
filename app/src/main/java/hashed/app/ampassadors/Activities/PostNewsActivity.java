@@ -16,13 +16,21 @@ import android.widget.ImageView;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
+
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Picasso;
 import hashed.app.ampassadors.Fragments.CommentsFragment;
@@ -44,8 +52,8 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
             commentsTv, likeTv, commentTv, newsTitleTv;
     private ImageView newsIv, userIv, attachmentImage, playIv;
     private FrameLayout frameLayout;
-    ProgressDialog progressDialog;
-    Toolbar toolbar;
+    private ProgressDialog progressDialog;
+    private Toolbar toolbar;
     //data
     private PostData postData;
     private BroadcastReceiver downloadCompleteReceiver;
@@ -62,11 +70,9 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
         getViews();
 
-        setClickListeners();
-
         getPostData();
 
-        getUserInfo();
+
 
     }
 
@@ -92,7 +98,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
         frameLayout = findViewById(R.id.frameLayout);
         newsTitleTv = findViewById(R.id.newsTitleTv);
         playIv = findViewById(R.id.playIv);
-        progressDialog = new ProgressDialog(this);
+
     }
 
     private void setClickListeners() {
@@ -106,40 +112,70 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
     private void getPostData() {
 
-        postData = (PostData) getIntent().getSerializableExtra("postData");
 
-        if (!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
-            if (postData.getPublisherId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-                toolbar.inflateMenu(R.menu.post_menu);
+        if(getIntent()== null || !getIntent().hasExtra("postId"))
+            return;
 
-            } else if (GlobalVariables.getRole().equals("Admin")) {
-                toolbar.inflateMenu(R.menu.admin_menu);
-            } else {
-                toolbar.inflateMenu(R.menu.users_post_menu);
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        FirebaseFirestore.getInstance().collection("Posts")
+                .document(getIntent().getStringExtra("postId"))
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if(documentSnapshot.exists()){
+                    postData = documentSnapshot.toObject(PostData.class);
+                }
+            }
+        }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                if(task.isSuccessful() && postData!=null){
+
+                    setClickListeners();
+
+                    getUserInfo();
+
+                    if (!user.isAnonymous()) {
+                        if (postData.getPublisherId().equals(user.getUid())) {
+                            toolbar.inflateMenu(R.menu.post_menu);
+
+                        } else if (GlobalVariables.getRole().equals("Admin")) {
+                            toolbar.inflateMenu(R.menu.admin_menu);
+                        } else {
+                            toolbar.inflateMenu(R.menu.users_post_menu);
+
+                        }
+                    }
+
+                    if (postData.getAttachmentType() == Files.IMAGE) {
+                        Picasso.get().load(postData.getAttachmentUrl()).fit().centerCrop().into(newsIv);
+                    } else if (postData.getAttachmentType() == Files.VIDEO) {
+                        Picasso.get().load(postData.getVideoThumbnailUrl()).fit().centerInside().into(newsIv);
+                    }
+
+                    titleTv.setText(postData.getTitle());
+                    descriptionTv.setText(postData.getDescription());
+                    newsTitleTv.setText(postData.getDocumentName());
+                    likesTv.setText(String.valueOf(postData.getLikes()));
+                    commentsTv.setText(String.valueOf(postData.getComments()));
+                    dateTv.setText(TimeFormatter.formatWithPattern(postData.getPublishTime(),
+                            TimeFormatter.MONTH_DAY_YEAR_HOUR_MINUTE));
+
+                    likeTv.setTextColor(getResources().getColor(
+                            GlobalVariables.getLikesList().contains(postData.getPostId()) ? R.color.red :
+                                    R.color.black));
+
+                    getNewsType();
+
+                }
 
             }
-        }
+        });
 
 
-        if (postData.getAttachmentType() == Files.IMAGE) {
-            Picasso.get().load(postData.getAttachmentUrl()).fit().centerCrop().into(newsIv);
-        } else if (postData.getAttachmentType() == Files.VIDEO) {
-            Picasso.get().load(postData.getVideoThumbnailUrl()).fit().centerInside().into(newsIv);
-        }
 
-        titleTv.setText(postData.getTitle());
-        descriptionTv.setText(postData.getDescription());
-        newsTitleTv.setText(postData.getDocumentName());
-        likesTv.setText(String.valueOf(postData.getLikes()));
-        commentsTv.setText(String.valueOf(postData.getComments()));
-        dateTv.setText(TimeFormatter.formatWithPattern(postData.getPublishTime(),
-                TimeFormatter.MONTH_DAY_YEAR_HOUR_MINUTE));
-
-        likeTv.setTextColor(getResources().getColor(
-                GlobalVariables.getLikesList().contains(postData.getPostId()) ? R.color.red :
-                        R.color.black));
-
-        getNewsType();
 
     }
 
@@ -174,7 +210,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
                 final float density = getResources().getDisplayMetrics().density;
                 lp2.setMargins((int) (4 * density), (int) (4 * density), 0, 0);
                 newsIv.setScaleType(ImageView.ScaleType.CENTER);
-                newsIv.setImageResource(R.drawable.pdf_icon);
+                newsIv.setImageResource(R.drawable.document_icon);
 
                 attachmentImage.setLayoutParams(lp2);
 
@@ -203,6 +239,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
                 break;
         }
     }
+
     private void getUserInfo() {
         FirebaseFirestore.getInstance().collection("Users")
                 .document(postData.getPublisherId()).get().addOnSuccessListener(snapshot -> {
@@ -322,41 +359,8 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
                     }
                 });
         } else if (item.getItemId() == R.id.delete) {
-            progressDialog.setMessage(getString(R.string.Dleteing));
-            progressDialog.show();
-                FirebaseFirestore.getInstance().collection("Users").
-                        document(postData.getPublisherId()).collection("UserPosts")
-                        .document(postData.getPostId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if (documentSnapshot.exists()){
-                            documentSnapshot.getReference().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    progressDialog.dismiss();
-                                    finish();
-                                    Toast.makeText(PostNewsActivity.this, R.string.Delete_success, Toast.LENGTH_SHORT).show();
-                                }
-                            });
 
-                        }else {
-                            FirebaseFirestore.getInstance().collection("Posts")
-                                    .document(postData.getPostId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    progressDialog.dismiss();
-                                    Toast.makeText(PostNewsActivity.this, R.string.Delete_success, Toast.LENGTH_SHORT).show();
-                                    finish();
-                                }
-                            });
-                        }
-
-                    }
-                });
-
-
-
-
+            PostData.deletePost(this,postData);
 
     } else if (item.getItemId() == R.id.Reporting) {
 
@@ -372,6 +376,10 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
         }
         return false;
     }
+
+
+
+
 
     @Override
     public void onBackPressed() {

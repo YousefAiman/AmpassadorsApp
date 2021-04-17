@@ -287,32 +287,39 @@
             android:id="@+id/coursePublishBtn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="50dp"
             android:background="@drawable/course_publish_btn_back"
             android:fontFamily="@font/segoe_ui_bold"
             android:text="@string/Publish"
             android:textAllCaps="false"
             android:textColor="@color/white"
+            android:layout_marginTop="10dp"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/courseDurationEd"
+            app:layout_constraintTop_toBottomOf="@+id/importantCourseCb"
             app:layout_constraintVertical_bias="1.0"
             app:layout_constraintWidth_min="wrap"
             app:layout_constraintWidth_percent="0.35" />
 
-        <CheckBox
-            android:id="@+id/checkBox"
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/importantCourseCb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="@string/important_post"
-            app:layout_constraintEnd_toEndOf="@+id/textView9"
+            android:button="@drawable/check_box_selector"
+            android:fontFamily="@font/segoe_ui"
+            android:paddingHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:text="Publish in home page"
+            android:textColor="@color/black_transparent"
+            android:textSize="14sp"
+            android:visibility="visible"
             app:layout_constraintStart_toStartOf="@+id/textView9"
             app:layout_constraintTop_toBottomOf="@+id/textView9" />
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

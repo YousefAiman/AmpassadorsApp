@@ -52,7 +52,6 @@ import hashed.app.ampassadors.Utils.Files;
 
 public class MessagesFragment extends Fragment{
 
-
   private static final int ADD__TYPE = 0,UPDATE_TYPE = 1,MOVE_TOP_FIRST_TYPE = 2,
   MESSAGE_PAGE_LIMIT = 8;
 
@@ -98,7 +97,6 @@ public class MessagesFragment extends Fragment{
             .whereLessThan("latestMessageTime", System.currentTimeMillis())
             .orderBy("latestMessageTime", Query.Direction.DESCENDING)
             .limit(MESSAGE_PAGE_LIMIT);
-
   }
 
   @Override
@@ -271,7 +269,7 @@ public class MessagesFragment extends Fragment{
                         final String lastSeen = snapshot.getValue(String.class);
 
                           calculateUnseenCount(lastSeen,chatItem, finalIndex,
-                                  finalIndex == 0?UPDATE_TYPE:MOVE_TOP_FIRST_TYPE);
+                                  finalIndex == 0?UPDATE_TYPE:MOVE_TOP_FIRST_TYPE,addToFirst);
 
                       }
 
@@ -419,10 +417,17 @@ public class MessagesFragment extends Fragment{
 
             if(isAnEmptyGroupMessage){
 
-//              int index = getIndexOrderedByTime(chatItem.getTime());
-              chatItems.add(chatItem);
-
-              orderAndShowMessages();
+              if(addToFirst){
+                boolean isAtTop = isAtTop();
+                chatItems.add(0,chatItem);
+                adapter.notifyItemInserted(0);
+                if(isAtTop){
+                  chatsRv.smoothScrollToPosition(0);
+                }
+              }else{
+                chatItems.add(chatItem);
+                orderAndShowMessages();
+              }
 //              final int index = chatItems.size();
 //              adapter.notifyItemInserted(index);
 
@@ -432,13 +437,13 @@ public class MessagesFragment extends Fragment{
 
               if (addToFirst) {
                 calculateUnseenCount(lastSeen,chatItem,0,
-                        ADD__TYPE);
+                        ADD__TYPE,true);
               } else {
 
 //                int index = getIndexOrderedByTime(chatItem.getTime());
 //                final int index = chatItems.size();
                 calculateUnseenCount(lastSeen,chatItem,chatItems.size(),
-                        ADD__TYPE);
+                        ADD__TYPE,false);
               }
             }
 
@@ -451,7 +456,7 @@ public class MessagesFragment extends Fragment{
             final int index = chatItems.indexOf(chatItem);
             final ChatItem chatItem1 = chatItems.get(index);
             final String lastSeen = snapshot.getValue(String.class);
-            calculateUnseenCount(lastSeen,chatItem1,index,UPDATE_TYPE);
+            calculateUnseenCount(lastSeen,chatItem1,index,UPDATE_TYPE,false);
 
           }
         }
@@ -467,7 +472,8 @@ public class MessagesFragment extends Fragment{
   }
 
 
-  private void calculateUnseenCount(String lastSeen,ChatItem chatItem,int index, int updateType){
+  private void calculateUnseenCount(String lastSeen,ChatItem chatItem,int index, int updateType,
+                                    boolean addToFirst){
 
     messagesRef.child(chatItem.getMessagingDocId()).child("messages").orderByKey()
             .startAt(lastSeen+1)
@@ -494,21 +500,36 @@ public class MessagesFragment extends Fragment{
 
                   }else if(updateType == MOVE_TOP_FIRST_TYPE){
 
+                    boolean scrollToTop = isAtTop();
+
                     chatItems.remove(index);
                     adapter.notifyItemRemoved(index);
                     chatItems.add(0, chatItem);
                     adapter.notifyItemInserted(0);
+
+                    if(scrollToTop){
+                      chatsRv.smoothScrollToPosition(0);
+                    }
 
                   }else{
 //                    if(index == 0){
 //                      chatItems.add(index,chatItem);
 //                      adapter.notifyItemInserted(index);
 //                    }else{
+                    if(addToFirst){
+
+                      boolean isAtTop = isAtTop();
+                      chatItems.add(0,chatItem);
+                      adapter.notifyItemInserted(0);
+
+                      if(isAtTop){
+                        chatsRv.smoothScrollToPosition(0);
+                      }
+
+                    }else{
                       chatItems.add(chatItem);
-
-
-                    orderAndShowMessages();
-
+                      orderAndShowMessages();
+                    }
 //                      adapter.notifyItemInserted(chatItems.size());
 //                    }
 
@@ -756,5 +777,13 @@ public class MessagesFragment extends Fragment{
                       }
                     })
     );
+  }
+
+  private boolean isAtTop(){
+    if(chatsRv.getLayoutManager()!=null){
+      return ((LinearLayoutManager) chatsRv.getLayoutManager())
+              .findFirstCompletelyVisibleItemPosition() == 0;
+    }
+    return false;
   }
 }

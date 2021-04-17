@@ -1,8 +1,16 @@
 package hashed.app.ampassadors.Objects;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
@@ -11,16 +19,20 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import hashed.app.ampassadors.Activities.PostNewsActivity;
 import hashed.app.ampassadors.NotificationUtil.CloudMessagingNotificationsSender;
 import hashed.app.ampassadors.NotificationUtil.Data;
 import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.Files;
 
 @IgnoreExtraProperties
 public class PostData implements Serializable {
@@ -217,6 +229,98 @@ public class PostData implements Serializable {
 
     }
 
+  }
+
+  public static void deletePost(Activity activity,PostData postData){
+
+    ProgressDialog progressDialog = new ProgressDialog(activity);
+    progressDialog.setMessage(activity.getString(R.string.Dleteing));
+    progressDialog.show();
+    FirebaseFirestore.getInstance().collection("Users").
+            document(postData.getPublisherId()).collection("UserPosts")
+            .document(postData.getPostId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+      @Override
+      public void onSuccess(DocumentSnapshot documentSnapshot) {
+        if (documentSnapshot.exists()){
+          deletePostRelatedData(documentSnapshot.getReference(),activity,progressDialog,
+                  postData);
+        }else {
+          deletePostRelatedData(FirebaseFirestore.getInstance().collection("Posts")
+                          .document(postData.getPostId())
+                  ,activity,progressDialog, postData);
+        }
+
+      }
+    });
+
+  }
+
+  private static void deletePostRelatedData(DocumentReference postRef, Activity activity,
+                                            ProgressDialog progressDialog,PostData postData){
+
+    postRef.update("deleting",true).addOnSuccessListener(new OnSuccessListener<Void>() {
+      @Override
+      public void onSuccess(Void aVoid) {
+
+        postRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+          @Override
+          public void onSuccess(Void aVoid) {
+            progressDialog.dismiss();
+            activity.finish();
+            Toast.makeText(activity, R.string.Delete_success, Toast.LENGTH_SHORT).show();
+          }
+        }).addOnCompleteListener(new OnCompleteListener<Void>() {
+          @Override
+          public void onComplete(@NonNull Task<Void> task) {
+            if(task.isSuccessful()){
+              deleteCollection("Likes",postRef);
+              deleteCollection("Comments",postRef);
+
+              if(postData.getType() == PostData.TYPE_POLL){
+                deleteCollection("Options",postRef);
+                deleteCollection("UserVotes",postRef);
+              }
+
+              final FirebaseStorage storage = FirebaseStorage.getInstance();
+
+              if(postData.getAttachmentUrl()!=null){
+                storage.getReferenceFromUrl(postData.getAttachmentUrl()).delete();
+              }
+
+              if(postData.getAttachmentType() == Files.VIDEO && postData.getVideoThumbnailUrl()!=null){
+                storage.getReferenceFromUrl(postData.getVideoThumbnailUrl()).delete();
+              }
+
+              FirebaseFirestore.getInstance().collection("Notifications")
+                      .whereEqualTo("destinationId",postData.getPostId())
+                      .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                @Override
+                public void onSuccess(QuerySnapshot snapshots) {
+                  for(DocumentSnapshot documentSnapshot:snapshots){
+                    documentSnapshot.getReference().delete();
+                  }
+                }
+              });
+            }
+          }
+        });
+
+      }
+    });
+
+  }
+
+  private static void deleteCollection(String collectionName,DocumentReference postRef){
+    postRef.collection(collectionName).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+      @Override
+      public void onSuccess(QuerySnapshot snapshots) {
+        if(snapshots != null){
+          for(DocumentSnapshot documentSnapshot:snapshots){
+            documentSnapshot.getReference().delete();
+          }
+        }
+      }
+    });
   }
 
   public String getTitle() {

@@ -31,10 +31,10 @@
         <activity android:name=".Activities.MessagingActivities.MeetingMessagingActivity"
             android:screenOrientation="portrait" />
 
-        <activity android:name=".Activities.MessagingActivities.GroupMessagingActivity2"
+        <activity android:name=".Activities.MessagingActivities.GroupMessagingActivity"
             android:screenOrientation="portrait" />
 
-        <activity android:name=".Activities.MessagingActivities.PrivateMessagingActivity2"
+        <activity android:name=".Activities.MessagingActivities.PrivateMessagingActivity"
             android:screenOrientation="portrait" />
 
         <activity android:name=".Activities.MessagingActivities.MessagingActivity"
@@ -122,10 +122,6 @@
             android:name=".Activities.ConnectionActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activities.MessagingActivities.GroupMessagingActivity"
-            android:parentActivityName=".Activities.Home_Activity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".Activities.Home_Activity"
             android:screenOrientation="portrait" />
         <activity
@@ -155,10 +151,6 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.SuggestionsActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".Activities.MessagingActivities.PrivateMessagingActivity"
-            android:parentActivityName=".Activities.Home_Activity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"

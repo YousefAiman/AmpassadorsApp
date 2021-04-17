@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity2;
+import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity;
 import hashed.app.ampassadors.Adapters.GroupMembersAdapter;
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
@@ -279,7 +279,7 @@ public class GroupInfoActivity extends AppCompatActivity implements
       public void onClick(View view) {
         userInfoDialog.cancel();
         startActivity(new Intent(GroupInfoActivity.this,
-                PrivateMessagingActivity2.class)
+                PrivateMessagingActivity.class)
                 .putExtra("messagingUid", userId)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
       }

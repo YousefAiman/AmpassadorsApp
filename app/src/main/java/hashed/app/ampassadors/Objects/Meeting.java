@@ -7,6 +7,7 @@ import com.google.firebase.firestore.Exclude;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 @IgnoreExtraProperties
 public class Meeting implements Serializable {
@@ -27,13 +28,26 @@ public class Meeting implements Serializable {
   private String meetingId;
   @PropertyName("hasEnded")
   private boolean hasEnded;
-  @PropertyName("hasStarted")
-  private boolean hasStarted;
   @PropertyName("imageUrl")
   private String imageUrl;
   @PropertyName("important")
-  boolean important ;
+  boolean important;
+
   public Meeting() {
+  }
+
+  public Meeting(Map<String,Object> meetingMap) {
+    this.creatorId = (String) meetingMap.get("creatorId");
+    this.title = (String) meetingMap.get("title");
+    this.description = (String) meetingMap.get("description");
+    this.startTime = (long) meetingMap.get("startTime");
+    this.createdTime = (long) meetingMap.get("createdTime");
+    this.meetingId = (String) meetingMap.get("meetingId");
+    this.hasEnded = (boolean) meetingMap.get("hasEnded");
+    if(meetingMap.containsKey("imageUrl")){
+      this.imageUrl = (String) meetingMap.get("imageUrl");
+    }
+    this.important = (boolean) meetingMap.get("important");
   }
 
   public String getCreatorId() {

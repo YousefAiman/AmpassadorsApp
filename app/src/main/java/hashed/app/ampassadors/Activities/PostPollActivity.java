@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -42,6 +43,7 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
 
   private static final int POLL_LIMIT = 15;
   //views
+  private Toolbar toolbar;
   private TextView usernameTv, dateTv, titleTv, likesTv, commentsTv, likeTv, commentTv, votesTv;
   private RecyclerView pollRv;
   private ImageView userIv;
@@ -64,18 +66,14 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
 
     getViews();
 
-    setClickListeners();
-
     getPostData();
-
-    getUserInfo();
 
   }
 
 
   private void setupToolbar() {
 
-    final Toolbar toolbar = findViewById(R.id.toolbar);
+     toolbar = findViewById(R.id.toolbar);
     toolbar.setNavigationOnClickListener(v -> finish());
     toolbar.setOnMenuItemClickListener(this);
 
@@ -102,7 +100,8 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
     commentTv.setOnClickListener(this);
   }
   private void getPostData() {
-        userIv.setOnClickListener(new View.OnClickListener() {
+
+    userIv.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
         userIv.getContext().startActivity(new Intent(PostPollActivity.this,
@@ -111,21 +110,60 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
                 .putExtra("username",postData.getPublisherName()));
       }
     });
-    postData = (PostData) getIntent().getSerializableExtra("postData");
-    titleTv.setText(postData.getTitle());
 
-    votesTv.setText(String.valueOf(postData.getTotalVotes()));
-    likesTv.setText(String.valueOf(postData.getLikes()));
-    commentsTv.setText(String.valueOf(postData.getComments()));
-    commentsTv.setText(String.valueOf(postData.getComments()));
-    dateTv.setText(TimeFormatter.formatWithPattern(postData.getPublishTime(),
-            TimeFormatter.MONTH_DAY_YEAR_HOUR_MINUTE));
 
-    likeTv.setTextColor(getResources().getColor(
-            GlobalVariables.getLikesList().contains(postData.getPostId()) ? R.color.red :
-                    R.color.black));
 
-    getPollRecycler();
+    postRef = FirebaseFirestore.getInstance().collection("Posts")
+            .document(getIntent().getStringExtra("postId"));
+
+    postRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+      @Override
+      public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+        if(documentSnapshot.exists()){
+          postData = documentSnapshot.toObject(PostData.class);
+        }
+
+      }
+    }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+      @Override
+      public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+        if(task.isSuccessful() && postData!=null){
+
+            if (postData.getPublisherId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+              toolbar.inflateMenu(R.menu.poll_menu);
+            } else if (GlobalVariables.getRole().equals("Admin")) {
+              toolbar.inflateMenu(R.menu.admin_menu);
+            } else {
+              toolbar.inflateMenu(R.menu.users_post_menu);
+            }
+
+
+          setClickListeners();
+
+          getUserInfo();
+
+          titleTv.setText(postData.getTitle());
+
+          votesTv.setText(String.valueOf(postData.getTotalVotes()));
+          likesTv.setText(String.valueOf(postData.getLikes()));
+          commentsTv.setText(String.valueOf(postData.getComments()));
+          commentsTv.setText(String.valueOf(postData.getComments()));
+          dateTv.setText(TimeFormatter.formatWithPattern(postData.getPublishTime(),
+                  TimeFormatter.MONTH_DAY_YEAR_HOUR_MINUTE));
+
+          likeTv.setTextColor(getResources().getColor(
+                  GlobalVariables.getLikesList().contains(postData.getPostId()) ? R.color.red :
+                          R.color.black));
+
+          getPollRecycler();
+
+        }
+      }
+    });
+
+
+
 
   }
 
@@ -195,6 +233,23 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
 
   @Override
   public boolean onMenuItemClick(MenuItem item) {
+
+     if (item.getItemId() == R.id.delete) {
+      PostData.deletePost(this,postData);
+    }else if (item.getItemId() == R.id.Reporting) {
+
+       FirebaseFirestore.getInstance().collection("Posts").
+               document(postData.getPostId()).update("isReported", true)
+               .addOnSuccessListener(new OnSuccessListener<Void>() {
+         @Override
+         public void onSuccess(Void aVoid) {
+           Toast.makeText(PostPollActivity.this,
+                   R.string.Repored, Toast.LENGTH_SHORT).show();
+         }
+       });
+
+     }
+
     return false;
   }
 
@@ -205,8 +260,7 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
     pollRv.setNestedScrollingEnabled(false);
     pollRv.setHasFixedSize(true);
 
-    postRef = FirebaseFirestore.getInstance().collection("Posts")
-                    .document(postData.getPostId());
+
 
     postRef.collection("UserVotes")
             .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -216,8 +270,8 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
 
         if (snapshot.exists()) {
           chosenOption = snapshot.get("voteOption", Integer.class);
-          postData.setChosenPollOption(chosenOption);
         }
+
 
 
         boolean hasEnded;
@@ -243,12 +297,18 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
                 , postData.getPostId(), hasEnded, postData.getTotalVotes());
 
 
-        if(postData.getChosenPollOption()!=-1){
-          adapter.setChosenOption(postData.getChosenPollOption());
+        if(chosenOption != -1){
+
+          postData.setChosenPollOption(chosenOption);
+          adapter.setChosenOption(chosenOption);
           adapter.showProgress = true;
+
         }else{
+          Log.d("ttt","no option selected");
           adapter.showProgress = hasEnded;
         }
+
+        Log.d("ttt","chosenOption: "+chosenOption);
 
         adapter.setHasStableIds(true);
         pollRv.setAdapter(adapter);
@@ -279,7 +339,7 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
     }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
       @Override
       public void onComplete(@NonNull Task<QuerySnapshot> task) {
-        if (task.isSuccessful() && !postData.getPollOptions().isEmpty()) {
+        if (task.isSuccessful() &&  !pollOptions.isEmpty()) {
 
           if (initial) {
             adapter.notifyDataSetChanged();

@@ -23,8 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import hashed.app.ampassadors.Adapters.PollsAdapter;
 import hashed.app.ampassadors.Adapters.PostAdapter;
 import hashed.app.ampassadors.Objects.PostData;
+import hashed.app.ampassadors.Objects.PostPollPreview;
 import hashed.app.ampassadors.R;
 
 import static hashed.app.ampassadors.Objects.PostData.TYPE_POLL;
@@ -34,8 +36,8 @@ public class ShowPollsActivity extends AppCompatActivity implements Toolbar.OnMe
 
     private static final int POSTS_LIMIT = 10;
     private Query query;
-    private List<PostData> postData;
-    private PostAdapter adapter;
+    private List<PostPollPreview> postData;
+    private PollsAdapter adapter;
     private RecyclerView post_list;
     private DocumentSnapshot lastDocSnap;
     private boolean isLoadingMessages;
@@ -55,7 +57,7 @@ public class ShowPollsActivity extends AppCompatActivity implements Toolbar.OnMe
                 .orderBy("publishTime", Query.Direction.DESCENDING).whereEqualTo("type",
                         TYPE_POLL).limit(POSTS_LIMIT);
         postData = new ArrayList<>();
-        adapter = new PostAdapter(postData, ShowPollsActivity.this);
+        adapter = new PollsAdapter(postData, ShowPollsActivity.this);
 
         post_list = findViewById(R.id.home_listt);
         post_list.setLayoutManager(new LinearLayoutManager(ShowPollsActivity.this
@@ -122,14 +124,12 @@ public class ShowPollsActivity extends AppCompatActivity implements Toolbar.OnMe
                 for (QueryDocumentSnapshot snapshot : queryDocumentSnapshots) {
 
                     if (snapshot.getLong("type") == TYPE_POLL) {
-                        //  Log.d("ggggg", snapshot.getLong("type") + "هههههههههههههههه");
-
 
                         if (snapshot.getBoolean("pollEnded")) {
 
                             if (snapshot.getLong("totalVotes") > 0) {
                                 addedCount.getAndIncrement();
-                                postData.add(snapshot.toObject(PostData.class));
+                                postData.add(snapshot.toObject(PostPollPreview.class));
                             }
 
                         } else {
@@ -142,7 +142,7 @@ public class ShowPollsActivity extends AppCompatActivity implements Toolbar.OnMe
 
                                 if (snapshot.getLong("totalVotes") > 0) {
 
-                                    final PostData post = snapshot.toObject(PostData.class);
+                                    final PostPollPreview post = snapshot.toObject(PostPollPreview.class);
                                     post.setPollEnded(true);
                                     postData.add(post);
                                     addedCount.getAndIncrement();
@@ -150,7 +150,7 @@ public class ShowPollsActivity extends AppCompatActivity implements Toolbar.OnMe
 
                             } else {
 
-                                postData.add(snapshot.toObject(PostData.class));
+                                postData.add(snapshot.toObject(PostPollPreview.class));
                                 addedCount.getAndIncrement();
                             }
 
@@ -158,7 +158,7 @@ public class ShowPollsActivity extends AppCompatActivity implements Toolbar.OnMe
 
                     } else {
                         addedCount.getAndIncrement();
-                        postData.add(snapshot.toObject(PostData.class));
+                        postData.add(snapshot.toObject(PostPollPreview.class));
                     }
                 }
                 //   postData.addAll(queryDocumentSnapshots.toObjects(PostData.class));

@@ -29,8 +29,7 @@ import com.google.android.exoplayer2.util.Util;
 
 import java.util.Objects;
 
-import hashed.app.ampassadors.Activities.MessagingActivities.GroupMessagingActivity;
-import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity;
+import hashed.app.ampassadors.Activities.MessagingActivities.MessagingActivity;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
 
@@ -217,26 +216,35 @@ public class VideoPickerPreviewFragment extends Fragment {
       final String content = messagingPickerEd.getText().toString();
       if (!content.isEmpty() && videoUri != null) {
 
-        if (getActivity() instanceof PrivateMessagingActivity) {
+//        if (getActivity() instanceof PrivateMessagingActivity) {
+//
+//          ((PrivateMessagingActivity) getActivity()).uploadVideoMessage(
+//                  videoUri,
+//                  content,
+//                  videoThumbnailBitmap
+//          );
+//
+//
+//        } else if (getActivity() instanceof GroupMessagingActivity) {
+//
+//          ((GroupMessagingActivity) getActivity()).uploadVideoMessage(
+//                  videoUri,
+//                  content,
+//                  videoThumbnailBitmap
+//          );
+//
+//        }
 
-          ((PrivateMessagingActivity) getActivity()).uploadVideoMessage(
+        if(getActivity()!=null){
+
+          ((MessagingActivity) getActivity()).uploadVideoMessage(
                   videoUri,
                   content,
                   videoThumbnailBitmap
           );
-
-
-        } else if (getActivity() instanceof GroupMessagingActivity) {
-
-          ((GroupMessagingActivity) getActivity()).uploadVideoMessage(
-                  videoUri,
-                  content,
-                  videoThumbnailBitmap
-          );
-
+          requireActivity().onBackPressed();
         }
 
-        requireActivity().onBackPressed();
 
       } else {
 

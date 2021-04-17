@@ -55,7 +55,9 @@ import hashed.app.ampassadors.Fragments.ChattingFragment;
 import hashed.app.ampassadors.Fragments.MeetingsFragment;
 import hashed.app.ampassadors.Fragments.PostsFragment;
 import hashed.app.ampassadors.Fragments.PostsProfileFragment;
+import hashed.app.ampassadors.Objects.HeaderItem;
 import hashed.app.ampassadors.Objects.PostData;
+import hashed.app.ampassadors.Objects.PostNewsPreview;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Services.FirebaseMessagingService;
 import hashed.app.ampassadors.Utils.GlobalVariables;
@@ -116,18 +118,7 @@ public class Home_Activity extends AppCompatActivity implements
     }
 
 
-    FirebaseFirestore.getInstance().collection("Posts")
-            .whereEqualTo("important",true)
-            .limit(5)
-            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-      @Override
-      public void onSuccess(QuerySnapshot snapshots) {
 
-
-
-
-      }
-    });
 
 //    FirebaseFirestore.getInstance().collection("Users")
 //          .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -339,24 +330,10 @@ public class Home_Activity extends AppCompatActivity implements
 
   }
 
-  @Override
-  protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-
-    if (resultCode == 3) {
-                if(nav_btom.getSelectedItemId() == R.id.home){
-                    final PostData postData = (PostData) data.getSerializableExtra("postData");
-                    ((PostsFragment)getSupportFragmentManager().getFragments().get(0))
-                            .addPostData(postData);
-
-                }
-        }
-    }
-
-
     public void showDrawer() {
         drawer_layout.openDrawer(GravityCompat.START);
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -33,15 +32,10 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 
 import hashed.app.ampassadors.Adapters.CoursesAdapter;
-import hashed.app.ampassadors.Adapters.HomeNewsHeaderViewPagerAdapter;
-import hashed.app.ampassadors.Adapters.PostAdapter;
 import hashed.app.ampassadors.BroadcastReceivers.NotificationIndicatorReceiver;
 import hashed.app.ampassadors.BuildConfig;
 import hashed.app.ampassadors.Fragments.AddCourseFragment;
-import hashed.app.ampassadors.Fragments.MeetingsFragment;
 import hashed.app.ampassadors.Objects.Course;
-import hashed.app.ampassadors.Objects.Meeting;
-import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 

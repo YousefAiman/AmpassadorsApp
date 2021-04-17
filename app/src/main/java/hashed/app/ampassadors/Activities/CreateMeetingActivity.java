@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,9 +50,11 @@ import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import hashed.app.ampassadors.Adapters.UsersAdapter;
+import hashed.app.ampassadors.Fragments.MeetingsFragment;
 import hashed.app.ampassadors.NotificationUtil.CloudMessagingNotificationsSender;
 import hashed.app.ampassadors.NotificationUtil.Data;
 import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
+import hashed.app.ampassadors.Objects.Meeting;
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
@@ -86,6 +89,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
   private FloatingActionButton editUsersFloatingBtn;
   private TextView contributorsTv, dateSetterTv, timeSetterTv;
   private RecyclerView usersPickedRv;
+  private CheckBox publicMeetingCb;
 
   private Uri imageUri;
   private UsersAdapter selectedUsersAdapter;
@@ -135,7 +139,8 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
     usersPickedRv = findViewById(R.id.usersPickedRv);
     dateSetterTv = findViewById(R.id.dateSetterTv);
     timeSetterTv = findViewById(R.id.timeSetterTv);
-
+    publicMeetingCb = findViewById(R.id.publicMeetingCb);
+    publicMeetingCb.setVisibility(View.VISIBLE);
   }
 
   private void initValues() {
@@ -261,7 +266,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
       meetingMap.put("members", selectedUserIdsList);
       meetingMap.put("meetingId", meetingId);
       meetingMap.put("hasEnded", false);
-
+      meetingMap.put("important", publicMeetingCb.isChecked());
 
 
       if (imageUri != null) {
@@ -329,7 +334,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
                                               TimeFormatter.formatTime(scheduleTime),
                                       "Meeting about: " + name,
                                       meetingImageUrl,
-                                      "meeting",
+                                      "Meeting added",
                                       FirestoreNotificationSender.TYPE_MEETING_ADDED,
                                       meetingId);
 
@@ -347,6 +352,9 @@ public class CreateMeetingActivity extends AppCompatActivity implements View.OnC
                               }
 
                               progressDialog.dismiss();
+
+                              setResult(MeetingsFragment.MEETING_RESULT,
+                                      new Intent().putExtra("meeting",new Meeting(meeting)));
                               finish();
                             }
                           });

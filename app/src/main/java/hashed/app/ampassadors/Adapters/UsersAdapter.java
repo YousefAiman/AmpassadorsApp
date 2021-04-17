@@ -20,7 +20,6 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity;
-import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity2;
 import hashed.app.ampassadors.Activities.ProfileActiv;
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
@@ -256,7 +255,7 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         userAdapterClicker.clickUser(filteredUsers.get(getAdapterPosition()).getUserId());
       } else {
         itemView.getContext().startActivity(new Intent(itemView.getContext(),
-                PrivateMessagingActivity2.class)
+                PrivateMessagingActivity.class)
                 .putExtra("messagingUid", users.get(getAdapterPosition()).getUserId())
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
       }

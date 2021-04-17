@@ -15,20 +15,29 @@ import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import hashed.app.ampassadors.NotificationUtil.BadgeUtil;
+import hashed.app.ampassadors.NotificationUtil.Data;
+import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.NotificationUtil.NotificationClickReceiver;
 import hashed.app.ampassadors.NotificationUtil.NotificationDeleteListener;
 import hashed.app.ampassadors.R;
@@ -41,6 +50,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
           new RequestOptions().override(100, 100);
   private NotificationManager notificationManager;
   private SharedPreferences sharedPreferences;
+  private List<ListenerRegistration> listenerRegistrationList;
 
   public static void startMessagingService(Context context) {
 
@@ -104,8 +114,8 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     }
 
     try {
-      if (remoteMessage.getData().get("type").equals("Group Messages")
-      || remoteMessage.getData().get("type").equals("Private Messages")) {
+      final String type = remoteMessage.getData().get("type");
+      if (type.equals("Group Messages") || type.equals("Private Messages")) {
         if (sharedPreferences.contains("currentlyMessagingUid")) {
           final Map<String, String> data = remoteMessage.getData();
 
@@ -186,15 +196,17 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                               .putExtra("notificationIdentifierTitle", identifierTitle)
                       , PendingIntent.FLAG_UPDATE_CURRENT));
 
-
       final Intent newIntent = new Intent(this, NotificationClickReceiver.class);
       newIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
 //      final Bundle messagingBundle = new Bundle();
 //      messagingBundle.putString("sourceId", data.get("sourceId"));
 //      messagingBundle.putString("sourceType", data.get("sourceType"));
 //      newIntent.putExtra("destinationBundle", messagingBundle);
 //      newIntent.putExtra("sourceId", data.get("sourceId"));
+
       newIntent.putExtra("sourceType", data.get("sourceType"));
+      newIntent.putExtra("sourceId", data.get("sourceId"));
 
       if (type.equals("Group Messages") || type.equals("Private Messages")) {
 
@@ -249,7 +261,84 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
         notificationManager.notify(notificationNum, builder.build());
 
+        listenToNotificationRemoval(data,notificationNum);
+
       }
+    }
+  }
+
+  private void listenToNotificationRemoval(Map<String, String> data,int notifId){
+
+    if(listenerRegistrationList == null)
+      listenerRegistrationList = new ArrayList<>();
+
+     String sourceType = data.get("sourceType");
+
+    switch (sourceType){
+
+      case "Post Like":
+        sourceType = FirestoreNotificationSender.TYPE_LIKE;
+        break;
+
+      case "Group Messages":
+        sourceType = FirestoreNotificationSender.TYPE_GROUP_MESSAGE;
+        break;
+
+        case "Course Messages":
+        sourceType = FirestoreNotificationSender.TYPE_COURSE_MESSAGE;
+        break;
+
+        case "Group added":
+        sourceType = FirestoreNotificationSender.TYPE_GROUP_ADDED;
+        break;
+
+        case "Meeting Messages":
+        sourceType = FirestoreNotificationSender.TYPE_MEETING_MESSAGE;
+        break;
+
+      case "Meeting added":
+        sourceType = FirestoreNotificationSender.TYPE_MEETING_ADDED;
+        break;
+
+      case "Private Messages":
+        sourceType = FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE;
+        break;
+
+      case "Post Comment":
+        sourceType = FirestoreNotificationSender.TYPE_COMMENT;
+        break;
+
+    }
+
+    String documentPath = FirebaseAuth.getInstance().getCurrentUser().getUid() + "_"+
+                    data.get("sourceId") +"_"+ sourceType;
+
+    Log.d("ttt","documentPath: "+documentPath);
+
+    final int index = listenerRegistrationList.size();
+
+    listenerRegistrationList.add(
+            FirebaseFirestore.getInstance().collection("Notifications")
+            .document(documentPath)
+            .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+              @Override
+              public void onEvent(@Nullable DocumentSnapshot value,
+                                  @Nullable FirebaseFirestoreException error) {
+                if(value != null && !value.exists()){
+
+                  Log.d("ttt","removed notification: "+value.getId());
+
+                  notificationManager.cancel(notifId);
+
+                  removeListener(index);
+                }
+              }
+            }));
+  }
+
+  private void removeListener(int index){
+    if(listenerRegistrationList!=null && listenerRegistrationList.size() > index){
+      listenerRegistrationList.remove(index);
     }
   }
 
@@ -269,5 +358,4 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
       }
     }
   }
-
 }

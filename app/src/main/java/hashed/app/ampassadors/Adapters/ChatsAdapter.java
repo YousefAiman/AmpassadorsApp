@@ -20,8 +20,8 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import hashed.app.ampassadors.Activities.MessagingActivities.GroupMessagingActivity2;
-import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity2;
+import hashed.app.ampassadors.Activities.MessagingActivities.GroupMessagingActivity;
+import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity;
 import hashed.app.ampassadors.Activities.ProfileActiv;
 import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.Objects.ChatItem;
@@ -126,7 +126,7 @@ public class ChatsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 //        messageTv.setTypeface(normalFont);
 //      }
 
-      if(chatItem.getUnSeenCount() > 0){
+      if(chatItem.getUnSeenCount() > 0 && !chatItem.getMessage().getSender().equals(currentUid)){
         unSeenTv.setVisibility(View.VISIBLE);
         messageTv.setTypeface(boldFont);
         unSeenTv.setText(String.valueOf(chatItem.getUnSeenCount()));
@@ -145,7 +145,7 @@ public class ChatsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onClick(View view) {
 
       itemView.getContext().startActivity(new Intent(itemView.getContext(),
-              PrivateMessagingActivity2.class)
+              PrivateMessagingActivity.class)
               .putExtra("type", FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE)
               .putExtra("messagingUid",chatItems.get(getAdapterPosition()).getMessagingUid()));
 
@@ -234,7 +234,7 @@ public class ChatsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onClick(View view) {
 
       itemView.getContext().startActivity(new Intent(itemView.getContext(),
-              GroupMessagingActivity2.class)
+              GroupMessagingActivity.class)
               .putExtra("type",FirestoreNotificationSender.TYPE_GROUP_MESSAGE)
               .putExtra("messagingUid",
               chatItems.get(getAdapterPosition()).getMessagingUid()));

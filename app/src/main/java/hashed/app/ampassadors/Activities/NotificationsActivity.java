@@ -58,13 +58,15 @@ public class NotificationsActivity extends AppCompatActivity implements
   private RecyclerView newestNotificationsRv;
   private ScrollListener scrollListener;
   private boolean isLoadingNotifications;
-
+  private String currentUid;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_notifications);
 
 //    String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+    currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     setupToolbar();
 
@@ -320,6 +322,7 @@ public class NotificationsActivity extends AppCompatActivity implements
   }
 
   private Notification findNotification(String documentId) {
+
     for (Notification notification : newerNotifications) {
       final String notificationPath = notification.getSenderId() + "_" +
               notification.getDestinationId() + "_" + notification.getType();
@@ -354,8 +357,7 @@ public class NotificationsActivity extends AppCompatActivity implements
   private void deleteNotif(Notification n) {
     Log.d("ttt", "deleting notif");
 
-    final String notificationPath = n.getSenderId()
-            + "_" + n.getDestinationId() + "_" + n.getType();
+    final String notificationPath = currentUid + "_" + n.getDestinationId() + "_" + n.getType();
 
     FirebaseFirestore.getInstance().collection("Notifications")
             .document(notificationPath).delete().addOnSuccessListener(new OnSuccessListener<Void>() {

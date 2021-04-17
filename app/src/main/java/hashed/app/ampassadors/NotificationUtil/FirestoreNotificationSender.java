@@ -2,9 +2,12 @@ package hashed.app.ampassadors.NotificationUtil;
 
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 
@@ -25,7 +28,6 @@ public class FirestoreNotificationSender {
           TYPE_COURSE_MESSAGE = "courseMessaging";
 
 
-
   private static final CollectionReference notificationRef =
           FirebaseFirestore.getInstance().collection("Notifications");
 
@@ -34,8 +36,7 @@ public class FirestoreNotificationSender {
 
     final String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-    final String notificationPath =
-            currentUserId + "_" + destinationId + "_" + type;
+    final String notificationPath = userId + "_" + destinationId + "_" + type;
 
     notificationRef.document(notificationPath)
             .get().addOnSuccessListener(documentSnapshot -> {
@@ -78,4 +79,18 @@ public class FirestoreNotificationSender {
     notificationRef.document(notificationPath).delete();
   }
 
+
+  public static void deleteNotificationsForId(String id){
+    notificationRef.whereEqualTo("destinationId",id)
+            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+      @Override
+      public void onSuccess(QuerySnapshot snapshots) {
+        if(snapshots!=null){
+          for(DocumentSnapshot documentSnapshot:snapshots){
+            documentSnapshot.getReference().delete();
+          }
+        }
+      }
+    });
+  }
 }

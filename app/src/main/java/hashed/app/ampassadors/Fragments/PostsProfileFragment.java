@@ -59,6 +59,7 @@ import hashed.app.ampassadors.Adapters.UserPostAdapter;
 import hashed.app.ampassadors.BroadcastReceivers.NotificationIndicatorReceiver;
 import hashed.app.ampassadors.BuildConfig;
 import hashed.app.ampassadors.Objects.PostData;
+import hashed.app.ampassadors.Objects.PostNewsPreview;
 import hashed.app.ampassadors.Objects.UserInfo;
 import hashed.app.ampassadors.Objects.UserPostData;
 import hashed.app.ampassadors.R;
@@ -325,19 +326,6 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         }
     }
 
-    private void setUpToolBarAndActions() {
-
-        final Toolbar toolbar = getView().findViewById(R.id.toolbar);
-
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(), "tool", Toast.LENGTH_SHORT).show();
-            }
-        });
-        toolbar.setOnMenuItemClickListener(this);
-    }
-
     private void getUserNaImg() {
         fAuth = FirebaseAuth.getInstance();
         userid = fAuth.getCurrentUser().getUid();
@@ -357,17 +345,20 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
                 });
     }
 
-    private void drawer() {
-        final DrawerLayout drawerLayout_b = getView().findViewById(R.id.drawer_layout);
-        getView().findViewById(R.id.profile_toolbara).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                drawerLayout_b.openDrawer(GravityCompat.START);
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 3) {
+            if(data.hasExtra("postData")){
+                final PostData newPost =
+                        (PostData) data.getSerializableExtra("postData");
+                if(newPost!=null){
+                    postData.add(0, newPost);
+                    adapter.notifyItemInserted(0);
+                    post_list.scrollToPosition(0);
+                }
             }
-        });
+        }
     }
 
-    public void replaceFragment(Fragment fragment) {
-        getFragmentManager().beginTransaction().replace(R.id.frameLayout, fragment).commit();
-    }
 }

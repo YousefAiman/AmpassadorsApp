@@ -49,6 +49,8 @@ import hashed.app.ampassadors.Objects.ZoomMeeting;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
 import hashed.app.ampassadors.Utils.TimeFormatter;
+import hashed.app.ampassadors.Utils.WorkRequester;
+import hashed.app.ampassadors.Workers.ZoomMeetingWorker;
 
 public class MeetingMessagingActivity extends MessagingActivity{
 
@@ -72,10 +74,10 @@ public class MeetingMessagingActivity extends MessagingActivity{
   void getMessagingUid() {
 
     final Intent intent = getIntent();
-    final String type = intent.getStringExtra("type");
     final String sourceId = intent.getStringExtra("messagingUid");
 
-    if (type.equals(FirestoreNotificationSender.TYPE_ZOOM)) {
+    if (intent.hasExtra("type") &&
+            intent.getStringExtra("type").equals(FirestoreNotificationSender.TYPE_ZOOM)) {
 
       messagingUid = sourceId.split("-")[0];
       final String joinUrl = sourceId.split("-")[1];
@@ -122,6 +124,7 @@ public class MeetingMessagingActivity extends MessagingActivity{
                       }
                     }
 
+                    creatorId = value.getString("creatorId");
                     messagingTbNameTv.setText(groupName = value.getString("title"));
 
                     if(value.contains("messagingSenders")){
@@ -259,8 +262,8 @@ public class MeetingMessagingActivity extends MessagingActivity{
               currentUserName+": "+body,
               groupName,
               groupImageUrl!=null?groupImageUrl:currentImageUrl,
-              "Group Messages",
-              FirestoreNotificationSender.TYPE_GROUP_MESSAGE,
+              "Meeting Messages",
+              FirestoreNotificationSender.TYPE_MEETING_MESSAGE,
               currentUid
       );
 
@@ -298,7 +301,7 @@ public class MeetingMessagingActivity extends MessagingActivity{
               Log.d("ttt", "sendBothNotifs");
 
               FirestoreNotificationSender.sendFirestoreNotification(userId,
-                      FirestoreNotificationSender.TYPE_GROUP_MESSAGE,
+                      FirestoreNotificationSender.TYPE_MEETING_MESSAGE,
                       body, groupName, messagingUid);
 
               CloudMessagingNotificationsSender.sendNotification(userId, data);
@@ -307,7 +310,7 @@ public class MeetingMessagingActivity extends MessagingActivity{
             Log.d("ttt", "sendBothNotifs");
 
             FirestoreNotificationSender.sendFirestoreNotification(userId,
-                    FirestoreNotificationSender.TYPE_GROUP_MESSAGE,
+                    FirestoreNotificationSender.TYPE_MEETING_MESSAGE,
                     body, groupName, messagingUid);
 
             CloudMessagingNotificationsSender.sendNotification(userId, data);
@@ -319,79 +322,71 @@ public class MeetingMessagingActivity extends MessagingActivity{
 
   }
 
+  private void sendZoomMeetingNotification(String topic, String joinUrl) {
+
+    String body = getString(R.string.Start_zoom_Meeting) + topic;
+
+    if (data == null) {
+
+      data = new Data(
+              currentUid,
+              body,
+              groupName,
+              groupImageUrl,
+              "Group Messages",
+              FirestoreNotificationSender.TYPE_ZOOM,
+              messagingUid + "-" + joinUrl
+      );
+
+    } else {
+      data.setBody(body);
+    }
+
+
+    final List<String> groupUsers = new ArrayList<>();
+    firebaseMessageDocRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+      @Override
+      public void onSuccess(DocumentSnapshot snapshot) {
+        if(snapshot.exists()){
+          groupUsers.addAll((List<String>) snapshot.get("members"));
+        }
+      }
+    }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+      @Override
+      public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+        if(task.isSuccessful() && !groupUsers.isEmpty()){
+          sendNotificationsToMembers(currentUserName+": "+body,groupUsers);
+        }
+      }
+    });
+  }
+
+  public void sendZoomMessage(String content, ZoomMeeting zoomMeeting) {
+
+    PrivateMessage privateMessage = new PrivateMessage(
+            content,
+            System.currentTimeMillis(),
+            currentUid,
+            Files.ZOOM);
+
+    privateMessage.setZoomMeeting(zoomMeeting);
+
+    firebaseMessageDocRef.update("currentZoomMeeting", zoomMeeting);
+
+    sendMessage(privateMessage);
+  }
+
+
+
   @Override
   void showMessageOptionsBottomSheet() {
 
-    messageAttachIv.setClickable(false);
+    if(currentUid != null && currentUid.equals(creatorId)){
+      showAdminOptionsBottomSheet();
+    }else{
+      showUserOptionsBottomSheet();
+    }
 
-    final BottomSheetDialog bsd = new BottomSheetDialog(this, R.style.SheetDialog);
-    final View parentView = getLayoutInflater().inflate(R.layout.group_message_options_bsd,
-            null);
-    parentView.setBackgroundColor(Color.TRANSPARENT);
-
-    parentView.findViewById(R.id.imageIv).setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-
-        bsd.dismiss();
-
-        Files.startImageFetchIntent(MeetingMessagingActivity.this);
-      }
-    });
-
-    parentView.findViewById(R.id.audioIv).setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-
-//        bsd.dismiss();
-//
-//        Files.startImageFetchIntent(PrivateMessagingActivity.this);
-      }
-    });
-
-    parentView.findViewById(R.id.videoIv).setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-
-        bsd.dismiss();
-        Files.startVideoFetchIntent(MeetingMessagingActivity.this);
-      }
-    });
-
-    parentView.findViewById(R.id.documentIv).setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-
-        bsd.dismiss();
-        Files.startDocumentFetchIntent(MeetingMessagingActivity.this);
-      }
-    });
-
-    parentView.findViewById(R.id.zoomIv).setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-
-        pickerFrameLayout.setVisibility(View.VISIBLE);
-
-        getSupportFragmentManager().beginTransaction().replace(pickerFrameLayout.getId(),
-                new ZoomMeetingCreationFragment()).commit();
-
-
-        bsd.dismiss();
-
-
-      }
-    });
-
-    bsd.setOnDismissListener(new DialogInterface.OnDismissListener() {
-      @Override
-      public void onDismiss(DialogInterface dialogInterface) {
-        messageAttachIv.setClickable(true);
-      }
-    });
-
-    bsd.setContentView(parentView);
-    bsd.show();
   }
 
   @Override
@@ -400,13 +395,30 @@ public class MeetingMessagingActivity extends MessagingActivity{
     messagingEd.setText("");
     messagingEd.setClickable(false);
 
-    final DatabaseReference childRef = currentMessagingRef.child("Messages").
-            child(String.valueOf(System.currentTimeMillis()));
+    final String messageId = String.valueOf(System.currentTimeMillis());
+
+    if (lastKeyRef == null) {
+      createMessagingDocument(privateMessage);
+      return;
+    }
+
+    final DatabaseReference childRef = databaseMessagesRef.child(messageId);
 
     childRef.setValue(privateMessage)
             .addOnSuccessListener(v -> {
 
-              sendBothNotifications(privateMessage);
+              if (privateMessage.getType() == Files.ZOOM) {
+
+                startZoomEndingWorker(privateMessage,messageId);
+
+                sendZoomMeetingNotification(privateMessage.getZoomMeeting().getTopic(),
+                        privateMessage.getZoomMeeting().getJoinUrl());
+
+              } else {
+
+                sendBothNotifications(privateMessage);
+
+              }
 
               messageSendIv.setClickable(true);
 
@@ -586,6 +598,21 @@ public class MeetingMessagingActivity extends MessagingActivity{
   }
 
 
+  private void startZoomEndingWorker(PrivateMessage privateMessage,String messageId){
+
+    androidx.work.Data workerData = new androidx.work.Data.Builder()
+            .putString("groupId",messagingUid)
+            .putString("zoomMeetingId",privateMessage.getZoomMeeting().getId())
+            .putString("messageId",messageId)
+            .build();
+
+    WorkRequester.requestWork(ZoomMeetingWorker.class,
+            this, privateMessage.getZoomMeeting().getStartTime() +
+                    (privateMessage.getZoomMeeting().getDuration() * DateUtils.MINUTE_IN_MILLIS),
+            workerData);
+
+  }
+
   @Override
   public boolean onMenuItemClick(MenuItem item) {
 
@@ -597,14 +624,8 @@ public class MeetingMessagingActivity extends MessagingActivity{
         }
 
       }else if(item.getItemId() == R.id.action_send_messages){
-
         showMessageSendingOptionsDialog(currentMessagingSenders);
-
-      }else if(item.getItemId() == R.id.action_edit_group){
-
       }
-
-
     return false;
   }
 

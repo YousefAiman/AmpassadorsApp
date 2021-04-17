@@ -58,6 +58,7 @@ import java.util.UUID;
 
 import hashed.app.ampassadors.Fragments.VideoFullScreenFragment;
 import hashed.app.ampassadors.Objects.PostData;
+import hashed.app.ampassadors.Objects.PostNewsPreview;
 import hashed.app.ampassadors.Objects.UserPostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.FileDownloadUtil;
@@ -83,13 +84,11 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
   private String documentName;
   private double documentSize;
   private CheckBox checkBox;
-  private boolean important = false;
 
   private UserPostData userPostData;
   //editing
   private PostData postData;
   private boolean isForEditing;
-
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -477,10 +476,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     dataMap.put("title", title);
     dataMap.put("description", description);
     dataMap.put("publisherId", currentUid);
-    if (checkBox.isChecked()) {
-      important = true;
-      dataMap.put("important", important);
-    }
+    dataMap.put("important", checkBox.isChecked());
     dataMap.put("isReported", false);
     dataMap.put("attachmentType", attachmentType);
     if (attachmentUrl != null) {
@@ -500,7 +496,6 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     if (documentSize != 0) {
       dataMap.put("documentSize", documentSize);
     }
-    dataMap.put("important", important);
     dataMap.put("publishTime", System.currentTimeMillis());
     dataMap.put("likes", 0);
     dataMap.put("comments", 0);
@@ -544,9 +539,8 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
         public void onSuccess(Void aVoid) {
           progressDialog.dismiss();
 
-          setResult(3, new Intent().putExtra("postData",
-                  new PostData(dataMap)));
-
+          setResult(3, new Intent().putExtra("postNewsPreview",
+                  new PostNewsPreview(dataMap)));
           finish();
         }
       }).addOnFailureListener(new OnFailureListener() {

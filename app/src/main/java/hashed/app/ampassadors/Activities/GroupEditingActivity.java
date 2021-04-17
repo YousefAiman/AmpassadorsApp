@@ -57,7 +57,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity;
-import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity2;
 import hashed.app.ampassadors.Adapters.GroupMembersAdapter;
 import hashed.app.ampassadors.NotificationUtil.CloudMessagingNotificationsSender;
 import hashed.app.ampassadors.NotificationUtil.Data;
@@ -362,7 +361,7 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
       public void onClick(View view) {
         userUpdateDialog.cancel();
         startActivity(new Intent(GroupEditingActivity.this,
-                PrivateMessagingActivity2.class)
+                PrivateMessagingActivity.class)
                 .putExtra("messagingUid", userId)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
       }
@@ -706,7 +705,7 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
                                   getResources().getString(R.string.added_to_group),
                           groupNameEd.getText().toString().trim(),
                           groupImageUrl,
-                          "group",
+                          "Group added",
                           FirestoreNotificationSender.TYPE_GROUP_ADDED,
                           firebaseMessageDocRef.getId());
 

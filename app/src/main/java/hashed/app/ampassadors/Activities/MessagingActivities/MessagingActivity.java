@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
@@ -40,6 +41,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.common.collect.Iterables;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -69,13 +71,16 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
+import hashed.app.ampassadors.Activities.NotificationsActivity;
 import hashed.app.ampassadors.Adapters.PrivateMessagingAdapter;
 import hashed.app.ampassadors.Fragments.FilePickerPreviewFragment;
 import hashed.app.ampassadors.Fragments.ImageFullScreenFragment;
 import hashed.app.ampassadors.Fragments.VideoFullScreenFragment;
 import hashed.app.ampassadors.Fragments.VideoPickerPreviewFragment;
+import hashed.app.ampassadors.Fragments.ZoomMeetingCreationFragment;
 import hashed.app.ampassadors.NotificationUtil.BadgeUtil;
 import hashed.app.ampassadors.NotificationUtil.Data;
+import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.Objects.PrivateMessage;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
@@ -201,6 +206,12 @@ public abstract class MessagingActivity extends AppCompatActivity
 
       }
     }
+
+
+    final String notificationPath = currentUid + "_" + messagingUid + "_" + type;
+
+    FirebaseFirestore.getInstance().collection("Notifications")
+            .document(notificationPath).delete();
 
   }
 
@@ -808,32 +819,26 @@ public abstract class MessagingActivity extends AppCompatActivity
                 if(snapshot.exists()){
 
                   snapshot.getChildren().iterator().next().getRef().child("deleted")
-                          .setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                      currentMessagingRef.child("lastDeleted").setValue(message.getTime())
-                              .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                  if (privateMessages.indexOf(message) ==
-                                          privateMessages.size() - 1) {
-                                    firebaseMessageDocRef.update("lastMessageDeleted",
-                                            message.getTime());
-                                  }
+                          .setValue(true).addOnSuccessListener(aVoid -> {
+                            currentMessagingRef.child("lastDeleted").setValue(message.getTime())
+                                    .addOnSuccessListener(aVoid1 -> {
+                                      if (privateMessages.indexOf(message) ==
+                                              privateMessages.size() - 1) {
+                                        firebaseMessageDocRef.update("lastMessageDeleted",
+                                                message.getTime());
+                                      }
 
-                                  dialog.dismiss();
-                                }
-                              }).addOnFailureListener(e -> {
-                        dialog.dismiss();
+                                      dialog.dismiss();
+                                    }).addOnFailureListener(e -> {
+                              dialog.dismiss();
 
-                        Toast.makeText(MessagingActivity.this,
-                                "لقد فشل حذف الرسالة", Toast.LENGTH_SHORT).show();
+                              Toast.makeText(MessagingActivity.this,
+                                      "لقد فشل حذف الرسالة", Toast.LENGTH_SHORT).show();
 
-                        Log.d("ttt", "failed: " + e.getMessage());
-                      });;
-                      ;
-                    }
-                  }).addOnFailureListener(e -> dialog.dismiss());
+                              Log.d("ttt", "failed: " + e.getMessage());
+                            });;
+                            ;
+                          }).addOnFailureListener(e -> dialog.dismiss());
                 }
               }
 
@@ -1330,70 +1335,36 @@ public abstract class MessagingActivity extends AppCompatActivity
 
     AlertDialog.Builder builder = new AlertDialog.Builder(MessagingActivity.this);
     builder.setTitle(R.string.who_can_message);
-    builder.setSingleChoiceItems(messagingOptions, chosenItem, new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialogInterface, int i) {
-        newSelectedStatus[0] = messagingOptions[i];
+    builder.setSingleChoiceItems(messagingOptions, chosenItem, (dialogInterface, i) -> newSelectedStatus[0] = messagingOptions[i]);
+    builder.setPositiveButton(R.string.confirm, (dialogInterface, i) -> {
 
-      }
-    });
-    builder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialogInterface, int i) {
+      if(newSelectedStatus.length > 0){
 
-        if(newSelectedStatus.length > 0){
+        if(newSelectedStatus[0].equals(getString(R.string.admins))
+                && !currentMessagingSenders.equals(ADMINS)){
 
-          if(newSelectedStatus[0].equals(getString(R.string.admins))
-                  && !currentMessagingSenders.equals(ADMINS)){
+          firebaseMessageDocRef.update("messagingSenders",ADMINS)
+                  .addOnSuccessListener(aVoid -> dialogInterface.dismiss())
+                  .addOnFailureListener(e -> Toast.makeText(MessagingActivity.this,
+                          "Changing group messages allowed senders failed!" +
+                                  "Please try again", Toast.LENGTH_SHORT).show());
 
-            firebaseMessageDocRef.update("messagingSenders",ADMINS)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                      @Override
-                      public void onSuccess(Void aVoid) {
-                        dialogInterface.dismiss();
-                      }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                      @Override
-                      public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(MessagingActivity.this,
-                                "Changing group messages allowed senders failed!" +
-                                        "Please try again", Toast.LENGTH_SHORT).show();
-                      }
-                    });
+        }else if(newSelectedStatus[0].equals(getString(R.string.all_members))
+                && !currentMessagingSenders.equals(MEMBERS)) {
 
-          }else if(newSelectedStatus[0].equals(getString(R.string.all_members))
-                  && !currentMessagingSenders.equals(MEMBERS)) {
-
-            firebaseMessageDocRef.update("messagingSenders", MEMBERS)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                      @Override
-                      public void onSuccess(Void aVoid) {
-                        dialogInterface.dismiss();
-                      }
-                    }).addOnFailureListener(new OnFailureListener() {
-              @Override
-              public void onFailure(@NonNull Exception e) {
-                Toast.makeText(MessagingActivity.this,
-                        "Changing group messages allowed senders failed!" +
-                                "Please try again", Toast.LENGTH_SHORT).show();
-              }
-            });
+          firebaseMessageDocRef.update("messagingSenders", MEMBERS)
+                  .addOnSuccessListener(aVoid -> dialogInterface.dismiss()).addOnFailureListener(e -> Toast.makeText(MessagingActivity.this,
+                  "Changing group messages allowed senders failed!" +
+                          "Please try again", Toast.LENGTH_SHORT).show());
 
 
-          }
-        }else{
-          dialogInterface.dismiss();
         }
-      }
-    });
-
-    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialogInterface, int i) {
+      }else{
         dialogInterface.dismiss();
       }
     });
+
+    builder.setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss());
 
     builder.show();
 
@@ -1424,5 +1395,111 @@ public abstract class MessagingActivity extends AppCompatActivity
 
 
   }
+
+  void showAdminOptionsBottomSheet() {
+
+    messageAttachIv.setClickable(false);
+
+    final BottomSheetDialog bsd = new BottomSheetDialog(this, R.style.SheetDialog);
+    final View parentView = getLayoutInflater().inflate(R.layout.group_message_options_bsd,
+            null);
+    parentView.setBackgroundColor(Color.TRANSPARENT);
+
+    parentView.findViewById(R.id.imageIv).setOnClickListener(view -> {
+
+      bsd.dismiss();
+      Files.startImageFetchIntent(MessagingActivity.this);
+    });
+
+    parentView.findViewById(R.id.audioIv).setOnClickListener(view -> {
+
+//        bsd.dismiss();
+//
+//        Files.startImageFetchIntent(PrivateMessagingActivity.this);
+    });
+
+    parentView.findViewById(R.id.videoIv).setOnClickListener(view -> {
+
+      bsd.dismiss();
+      Files.startVideoFetchIntent(MessagingActivity.this);
+    });
+
+    parentView.findViewById(R.id.documentIv).setOnClickListener(view -> {
+
+      bsd.dismiss();
+      Files.startDocumentFetchIntent(MessagingActivity.this);
+    });
+
+    parentView.findViewById(R.id.zoomIv).setOnClickListener(view -> {
+
+      pickerFrameLayout.setVisibility(View.VISIBLE);
+
+      getSupportFragmentManager().beginTransaction().replace(pickerFrameLayout.getId(),
+              new ZoomMeetingCreationFragment()).commit();
+
+
+      bsd.dismiss();
+
+
+    });
+
+    bsd.setOnDismissListener(dialogInterface -> messageAttachIv.setClickable(true));
+
+    bsd.setContentView(parentView);
+    bsd.show();
+
+  }
+
+  void showUserOptionsBottomSheet() {
+
+    messageAttachIv.setClickable(false);
+
+    final BottomSheetDialog bsd = new BottomSheetDialog(this, R.style.SheetDialog);
+    final View parentView = getLayoutInflater().inflate(R.layout.message_options_bsd, null);
+    parentView.setBackgroundColor(Color.TRANSPARENT);
+
+    parentView.findViewById(R.id.imageIv).setOnClickListener(view -> {
+
+      if (checkIsUploading()) {
+        return;
+      }
+
+      bsd.dismiss();
+
+      Files.startImageFetchIntent(MessagingActivity.this);
+    });
+
+    parentView.findViewById(R.id.audioIv).setOnClickListener(view -> {
+      if (checkIsUploading()) {
+        return;
+      }
+//        bsd.dismiss();
+//
+//        Files.startImageFetchIntent(PrivateMessagingActivity.this);
+    });
+
+    parentView.findViewById(R.id.videoIv).setOnClickListener(view -> {
+      if (checkIsUploading()) {
+        return;
+      }
+      bsd.dismiss();
+      Files.startVideoFetchIntent(MessagingActivity.this);
+    });
+
+    parentView.findViewById(R.id.documentIv).setOnClickListener(view -> {
+      if (checkIsUploading()) {
+        return;
+      }
+      bsd.dismiss();
+      Files.startDocumentFetchIntent(MessagingActivity.this);
+    });
+
+    bsd.setOnDismissListener(dialogInterface -> messageAttachIv.setClickable(true));
+
+    bsd.setContentView(parentView);
+    bsd.show();
+
+  }
+
 
 }

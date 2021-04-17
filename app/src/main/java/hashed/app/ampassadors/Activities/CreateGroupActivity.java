@@ -312,9 +312,10 @@ import hashed.app.ampassadors.Utils.UploadTaskUtil;
                                                                 getResources().getString(R.string.added_to_group),
                                                         groupNameEd.getText().toString().trim(),
                                                         meetingImageUrl,
-                                                        "group",
+                                                        "Group added",
                                                         FirestoreNotificationSender.TYPE_GROUP_ADDED,
                                                         groupId);
+
 
                                                 selectedUserIdsList.remove(currentUid);
 

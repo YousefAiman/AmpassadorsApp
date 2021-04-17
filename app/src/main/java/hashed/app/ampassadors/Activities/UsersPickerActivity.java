@@ -24,6 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 
 import hashed.app.ampassadors.Adapters.UsersPickerAdapter;
+import hashed.app.ampassadors.Fragments.MeetingsFragment;
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
 
@@ -198,10 +199,10 @@ public class UsersPickerActivity extends AppCompatActivity implements
             setResult(3,createMeetingIntent);
 
           }else if(getIntent().hasExtra("previousSearchSelectedUserIdsList")){
-            startActivity(createMeetingIntent);
+            startActivityForResult(createMeetingIntent, MeetingsFragment.MEETING_RESULT);
           }
         }else{
-          startActivity(createMeetingIntent);
+          startActivityForResult(createMeetingIntent, MeetingsFragment.MEETING_RESULT);
         }
 
         finish();

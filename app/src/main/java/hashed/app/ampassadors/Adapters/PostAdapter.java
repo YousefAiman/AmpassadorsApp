@@ -154,9 +154,9 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onClick(View view) {
 
-      view.getContext().startActivity(new Intent(view.getContext(),
-              PostNewsActivity.class).putExtra("postData",
-              posts.get(getAdapterPosition())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+      view.getContext().startActivity(new Intent(view.getContext(), PostNewsActivity.class)
+              .putExtra("postId", posts.get(getAdapterPosition()).getPostId())
+              .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 
     }
   }
@@ -187,9 +187,9 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onClick(View view) {
 
-      view.getContext().startActivity(new Intent(view.getContext(),
-              PostNewsActivity.class).putExtra("postData",
-              posts.get(getAdapterPosition())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+      view.getContext().startActivity(new Intent(view.getContext(), PostNewsActivity.class)
+              .putExtra("postId", posts.get(getAdapterPosition()).getPostId())
+              .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 
     }
   }
@@ -212,9 +212,9 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onClick(View view) {
 
-      view.getContext().startActivity(new Intent(view.getContext(),
-              PostNewsActivity.class).putExtra("postData",
-              posts.get(getAdapterPosition())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+      view.getContext().startActivity(new Intent(view.getContext(), PostNewsActivity.class)
+              .putExtra("postId", posts.get(getAdapterPosition()).getPostId())
+              .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 
     }
   }
@@ -240,9 +240,9 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onClick(View view) {
 
-      view.getContext().startActivity(new Intent(view.getContext(),
-              PostNewsActivity.class).putExtra("postData",
-              posts.get(getAdapterPosition())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+      view.getContext().startActivity(new Intent(view.getContext(), PostNewsActivity.class)
+              .putExtra("postId", posts.get(getAdapterPosition()).getPostId())
+              .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 
     }
   }
