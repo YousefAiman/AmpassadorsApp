@@ -135,24 +135,33 @@ public class PostData implements Serializable {
   }
 
   public static void likePost(String postId,String postTitle, int type,
-                              String creatorId, Context context) {
+                              String creatorId, Context context,boolean isUserPost) {
 
     if (type == 1) {
 
       HashMap<String, Object> likedMap = new HashMap<>();
       likedMap.put("userId", FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-      FirebaseFirestore.getInstance().collection("Posts")
-              .document(postId)
-              .collection("Likes")
+      DocumentReference documentReference;
+
+      if(isUserPost){
+        documentReference = FirebaseFirestore.getInstance().collection("Users")
+                .document(creatorId)
+                .collection("UserPosts")
+                .document(postId);
+      }else{
+        documentReference = FirebaseFirestore.getInstance().collection("Posts")
+                .document(postId);
+      }
+
+      documentReference.collection("Likes")
               .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
               .set(likedMap)
               .addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void v) {
 
-                  FirebaseFirestore.getInstance().collection("Posts")
-                          .document(postId).update("likes", FieldValue.increment(1));
+                  documentReference.update("likes", FieldValue.increment(1));
 
                   final String currentUid = FirebaseAuth.getInstance()
                           .getCurrentUser().getUid();
@@ -204,8 +213,19 @@ public class PostData implements Serializable {
 
       final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-      FirebaseFirestore.getInstance().collection("Posts")
-              .document(postId)
+      DocumentReference documentReference;
+
+      if(isUserPost){
+        documentReference = FirebaseFirestore.getInstance().collection("Users")
+                .document(creatorId)
+                .collection("UserPosts")
+                .document(postId);
+      }else{
+        documentReference = FirebaseFirestore.getInstance().collection("Posts")
+                .document(postId);
+      }
+
+      documentReference
               .collection("Likes")
               .document()
               .delete()

@@ -277,7 +277,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
         } else if (id == commentTv.getId()) {
 
             CommentsFragment commentsFragment = new CommentsFragment(postData.getPostId(),
-                    postData.getComments());
+                    postData.getComments(),getIntent().hasExtra("isForUser"),postData.getPublisherId());
             commentsFragment.show(getSupportFragmentManager(), "CommentsFragment");
         } else if (id == newsIv.getId()) {
 
@@ -331,7 +331,9 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
                 likesTv.setText(String.valueOf(
                         (Integer.parseInt(likesTv.getText().toString()) - 1)));
 
-                PostData.likePost(postData.getPostId(), postData.getTitle(), 2, postData.getPublisherId(), this);
+                PostData.likePost(postData.getPostId(), postData.getTitle(), 2,
+                        postData.getPublisherId(), this,
+                        getIntent().hasExtra("isForUser"));
 
             } else {
 
@@ -340,7 +342,9 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
                 likesTv.setText(String.valueOf(
                         (Integer.parseInt(likesTv.getText().toString()) + 1)));
 
-                PostData.likePost(postData.getPostId(), postData.getTitle(), 1, postData.getPublisherId(), this);
+                PostData.likePost(postData.getPostId(), postData.getTitle(), 1,
+                        postData.getPublisherId(), this,
+                        getIntent().hasExtra("isForUser"));
 
             }
         }

@@ -76,10 +76,15 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
   private ChatsScrollListener chatsScrollListener;
   private DocumentSnapshot lastDocSnap;
   private Comment currentFocusedComment;
+  private boolean isUserPost;
+  private String creatorId;
 
-  public CommentsFragment(String postId, int commentsCount) {
+  public CommentsFragment(String postId, int commentsCount,boolean isUserPost,
+                          String creatorId) {
     this.postId = postId;
     this.commentsCount = commentsCount;
+    this.isUserPost = isUserPost;
+    this.creatorId = creatorId;
   }
 
 
@@ -113,7 +118,22 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
     comments = new ArrayList<>();
     commentsAdapter = new CommentsAdapter(comments, this, postId, getContext());
     postsRef = FirebaseFirestore.getInstance().collection("Posts");
-    commentsQuery = postsRef.document(postId).collection("Comments")
+
+    DocumentReference documentReference;
+    if(isUserPost){
+
+      documentReference = FirebaseFirestore.getInstance().collection("Users")
+              .document(creatorId)
+              .collection("UserPosts")
+              .document(postId);
+
+    }else{
+      documentReference = postsRef.document(postId);
+    }
+
+
+
+    commentsQuery = documentReference.collection("Comments")
             .limit(COMMENTS_SIZE).orderBy("likes", Query.Direction.DESCENDING);
   }
 
@@ -230,7 +250,19 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
         commentMap.put("commentId", commentId);
         commentMap.put("likes", 0);
 
-        postsRef.document(postId).collection("Comments").document(commentId)
+        DocumentReference documentReference;
+        if(isUserPost){
+
+          documentReference = FirebaseFirestore.getInstance().collection("Users")
+                  .document(creatorId)
+                  .collection("UserPosts")
+                  .document(postId);
+
+        }else{
+          documentReference = postsRef.document(postId);
+        }
+
+        documentReference.collection("Comments").document(commentId)
                 .set(commentMap).addOnSuccessListener(new OnSuccessListener<Void>() {
           @Override
           public void onSuccess(Void aVoid) {
@@ -240,7 +272,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
             commentsRv.scrollToPosition(comments.size() - 1);
             commentSubmitIv.setClickable(true);
 
-            postsRef.document(postId).update("comments", FieldValue.increment(1))
+            documentReference.update("comments", FieldValue.increment(1))
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                       @Override
                       public void onSuccess(Void aVoid) {
@@ -274,7 +306,19 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
 
   private void sendCommentNotification(String message) {
 
-    postsRef.document(postId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+    DocumentReference documentReference;
+    if(isUserPost){
+
+      documentReference = FirebaseFirestore.getInstance().collection("Users")
+              .document(creatorId)
+              .collection("UserPosts")
+              .document(postId);
+
+    }else{
+      documentReference = postsRef.document(postId);
+    }
+
+    documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
       @Override
       public void onSuccess(DocumentSnapshot snapshot) {
 
@@ -331,7 +375,20 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
 
   private void sendCommentLikeNotification(String userId,String body,String likeType) {
 
-    postsRef.document(postId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+    DocumentReference documentReference;
+    if(isUserPost){
+
+      documentReference = FirebaseFirestore.getInstance().collection("Users")
+              .document(creatorId)
+              .collection("UserPosts")
+              .document(postId);
+
+    }else{
+      documentReference = postsRef.document(postId);
+    }
+
+
+    documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
       @Override
       public void onSuccess(DocumentSnapshot snapshot) {
 
@@ -399,14 +456,31 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
     currentFocusedComment = comments.get(position);
 
     final ArrayList<CommentReply> commentReplies = new ArrayList<>();
+
+    DocumentReference documentReference;
+    if(isUserPost){
+
+      documentReference = FirebaseFirestore.getInstance().collection("Users")
+              .document(creatorId)
+              .collection("UserPosts")
+              .document(postId);
+
+    }else{
+      documentReference = postsRef.document(postId);
+    }
+
+
+
+
     final RepliesAdapter adapter = new RepliesAdapter(commentReplies, this,
             currentFocusedComment.getCommentId(),
-            postsRef.document(postId).collection("Comments")
+            documentReference.collection("Comments")
                     .document(currentFocusedComment.getCommentId()), getContext());
 
     repliesRv.setAdapter(adapter);
 
-    postsRef.document(postId).collection("Comments")
+
+    documentReference.collection("Comments")
             .document(currentFocusedComment.getCommentId()).collection("Replies")
             .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
       @Override
@@ -475,13 +549,26 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                   replyMap.put("replyId", replyId);
                   replyMap.put("likes", 0);
 
-                  postsRef.document(postId).collection("Comments").document(currentFocusedComment.getCommentId())
+                  DocumentReference documentReference;
+                  if(isUserPost){
+
+                    documentReference = FirebaseFirestore.getInstance().collection("Users")
+                            .document(creatorId)
+                            .collection("UserPosts")
+                            .document(postId);
+
+                  }else{
+                    documentReference = postsRef.document(postId);
+                  }
+
+
+                  documentReference.collection("Comments").document(currentFocusedComment.getCommentId())
                           .collection("Replies").document(replyId).set(replyMap)
                           .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
 
-                              postsRef.document(postId).collection("Comments")
+                              documentReference.collection("Comments")
                                       .document(comments.get(commentPosition).getCommentId())
                                       .update("replies", FieldValue.increment(1));
 
@@ -542,8 +629,20 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                 final Comment comment = comments.get(position);
                 final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+                 DocumentReference documentReference;
+                  if(isUserPost){
+
+                    documentReference = FirebaseFirestore.getInstance().collection("Users")
+                            .document(creatorId)
+                            .collection("UserPosts")
+                            .document(postId);
+
+                  }else{
+                    documentReference = postsRef.document(postId);
+                  }
+
                 final DocumentReference commentRef =
-                        postsRef.document(postId).collection("Comments").document(
+                        documentReference.collection("Comments").document(
                                 comment.getCommentId());
 
                 if (comment.isLikedByUser()) {
@@ -660,8 +759,21 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                 likesTv.setClickable(false);
                 final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+                 DocumentReference documentReference;
+                  if(isUserPost){
+
+                    documentReference = FirebaseFirestore.getInstance().collection("Users")
+                            .document(creatorId)
+                            .collection("UserPosts")
+                            .document(postId);
+
+                  }else{
+                    documentReference = postsRef.document(postId);
+                  }
+
+
                 final DocumentReference replyRef =
-                        postsRef.document(postId).collection("Comments").document(
+                        documentReference.collection("Comments").document(
                                 commentId).collection("Replies").document(reply.getReplyId());
 
                 if (reply.isLikedByUser()) {

@@ -112,9 +112,17 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
     });
 
 
+    if(getIntent().hasExtra("isForUser") && getIntent().getBooleanExtra("isForUser",false)){
 
-    postRef = FirebaseFirestore.getInstance().collection("Posts")
-            .document(getIntent().getStringExtra("postId"));
+      postRef = FirebaseFirestore.getInstance().collection("Users")
+              .document(getIntent().getStringExtra("publisherId"))
+              .collection("UserPosts")
+              .document(getIntent().getStringExtra("postId"));
+
+    }else{
+      postRef = FirebaseFirestore.getInstance().collection("Posts")
+              .document(getIntent().getStringExtra("postId"));
+    }
 
     postRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
       @Override
@@ -197,7 +205,7 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
       likeOrDislike();
     } else if (id == commentTv.getId()) {
       CommentsFragment commentsFragment = new CommentsFragment(postData.getPostId(),
-              postData.getComments());
+              postData.getComments(),getIntent().hasExtra("isForUser"),postData.getPublisherId());
       commentsFragment.show(getSupportFragmentManager(), "CommentsFragment");
     }
   }
@@ -216,14 +224,19 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
             likesTv.setText(String.valueOf(
                     (Integer.parseInt(likesTv.getText().toString()) - 1)));
 
-            PostData.likePost(postData.getPostId(),postData.getTitle(), 2, postData.getPublisherId(), this);
+            PostData.likePost(postData.getPostId(),postData.getTitle(), 2,
+                    postData.getPublisherId(), this
+                    ,getIntent().hasExtra("isForUser"));
           } else {
             likeTv.setTextColor(getResources().getColor(R.color.red));
 
             likesTv.setText(String.valueOf(
                     (Integer.parseInt(likesTv.getText().toString()) + 1)));
 
-            PostData.likePost(postData.getPostId(),postData.getTitle(), 1, postData.getPublisherId(), this);
+            PostData.likePost(postData.getPostId(),postData.getTitle(), 1,
+                    postData.getPublisherId(), this
+                    ,getIntent().hasExtra("isForUser"));
+
 
           }
         }
@@ -238,8 +251,7 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
       PostData.deletePost(this,postData);
     }else if (item.getItemId() == R.id.Reporting) {
 
-       FirebaseFirestore.getInstance().collection("Posts").
-               document(postData.getPostId()).update("isReported", true)
+       postRef.update("isReported", true)
                .addOnSuccessListener(new OnSuccessListener<Void>() {
          @Override
          public void onSuccess(Void aVoid) {
