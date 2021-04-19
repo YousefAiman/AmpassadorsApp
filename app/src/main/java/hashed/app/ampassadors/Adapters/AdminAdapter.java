@@ -76,8 +76,8 @@ public class AdminAdapter extends RecyclerView.Adapter<AdminAdapter.AdminHolder>
     }
 
     private void bind(UserApprovment userApprovment){
-      email.setText(userApprovment.getEmail());
-      password.setText(userApprovment.getUsername());
+      email.setText(userApprovment.getUsername());
+      password.setText(userApprovment.getEmail());
       delete_account.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
