@@ -11,7 +11,6 @@ import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -36,7 +35,6 @@ import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import hashed.app.ampassadors.NotificationUtil.BadgeUtil;
-import hashed.app.ampassadors.NotificationUtil.Data;
 import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.NotificationUtil.NotificationClickReceiver;
 import hashed.app.ampassadors.NotificationUtil.NotificationDeleteListener;
@@ -320,18 +318,14 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     listenerRegistrationList.add(
             FirebaseFirestore.getInstance().collection("Notifications")
             .document(documentPath)
-            .addSnapshotListener(new EventListener<DocumentSnapshot>() {
-              @Override
-              public void onEvent(@Nullable DocumentSnapshot value,
-                                  @Nullable FirebaseFirestoreException error) {
-                if(value != null && !value.exists()){
+            .addSnapshotListener((value, error) -> {
+              if(value != null && !value.exists()){
 
-                  Log.d("ttt","removed notification: "+value.getId());
+                Log.d("ttt","removed notification: "+value.getId());
 
-                  notificationManager.cancel(notifId);
+                notificationManager.cancel(notifId);
 
-                  removeListener(index);
-                }
+                removeListener(index);
               }
             }));
   }
@@ -350,7 +344,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         NotificationChannel channel = new NotificationChannel(channelId, channelId,
                 NotificationManager.IMPORTANCE_HIGH);
         channel.setShowBadge(true);
-        channel.setDescription("notifications");
+        channel.setDescription(channelId);
         channel.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),
                 null);
         channel.enableVibration(true);

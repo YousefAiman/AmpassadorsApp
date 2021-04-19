@@ -1338,7 +1338,7 @@ public abstract class MessagingActivity extends AppCompatActivity
     builder.setSingleChoiceItems(messagingOptions, chosenItem, (dialogInterface, i) -> newSelectedStatus[0] = messagingOptions[i]);
     builder.setPositiveButton(R.string.confirm, (dialogInterface, i) -> {
 
-      if(newSelectedStatus.length > 0){
+      if(newSelectedStatus[0] != null){
 
         if(newSelectedStatus[0].equals(getString(R.string.admins))
                 && !currentMessagingSenders.equals(ADMINS)){
@@ -1373,7 +1373,6 @@ public abstract class MessagingActivity extends AppCompatActivity
   void changeMessagingStatus(String status,String currentMessagingSenders){
 
 
-
       if(status.equals(ADMINS) && (currentMessagingSenders == null ||
               !currentMessagingSenders.equals(ADMINS))){
 
@@ -1391,8 +1390,6 @@ public abstract class MessagingActivity extends AppCompatActivity
         messagingEditText.setClickable(true);
 
       }
-
-
 
   }
 

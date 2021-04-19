@@ -31,8 +31,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,6 +43,7 @@ import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.AudioPlayer;
 import hashed.app.ampassadors.Utils.Files;
 import hashed.app.ampassadors.Utils.TimeFormatter;
+import hashed.app.ampassadors.Utils.WifiUtil;
 
 public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -108,7 +107,10 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
   private final Context context;
   private boolean longCLickEnabled = true;
 
-
+  //audio messages
+  private AudioPlayer audioPlayer;
+  private MediaPlayer lastMediaPlayer;
+  private int lastClicked = -1;
 
   public PrivateMessagingAdapter(ArrayList<PrivateMessage> privateMessages,
                                  Context context,
@@ -158,6 +160,22 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     }
   }
+
+  private static void getUserImage(String userId, ImageView iv) {
+    usersRef.document(userId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+      @Override
+      public void onSuccess(DocumentSnapshot documentSnapshot) {
+        if (documentSnapshot.exists() && documentSnapshot.contains("imageUrl")) {
+
+          final String imageUrl = documentSnapshot.getString("imageUrl");
+          if(imageUrl!=null && !imageUrl.isEmpty()){
+            Picasso.get().load(imageUrl).fit().into(iv);
+          }
+        }
+      }
+    });
+  }
+
 
   private static void showMessageDeletionDialog(PrivateMessage message, Context context) {
     final AlertDialog.Builder alert = new AlertDialog.Builder(context);
@@ -585,16 +603,12 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
   }
 
-  static class PrivateMessagingAudioVh extends RecyclerView.ViewHolder
+   class PrivateMessagingAudioVh extends RecyclerView.ViewHolder
           implements View.OnLongClickListener, View.OnClickListener,
           MediaPlayer.OnCompletionListener {
 
     private final Slider audioProgressSlider;
-    private final ImageView playIv;
-
-    private AudioPlayer audioPlayer;
-    private MediaPlayer lastMediaPlayer;
-    private int lastClicked = -1;
+    private final ImageView playIv,imageIv;
     private TextView senderTv;
     private final TextView timeTv;
 //
@@ -605,7 +619,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
       super(itemView);
       audioProgressSlider = itemView.findViewById(R.id.audioProgressSlider);
       timeTv = itemView.findViewById(R.id.timeTv);
-//      imageIv = itemView.findViewById(R.id.imageIv);
+      imageIv = itemView.findViewById(R.id.imageIv);
       playIv = itemView.findViewById(R.id.playIv);
       if (isForGroup) {
         senderTv = itemView.findViewById(R.id.senderTv);
@@ -648,11 +662,26 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
         getUserName(message.getSender(), senderTv);
       }
 
+      getUserImage(message.getSender(), imageIv);
+
       itemView.setOnClickListener(this);
       if (message.getSender().equals(currentUid)) {
         itemView.setOnLongClickListener(this);
       }
 
+//
+//      if(message.isStopPlayingAudio()){
+//
+//
+//
+////        if (audioPlayer != null) {
+////          Log.d("audioMessage", "audioPlayer != null");
+////          if (lastMediaPlayer.isPlaying()) {
+////            Log.d("audioMessage", "lastMediaPlayer.isPlaying()");
+////            audioPlayer.pausePlayer();
+////          }
+////        }
+//      }
 
     }
 
@@ -667,30 +696,70 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
       if (view.getId() == R.id.playIv) {
 
+        if(WifiUtil.checkWifiConnection(itemView.getContext())) {
+          Log.d("audioMessage", "lastClicked: " + lastClicked);
 
-        Log.d("audioMessage", "item clicked");
-        PrivateMessage message = privateMessages.get(getAdapterPosition());
+          PrivateMessage message = privateMessages.get(getBindingAdapterPosition());
 
-
-        if (lastClicked == -1) {
-          Log.d("audioMessage", "lastClicked == -1");
-
-          audioPlayer = new AudioPlayer(itemView.getContext(),
-                  message.getAttachmentUrl(), message.getLength(),
-                  audioProgressSlider, playIv);
-
-          lastMediaPlayer = audioPlayer.startPlaying(audioProgressSlider.getValue() > 0 ?
-                  (int) audioProgressSlider.getValue() : 0);
-
-          lastMediaPlayer.setOnCompletionListener(this);
-
-          lastClicked = getAdapterPosition();
-
-        } else if (lastClicked == getAdapterPosition()) {
-          Log.d("audioMessage", "lastClicked == getAdapterPosition()");
-          if (audioPlayer == null) {
-
-            Log.d("audioMessage", "audioPlayer == null");
+//        if(lastClicked != -1 && lastClicked != getAdapterPosition()){
+//
+//          if (audioPlayer != null) {
+//            Log.d("audioMessage","previous audio player is not null so releasing it");
+//            audioPlayer.releasePlayer();
+////            privateMessages.get(lastClicked).setStopPlayingAudio(true);
+////            getBindingAdapter().notifyItemChanged(lastClicked);
+////            notifyItemChanged(lastClicked);
+//          }else {
+//
+//            audioPlayer = new AudioPlayer(itemView.getContext(),
+//                    message.getAttachmentUrl(), message.getLength(),
+//                    audioProgressSlider, playIv);
+//
+//            lastMediaPlayer = audioPlayer.startPlaying(audioProgressSlider.getValue() > 0 ?
+//                    (int) audioProgressSlider.getValue() : 0);
+//
+//            lastMediaPlayer.setOnCompletionListener(this);
+//
+//          }
+////            else {
+////            if (lastMediaPlayer.isPlaying()) {
+////              audioPlayer.pausePlayer();
+////            } else {
+////              audioPlayer.resumePlayer();
+////            }
+////          }
+//        }else{
+//
+//          if (audioPlayer == null) {
+//
+//            Log.d("audioMessage", "audioPlayer == null");
+//
+//            audioPlayer = new AudioPlayer(itemView.getContext(),
+//                    message.getAttachmentUrl(), message.getLength(),
+//                    audioProgressSlider, playIv);
+//
+//            lastMediaPlayer = audioPlayer.startPlaying(audioProgressSlider.getValue() > 0 ?
+//                    (int) audioProgressSlider.getValue() : 0);
+//
+//            lastMediaPlayer.setOnCompletionListener(this);
+//
+//
+//          } else {
+//
+//            if (lastMediaPlayer.isPlaying()) {
+//              audioPlayer.pausePlayer();
+//            } else {
+//              audioPlayer.resumePlayer();
+//            }
+//
+//          }
+//
+//        }
+//
+//        Log.d("ttt","lastClicked: "+lastClicked);
+//
+//        lastClicked = getAdapterPosition();
+          if (lastClicked == -1) {
 
             audioPlayer = new AudioPlayer(itemView.getContext(),
                     message.getAttachmentUrl(), message.getLength(),
@@ -701,49 +770,86 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
             lastMediaPlayer.setOnCompletionListener(this);
 
-            lastClicked = getAdapterPosition();
+          } else if (lastClicked == getAdapterPosition()) {
+
+            if (lastMediaPlayer != null && audioPlayer != null) {
+              if (lastMediaPlayer.isPlaying()) {
+                audioPlayer.pausePlayer();
+              } else {
+                audioPlayer.resumePlayer();
+              }
+            } else {
+
+              audioPlayer = new AudioPlayer(itemView.getContext(),
+                      message.getAttachmentUrl(), message.getLength(),
+                      audioProgressSlider, playIv);
+
+              lastMediaPlayer = audioPlayer.startPlaying(audioProgressSlider.getValue() > 0 ?
+                      (int) audioProgressSlider.getValue() : 0);
+
+              lastMediaPlayer.setOnCompletionListener(this);
+
+            }
+
+//          if (audioPlayer == null) {
+//
+//            Log.d("audioMessage", "audioPlayer == null");
+//
+//            audioPlayer = new AudioPlayer(itemView.getContext(),
+//                    message.getAttachmentUrl(), message.getLength(),
+//                    audioProgressSlider, playIv);
+//
+//            lastMediaPlayer = audioPlayer.startPlaying(audioProgressSlider.getValue() > 0 ?
+//                    (int) audioProgressSlider.getValue() : 0);
+//
+//            lastMediaPlayer.setOnCompletionListener(this);
+//
+//
+//          } else {
+//
+//
+//            Log.d("audioMessage", "audioPlayer != null");
+//
+//            if(lastMediaPlayer!=null){
+//              if (lastMediaPlayer.isPlaying()) {
+//
+//                Log.d("audioMessage", "lastMediaPlayer.isPlaying()");
+//
+//                audioPlayer.pausePlayer();
+//              } else {
+//
+//                Log.d("audioMessage", "lastMediaPlayer is paused");
+//
+//                audioPlayer.resumePlayer();
+//              }
+//            }
+//          }
+
 
           } else {
 
-            Log.d("audioMessage", "audioPlayer != null");
+            Log.d("audioMessage", "last clicked new");
 
-            if (lastMediaPlayer.isPlaying()) {
-
-              Log.d("audioMessage", "lastMediaPlayer.isPlaying()");
-
-              audioPlayer.pausePlayer();
-            } else {
-
-              Log.d("audioMessage", "lastMediaPlayer is paused");
-
-              audioPlayer.resumePlayer();
+            if (lastMediaPlayer != null && audioPlayer != null) {
+              audioPlayer.releasePlayer();
+              audioPlayer = null;
+              lastMediaPlayer = null;
             }
 
+            audioPlayer = new AudioPlayer(itemView.getContext(),
+                    message.getAttachmentUrl(), message.getLength(),
+                    audioProgressSlider, playIv);
+
+            lastMediaPlayer = audioPlayer.startPlaying(audioProgressSlider.getValue() > 0 ?
+                    (int) audioProgressSlider.getValue() : 0);
+
+            lastMediaPlayer.setOnCompletionListener(this);
+
           }
-
-
-        } else {
-
-          Log.d("audioMessage", "last clicked new");
-
-          if (audioPlayer != null) {
-            Log.d("audioMessage", "audioPlayer!=null");
-            audioPlayer.releasePlayer();
-          }
-
-          audioPlayer = new AudioPlayer(itemView.getContext(),
-                  message.getAttachmentUrl(), message.getLength(),
-                  audioProgressSlider, playIv);
-
-          lastMediaPlayer = audioPlayer.startPlaying(audioProgressSlider.getValue() > 0 ?
-                  (int) audioProgressSlider.getValue() : 0);
-
-          lastMediaPlayer.setOnCompletionListener(this);
 
           lastClicked = getAdapterPosition();
 
         }
-
       }else{
         showOrHideTime(timeTv,getAdapterPosition());
       }
@@ -752,11 +858,9 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
-
       audioPlayer.releasePlayer();
       audioPlayer = null;
       lastMediaPlayer = null;
-
     }
   }
 
@@ -960,13 +1064,9 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
   }
 
   static class PrivateMessagingDeletedVh extends RecyclerView.ViewHolder {
-
     public PrivateMessagingDeletedVh(@NonNull View itemView) {
       super(itemView);
-
     }
-
-
   }
 
   static class PrivateMessagingDeletedGroupVh extends RecyclerView.ViewHolder {

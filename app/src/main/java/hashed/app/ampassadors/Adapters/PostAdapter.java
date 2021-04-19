@@ -43,13 +43,20 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
   private final List<PostData> posts;
   private final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
   private final Context context;
+  private boolean isForUser;
   public List<Integer> loadingItems = new ArrayList<>();
+
   public PostAdapter(List<PostData> posts, Context context) {
     this.posts = posts;
     this.context = context;
-//        this.commentsInterface = commentsInterface;
-//        this.imageInterface = imageInterface;
   }
+
+  public PostAdapter(List<PostData> posts, Context context,boolean isForUser) {
+    this.posts = posts;
+    this.context = context;
+    this.isForUser = isForUser;
+  }
+
   @NonNull
   @Override
   public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -154,9 +161,16 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onClick(View view) {
 
-      view.getContext().startActivity(new Intent(view.getContext(), PostNewsActivity.class)
+      final Intent intent = new Intent(view.getContext(), PostNewsActivity.class)
               .putExtra("postId", posts.get(getAdapterPosition()).getPostId())
-              .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+              .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+      if(isForUser){
+        intent.putExtra("isForUser",isForUser);
+        intent.putExtra("publisherId",posts.get(getAdapterPosition()).getPublisherId());
+      }
+
+      view.getContext().startActivity(intent);
 
     }
   }
@@ -187,9 +201,16 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onClick(View view) {
 
-      view.getContext().startActivity(new Intent(view.getContext(), PostNewsActivity.class)
+      final Intent intent = new Intent(view.getContext(), PostNewsActivity.class)
               .putExtra("postId", posts.get(getAdapterPosition()).getPostId())
-              .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+              .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+      if(isForUser){
+        intent.putExtra("isForUser",isForUser);
+        intent.putExtra("publisherId",posts.get(getAdapterPosition()).getPublisherId());
+      }
+
+      view.getContext().startActivity(intent);
 
     }
   }
@@ -212,9 +233,16 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onClick(View view) {
 
-      view.getContext().startActivity(new Intent(view.getContext(), PostNewsActivity.class)
+      final Intent intent = new Intent(view.getContext(), PostNewsActivity.class)
               .putExtra("postId", posts.get(getAdapterPosition()).getPostId())
-              .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+              .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+      if(isForUser){
+        intent.putExtra("isForUser",isForUser);
+        intent.putExtra("publisherId",posts.get(getAdapterPosition()).getPublisherId());
+      }
+
+      view.getContext().startActivity(intent);
 
     }
   }
@@ -240,10 +268,18 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onClick(View view) {
 
-      view.getContext().startActivity(new Intent(view.getContext(), PostNewsActivity.class)
-              .putExtra("postId", posts.get(getAdapterPosition()).getPostId())
-              .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+//      if()
 
+      final Intent intent = new Intent(view.getContext(), PostNewsActivity.class)
+              .putExtra("postId", posts.get(getAdapterPosition()).getPostId())
+              .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+      if(isForUser){
+        intent.putExtra("isForUser",isForUser);
+        intent.putExtra("publisherId",posts.get(getAdapterPosition()).getPublisherId());
+      }
+
+      view.getContext().startActivity(intent);
     }
   }
 
@@ -382,9 +418,17 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onClick(View view) {
 
-      view.getContext().startActivity(new Intent(view.getContext(),
-              PostPollActivity.class).putExtra("postData",
-              posts.get(getAdapterPosition())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+      final Intent intent = new Intent(view.getContext(), PostNewsActivity.class)
+              .putExtra("postId", posts.get(getAdapterPosition()).getPostId())
+              .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+      if(isForUser){
+        intent.putExtra("isForUser",isForUser);
+        intent.putExtra("publisherId",posts.get(getAdapterPosition()).getPublisherId());
+      }
+
+      view.getContext().startActivity(intent);
+
     }
   }
 }

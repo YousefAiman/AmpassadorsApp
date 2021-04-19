@@ -72,8 +72,6 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
         getPostData();
 
-
-
     }
 
     private void setupToolbar() {
@@ -118,9 +116,22 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        FirebaseFirestore.getInstance().collection("Posts")
-                .document(getIntent().getStringExtra("postId"))
-                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        DocumentReference postRef;
+
+        if(getIntent().hasExtra("isForUser") && getIntent().getBooleanExtra("isForUser",false)){
+
+            postRef = FirebaseFirestore.getInstance().collection("Users")
+                    .document(getIntent().getStringExtra("publisherId"))
+                    .collection("UserPosts")
+                    .document(getIntent().getStringExtra("postId"));
+
+        }else{
+            postRef = FirebaseFirestore.getInstance().collection("Posts")
+                    .document(getIntent().getStringExtra("postId"));
+        }
+
+
+        postRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if(documentSnapshot.exists()){

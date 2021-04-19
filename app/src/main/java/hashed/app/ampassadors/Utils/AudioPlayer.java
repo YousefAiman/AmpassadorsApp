@@ -136,14 +136,18 @@ public class AudioPlayer implements Slider.OnSliderTouchListener
     mediaPlayer.start();
 
     playerIv.setImageDrawable(pauseDrawable);
-    progressHandle.postDelayed(playBackProgressRunnable, 0);
+    if(progressHandle!=null){
+      progressHandle.postDelayed(playBackProgressRunnable, 0);
+    }
 
   }
 
 
   public void releasePlayer() {
 
-    progressHandle.removeCallbacks(playBackProgressRunnable);
+    if(progressHandle!=null){
+      progressHandle.removeCallbacks(playBackProgressRunnable);
+    }
     slider.removeOnSliderTouchListener(this);
 
     playerIv.setImageDrawable(playDrawable);

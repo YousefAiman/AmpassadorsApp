@@ -1,6 +1,5 @@
 package hashed.app.ampassadors.Fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,10 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,17 +38,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import hashed.app.ampassadors.Activities.UsersPickerActivity;
 import hashed.app.ampassadors.Adapters.ChatsAdapter;
 import hashed.app.ampassadors.Objects.ChatItem;
-import hashed.app.ampassadors.Objects.PrivateMessage;
 import hashed.app.ampassadors.Objects.PrivateMessagePreview;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
 
 public class MessagesFragment extends Fragment{
 
-  private static final int ADD__TYPE = 0,UPDATE_TYPE = 1,MOVE_TOP_FIRST_TYPE = 2,
+  private static final int ADD_TYPE = 0,UPDATE_TYPE = 1,MOVE_TOP_FIRST_TYPE = 2,
   MESSAGE_PAGE_LIMIT = 8;
 
   //database
@@ -80,6 +74,8 @@ public class MessagesFragment extends Fragment{
   //adapter
   private String currentUid;
   private ChatsAdapter adapter;
+
+  private int fetchedItems = 0;
 
   public MessagesFragment() {
   }
@@ -170,6 +166,7 @@ public class MessagesFragment extends Fragment{
       public void onSuccess(QuerySnapshot snapshots) {
         if(!snapshots.isEmpty()){
           initialCount = snapshots.size();
+          Log.d("gettingMessages","queryCount: "+initialCount);
           for(DocumentSnapshot snapshot:snapshots){
             getMessageFromSnapshot(snapshot, false);
           }
@@ -206,9 +203,13 @@ public class MessagesFragment extends Fragment{
 
     getLastMessage(chatItem, addToFirst);
 
+    Log.d("gettingMessages","getMessageFromSnapshot: "+snapshot.getId());
+
   }
 
   private void getLastMessage(ChatItem chatItem, boolean addToFirst) {
+
+    Log.d("gettingMessages","getLastMessage: "+chatItem.getMessagingDocId());
 
     final com.google.firebase.database.Query reference =
             messagesRef.child(chatItem.getMessagingDocId()).child("messages")
@@ -221,16 +222,13 @@ public class MessagesFragment extends Fragment{
 
                 if (snapshot.exists() && snapshot.getChildrenCount() > 0) {
 
-                  Log.d("ttt", "last message value changed: " + snapshot.getKey()
-                          + " child count: " + snapshot.getChildrenCount());
+                  Log.d("gettingMessages","onDataChange exists: "+
+                          chatItem.getMessagingDocId());
 
                   final DataSnapshot ref = snapshot.getChildren().iterator().next();
 
-                  Log.d("ttt", "ref.key: " + ref.getKey());
 
                   if (chatItem.getMessage() == null) {
-
-                    Log.d("ttt", "no message so adding it");
 
                     chatItem.setMessage(ref.getValue(PrivateMessagePreview.class));
                     chatItem.setMessageKey(Long.parseLong(ref.getKey()));
@@ -240,7 +238,7 @@ public class MessagesFragment extends Fragment{
 
                   } else {
 
-                    Log.d("ttt", "looking for chat item");
+
                     int index = 0;
                     for (int i = 0; i < chatItems.size(); i++) {
                       if (chatItems.get(i).getMessagingDocId().equals(chatItem.getMessagingDocId())) {
@@ -268,7 +266,8 @@ public class MessagesFragment extends Fragment{
 
                         final String lastSeen = snapshot.getValue(String.class);
 
-                          calculateUnseenCount(lastSeen,chatItem, finalIndex,
+                          calculateUnseenCount(lastSeen,chatItem,
+                                  finalIndex,
                                   finalIndex == 0?UPDATE_TYPE:MOVE_TOP_FIRST_TYPE,addToFirst);
 
                       }
@@ -282,6 +281,9 @@ public class MessagesFragment extends Fragment{
 
                   }
                 }else{
+
+                  Log.d("gettingMessages","onDataChange doesn't exist: "
+                          +chatItem.getMessagingDocId());
 
                   chatItem.setSeen(true);
                   chatItem.setUnSeenCount(0);
@@ -357,11 +359,12 @@ public class MessagesFragment extends Fragment{
                         checkMessageSeenAndAddSeenListener(chatItem, addToFirst,
                                 true);
 
+                      }else{
+                        Log.d("gettingMessages","database child doesn't exist: "
+                        +chatItem.getMessagingDocId());
                       }
                     }
                   });
-
-
 //                  int index = listenerRegistrations.size();
 //                  listenerRegistrations.add(messagesCollectionRef.document(chatItem.getMessagingDocId())
 //                          .addSnapshotListener(new EventListener<DocumentSnapshot>() {
@@ -385,13 +388,14 @@ public class MessagesFragment extends Fragment{
 //
 //                            }
 //                          }));
-
-
                 }
               }
 
               @Override
               public void onCancelled(@NonNull DatabaseError error) {
+
+                Log.d("gettingMessages","onCancelled: "+chatItem.getMessagingDocId()
+                +" error: "+error.getMessage());
 
               }
             }));
@@ -400,6 +404,9 @@ public class MessagesFragment extends Fragment{
 
   private void checkMessageSeenAndAddSeenListener(ChatItem chatItem, boolean addToFirst,
                                                   boolean isAnEmptyGroupMessage) {
+
+    Log.d("gettingMessages","checkMessageSeenAndAddSeenListener: "
+            +chatItem.getMessagingDocId());
 
     DatabaseReference lastSeenRef =
             messagesRef.child(chatItem.getMessagingDocId())
@@ -426,7 +433,10 @@ public class MessagesFragment extends Fragment{
                 }
               }else{
                 chatItems.add(chatItem);
-                orderAndShowMessages();
+//                if(isLastMessage){
+                  orderAndShowMessages();
+//                }
+
               }
 //              final int index = chatItems.size();
 //              adapter.notifyItemInserted(index);
@@ -437,13 +447,12 @@ public class MessagesFragment extends Fragment{
 
               if (addToFirst) {
                 calculateUnseenCount(lastSeen,chatItem,0,
-                        ADD__TYPE,true);
+                        ADD_TYPE,true);
               } else {
 
-//                int index = getIndexOrderedByTime(chatItem.getTime());
-//                final int index = chatItems.size();
-                calculateUnseenCount(lastSeen,chatItem,chatItems.size(),
-                        ADD__TYPE,false);
+                  calculateUnseenCount(lastSeen,chatItem,chatItems.size(),
+                          ADD_TYPE,false);
+
               }
             }
 
@@ -459,11 +468,14 @@ public class MessagesFragment extends Fragment{
             calculateUnseenCount(lastSeen,chatItem1,index,UPDATE_TYPE,false);
 
           }
+        }else{
+          initialCount--;
         }
       }
 
       @Override
       public void onCancelled(@NonNull DatabaseError error) {
+        initialCount--;
       }
     });
 
@@ -528,7 +540,9 @@ public class MessagesFragment extends Fragment{
 
                     }else{
                       chatItems.add(chatItem);
-                      orderAndShowMessages();
+//                      if(isLastMessage){
+                        orderAndShowMessages();
+//                      }
                     }
 //                      adapter.notifyItemInserted(chatItems.size());
 //                    }
@@ -611,6 +625,8 @@ public class MessagesFragment extends Fragment{
                   for (DocumentChange dc : value.getDocumentChanges()) {
 
                     if (dc.getType() == DocumentChange.Type.ADDED) {
+                      Log.d("ttt","added to latest to users array: "+
+                              dc.getDocument().getId());
 
                       if (!chatItems.isEmpty()) {
                         final String documentId = dc.getDocument()
@@ -664,10 +680,53 @@ public class MessagesFragment extends Fragment{
                         .child("UsersLastSeenMessages").child(currentUid);
 
         lastSeenRef.removeEventListener(
-                Objects.requireNonNull(valueEventListeners.get(
-                        lastSeenRef.getRef())));
+                Objects.requireNonNull(valueEventListeners.get(lastSeenRef.getRef())));
 
         valueEventListeners.remove(lastSeenRef.getRef());
+
+        if(chatItem.isGroupMessage()){
+          int listenerIndex = listenerRegistrations.size();
+          listenerRegistrations.add(
+
+                  messagesCollectionRef.whereEqualTo("groupId",chatItem.getMessagingDocId())
+                  .whereArrayContains("users",currentUid)
+                  .limit(1)
+                  .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                      if(value!=null && !value.getDocumentChanges().isEmpty()){
+                        if(value.getDocumentChanges().get(0).getType().equals(DocumentChange.Type.ADDED)){
+
+                                final long latestMessageTime =
+                                        dc.getDocument().getLong("latestMessageTime");
+
+                                List<Long> chatItemsTimesList = new ArrayList<>();
+
+                                for(ChatItem chatItem1:chatItems){
+                                  chatItemsTimesList.add(chatItem1.getTime());
+                                }
+
+                            chatItemsTimesList.add(latestMessageTime);
+
+                                Collections.sort(chatItemsTimesList,(c1,c2) ->
+                                        Long.compare(c2,c1));
+
+                                int index = chatItemsTimesList.indexOf(latestMessageTime);
+
+                                Log.d("ttt","needs to be added at: "+index);
+
+                                getMessageFromSnapshot(dc.getDocument(),false);
+
+                          listenerRegistrations.get(listenerIndex).remove();
+                          listenerRegistrations.remove(listenerIndex);
+
+                        }
+                      }
+                    }
+                  })
+          );
+        }
+
 
         break;
       }
@@ -777,6 +836,7 @@ public class MessagesFragment extends Fragment{
                       }
                     })
     );
+
   }
 
   private boolean isAtTop(){

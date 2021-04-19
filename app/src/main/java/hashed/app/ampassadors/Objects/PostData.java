@@ -162,40 +162,40 @@ public class PostData implements Serializable {
                                   .document(currentUid);
                   userRef.update("Likes", FieldValue.arrayUnion(postId));
 
-                  userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot snapshot) {
-                      if (snapshot.exists()) {
-                        final String username = snapshot.getString("username");
-                        final String imageUrl = snapshot.getString("imageUrl");
+                  if(!creatorId.equals(currentUid)) {
+                    userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                      @Override
+                      public void onSuccess(DocumentSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                          final String username = snapshot.getString("username");
+                          final String imageUrl = snapshot.getString("imageUrl");
 
                           final String message = username + " " + context.getResources()
                                   .getString(R.string.liked_post);
 
-                        FirestoreNotificationSender.sendFirestoreNotification(
-                                creatorId, FirestoreNotificationSender.TYPE_LIKE,
-                                message, username, postId);
+                          FirestoreNotificationSender.sendFirestoreNotification(
+                                  creatorId, FirestoreNotificationSender.TYPE_LIKE,
+                                  message, username, postId);
 
+                          final Data data = new Data(
+                                  currentUid,
+                                  message,
+                                  postTitle,
+                                  null,
+                                  "Post Like",
+                                  FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE,
+                                  postId);
 
-                        final Data  data = new Data(
-                                currentUid,
-                                message,
-                                postTitle,
-                                null,
-                                "Post Like",
-                                FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE,
-                                postId);
+                          if (imageUrl != null && !imageUrl.isEmpty()) {
+                            data.setSenderImageUrl(imageUrl);
+                          }
 
-                        if(imageUrl!=null && !imageUrl.isEmpty()){
-                          data.setSenderImageUrl(imageUrl);
+                          CloudMessagingNotificationsSender.sendNotification(creatorId, data);
+
                         }
-
-                        CloudMessagingNotificationsSender.sendNotification(creatorId, data);
-
                       }
-                    }
-                  });
-
+                    });
+                  }
                 }
               });
 

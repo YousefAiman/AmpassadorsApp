@@ -16,7 +16,8 @@
         android:id="@+id/playerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/white"
+        app:resize_mode="fit"
+        android:background="@color/transparent"
         app:use_controller="false"
         app:layout_constraintDimensionRatio="1"
         app:layout_constraintTop_toTopOf="parent" />

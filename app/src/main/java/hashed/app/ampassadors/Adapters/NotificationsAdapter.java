@@ -84,38 +84,57 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     switch (notification.getType()) {
 
       case FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE:
+      case FirestoreNotificationSender.TYPE_LIKE:
+      case FirestoreNotificationSender.TYPE_COMMENT:
         documentReference = firestore.collection("Users")
                 .document(notification.getSenderId());
         break;
 
       case FirestoreNotificationSender.TYPE_MEETING_MESSAGE:
+      case FirestoreNotificationSender.TYPE_MEETING_STARTED:
+      case FirestoreNotificationSender.TYPE_MEETING_ADDED:
         documentReference = firestore.collection("Meetings")
                 .document(notification.getSenderId());
         break;
+
+      case FirestoreNotificationSender.TYPE_GROUP_ADDED:
+      case FirestoreNotificationSender.TYPE_GROUP_MESSAGE:
+        documentReference = firestore.collection("PrivateMessages")
+                .document(notification.getSenderId());
+        break;
+
+//      case FirestoreNotificationSender.TYPE_COURSE_MESSAGE:
+//      case FirestoreNotificationSender.TYPE_COURSE_STARTED:
+//        documentReference = firestore.collection("Courses")
+//                .document(notification.getSenderId());
+//        break;
 
       default:
         return;
     }
 
-
     documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
       @Override
       public void onSuccess(DocumentSnapshot documentSnapshot) {
-
         if (documentSnapshot.exists()) {
-          notification.setImageUrl(documentSnapshot.getString("imageUrl"));
-        }
 
-      }
-    }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-      @Override
-      public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-        if (task.isSuccessful() && notification.getImageUrl() != null &&
-                !notification.getImageUrl().isEmpty()) {
-          Picasso.get().load(notification.getImageUrl()).fit().into(imageView);
+          final String imageUrl = documentSnapshot.getString("imageUrl");
+          if(imageUrl!=null && !imageUrl.isEmpty()){
+            notification.setImageUrl(imageUrl);
+            Picasso.get().load(imageUrl).fit().into(imageView);
+          }
         }
       }
     });
+//    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//      @Override
+//      public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//        if (task.isSuccessful() && notification.getImageUrl() != null &&
+//                !notification.getImageUrl().isEmpty()) {
+//          Picasso.get().load(notification.getImageUrl()).fit().into(imageView);
+//        }
+//      }
+//    });
 
 
   }
