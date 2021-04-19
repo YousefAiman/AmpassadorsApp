@@ -1,34 +1,32 @@
 package hashed.app.ampassadors.Activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.ResourcesCompat;
-
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Log;
+import com.google.android.exoplayer2.util.Util;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.EventListener;
 
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.VideoCache;
@@ -62,7 +60,6 @@ public class VideoWelcomeActivity extends AppCompatActivity implements View.OnCl
 
     initializePlayer();
 
-
   }
 
 
@@ -88,17 +85,23 @@ public class VideoWelcomeActivity extends AppCompatActivity implements View.OnCl
 
   private void initializePlayer(){
 
-    final DefaultTrackSelector trackSelector = new DefaultTrackSelector(this);
-//    trackSelector.setParameters(trackSelector.buildUponParameters().setMaxVideoSizeSd());
     exoPlayer = new SimpleExoPlayer.Builder(this)
-            .setTrackSelector(trackSelector).build();
+            .setBandwidthMeter(new DefaultBandwidthMeter.Builder(this).build())
+            .build();
 
-    final MediaSource mediaSource =
-            new ProgressiveMediaSource.Factory(new VideoDataSourceFactory(this))
-                    .createMediaSource(Uri.parse(videoUrl));
+    playerView.setPlayer(exoPlayer);
 
+    DefaultDataSourceFactory mediaDataSourceFactory = new
+            DefaultDataSourceFactory(this, Util.getUserAgent(this, getString(R.string.app_name)));
+
+    MediaItem mediaItem = MediaItem.fromUri(videoUrl);
+
+    MediaSource mediaSource = new ProgressiveMediaSource.Factory(mediaDataSourceFactory)
+            .createMediaSource(mediaItem);
+
+    exoPlayer.setMediaSource(mediaSource);
+    exoPlayer.prepare();
     exoPlayer.setPlayWhenReady(true);
-    exoPlayer.prepare(mediaSource);
 
     exoPlayer.addListener(new Player.EventListener() {
       @Override
@@ -109,8 +112,6 @@ public class VideoWelcomeActivity extends AppCompatActivity implements View.OnCl
         }
       }
     });
-
-    playerView.setPlayer(exoPlayer);
 
   }
 
@@ -234,7 +235,6 @@ public class VideoWelcomeActivity extends AppCompatActivity implements View.OnCl
   public void onResume() {
     super.onResume();
     if (exoPlayer != null && !exoPlayer.getPlayWhenReady()) {
-      exoPlayer.setPlayWhenReady(true);
       playVideo();
     }
   }

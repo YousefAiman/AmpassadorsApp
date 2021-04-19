@@ -339,10 +339,10 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                 googleSignIn();
             }
         }else if(view.getId() == facebookbtn.getId()){
-//            if (WifiUtil.checkWifiConnection(this)) {
+            if (WifiUtil.checkWifiConnection(this)) {
             facebookLoginBtn.setOnClickListener(this);
                 facebookLoginBtn.performClick();
-//            }
+            }
         }else if(view.getId() == facebookLoginBtn.getId()){
 
             ProgressDialog progressDialog = new ProgressDialog(this);

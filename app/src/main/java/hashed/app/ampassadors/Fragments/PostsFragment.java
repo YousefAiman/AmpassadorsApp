@@ -578,14 +578,17 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                     density = 1;
                 }
 
-                for (int i = 0; i < headerItems.size(); i++) {
-                    dots[i] = new ImageView(requireActivity());
-                    dots[i].setImageResource(R.drawable.indicator_inactive_icon);
-                    params.setMargins((int) (5 * density), 0, (int) (5 * density), 0);
-                    dotsLinear.addView(dots[i], params);
-                }
+                if(getActivity()!=null){
 
-                dots[0].setImageResource(R.drawable.indicator_active_icon);
+                    for (int i = 0; i < headerItems.size(); i++) {
+                        dots[i] = new ImageView(getActivity());
+                        dots[i].setImageResource(R.drawable.indicator_inactive_icon);
+                        params.setMargins((int) (5 * density), 0, (int) (5 * density), 0);
+                        dotsLinear.addView(dots[i], params);
+                    }
+
+                    dots[0].setImageResource(R.drawable.indicator_active_icon);
+
 
                 headerViewPager.addOnPageChangeListener(pageChangeListener =
                         new ViewPager.OnPageChangeListener() {
@@ -626,12 +629,13 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
                         headerViewPager.setCurrentItem(scrollPosition, true);
 
-                        handler.postDelayed(this, 5000);
+                        handler.postDelayed(this, 4000);
 
                     }
                 };
 
                 handler.postDelayed(pagerRunnable, 4000);
+                }
 
             }
         } else {

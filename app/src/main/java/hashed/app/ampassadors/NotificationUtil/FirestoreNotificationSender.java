@@ -19,6 +19,7 @@ public class FirestoreNotificationSender {
           TYPE_GROUP_MESSAGE = "groupMessaging",
           TYPE_GROUP_ADDED = "groupAdded",
           TYPE_LIKE = "postLike",
+          TYPE_COMMENT_LIKE = "commentLike",
           TYPE_COMMENT = "postComment",
           TYPE_ZOOM = "zoomMeeting",
           TYPE_MEETING_ADDED = "meetingAdded",

@@ -49,6 +49,7 @@ public class GroupMessagingActivity extends MessagingActivity{
   private String currentMessagingSenders = MEMBERS;
   private List<String> groupAdmins;
   private List<ListenerRegistration> listenerRegistrations;
+  private boolean userISAnAdmin,userIsGroupCreator;
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -97,24 +98,39 @@ public class GroupMessagingActivity extends MessagingActivity{
             }
             messagingTbNameTv.setText(groupName = value.getString("groupName"));
 
-            groupAdmins = (List<String>) value.get("groupAdmins");
+            final String creatorId = value.getString("creatorId");
 
-            if(value.contains("messagingSenders")){
+            if(userIsGroupCreator = creatorId.equals(currentUid)){
+              toolbar.inflateMenu(R.menu.group_creator_menu);
 
-              String newMessagingStatus = value.getString("messagingSenders");
-
-              if(groupAdmins == null || !groupAdmins.contains(currentUid)){
-                changeMessagingStatus(newMessagingStatus,currentMessagingSenders);
+              if(value.contains("messagingSenders")) {
+                currentMessagingSenders = value.getString("messagingSenders");
               }
-              currentMessagingSenders = newMessagingStatus;
 
-            }
-
-            if(groupAdmins != null && groupAdmins.contains(currentUid)){
-              toolbar.inflateMenu(R.menu.group_admin_menu);
             }else{
-              toolbar.inflateMenu(R.menu.group_user_menu);
+
+              groupAdmins = (List<String>) value.get("groupAdmins");
+
+              userISAnAdmin = groupAdmins.contains(currentUid);
+
+              if(value.contains("messagingSenders")){
+
+                String newMessagingStatus = value.getString("messagingSenders");
+
+                if(groupAdmins == null || !groupAdmins.contains(currentUid)){
+                  changeMessagingStatus(newMessagingStatus,currentMessagingSenders);
+                }
+                currentMessagingSenders = newMessagingStatus;
+
+              }
+
+              if(groupAdmins != null && groupAdmins.contains(currentUid)){
+                toolbar.inflateMenu(R.menu.group_admin_menu);
+              }else{
+                toolbar.inflateMenu(R.menu.group_user_menu);
+              }
             }
+
 
             isInitial[0] = false;
 
@@ -133,6 +149,9 @@ public class GroupMessagingActivity extends MessagingActivity{
               return;
             }
 
+            if(!userIsGroupCreator){
+
+
             if(value.contains("messagingSenders")){
               String newMessagingStatus = value.getString("messagingSenders");
 
@@ -148,6 +167,28 @@ public class GroupMessagingActivity extends MessagingActivity{
               }
             }
 
+            if(value.contains("groupAdmins")){
+              groupAdmins = (List<String>) value.get("groupAdmins");
+              if(!userISAnAdmin && groupAdmins.contains(currentUid)){
+                //user is now an admin
+//                toolbar.getMenu().setvi
+                userISAnAdmin = true;
+                toolbar.getMenu().clear();
+                toolbar.inflateMenu(R.menu.group_creator_menu);
+              }else if(userISAnAdmin && !groupAdmins.contains(currentUid)){
+                //user is removed from admins
+                userISAnAdmin = false;
+                toolbar.getMenu().clear();
+                toolbar.inflateMenu(R.menu.group_user_menu);
+              }
+            }
+            }else{
+
+              if(value.contains("messagingSenders")) {
+                currentMessagingSenders = value.getString("messagingSenders");
+              }
+
+            }
           }
         }
       }
@@ -334,14 +375,14 @@ public class GroupMessagingActivity extends MessagingActivity{
   @Override
   public boolean onMenuItemClick(MenuItem item) {
 
-    if (item.getItemId() == R.id.action_end_meeting) {
+    if(item.getItemId() == R.id.action_send_messages){
 
-      if (firebaseMessageDocRef != null) {
-        firebaseMessageDocRef.update("hasEnded", true).addOnSuccessListener(v -> finish());
+      if(userISAnAdmin || userIsGroupCreator){
+        showMessageSendingOptionsDialog(currentMessagingSenders);
+      }else{
+        Toast.makeText(this, "You are not an admin of this group anymore!",
+                Toast.LENGTH_SHORT).show();
       }
-    }else if(item.getItemId() == R.id.action_send_messages){
-
-      showMessageSendingOptionsDialog(currentMessagingSenders);
 
     }else if(item.getItemId() == R.id.action_leave_group){
 
@@ -351,10 +392,17 @@ public class GroupMessagingActivity extends MessagingActivity{
     }else if(item.getItemId() == R.id.action_edit_group){
 
 
-      startActivity(new Intent(GroupMessagingActivity.this, GroupEditingActivity.class)
-              .putExtra("firebaseMessageDocRefId", firebaseMessageDocRef.getId())
-              .putExtra("groupType","messagingGroup")
-              .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+      if(userISAnAdmin || userIsGroupCreator){
+        startActivity(new Intent(GroupMessagingActivity.this, GroupEditingActivity.class)
+                .putExtra("firebaseMessageDocRefId", firebaseMessageDocRef.getId())
+                .putExtra("groupType","messagingGroup")
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+      }else{
+        Toast.makeText(this, "You are not an admin of this group anymore!",
+                Toast.LENGTH_SHORT).show();
+      }
+
+
 
     }else if(item.getItemId() == R.id.action_group_info){
 

@@ -329,6 +329,68 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
 
   }
 
+  private void sendCommentLikeNotification(String userId,String body,String likeType) {
+
+    postsRef.document(postId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+      @Override
+      public void onSuccess(DocumentSnapshot snapshot) {
+
+        if (snapshot.exists()) {
+
+          if (!userId.
+                  equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+
+            final DocumentReference userRef =
+                    FirebaseFirestore.getInstance().collection("Users")
+                            .document(FirebaseAuth.getInstance()
+                                    .getCurrentUser().getUid());
+
+            userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+              @Override
+              public void onSuccess(DocumentSnapshot snapshot) {
+                if (snapshot.exists()) {
+                  final String username = snapshot.getString("username");
+                  final String imageUrl = snapshot.getString("imageUrl");
+
+                  final String currentUid =FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                  final String senderName =
+                          likeType.equals(FirestoreNotificationSender.TYPE_COMMENT_LIKE)?
+                  username + " Liked your comment":
+                  username + " Liked your comment";
+
+                  FirestoreNotificationSender.sendFirestoreNotification(
+                          userId, likeType,
+                          body,
+                          senderName
+                          , postId);
+
+                  final Data data = new Data(
+                          currentUid,
+                          body,
+                          senderName,
+                          null,
+                          "Comment Like",
+                          likeType,
+                          postId);
+
+                  if(imageUrl!=null && !imageUrl.isEmpty()){
+                    data.setSenderImageUrl(imageUrl);
+                  }
+
+                  CloudMessagingNotificationsSender.sendNotification(userId, data);
+                }
+              }
+            });
+          }
+        }
+      }
+    });
+
+
+  }
+
+
   @Override
   public void showReplies(RecyclerView repliesRv, int position, boolean isReplying) {
 
@@ -508,6 +570,12 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                               commentRef.update("likes", FieldValue.increment(-1));
 
                               likesTv.setClickable(true);
+
+                              if(!comment.getUserId().equals(currentUid)){
+                                sendCommentLikeNotification(comment.getUserId(),
+                                        comment.getComment(),
+                                        FirestoreNotificationSender.TYPE_COMMENT_LIKE);
+                              }
                             }
                           }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -520,8 +588,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
 
                       Toast.makeText(getContext(), R.string.failed_to_remove_like, Toast.LENGTH_SHORT).show();
 
-                      likesTv.setText(getResources().getString(R.string.likes) + " " +
-                              (comment.getLikes()));
+                      likesTv.setText(getResources().getString(R.string.likes) + " " + (comment.getLikes()));
 
                       likesTv.setClickable(true);
 
@@ -530,6 +597,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
 
 
                 } else {
+
 
 
                   comment.setLikes(comment.getLikes() + 1);
@@ -552,6 +620,8 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                               commentRef.update("likes", FieldValue.increment(1));
 
                               likesTv.setClickable(true);
+
+
 
                             }
                           }).addOnFailureListener(new OnFailureListener() {
@@ -581,7 +651,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
   public void likeReply(CommentReply reply, TextView likesTv, String commentId) {
 
 
-              if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
+         if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
 
               SigninUtil.getInstance(getContext(),
                       getActivity()).show();
@@ -618,6 +688,13 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                               replyRef.update("likes", FieldValue.increment(-1));
 
                               likesTv.setClickable(true);
+
+                              if(!reply.getUserId().equals(currentUid)){
+                                sendCommentLikeNotification(reply.getUserId(),reply.getReply(),
+                                        FirestoreNotificationSender.TYPE_COMMENT_LIKE);
+
+                              }
+
                             }
                           }).addOnFailureListener(new OnFailureListener() {
                     @Override

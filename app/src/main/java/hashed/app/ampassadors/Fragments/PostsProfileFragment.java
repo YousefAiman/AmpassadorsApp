@@ -180,7 +180,7 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
                         Query.Direction.DESCENDING).limit(10);
         postData = new ArrayList<>();
 
-        adapter = new PostAdapter(postData, getActivity());
+        adapter = new PostAdapter(postData, getActivity(),true);
         post_list = view.findViewById(R.id.userpost_recycler);
 
         post_list.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL,

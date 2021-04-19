@@ -31,6 +31,8 @@ public class PrivateMessage implements Serializable {
   private String fileName;
   @Exclude
   private UploadTask uploadTask;
+  @Exclude
+  private boolean stopPlayingAudio;
 
   @PropertyName("zoomMeeting")
   private ZoomMeeting zoomMeeting;
@@ -181,6 +183,14 @@ public class PrivateMessage implements Serializable {
 
   public void setFileName(String fileName) {
     this.fileName = fileName;
+  }
+
+  public boolean isStopPlayingAudio() {
+    return stopPlayingAudio;
+  }
+
+  public void setStopPlayingAudio(boolean stopPlayingAudio) {
+    this.stopPlayingAudio = stopPlayingAudio;
   }
 
   public static class UploadTask {

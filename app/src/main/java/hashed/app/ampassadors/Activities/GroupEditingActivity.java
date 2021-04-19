@@ -263,6 +263,12 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
                   updateItem(removedAdmin);
                 }
 
+                if(removedAdmins.contains(currentUid)){
+                  Toast.makeText(GroupEditingActivity.this,
+                          "You are not an admin of this group anymore!",
+                          Toast.LENGTH_SHORT).show();
+                  finish();
+                }
               }else{
                 Log.d("ttt","no removedAdmins");
               }
@@ -274,7 +280,22 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
                  for(String addAdmin:addedAdmins){
                    Log.d("ttt","addAdmin: "+addAdmin);
                    updateItem(addAdmin);
+
+                   if(usersIds!=null){
+                     if(!usersIds.contains(addAdmin) &&
+                             !addAdmin.equals(currentUid) && !addAdmin.equals(creatorId)){
+
+                       usersIds.add(addAdmin);
+
+                       updateParticipantsCount();
+
+                       if(userPreviews.size() < 10){
+                         getUsers(usersIds.subList(usersIds.size()-1,usersIds.size()));
+                       }
+                     }
+                   }
                  }
+
 
               }else{
                  Log.d("ttt","no addedAdmins");
@@ -396,7 +417,12 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
       changeAdminStatusTv.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+
           userUpdateDialog.cancel();
+
+          if(userId.equals(creatorId)){
+            return;
+          }
 
           if (adminsList != null && !adminsList.isEmpty() && adminsList.contains(userId)) {
 
@@ -414,7 +440,8 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
               public void onFailure(@NonNull Exception e) {
                 adminsList.add(userId);
               }
-            });;
+            });
+
           } else {
 
             if(adminsList == null){
@@ -450,7 +477,12 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
     removeUserFromGroupTv.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
+
         userUpdateDialog.cancel();
+
+        if(userId.equals(creatorId)){
+          return;
+        }
 
         if(newSelectedUserIdsList!=null && newSelectedUserIdsList.contains(userId)){
 
@@ -903,6 +935,8 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
 
             usersIds.add(snapshot.getKey());
 
+            updateParticipantsCount();
+
             if(userPreviews.size() < 10){
               getUsers(usersIds.subList(usersIds.size()-1,usersIds.size()));
             }
@@ -920,10 +954,12 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
 
         if(snapshot.exists() && usersIds!=null){
 
+          Log.d("groupEditing","child removed: "+snapshot.getKey());
           if(lastSelectedUserId!=null && userUpdateDialog!=null && userUpdateDialog.isShowing()){
             userUpdateDialog.cancel();
             Toast.makeText(GroupEditingActivity.this,
                     "This user was removed by another admin!", Toast.LENGTH_SHORT).show();
+            return;
           }
 
           if(usersIds.contains(snapshot.getKey())){

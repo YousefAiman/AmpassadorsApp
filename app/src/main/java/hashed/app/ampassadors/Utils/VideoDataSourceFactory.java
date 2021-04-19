@@ -69,6 +69,7 @@ public class VideoDataSourceFactory implements DataSource.Factory {
       Log.d("exoPlayerPlayback", "dir!= null && dir.isFile()");
       return dir.delete();
     } else {
+      Log.d("exoPlayerPlayback", "failed to delete file because it doesn't exist");
       return false;
     }
   }

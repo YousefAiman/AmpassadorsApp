@@ -38,12 +38,10 @@ public class WifiUtil {
 
     builder.addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
 
-
     builder.addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
             .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
             .addTransportType(NetworkCapabilities.TRANSPORT_VPN)
             .addTransportType(NetworkCapabilities.TRANSPORT_ETHERNET);
-
 
     ConnectivityManager.NetworkCallback networkCallback;
 
@@ -138,6 +136,7 @@ public class WifiUtil {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
       final NetworkCapabilities capabilities = cm.getNetworkCapabilities(cm.getActiveNetwork());
+
 
       if (capabilities != null &&
               (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)

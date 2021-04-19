@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:title="@string/more"
+    <item
         android:icon="@drawable/dots_more_icon"
-        app:showAsAction="always">
+        android:title="@string/more"
+        app:showAsAction="always|collapseActionView">
         <menu>
 
-            <item android:id="@+id/action_delete_group"
-                android:title="@string/delete_group"
-                android:icon="@drawable/ic_baseline_delete_post"/>
-
-            <item android:id="@+id/action_edit_group"
-                android:title="@string/edit_group"
-                android:icon="@drawable/ic_baseline_edit"/>
-
-            <item android:id="@+id/action_send_messages"
+            <item
+                android:id="@+id/action_send_messages"
+                android:icon="@drawable/send_icon"
                 android:title="@string/send_messages"
-                android:icon="@drawable/edit_icon_white"/>
+                app:showAsAction="always" />
+
+
+            <item
+                android:id="@+id/action_edit_group"
+                android:icon="@drawable/ic_baseline_edit"
+                android:title="@string/edit_group" />
+
+            <item
+                android:id="@+id/action_leave_group"
+                android:title="@string/leave_group"
+                app:showAsAction="ifRoom" />
 
         </menu>
     </item>

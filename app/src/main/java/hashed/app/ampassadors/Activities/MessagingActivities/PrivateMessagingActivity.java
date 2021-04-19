@@ -116,6 +116,8 @@ public class PrivateMessagingActivity extends MessagingActivity{
               FirebaseFirestore.getInstance().collection("PrivateMessages")
                       .document(currentMessagingRef.getKey());
 
+      databaseMessagesRef = currentMessagingRef.child("messages");
+
       firebaseMessageDocRef.set(messageDocumentPreviewMap);
 
       createMessagesListener();
@@ -185,6 +187,7 @@ public class PrivateMessagingActivity extends MessagingActivity{
       data.setBody(body);
     }
     CloudMessagingNotificationsSender.sendNotification(messagingUid, data);
+
   }
 
 

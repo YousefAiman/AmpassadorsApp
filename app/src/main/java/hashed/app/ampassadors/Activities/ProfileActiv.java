@@ -131,10 +131,9 @@ FirebaseFirestore fStore;
             query = firebaseFirestore.collection("Users").
                     document(mn)
                     .collection("UserPosts")
-                    .orderBy("publishTime",
-                            Query.Direction.DESCENDING).limit(10);
+                    .orderBy("publishTime", Query.Direction.DESCENDING).limit(10);
             postData = new ArrayList<>();
-            adapter = new PostAdapter(postData, ProfileActiv.this);
+            adapter = new PostAdapter(postData, ProfileActiv.this,true);
             post_list = findViewById(R.id.userpost_recycler);
             post_list.setLayoutManager(new LinearLayoutManager(ProfileActiv.this, RecyclerView.VERTICAL,
                     false));
