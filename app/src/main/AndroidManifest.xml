@@ -22,25 +22,28 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AmpassadorsApp">
 
-        <activity android:name=".Activities.GroupInfoActivity"
-            android:screenOrientation="portrait" />
+        <activity android:name=".Activities.NotificationSenderActivity"/>
 
-        <activity android:name=".Activities.MessagingActivities.CourseMessagingActivity"
+        <activity
+            android:name=".Activities.GroupInfoActivity"
             android:screenOrientation="portrait" />
-
-        <activity android:name=".Activities.MessagingActivities.MeetingMessagingActivity"
+        <activity
+            android:name=".Activities.MessagingActivities.CourseMessagingActivity"
             android:screenOrientation="portrait" />
-
-        <activity android:name=".Activities.MessagingActivities.GroupMessagingActivity"
+        <activity
+            android:name=".Activities.MessagingActivities.MeetingMessagingActivity"
             android:screenOrientation="portrait" />
-
-        <activity android:name=".Activities.MessagingActivities.PrivateMessagingActivity"
+        <activity
+            android:name=".Activities.MessagingActivities.GroupMessagingActivity"
             android:screenOrientation="portrait" />
-
-        <activity android:name=".Activities.MessagingActivities.MessagingActivity"
+        <activity
+            android:name=".Activities.MessagingActivities.PrivateMessagingActivity"
             android:screenOrientation="portrait" />
-
-        <activity android:name=".Activities.GroupEditingActivity"
+        <activity
+            android:name=".Activities.MessagingActivities.MessagingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.GroupEditingActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.MeetingActivity"
@@ -152,12 +155,12 @@
         <activity
             android:name=".Activities.SuggestionsActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

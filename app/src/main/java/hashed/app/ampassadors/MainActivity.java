@@ -19,6 +19,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
 
 import hashed.app.ampassadors.Activities.ConnectionActivity;
 import hashed.app.ampassadors.Activities.Home_Activity;
@@ -82,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
                   addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
+
 
                       GlobalVariables.setRole(documentSnapshot.getString("Role"));
                       if(documentSnapshot.contains("token")){

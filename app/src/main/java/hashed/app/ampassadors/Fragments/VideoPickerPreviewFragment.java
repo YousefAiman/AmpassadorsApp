@@ -17,6 +17,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
@@ -173,7 +174,7 @@ public class VideoPickerPreviewFragment extends Fragment {
                     "simpleExoPlayer"));
 
     MediaSource firstSource = new ProgressiveMediaSource.Factory(dataSourceFactory)
-            .createMediaSource(fileDataSource.getUri());
+            .createMediaSource(MediaItem.fromUri(fileDataSource.getUri()));
 
     simpleExoPlayer.prepare(firstSource, true, true);
 

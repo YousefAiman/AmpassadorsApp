@@ -44,7 +44,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
   private final NotificationDeleter notificationDeleter;
 
   public interface NotificationDeleter{
-    public void deleteNotification(Notification notification);
+    void deleteNotification(Notification notification);
   }
 
   public NotificationsAdapter(ArrayList<Notification> notifications, int type,
@@ -273,9 +273,25 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
           notificationDeleter.deleteNotification(notification);
 
-          view.getContext().startActivity(new Intent(view.getContext(), PostNewsActivity.class)
+          Intent intent = new Intent(view.getContext(), PostNewsActivity.class)
                   .putExtra("postId", notification.getDestinationId())
-                  .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                  .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+          FirebaseFirestore.getInstance().collection("Users")
+                  .document(notification.getReceiverId())
+                  .collection("UserPosts")
+                  .document(notification.getDestinationId())
+                  .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+              if(documentSnapshot.exists()){
+                intent.putExtra("isForUser",true);
+                intent.putExtra("publisherId",notification.getReceiverId());
+              }
+
+              view.getContext().startActivity(intent);
+            }
+          });
 
 //          final ProgressDialog progressDialog = new ProgressDialog(itemView.getContext());
 //          progressDialog.show();

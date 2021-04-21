@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
@@ -358,7 +359,7 @@ public class Edit_Post extends AppCompatActivity implements View.OnClickListener
                         "simpleExoPlayer"));
 
         MediaSource firstSource = new ProgressiveMediaSource.Factory(dataSourceFactory)
-                .createMediaSource(fileDataSource.getUri());
+                .createMediaSource(MediaItem.fromUri(fileDataSource.getUri()));
 
         simpleExoPlayer.prepare(firstSource, true, true);
 

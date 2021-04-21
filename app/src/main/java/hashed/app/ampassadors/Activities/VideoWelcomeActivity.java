@@ -94,10 +94,9 @@ public class VideoWelcomeActivity extends AppCompatActivity implements View.OnCl
     DefaultDataSourceFactory mediaDataSourceFactory = new
             DefaultDataSourceFactory(this, Util.getUserAgent(this, getString(R.string.app_name)));
 
-    MediaItem mediaItem = MediaItem.fromUri(videoUrl);
 
     MediaSource mediaSource = new ProgressiveMediaSource.Factory(mediaDataSourceFactory)
-            .createMediaSource(mediaItem);
+            .createMediaSource(MediaItem.fromUri(videoUrl));
 
     exoPlayer.setMediaSource(mediaSource);
     exoPlayer.prepare();
@@ -105,8 +104,8 @@ public class VideoWelcomeActivity extends AppCompatActivity implements View.OnCl
 
     exoPlayer.addListener(new Player.EventListener() {
       @Override
-      public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        if (playbackState == SimpleExoPlayer.STATE_ENDED) {
+      public void onPlaybackStateChanged(int state) {
+        if (state == SimpleExoPlayer.STATE_ENDED) {
           playIv.setImageResource(R.drawable.replay_icon_white);
           playIv.setVisibility(View.VISIBLE);
         }

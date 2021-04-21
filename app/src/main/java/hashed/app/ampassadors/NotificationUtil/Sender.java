@@ -1,6 +1,6 @@
 package hashed.app.ampassadors.NotificationUtil;
 
-class Sender {
+public class Sender {
   private final Data data;
   private final String to;
 

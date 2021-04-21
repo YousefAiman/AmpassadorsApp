@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -30,7 +31,6 @@ import hashed.app.ampassadors.Utils.GlobalVariables;
 
 public class NotificationClickReceiver extends BroadcastReceiver {
 
-
   @Override
   public void onReceive(Context context, Intent intent) {
 
@@ -39,8 +39,8 @@ public class NotificationClickReceiver extends BroadcastReceiver {
 
       Log.d("ttt","has both extras");
 
-      String sourceType = intent.getStringExtra("sourceType");
-      String sourceId = intent.getStringExtra("sourceId");
+      final String sourceType = intent.getStringExtra("sourceType");
+      final String sourceId = intent.getStringExtra("sourceId");
 
       if (GlobalVariables.isAppIsRunning()) {
 
@@ -84,22 +84,37 @@ public class NotificationClickReceiver extends BroadcastReceiver {
               fetchObjectAndStartIntent(MeetingActivity.class,context,"Meetings",
                       Meeting.class,sourceId,"meeting");
 
-
+              break;
             case FirestoreNotificationSender.TYPE_LIKE:
             case FirestoreNotificationSender.TYPE_COMMENT:
 
-              Intent postIntent =
-                      new Intent(context, PostNewsActivity.class)
-                      .putExtra("postId",sourceId)
-                      .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+              Intent postIntent = new Intent(context, PostNewsActivity.class)
+                      .putExtra("postId",sourceId).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-              context.startActivity(postIntent);
+              final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+              FirebaseFirestore.getInstance().collection("Users")
+                      .document(currentUid)
+                      .collection("UserPosts")
+                      .document(sourceId)
+                      .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                  if(documentSnapshot.exists()){
+                    intent.putExtra("isForUser",true);
+                    intent.putExtra("publisherId",currentUid);
+                  }
+
+                  context.startActivity(postIntent);
+                }
+              });
+
+              break;
             case FirestoreNotificationSender.TYPE_COURSE_STARTED:
 
               fetchObjectAndStartIntent(CourseActivity.class,context,"Courses",
                       Course.class,sourceId,"course");
-
+              break;
           }
         }
 

@@ -19,6 +19,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
@@ -159,7 +160,7 @@ public class VideoFullScreenFragment extends DialogFragment {
 
     final MediaSource mediaSource =
             new ProgressiveMediaSource.Factory(new VideoDataSourceFactory(getContext()))
-                    .createMediaSource(Uri.parse(videoUrl));
+                    .createMediaSource(MediaItem.fromUri(videoUrl));
 
     exoPlayer.setPlayWhenReady(true);
     exoPlayer.prepare(mediaSource);

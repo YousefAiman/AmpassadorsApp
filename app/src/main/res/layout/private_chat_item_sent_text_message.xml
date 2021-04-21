@@ -34,10 +34,6 @@
             android:textColorLink="@color/white_grey"
             android:textIsSelectable="true"
             android:textSize="18sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline11"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_default="percent"
             app:layout_constraintWidth_max="wrap" />
 
     </FrameLayout>
