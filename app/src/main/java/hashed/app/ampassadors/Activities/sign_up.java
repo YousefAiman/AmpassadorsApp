@@ -170,13 +170,12 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                ActivityCompat.requestPermissions(sign_up.this, new String[]{Manifest.permission.CAMERA,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+//                ActivityCompat.requestPermissions(sign_up.this, new String[]{Manifest.permission.CAMERA,
+//                        Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
                 SelectImage(sign_up.this);
             }
         });
     }
-
     private void signUp() {
 
         reference = firebaseFirestore.collection("Users");
@@ -472,6 +471,8 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                     if (ActivityCompat.checkSelfPermission(sign_up.this,Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
 
                         Intent pikPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        ActivityCompat.requestPermissions(sign_up.this, new String[]{Manifest.permission.CAMERA,}, 1);
+
                         startActivityForResult(pikPhoto, 1);
 
                     }else {
@@ -499,6 +500,9 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                     if (ActivityCompat.checkSelfPermission(sign_up.this,Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
 
                         Intent pikPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                        ActivityCompat.requestPermissions(sign_up.this, new String[]{
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 2);
+
                         startActivityForResult(pikPhoto, 2);
 
                     }else {
