@@ -226,7 +226,7 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
 
             PostData.likePost(postData.getPostId(),postData.getTitle(), 2,
                     postData.getPublisherId(), this
-                    ,getIntent().hasExtra("isForUser"));
+                    ,getIntent().hasExtra("isForUser"),likeTv);
           } else {
             likeTv.setTextColor(getResources().getColor(R.color.red));
 
@@ -235,7 +235,7 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
 
             PostData.likePost(postData.getPostId(),postData.getTitle(), 1,
                     postData.getPublisherId(), this
-                    ,getIntent().hasExtra("isForUser"));
+                    ,getIntent().hasExtra("isForUser"),likeTv);
 
 
           }

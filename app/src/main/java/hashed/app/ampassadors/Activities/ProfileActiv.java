@@ -98,6 +98,9 @@ FirebaseFirestore fStore;
         frameLayout = findViewById(R.id.frameLayout);
         collectionReference = FirebaseFirestore.getInstance().collection("Users");
         swipeRefresh.setOnRefreshListener(this);
+
+        id = getIntent().getStringExtra("userId");
+
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -187,7 +190,7 @@ FirebaseFirestore fStore;
         updatedQuery.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                if (!queryDocumentSnapshots.isEmpty()) {
+                if (queryDocumentSnapshots!=null && !queryDocumentSnapshots.isEmpty()) {
                     lastDocSnap = queryDocumentSnapshots.getDocuments().get(
                             queryDocumentSnapshots.size() - 1
                     );

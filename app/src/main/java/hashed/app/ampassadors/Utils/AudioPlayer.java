@@ -154,9 +154,11 @@ public class AudioPlayer implements Slider.OnSliderTouchListener
 
     slider.setValue(0);
 
-    mediaPlayer.stop();
-    mediaPlayer.release();
-    mediaPlayer = null;
+    if(mediaPlayer!=null){
+      mediaPlayer.stop();
+      mediaPlayer.release();
+      mediaPlayer = null;
+    }
 
   }
 

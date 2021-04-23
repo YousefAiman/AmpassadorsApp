@@ -145,6 +145,15 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     final Map<String, String> data = remoteMessage.getData();
     final String type = data.get("type");
 
+    final String identifierTitle = data.get("sourceId") + data.get("sourceType");
+
+    if (GlobalVariables.getMessagesNotificationMap().containsKey(identifierTitle)
+    && !(type.equals("Group Messages") || type.equals("Private Messages")
+            || type.equals("Course Messages") || type.equals("Meeting Messages"))) {
+      Log.d("ttt", "already received this notifacaiton and iut's not a message");
+      return;
+    }
+
     Log.d("ttt", "type: " + type);
     createChannel(type);
 
@@ -186,7 +195,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 //    if (GlobalVariables.getMessagesNotificationMap() == null)
 //      GlobalVariables.setMessagesNotificationMap(new HashMap<>());
 
-      final String identifierTitle = data.get("sourceId") + data.get("sourceType");
+
 
       builder.setDeleteIntent(
               PendingIntent.getBroadcast(this, notificationNum,
@@ -243,12 +252,12 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
       } else {
 
+        GlobalVariables.getMessagesNotificationMap().put(identifierTitle, notificationNum);
+
         if (Build.VERSION.SDK_INT < 26) {
           BadgeUtil.incrementBadgeNum(this);
         }
         notificationNum++;
-
-        GlobalVariables.getMessagesNotificationMap().put(identifierTitle, notificationNum);
 
 
         final PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
@@ -259,7 +268,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
         notificationManager.notify(notificationNum, builder.build());
 
-        listenToNotificationRemoval(data,notificationNum);
+//        listenToNotificationRemoval(data,notificationNum);
 
       }
     }

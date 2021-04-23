@@ -55,7 +55,6 @@ import hashed.app.ampassadors.Activities.PostNewActivity;
 import hashed.app.ampassadors.Activities.Profile;
 import hashed.app.ampassadors.Activities.profile_edit;
 import hashed.app.ampassadors.Adapters.PostAdapter;
-import hashed.app.ampassadors.Adapters.UserPostAdapter;
 import hashed.app.ampassadors.BroadcastReceivers.NotificationIndicatorReceiver;
 import hashed.app.ampassadors.BuildConfig;
 import hashed.app.ampassadors.Objects.PostData;

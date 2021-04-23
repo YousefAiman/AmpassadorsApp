@@ -64,9 +64,6 @@
             android:name=".Activities.PostsSearchActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activities.Edit_Post"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".Activities.VideoWelcomeActivity"
             android:screenOrientation="portrait" />
         <activity

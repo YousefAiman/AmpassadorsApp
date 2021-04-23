@@ -148,7 +148,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
                     getUserInfo();
 
-                    if (!user.isAnonymous()) {
+                    if (user != null && !user.isAnonymous()) {
                         if (postData.getPublisherId().equals(user.getUid())) {
                             toolbar.inflateMenu(R.menu.post_menu);
 
@@ -156,7 +156,6 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
                             toolbar.inflateMenu(R.menu.admin_menu);
                         } else {
                             toolbar.inflateMenu(R.menu.users_post_menu);
-
                         }
                     }
 
@@ -333,7 +332,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
                 PostData.likePost(postData.getPostId(), postData.getTitle(), 2,
                         postData.getPublisherId(), this,
-                        getIntent().hasExtra("isForUser"));
+                        getIntent().hasExtra("isForUser"),likeTv);
 
             } else {
 
@@ -344,7 +343,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
                 PostData.likePost(postData.getPostId(), postData.getTitle(), 1,
                         postData.getPublisherId(), this,
-                        getIntent().hasExtra("isForUser"));
+                        getIntent().hasExtra("isForUser"),likeTv);
 
             }
         }

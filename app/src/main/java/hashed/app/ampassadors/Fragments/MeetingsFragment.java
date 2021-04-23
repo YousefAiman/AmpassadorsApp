@@ -171,13 +171,12 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
 
 
     if(!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
-      if (GlobalVariables.getRole().equals("Admin") ||
-              GlobalVariables.getRole().equals("Coordinator")){
-
-        floatingButton.setVisibility(View.VISIBLE);
-//        deleteMeetingsBtn.setVisibility(View.VISIBLE);
-        floatingButton.setOnClickListener(this);
-//        deleteMeetingsBtn.setOnClickListener(this);
+      if(GlobalVariables.getRole()!=null){
+        if (GlobalVariables.getRole().equals("Admin") ||
+                GlobalVariables.getRole().equals("Coordinator")){
+          floatingButton.setVisibility(View.VISIBLE);
+          floatingButton.setOnClickListener(this);
+        }
       }
     }
 
