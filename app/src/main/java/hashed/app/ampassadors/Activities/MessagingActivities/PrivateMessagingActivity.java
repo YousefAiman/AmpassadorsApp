@@ -114,7 +114,8 @@ public class PrivateMessagingActivity extends MessagingActivity{
 
       firebaseMessageDocRef =
               FirebaseFirestore.getInstance().collection("PrivateMessages")
-                      .document(currentMessagingRef.getKey());
+                      .document(currentMessagingRef.getKey()!=null?
+      currentMessagingRef.getKey():messagingUid);
 
       databaseMessagesRef = currentMessagingRef.child("messages");
 

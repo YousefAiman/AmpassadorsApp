@@ -3,12 +3,16 @@ package hashed.app.ampassadors.Objects;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.util.Log;
+import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -134,8 +138,11 @@ public class PostData implements Serializable {
     this.type = type;
   }
 
-  public static void likePost(String postId,String postTitle, int type,
-                              String creatorId, Context context,boolean isUserPost) {
+  public static void likePost(String postId, String postTitle, int type,
+                              String creatorId, Context context, boolean isUserPost,
+                              View likeView) {
+
+    likeView.setClickable(false);
 
     if (type == 1) {
 
@@ -161,52 +168,102 @@ public class PostData implements Serializable {
                 @Override
                 public void onSuccess(Void v) {
 
-                  documentReference.update("likes", FieldValue.increment(1));
-
                   final String currentUid = FirebaseAuth.getInstance()
                           .getCurrentUser().getUid();
 
                   final DocumentReference userRef =
                           FirebaseFirestore.getInstance().collection("Users")
                                   .document(currentUid);
-                  userRef.update("Likes", FieldValue.arrayUnion(postId));
 
-                  if(!creatorId.equals(currentUid)) {
-                    userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                      @Override
-                      public void onSuccess(DocumentSnapshot snapshot) {
-                        if (snapshot.exists()) {
-                          final String username = snapshot.getString("username");
-                          final String imageUrl = snapshot.getString("imageUrl");
+                  userRef.update("Likes", FieldValue.arrayUnion(postId))
+                  .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
 
-                          final String message = username + " " + context.getResources()
-                                  .getString(R.string.liked_post);
+                      documentReference.update("likes", FieldValue.increment(1))
+                      .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
 
-                          FirestoreNotificationSender.sendFirestoreNotification(
-                                  creatorId, FirestoreNotificationSender.TYPE_LIKE,
-                                  message, username, postId);
+                          if(!creatorId.equals(currentUid)) {
 
-                          final Data data = new Data(
-                                  currentUid,
-                                  message,
-                                  postTitle,
-                                  null,
-                                  "Post Like",
-                                  FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE,
-                                  postId);
+                            final String notificationPath = creatorId + "_" + postId + "_" + FirestoreNotificationSender.TYPE_LIKE;
 
-                          if (imageUrl != null && !imageUrl.isEmpty()) {
-                            data.setSenderImageUrl(imageUrl);
+                            FirebaseFirestore.getInstance().collection("Notifications").document(notificationPath)
+                                    .get().addOnSuccessListener(documentSnapshot -> {
+                              if (!documentSnapshot.exists()) {
+
+                                userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                  @Override
+                                  public void onSuccess(DocumentSnapshot snapshot) {
+                                    if (snapshot.exists()) {
+                                      final String username = snapshot.getString("username");
+                                      final String imageUrl = snapshot.getString("imageUrl");
+
+                                      final String message = username + " " + context.getResources()
+                                              .getString(R.string.liked_post);
+
+                                      FirestoreNotificationSender.sendFirestoreNotification(
+                                              creatorId, FirestoreNotificationSender.TYPE_LIKE,
+                                              message, username, postId);
+
+                                      final Data data = new Data(
+                                              currentUid,
+                                              message,
+                                              postTitle,
+                                              null,
+                                              "Post Like",
+                                              FirestoreNotificationSender.TYPE_LIKE,
+                                              postId);
+
+                                      if (imageUrl != null && !imageUrl.isEmpty()) {
+                                        data.setSenderImageUrl(imageUrl);
+                                      }
+
+                                      CloudMessagingNotificationsSender.sendNotification(creatorId, data);
+
+                                    }
+                                  }
+                                }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                  @Override
+                                  public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    likeView.setClickable(true);
+                                  }
+                                });
+                              }
+                            }).addOnFailureListener(new OnFailureListener() {
+                              @Override
+                              public void onFailure(@NonNull Exception e) {
+                                likeView.setClickable(true);
+                              }
+                            });
+
                           }
 
-                          CloudMessagingNotificationsSender.sendNotification(creatorId, data);
-
                         }
-                      }
-                    });
-                  }
+                      }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                          likeView.setClickable(true);
+                        }
+                      });
+
+                    }
+                  }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                      likeView.setClickable(true);
+                    }
+                  });
+
+
                 }
-              });
+              }).addOnFailureListener(new OnFailureListener() {
+        @Override
+        public void onFailure(@NonNull Exception e) {
+          likeView.setClickable(true);
+        }
+      });
 
     } else {
 
@@ -227,25 +284,46 @@ public class PostData implements Serializable {
 
       documentReference
               .collection("Likes")
-              .document()
+              .document(currentUid)
               .delete()
               .addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
 
-                  FirebaseFirestore.getInstance().collection("Posts")
-                          .document(postId).update("likes", FieldValue.increment(-1));
-
                   FirebaseFirestore.getInstance().collection("Users")
                           .document(currentUid)
-                          .update("Likes", FieldValue.arrayRemove(postId));
+                          .update("Likes", FieldValue.arrayRemove(postId))
+                          .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                              FirebaseFirestore.getInstance().collection("Posts")
+                                      .document(postId).update("likes", FieldValue.increment(-1))
+                              .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                  likeView.setClickable(true);
+                                }
+                              });
+                            }
+                          })
+                  .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                      likeView.setClickable(true);
+                    }
+                  });
 
                   FirestoreNotificationSender.deleteFirestoreNotification(
                           postId,
                           "postLike"
                   );
                 }
-              });
+              }).addOnFailureListener(new OnFailureListener() {
+        @Override
+        public void onFailure(@NonNull Exception e) {
+          likeView.setClickable(true);
+        }
+      });
 
     }
 

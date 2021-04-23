@@ -131,10 +131,9 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
       documentReference = postsRef.document(postId);
     }
 
-
-
     commentsQuery = documentReference.collection("Comments")
             .limit(COMMENTS_SIZE).orderBy("likes", Query.Direction.DESCENDING);
+
   }
 
   @Override
@@ -146,7 +145,6 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
     commentsRv = view.findViewById(R.id.commentsRv);
     commentSubmitIv = view.findViewById(R.id.commentSubmitIv);
     commentCountTv = view.findViewById(R.id.commentCountTv);
-
 
     commentSubmitIv.setOnClickListener(this);
 
@@ -427,7 +425,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                           body,
                           senderName,
                           null,
-                          "Comment Like",
+                          FirestoreNotificationSender.TYPE_COMMENT_LIKE,
                           likeType,
                           postId);
 

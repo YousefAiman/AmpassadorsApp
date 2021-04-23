@@ -301,10 +301,19 @@ public class MessagesFragment extends Fragment{
 
                         privateMessagePreview.setSender(creatorId);
 
-                        if(creatorId.equals(currentUid)){
+                        if(creatorId != null && creatorId.equals(currentUid)){
 
                           final List<String> users = (List<String>) document.get("users");
-                          users.remove(currentUid);
+
+                          if(users!=null){
+                            users.remove(currentUid);
+                            privateMessagePreview.setContent("You added "+users.size()
+                                    +" users to this group.");
+                          }else{
+                            privateMessagePreview.setContent("You added multiple" +
+                                    " users to this group.");
+                          }
+
 //                                    if(users.size() == 2){
 //
 //                                      privateMessagePreview.setContent("You added ");
@@ -339,8 +348,6 @@ public class MessagesFragment extends Fragment{
 //                                      +" users to this group.");
 //
 //                                    }
-                          privateMessagePreview.setContent("You added "+users.size()
-                                  +" users to this group.");
 
                         }else{
                           privateMessagePreview.setContent("added you to this group");
