@@ -160,7 +160,7 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
 
 
     toolbar.getMenu().findItem(R.id.action_notifications)
-            .setIcon(GlobalVariables.getNotificationsCount() > 0 ?
+            .setIcon(GlobalVariables.getInstance().getNotificationsCount() > 0 ?
                     R.drawable.notification_indicator_icon :
                     R.drawable.notification_icon);
 
@@ -171,9 +171,9 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
 
 
     if(!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
-      if(GlobalVariables.getRole()!=null){
-        if (GlobalVariables.getRole().equals("Admin") ||
-                GlobalVariables.getRole().equals("Coordinator")){
+      if(GlobalVariables.getInstance().getRole()!=null){
+        if (GlobalVariables.getInstance().getRole().equals("Admin") ||
+                GlobalVariables.getInstance().getRole().equals("Coordinator")){
           floatingButton.setVisibility(View.VISIBLE);
           floatingButton.setOnClickListener(this);
         }

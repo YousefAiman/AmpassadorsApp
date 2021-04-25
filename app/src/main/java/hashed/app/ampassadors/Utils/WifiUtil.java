@@ -79,7 +79,7 @@ public class WifiUtil {
 //                              }
 //                            });
 
-                    GlobalVariables.setWifiIsOn(true);
+                    GlobalVariables.getInstance().setWifiIsOn(true);
                   }
 
                   Log.d("ttt", "network is on man");
@@ -101,7 +101,7 @@ public class WifiUtil {
                 if (activeNetworks.size() == 0) {
 
                   if (GlobalVariables.isWifiIsOn()) {
-                    GlobalVariables.setWifiIsOn(false);
+                    GlobalVariables.getInstance().setWifiIsOn(false);
                   }
 
                   Log.d("ttt", "wifi offline: " + network.toString());
@@ -113,7 +113,7 @@ public class WifiUtil {
             });
 
 
-    GlobalVariables.setRegisteredNetworkCallback(networkCallback);
+    GlobalVariables.getInstance().setRegisteredNetworkCallback(networkCallback);
 
 
   }
@@ -123,7 +123,7 @@ public class WifiUtil {
     final IntentFilter intentFilter = new IntentFilter();
     intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
     final WifiReceiver wifiReceiver = new WifiReceiver();
-    GlobalVariables.setCurrentWifiReceiver(wifiReceiver);
+    GlobalVariables.getInstance().setCurrentWifiReceiver(wifiReceiver);
     context.registerReceiver(wifiReceiver, intentFilter);
 
   }

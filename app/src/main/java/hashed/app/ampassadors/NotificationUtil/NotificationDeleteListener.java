@@ -15,8 +15,8 @@ public class NotificationDeleteListener extends BroadcastReceiver {
     Log.d("ttt", "notification dismissedd man!!");
 
     if (intent.hasExtra("notificationIdentifierTitle") &&
-            GlobalVariables.getMessagesNotificationMap() != null)
-      GlobalVariables.getMessagesNotificationMap().remove(
+            GlobalVariables.getInstance().getMessagesNotificationMap() != null)
+      GlobalVariables.getInstance().getMessagesNotificationMap().remove(
               intent.getStringExtra("notificationIdentifierTitle"));
 
   }

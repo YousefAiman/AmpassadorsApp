@@ -19,7 +19,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -84,6 +86,8 @@ public class PrivateMessagingActivity extends MessagingActivity{
   @Override
   void createMessagingDocument(PrivateMessage privateMessage) {
 
+    removeSenderFirstMessageListener();
+
     final Map<String, Object> messagingDocumentMap = new HashMap<>();
 
     messagingDocumentMap.put("DeletedFor:" + currentUid, false);
@@ -120,6 +124,8 @@ public class PrivateMessagingActivity extends MessagingActivity{
       databaseMessagesRef = currentMessagingRef.child("messages");
 
       firebaseMessageDocRef.set(messageDocumentPreviewMap);
+
+      sendNotification(privateMessage);
 
       createMessagesListener();
 
@@ -308,7 +314,6 @@ public class PrivateMessagingActivity extends MessagingActivity{
 
     privateMessagingRv.setAdapter(adapter);
 
-
     messagingDatabaseRef.child(currentUid + "-" + messagingUid)
               .addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -326,6 +331,7 @@ public class PrivateMessagingActivity extends MessagingActivity{
                               public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                                 if (snapshot.exists()) {
+                                  Log.d("ttt","on data changed for single event value man");
                                   messagesProgressBar.setVisibility(View.VISIBLE);
                                   fetchMessagesFromSnapshot(snapshot);
 
@@ -336,6 +342,80 @@ public class PrivateMessagingActivity extends MessagingActivity{
                                   firebaseMessageDocRef = FirebaseFirestore.getInstance()
                                           .collection("PrivateMessages")
                                           .document(currentMessagingRef.getKey());
+
+
+                                  ValueEventListener valueEventListener;
+
+                                  DatabaseReference senderFirstMessageRef
+                                           = messagingDatabaseRef.child(messagingUid + "-" + currentUid);
+
+                                  senderFirstMessageRef.addValueEventListener(valueEventListener = new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                              if(snapshot!=null && snapshot.exists()){
+
+                                                Log.d("ttt","on data changed");
+                                                removeSenderFirstMessageListener();
+
+                                                currentMessagingRef = messagingDatabaseRef
+                                                        .child(messagingUid + "-" + currentUid);
+
+                                                firebaseMessageDocRef = FirebaseFirestore.getInstance()
+                                                        .collection("PrivateMessages")
+                                                        .document(currentMessagingRef.getKey());
+
+                                                messagesProgressBar.setVisibility(View.VISIBLE);
+                                                fetchMessagesFromSnapshot(snapshot);
+
+                                              }
+
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                          });
+
+                                  if(valueEventListeners == null){
+                                    valueEventListeners = new HashMap<>();
+                                  }
+
+                                  valueEventListeners.put(
+                                          messagingDatabaseRef.child(messagingUid + "-" + currentUid)
+                                          , valueEventListener);
+
+
+//                                  FirebaseFirestore.getInstance()
+//                                          .collection("PrivateMessages")
+//                                          .document(messagingUid + "-" + currentUid)
+//                                          .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+//                                            @Override
+//                                            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+//
+//                                              if(value!=null && value.exists()){
+//
+//                                                Log.d("ttt","added to firestore: "+value.getId());
+//
+//
+////                                                currentMessagingRef.addListenerForSingleValueEvent(new ValueEventListener() {
+////                                                  @Override
+////                                                  public void onDataChange(@NonNull DataSnapshot snapshot) {
+////                                                    if(snapshot.exists()){
+////                                                      fetchMessagesFromSnapshot(snapshot);
+////                                                    }
+////                                                  }
+////
+////                                                  @Override
+////                                                  public void onCancelled(@NonNull DatabaseError error) {
+////
+////                                                  }
+////                                                });
+////
+//                                              }
+//                                            }
+//                                          });
 
                                   messageSendIv.setOnClickListener(new FirstMessageClickListener());
                                   messageAttachIv.setClickable(true);
@@ -414,4 +494,16 @@ public class PrivateMessagingActivity extends MessagingActivity{
     return false;
   }
 
+
+  private void removeSenderFirstMessageListener(){
+
+    Log.d("ttt", "removeSenderFirstMessageListener: removed");
+
+    DatabaseReference senderFirstMessageRef
+            = messagingDatabaseRef.child(messagingUid + "-" + currentUid);
+    senderFirstMessageRef.removeEventListener(
+            Objects.requireNonNull(valueEventListeners.get(
+                    senderFirstMessageRef.getRef())));
+    valueEventListeners.remove(senderFirstMessageRef.getRef());
+  }
 }

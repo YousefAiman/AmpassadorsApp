@@ -168,8 +168,7 @@ public class PostData implements Serializable {
                 @Override
                 public void onSuccess(Void v) {
 
-                  final String currentUid = FirebaseAuth.getInstance()
-                          .getCurrentUser().getUid();
+                  final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
                   final DocumentReference userRef =
                           FirebaseFirestore.getInstance().collection("Users")
@@ -187,9 +186,11 @@ public class PostData implements Serializable {
 
                           if(!creatorId.equals(currentUid)) {
 
-                            final String notificationPath = creatorId + "_" + postId + "_" + FirestoreNotificationSender.TYPE_LIKE;
+                            final String notificationPath = creatorId + "_" + postId + "_" +
+                                    FirestoreNotificationSender.TYPE_LIKE;
 
-                            FirebaseFirestore.getInstance().collection("Notifications").document(notificationPath)
+                            FirebaseFirestore.getInstance().collection("Notifications")
+                                    .document(notificationPath)
                                     .get().addOnSuccessListener(documentSnapshot -> {
                               if (!documentSnapshot.exists()) {
 
@@ -230,6 +231,8 @@ public class PostData implements Serializable {
                                     likeView.setClickable(true);
                                   }
                                 });
+                              }else{
+                                likeView.setClickable(true);
                               }
                             }).addOnFailureListener(new OnFailureListener() {
                               @Override
@@ -238,6 +241,8 @@ public class PostData implements Serializable {
                               }
                             });
 
+                          }else{
+                            likeView.setClickable(true);
                           }
 
                         }
@@ -296,17 +301,20 @@ public class PostData implements Serializable {
                           .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                              FirebaseFirestore.getInstance().collection("Posts")
-                                      .document(postId).update("likes", FieldValue.increment(-1))
-                              .addOnCompleteListener(new OnCompleteListener<Void>() {
+                              documentReference.update("likes", FieldValue.increment(-1))
+                              .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
-                                public void onComplete(@NonNull Task<Void> task) {
+                                public void onSuccess(Void aVoid) {
+                                  likeView.setClickable(true);
+                                }
+                              }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
                                   likeView.setClickable(true);
                                 }
                               });
                             }
-                          })
-                  .addOnFailureListener(new OnFailureListener() {
+                          }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                       likeView.setClickable(true);

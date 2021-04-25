@@ -14,7 +14,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -98,13 +101,11 @@ public class MessagesFragment extends Fragment{
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_recycler_child, container, false);
+    View view = inflater.inflate(R.layout.fragment_messages, container, false);
     chatsRv = view.findViewById(R.id.childRv);
     noMessagesTv = view.findViewById(R.id.emptyTv);
     progressBar = view.findViewById(R.id.progressBar);
 
-
-    noMessagesTv.setText(getResources().getString(R.string.no_current_messages));
 
     chatsRv.setLayoutManager(new LinearLayoutManager(getContext(),
             RecyclerView.VERTICAL, false) {
@@ -114,10 +115,11 @@ public class MessagesFragment extends Fragment{
         return true;
       }
 
+
       @Override
       public void onItemsRemoved(@NonNull RecyclerView recyclerView,
                                  int positionStart, int itemCount) {
-        if (itemCount == 0) {
+        if (chatItems.size() == 0) {
           noMessagesTv.setVisibility(View.VISIBLE);
           chatsRv.setVisibility(View.INVISIBLE);
         }
@@ -165,20 +167,46 @@ public class MessagesFragment extends Fragment{
       @Override
       public void onSuccess(QuerySnapshot snapshots) {
         if(!snapshots.isEmpty()){
+
+
           initialCount = snapshots.size();
           Log.d("gettingMessages","queryCount: "+initialCount);
           for(DocumentSnapshot snapshot:snapshots){
             getMessageFromSnapshot(snapshot, false);
           }
           lastDocSnapshot = snapshots.getDocuments().get(initialCount-1);
-        }else if(scrollListener!=null){
+        }else{
+
+          if(lastDocSnapshot == null){
+            noMessagesTv.setVisibility(View.VISIBLE);
+          }
 
           if(progressBar.getVisibility() == View.VISIBLE){
             progressBar.setVisibility(View.GONE);
           }
 
-          chatsRv.removeOnScrollListener(scrollListener);
+          if(scrollListener!=null){
+            chatsRv.removeOnScrollListener(scrollListener);
+          }
         }
+      }
+    }).addOnFailureListener(new OnFailureListener() {
+      @Override
+      public void onFailure(@NonNull Exception e) {
+
+        if(progressBar.getVisibility() == View.VISIBLE){
+          progressBar.setVisibility(View.GONE);
+        }
+
+        if(lastDocSnapshot == null){
+          noMessagesTv.setVisibility(View.VISIBLE);
+        }
+
+      }
+    }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+      @Override
+      public void onComplete(@NonNull Task<QuerySnapshot> task) {
+        addNewMessagesListener();
       }
     });
 
@@ -771,7 +799,7 @@ public class MessagesFragment extends Fragment{
 
       adapter.notifyDataSetChanged();
 
-      addNewMessagesListener();
+
       addDeletionListener();
 
       chatsRv.addOnScrollListener(scrollListener = new ScrollListener());

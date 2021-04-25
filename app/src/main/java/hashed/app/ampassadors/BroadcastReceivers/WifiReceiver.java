@@ -23,7 +23,7 @@ public class WifiReceiver extends BroadcastReceiver {
 
     if (netInfo != null && netInfo.isConnected()) {
       Log.d("ttt", "wifi online");
-      GlobalVariables.setWifiIsOn(true);
+      GlobalVariables.getInstance().getInstance().setWifiIsOn(true);
     } else {
       Log.d("ttt", "wifi offline");
       GlobalVariables.setWifiIsOn(false);

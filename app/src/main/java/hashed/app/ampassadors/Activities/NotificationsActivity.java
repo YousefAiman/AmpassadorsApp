@@ -458,14 +458,13 @@ public class NotificationsActivity extends AppCompatActivity implements
     final String identifierTitle =
             notification.getDestinationId() + notification.getType();
 
-    if (GlobalVariables.getMessagesNotificationMap() != null) {
-      if (GlobalVariables.getMessagesNotificationMap().containsKey(identifierTitle)) {
+    if (GlobalVariables.getInstance().getMessagesNotificationMap() != null) {
+      if (GlobalVariables.getInstance().getMessagesNotificationMap().containsKey(identifierTitle)) {
 
 
         ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE))
-                .cancel(GlobalVariables
-                        .getMessagesNotificationMap().get(identifierTitle));
-        GlobalVariables.getMessagesNotificationMap().remove(identifierTitle);
+                .cancel(GlobalVariables.getInstance().getMessagesNotificationMap().get(identifierTitle));
+        GlobalVariables.getInstance().getMessagesNotificationMap().remove(identifierTitle);
 
       }
     }

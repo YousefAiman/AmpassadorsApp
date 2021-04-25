@@ -140,7 +140,7 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
 
             if (postData.getPublisherId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
               toolbar.inflateMenu(R.menu.poll_menu);
-            } else if (GlobalVariables.getRole().equals("Admin")) {
+            } else if (GlobalVariables.getInstance().getRole().equals("Admin")) {
               toolbar.inflateMenu(R.menu.admin_menu);
             } else {
               toolbar.inflateMenu(R.menu.users_post_menu);
@@ -161,7 +161,7 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
                   TimeFormatter.MONTH_DAY_YEAR_HOUR_MINUTE));
 
           likeTv.setTextColor(getResources().getColor(
-                  GlobalVariables.getLikesList().contains(postData.getPostId()) ? R.color.red :
+                  GlobalVariables.getInstance().getLikesList().contains(postData.getPostId()) ? R.color.red :
                           R.color.black));
 
           getPollRecycler();
