@@ -96,7 +96,7 @@ public class CoursesActivity extends AppCompatActivity implements
         });
 
         courseToolbar.getMenu().findItem(R.id.action_notifications)
-                .setIcon(GlobalVariables.getNotificationsCount() > 0 ?
+                .setIcon(GlobalVariables.getInstance().getNotificationsCount() > 0 ?
                         R.drawable.notification_indicator_icon :
                         R.drawable.notification_icon);
 
@@ -112,8 +112,8 @@ public class CoursesActivity extends AppCompatActivity implements
         emptyTv = findViewById(R.id.emptyTv);
 
         if (!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
-            if (GlobalVariables.getRole().equals("Admin") ||
-                    GlobalVariables.getRole().equals("Coordinator")) {
+            if (GlobalVariables.getInstance().getRole().equals("Admin") ||
+                    GlobalVariables.getInstance().getRole().equals("Coordinator")) {
                 addCourseBtn.setVisibility(View.VISIBLE);
                 addCourseBtn.setOnClickListener(this);
             }

@@ -152,7 +152,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
                         if (postData.getPublisherId().equals(user.getUid())) {
                             toolbar.inflateMenu(R.menu.post_menu);
 
-                        } else if (GlobalVariables.getRole().equals("Admin")) {
+                        } else if (GlobalVariables.getInstance().getRole().equals("Admin")) {
                             toolbar.inflateMenu(R.menu.admin_menu);
                         } else {
                             toolbar.inflateMenu(R.menu.users_post_menu);
@@ -174,7 +174,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
                             TimeFormatter.MONTH_DAY_YEAR_HOUR_MINUTE));
 
                     likeTv.setTextColor(getResources().getColor(
-                            GlobalVariables.getLikesList().contains(postData.getPostId()) ? R.color.red :
+                            GlobalVariables.getInstance().getLikesList().contains(postData.getPostId()) ? R.color.red :
                                     R.color.black));
 
                     getNewsType();
@@ -323,7 +323,22 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
                     PostNewsActivity.this).show();
         } else {
 
-            if (likeTv.getCurrentTextColor() == getResources().getColor(R.color.red)) {
+//            DocumentReference documentReference;
+//            if(getIntent().hasExtra("isForUser")){
+//                documentReference = FirebaseFirestore.getInstance()
+//                        .collection("Users")
+//                        .document(postData.getPublisherId())
+//                        .collection("UserPosts")
+//                        .document(postData.getPostId());
+//
+//            }else{
+//                documentReference = FirebaseFirestore.getInstance()
+//                        .collection("Posts")
+//                        .document(postData.getPostId());
+//
+//            }
+
+            if (GlobalVariables.getInstance().getLikesList().contains(postData.getPostId())) {
 
                 likeTv.setTextColor(getResources().getColor(R.color.black));
 

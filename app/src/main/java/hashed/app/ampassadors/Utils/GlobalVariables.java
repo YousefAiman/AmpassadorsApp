@@ -26,9 +26,12 @@ public class GlobalVariables extends Application {
   private static String role;
 
 
+
+
   public static GlobalVariables getInstance() {
     return globalSingleton;
   }
+
 
   public static List<String> getLikesList() {
     if (likesList == null)
@@ -130,6 +133,18 @@ public class GlobalVariables extends Application {
   public void onCreate() {
     super.onCreate();
     globalSingleton = this;
+  }
+
+  public static void clear(){
+    likesList = null;
+    currentUsername = null;
+    currentUserImageUrl = null;
+    currentToken = null;
+    messagesNotificationMap = null;
+    currentWifiReceiver = null;
+    registeredNetworkCallback = null;
+    notificationsCount = 0;
+    role = null;
   }
 
 }

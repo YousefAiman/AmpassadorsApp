@@ -144,15 +144,15 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         super.onViewCreated(view, savedInstanceState);
 
         toolbar.getMenu().findItem(R.id.action_notifications)
-                .setIcon(GlobalVariables.getNotificationsCount() > 0 ?
+                .setIcon(GlobalVariables.getInstance().getNotificationsCount() > 0 ?
                         R.drawable.notification_indicator_icon :
                         R.drawable.notification_icon);
 //    Log.d("tttt", GlobalVariables.getRole());
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null && !user.isAnonymous()) {
-            if(GlobalVariables.getRole()!=null){
-                if (GlobalVariables.getRole().equals("Admin") ||
-                        GlobalVariables.getRole().equals("Publisher")) {
+            if(GlobalVariables.getInstance().getRole()!=null){
+                if (GlobalVariables.getInstance().getRole().equals("Admin") ||
+                        GlobalVariables.getInstance().getRole().equals("Publisher")) {
                     floatingButton.setVisibility(View.VISIBLE);
                 }
             }

@@ -87,9 +87,9 @@ public class MainActivity extends AppCompatActivity {
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
 
 
-                      GlobalVariables.setRole(documentSnapshot.getString("Role"));
+                      GlobalVariables.getInstance().setRole(documentSnapshot.getString("Role"));
                       if(documentSnapshot.contains("token")){
-                        GlobalVariables.setCurrentToken(documentSnapshot.getString("token"));
+                        GlobalVariables.getInstance().setCurrentToken(documentSnapshot.getString("token"));
                       }
                     }
                   }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

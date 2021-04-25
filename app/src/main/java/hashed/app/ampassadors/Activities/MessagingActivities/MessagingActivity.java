@@ -116,7 +116,7 @@ public abstract class MessagingActivity extends AppCompatActivity
 
   //event listeners
   private Map<DatabaseReference, ChildEventListener> childEventListeners;
-  private Map<DatabaseReference, ValueEventListener> valueEventListeners;
+  Map<DatabaseReference, ValueEventListener> valueEventListeners;
   private Map<UploadTask, StorageTask<UploadTask.TaskSnapshot>> uploadTasks;
 
 
@@ -186,11 +186,11 @@ public abstract class MessagingActivity extends AppCompatActivity
     sharedPreferences.edit()
             .putString("currentlyMessagingUid", messagingUid).apply();
 
-    if (GlobalVariables.getMessagesNotificationMap() != null) {
+    if (GlobalVariables.getInstance().getMessagesNotificationMap() != null) {
 
       String title = messagingUid + type;
 
-      if (GlobalVariables.getMessagesNotificationMap().containsKey(title)) {
+      if (GlobalVariables.getInstance().getMessagesNotificationMap().containsKey(title)) {
         Log.d("ttt", "removing: " + title);
 
         NotificationManager notificationManager =
@@ -198,7 +198,7 @@ public abstract class MessagingActivity extends AppCompatActivity
 
         notificationManager.cancel(GlobalVariables.getMessagesNotificationMap().get(title));
 
-        GlobalVariables.getMessagesNotificationMap().remove(title);
+        GlobalVariables.getInstance().getMessagesNotificationMap().remove(title);
 
         if (Build.VERSION.SDK_INT < 26) {
           BadgeUtil.decrementBadgeNum(this);
@@ -390,7 +390,10 @@ public abstract class MessagingActivity extends AppCompatActivity
 
   private void addDeleteFieldListener() {
 
-    valueEventListeners = new HashMap<>();
+    if(valueEventListeners==null){
+      valueEventListeners = new HashMap<>();
+    }
+
 
     ValueEventListener valueEventListener;
     currentMessagingRef

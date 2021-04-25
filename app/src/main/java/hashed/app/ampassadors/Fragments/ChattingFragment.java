@@ -77,7 +77,7 @@ public class ChattingFragment extends Fragment implements MenuItem.OnMenuItemCli
     super.onViewCreated(view, savedInstanceState);
 
     toolbar.getMenu().findItem(R.id.action_notifications)
-            .setIcon(GlobalVariables.getNotificationsCount() > 0 ?
+            .setIcon(GlobalVariables.getInstance().getNotificationsCount() > 0 ?
                     R.drawable.notification_indicator_icon :
                     R.drawable.notification_icon);
 

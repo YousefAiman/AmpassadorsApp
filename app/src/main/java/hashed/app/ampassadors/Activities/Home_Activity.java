@@ -95,7 +95,7 @@ public class Home_Activity extends AppCompatActivity implements
     setContentView(R.layout.home_activity);
 
     SetUpCompetent();
-    GlobalVariables.setAppIsRunning(true);
+    GlobalVariables.getInstance().setAppIsRunning(true);
 
 
     firebaseFirestore = FirebaseFirestore.getInstance();
@@ -110,7 +110,7 @@ public class Home_Activity extends AppCompatActivity implements
     if(auth.getCurrentUser().isAnonymous()){
       navigationview.inflateMenu(R.menu.menu_nav);
     }else{
-      if (GlobalVariables.getRole()!=null && GlobalVariables.getRole().equals("Admin")) {
+      if (GlobalVariables.getInstance().getRole()!=null && GlobalVariables.getInstance().getRole().equals("Admin")) {
         navigationview.inflateMenu(R.menu.menu_admin);
       } else {
         navigationview.inflateMenu(R.menu.menu_nav);
@@ -218,20 +218,20 @@ public class Home_Activity extends AppCompatActivity implements
 
                         if (value != null && value.exists()) {
 
-                          if (GlobalVariables.getCurrentUsername() == null) {
+                          if (GlobalVariables.getInstance().getCurrentUsername() == null) {
 
-                            GlobalVariables.setCurrentUsername(
+                            GlobalVariables.getInstance().setCurrentUsername(
                                     value.getString("username"));
 
-                            GlobalVariables.setCurrentUserImageUrl(
+                            GlobalVariables.getInstance().setCurrentUserImageUrl(
                                     value.getString("imageUrl"));
 
                           }
 
-                          GlobalVariables.setRole(value.getString("Role"));
+                          GlobalVariables.getInstance().setRole(value.getString("Role"));
                           if (value.contains("Likes")) {
                             final List<String> likes = (List<String>) value.get("Likes");
-                            GlobalVariables.setLikesList(likes);
+                            GlobalVariables.getInstance().setLikesList(likes);
                           }
                         }
                       }
@@ -401,6 +401,7 @@ public class Home_Activity extends AppCompatActivity implements
 
                     Intent intent = new Intent(Home_Activity.this, sign_in.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    GlobalVariables.clear();
                     startActivity(intent);
                     finish();
 //                }
@@ -460,7 +461,8 @@ public class Home_Activity extends AppCompatActivity implements
               startActivity(intent);
           }
 
-        } else if (item.getItemId() == R.id.listComplaints && GlobalVariables.getRole().equals("Admin")) {
+        } else if (item.getItemId() == R.id.listComplaints &&
+              GlobalVariables.getInstance().getRole().equals("Admin")) {
 
             Intent intent = new Intent(Home_Activity.this, ComplanitsListActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -483,7 +485,8 @@ public class Home_Activity extends AppCompatActivity implements
           }
 
 
-        } else if (item.getItemId() == R.id.listSuggestion && GlobalVariables.getRole().equals("Admin")) {
+        } else if (item.getItemId() == R.id.listSuggestion &&
+              GlobalVariables.getInstance().getRole().equals("Admin")) {
             Intent intent = new Intent(Home_Activity.this, List_Sug_Activity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
@@ -567,7 +570,7 @@ public class Home_Activity extends AppCompatActivity implements
                                 break;
                             }
 
-                            GlobalVariables.setNotificationsCount(notificationCount.get());
+                            GlobalVariables.getInstance().setNotificationsCount(notificationCount.get());
 
                         }
                     }

@@ -73,7 +73,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     }
 
 
-    GlobalVariables.setCurrentToken(s);
+    GlobalVariables.getInstance().setCurrentToken(s);
     Log.d("ttt", "new token: " + s);
   }
 
@@ -90,6 +90,10 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     Log.d("ttt", "message received");
 
     if (remoteMessage.getData().isEmpty()) {
+      return;
+    }
+
+    if(FirebaseAuth.getInstance().getCurrentUser() == null){
       return;
     }
 
@@ -147,7 +151,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
     final String identifierTitle = data.get("sourceId") + data.get("sourceType");
 
-    if (GlobalVariables.getMessagesNotificationMap().containsKey(identifierTitle)
+    if (GlobalVariables.getInstance().getMessagesNotificationMap().containsKey(identifierTitle)
     && !(type.equals("Group Messages") || type.equals("Private Messages")
             || type.equals("Course Messages") || type.equals("Meeting Messages"))) {
       Log.d("ttt", "already received this notifacaiton and iut's not a message");
@@ -227,12 +231,12 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
         NotificationManagerCompat manager = NotificationManagerCompat.from(this);
 
-        if (!GlobalVariables.getMessagesNotificationMap().containsKey(identifierTitle)) {
+        if (!GlobalVariables.getInstance().getMessagesNotificationMap().containsKey(identifierTitle)) {
 
           Log.d("ttt", "global variables contains: " + identifierTitle);
 
           notificationNum++;
-          GlobalVariables.getMessagesNotificationMap().put(identifierTitle, notificationNum);
+          GlobalVariables.getInstance().getMessagesNotificationMap().put(identifierTitle, notificationNum);
           Log.d("ttt", "this notification doesn't exist so building");
           manager.notify(notificationNum, builder.build());
 
@@ -245,14 +249,14 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
           Log.d("ttt", "global variables doesn't contain: " + identifierTitle);
 
           Log.d("ttt", "this notification already exists just updating");
-          manager.notify(GlobalVariables.getMessagesNotificationMap().get(identifierTitle)
+          manager.notify(GlobalVariables.getInstance().getMessagesNotificationMap().get(identifierTitle)
                   , builder.build());
 
         }
 
       } else {
 
-        GlobalVariables.getMessagesNotificationMap().put(identifierTitle, notificationNum);
+        GlobalVariables.getInstance().getMessagesNotificationMap().put(identifierTitle, notificationNum);
 
         if (Build.VERSION.SDK_INT < 26) {
           BadgeUtil.incrementBadgeNum(this);

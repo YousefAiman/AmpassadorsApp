@@ -27,7 +27,7 @@ public class ShutdownService extends Service {
 
     Log.d("exoPlayerPlayback", "onTaskRemoved");
 
-    GlobalVariables.setAppIsRunning(false);
+    GlobalVariables.getInstance().setAppIsRunning(false);
 
     getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE).edit()
             .remove("isPaused")
@@ -35,16 +35,16 @@ public class ShutdownService extends Service {
 
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
-            GlobalVariables.getRegisteredNetworkCallback() != null) {
+            GlobalVariables.getInstance().getRegisteredNetworkCallback() != null) {
       ((ConnectivityManager) getApplicationContext()
               .getSystemService(Context.CONNECTIVITY_SERVICE))
-              .unregisterNetworkCallback(GlobalVariables.getRegisteredNetworkCallback());
+              .unregisterNetworkCallback(GlobalVariables.getInstance().getRegisteredNetworkCallback());
 
-      GlobalVariables.setRegisteredNetworkCallback(null);
+      GlobalVariables.getInstance().setRegisteredNetworkCallback(null);
 
-    } else if (GlobalVariables.getCurrentWifiReceiver() != null) {
-      unregisterReceiver(GlobalVariables.getCurrentWifiReceiver());
-      GlobalVariables.setCurrentWifiReceiver(null);
+    } else if (GlobalVariables.getInstance().getCurrentWifiReceiver() != null) {
+      unregisterReceiver(GlobalVariables.getInstance().getCurrentWifiReceiver());
+      GlobalVariables.getInstance().setCurrentWifiReceiver(null);
     }
 
     this.stopSelf();

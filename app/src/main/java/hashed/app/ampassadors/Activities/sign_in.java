@@ -211,7 +211,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                                 @Override
                                 public void onSuccess(AuthResult authResult) {
 
-                                    if (auth.getCurrentUser().isEmailVerified()) {
+//                                    if (auth.getCurrentUser().isEmailVerified()) {
 
                                         FirebaseFirestore.getInstance().collection("Users")
                                                 .document(authResult.getUser().getUid())
@@ -247,7 +247,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
 //                                                        });
                                                     snapshot.getReference().update("isEmailVerified",true);
 
-                                                    GlobalVariables.setRole(snapshot.getString("Role"));
+                                                    GlobalVariables.getInstance().getInstance().setRole(snapshot.getString("Role"));
 
                                                         FirebaseMessagingService.startMessagingService(sign_in.this);
 
@@ -293,15 +293,15 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                                             }
                                         });
 
-                                    } else {
-                                        auth.signOut();
-                                        dialog.dismiss();
-
-                                        Toast.makeText(sign_in.this,
-                                                R.string.Email_Verfiy_Message,
-                                                Toast.LENGTH_SHORT).show();
-
-                                    }
+//                                    } else {
+//                                        auth.signOut();
+//                                        dialog.dismiss();
+//
+//                                        Toast.makeText(sign_in.this,
+//                                                R.string.Email_Verfiy_Message,
+//                                                Toast.LENGTH_SHORT).show();
+//
+//                                    }
                                 }
 
                             }).addOnFailureListener(new OnFailureListener() {
@@ -471,7 +471,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                                         snapshot.getReference().update("token", s);
                                     });
 
-                                    GlobalVariables.setRole(snapshot.getString("Role"));
+                                    GlobalVariables.getInstance().setRole(snapshot.getString("Role"));
 
                                     FirebaseMessagingService.
                                             startMessagingService(sign_in.this);
@@ -536,7 +536,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
         hashMap.put("Role", "Ambassador");
         hashMap.put("isEmailVerified", true);
          hashMap.put("Bio","");
-        GlobalVariables.setRole("Ambassador");
+        GlobalVariables.getInstance().setRole("Ambassador");
 
         final DocumentReference userRef =
                 FirebaseFirestore.getInstance().collection("Users").document(userId);
@@ -653,7 +653,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                                     FirebaseMessaging.getInstance().getToken().addOnSuccessListener(s ->
                                             userRef.update("token", s));
 
-                                    GlobalVariables.setRole(task.getResult().getString("Role"));
+                                    GlobalVariables.getInstance().setRole(task.getResult().getString("Role"));
 
                                     FirebaseMessagingService.
                                             startMessagingService(sign_in.this);
