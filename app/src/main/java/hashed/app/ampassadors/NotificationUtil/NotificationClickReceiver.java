@@ -100,9 +100,10 @@ public class NotificationClickReceiver extends BroadcastReceiver {
                       .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
+
                   if(documentSnapshot.exists()){
-                    intent.putExtra("isForUser",true);
-                    intent.putExtra("publisherId",currentUid);
+                    postIntent.putExtra("isForUser",true);
+                    postIntent.putExtra("publisherId",currentUid);
                   }
 
                   context.startActivity(postIntent);

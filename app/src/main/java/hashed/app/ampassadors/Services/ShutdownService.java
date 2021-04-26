@@ -10,6 +10,9 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 
@@ -32,6 +35,17 @@ public class ShutdownService extends Service {
     getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE).edit()
             .remove("isPaused")
             .remove("currentlyMessagingUid").apply();
+
+
+    final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+    if(currentUser != null && !currentUser.isAnonymous()){
+
+      FirebaseFirestore.getInstance().collection("Users")
+              .document(currentUser.getUid()).update("status",false);
+
+    }
+
 
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&

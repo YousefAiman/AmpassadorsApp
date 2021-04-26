@@ -338,8 +338,8 @@ public class Home_Activity extends AppCompatActivity implements
     protected void onDestroy() {
         super.onDestroy();
 
-      FirebaseFirestore.getInstance().collection("Users")
-              .document(userid).update("status",false);
+//      FirebaseFirestore.getInstance().collection("Users")
+//              .document(userid).update("status",false);
 
         if(listenerRegistrations!=null && !listenerRegistrations.isEmpty()){
             for(ListenerRegistration listenerRegistration:listenerRegistrations){
