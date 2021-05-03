@@ -58,7 +58,6 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     this.notificationDeleter = notificationDeleter;
   }
 
-
   @NonNull
   @Override
   public NotificationsVh onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -248,7 +247,6 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
                 meetingIntent.putExtra("meeting",documentSnapshot.toObject(Meeting.class));
 
-//
 //                boolean hasEnded = documentSnapshot.getBoolean("hasEnded");
 //                long startTime = documentSnapshot.getLong("startTime");
 //
@@ -299,13 +297,9 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
           notificationDeleter.deleteNotification(notification);
 
-
-
-
-
-          Intent postIntent = new Intent(view.getContext(), PostNewsActivity.class)
-                  .putExtra("postId", notification.getDestinationId())
-                  .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//          Intent postIntent = new Intent(view.getContext(), PostNewsActivity.class)
+//                  .putExtra("postId", notification.getDestinationId())
+//                  .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
           FirebaseFirestore.getInstance().collection("Users")
                   .document(notification.getReceiverId())
@@ -324,6 +318,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
               if(documentSnapshot.exists()){
 
+                notificationDeleter.deleteNotification(notification);
+
                 Intent postIntent = new Intent(view.getContext(),
                           documentSnapshot.getLong("type") == PostData.TYPE_NEWS?
                                   PostNewsActivity.class:PostPollActivity.class)
@@ -333,7 +329,6 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
                 view.getContext().startActivity(postIntent);
 
-
               }else{
 
                 firestore.collection("Posts").document(notification.getDestinationId())
@@ -342,6 +337,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                   public void onSuccess(DocumentSnapshot documentSnapshot) {
 
                     if(documentSnapshot.exists()){
+
+                      notificationDeleter.deleteNotification(notification);
 
                       Intent postIntent = new Intent(view.getContext(),
                               documentSnapshot.getLong("type") == PostData.TYPE_NEWS?

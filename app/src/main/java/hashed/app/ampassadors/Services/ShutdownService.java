@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.GlobalVariables;
@@ -28,7 +29,7 @@ public class ShutdownService extends Service {
   public void onTaskRemoved(Intent rootIntent) {
     super.onTaskRemoved(rootIntent);
 
-    Log.d("exoPlayerPlayback", "onTaskRemoved");
+    Log.d("ttt", "app was shut down");
 
     GlobalVariables.getInstance().setAppIsRunning(false);
 

@@ -88,8 +88,9 @@ public class PrivateMessagingActivity extends MessagingActivity{
 
     removeSenderFirstMessageListener();
 
-    final Map<String, Object> messagingDocumentMap = new HashMap<>();
+    currentMessagingRef.push();
 
+    final Map<String, Object> messagingDocumentMap = new HashMap<>();
     messagingDocumentMap.put("DeletedFor:" + currentUid, false);
     messagingDocumentMap.put("DeletedFor:" + messagingUid, false);
 

@@ -189,11 +189,12 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
     swipeRefreshLayout.setRefreshing(true);
     isLoading = true;
 
+    Query newQuery = query;
     if (lastDocSnap != null) {
-      query = query.startAfter(lastDocSnap);
+      newQuery = newQuery.startAfter(lastDocSnap);
     }
 
-    query.get().addOnSuccessListener(snapshots -> {
+    newQuery.get().addOnSuccessListener(snapshots -> {
 
       if (!snapshots.isEmpty()) {
 

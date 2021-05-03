@@ -63,7 +63,7 @@ import hashed.app.ampassadors.Services.FirebaseMessagingService;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.SigninUtil;
 
-public class Home_Activity extends AppCompatActivity implements
+public class  Home_Activity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
 
   private final FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -361,16 +361,22 @@ public class Home_Activity extends AppCompatActivity implements
 
                     NotificationManagerCompat.from(this).cancelAll();
 
+
+          FirebaseFirestore.getInstance().collection("Users")
+                  .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                  .update("status",false);
+
         if (AccessToken.getCurrentAccessToken() != null) {
           LoginManager.getInstance().logOut();
         }
+
+
 
         auth.signOut();
 
         GoogleSignIn.getClient(
                 this,
                 new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()).signOut();
-
 
 //        if(auth.getCurrentUser().getProviderId()){
 //
@@ -388,8 +394,6 @@ public class Home_Activity extends AppCompatActivity implements
 //
 //
 //        }
-
-
 
                     getPackageManager().setComponentEnabledSetting(
                             new ComponentName(Home_Activity.this, FirebaseMessagingService.class),

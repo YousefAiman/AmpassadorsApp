@@ -36,7 +36,6 @@ public class NotificationClickReceiver extends BroadcastReceiver {
 
     if (intent.hasExtra("sourceId") && intent.hasExtra("sourceType")) {
 
-
       Log.d("ttt","has both extras");
 
       final String sourceType = intent.getStringExtra("sourceType");
@@ -81,6 +80,7 @@ public class NotificationClickReceiver extends BroadcastReceiver {
             case FirestoreNotificationSender.TYPE_MEETING_STARTED:
             case FirestoreNotificationSender.TYPE_MEETING_ADDED:
 
+              Log.d("ttt","meeting source: "+sourceId);
               fetchObjectAndStartIntent(MeetingActivity.class,context,"Meetings",
                       Meeting.class,sourceId,"meeting");
 

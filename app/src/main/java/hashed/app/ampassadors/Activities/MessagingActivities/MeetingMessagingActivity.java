@@ -90,7 +90,6 @@ public class MeetingMessagingActivity extends MessagingActivity{
       messagingUid = sourceId;
     }
 
-
     messagingDatabaseRef =
             FirebaseDatabase.getInstance().getReference().child("GroupMessages").getRef();
 

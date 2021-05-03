@@ -81,7 +81,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
           MSG_TYPE_LEFT_DELETED = 41,
           MSG_TYPE_RIGHT_DELETED = 42,
           MSG_TYPE_LEFT_DELETED_GROUP = 43;
-  private static final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+  private static String currentUid;
 
 
 //  private final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -122,7 +122,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
                                  boolean isForGroup
   ) {
 
-
+    currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     PrivateMessagingAdapter.privateMessages = privateMessages;
     this.context = context;
     PrivateMessagingAdapter.isForGroup = isForGroup;
