@@ -31,6 +31,7 @@ public class PrivateMessage implements Serializable {
   private String fileName;
   @Exclude
   private UploadTask uploadTask;
+
   @Exclude
   private boolean stopPlayingAudio;
 

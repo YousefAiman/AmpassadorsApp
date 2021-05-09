@@ -25,9 +25,6 @@ public class GlobalVariables extends Application {
   private static int notificationsCount;
   private static String role;
 
-
-
-
   public static GlobalVariables getInstance() {
     return globalSingleton;
   }

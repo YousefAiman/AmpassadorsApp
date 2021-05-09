@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -26,10 +27,23 @@ public class ShutdownService extends Service {
   }
 
   @Override
-  public void onTaskRemoved(Intent rootIntent) {
-    super.onTaskRemoved(rootIntent);
+  public void onCreate() {
+    super.onCreate();
+    Log.d("ttt","shut down service created");
+  }
 
-    Log.d("ttt", "app was shut down");
+  @Override
+  public int onStartCommand(Intent intent, int flags, int startId) {
+    return START_NOT_STICKY;
+  }
+
+  @Override
+  public void onTaskRemoved(Intent rootIntent) {
+
+    super.onTaskRemoved(rootIntent);
+//    Toast.makeText(this, "app shutdown", Toast.LENGTH_SHORT).show();
+
+    Log.d("ttt","task removed");
 
     GlobalVariables.getInstance().setAppIsRunning(false);
 
@@ -41,13 +55,9 @@ public class ShutdownService extends Service {
     final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
     if(currentUser != null && !currentUser.isAnonymous()){
-
       FirebaseFirestore.getInstance().collection("Users")
               .document(currentUser.getUid()).update("status",false);
-
     }
-
-
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
             GlobalVariables.getInstance().getRegisteredNetworkCallback() != null) {
@@ -61,6 +71,8 @@ public class ShutdownService extends Service {
       unregisterReceiver(GlobalVariables.getInstance().getCurrentWifiReceiver());
       GlobalVariables.getInstance().setCurrentWifiReceiver(null);
     }
+
+//  stopService(rootIntent);
 
     this.stopSelf();
   }

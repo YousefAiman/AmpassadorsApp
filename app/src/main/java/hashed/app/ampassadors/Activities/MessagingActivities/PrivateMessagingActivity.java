@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.database.DataSnapshot;
@@ -22,6 +23,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -43,10 +45,7 @@ public class PrivateMessagingActivity extends MessagingActivity{
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
     handleNotification(FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE);
-
-
   }
 
   @Override
@@ -83,12 +82,25 @@ public class PrivateMessagingActivity extends MessagingActivity{
 
   }
 
+
+
   @Override
   void createMessagingDocument(PrivateMessage privateMessage) {
 
-    removeSenderFirstMessageListener();
 
-    currentMessagingRef.push();
+    boolean currentUidIsFirst = currentUid.toUpperCase()
+            .compareTo(messagingUid.toUpperCase()) < 0;
+    String id;
+    if(currentUidIsFirst){
+      id = currentUid+"-"+messagingUid;
+    }else{
+      id = messagingUid+"-"+currentUid;
+    }
+
+    removeSenderFirstMessageListener(id);
+
+//    currentMessagingRef.child("messages").child(
+//            String.valueOf(System.currentTimeMillis())).setValue(privateMessage);
 
     final Map<String, Object> messagingDocumentMap = new HashMap<>();
     messagingDocumentMap.put("DeletedFor:" + currentUid, false);
@@ -96,15 +108,47 @@ public class PrivateMessagingActivity extends MessagingActivity{
 
     final Map<String, PrivateMessage> messages = new HashMap<>();
     messages.put(String.valueOf(System.currentTimeMillis()), privateMessage);
-
+//    currentMessagingRef.child("messages")
+//            .setValue(String.valueOf(System.currentTimeMillis()), privateMessage);
+//
     messagingDocumentMap.put("messages", messages);
 
+    currentMessagingRef = messagingDatabaseRef.child(id);
+
+//    currentMessagingRef.child("messages")
+//            .child(String.valueOf(System.currentTimeMillis()))
+//            .setValue(privateMessage);
 
     currentMessagingRef.setValue(messagingDocumentMap).addOnSuccessListener(v -> {
 
+//      DatabaseReference senderFirstMessageRef
+//              = messagingDatabaseRef.child(messagingUid + "-" + currentUid);
+//
+//      senderFirstMessageRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//        @Override
+//        public void onDataChange(@NonNull DataSnapshot snapshot) {
+//
+//          if(snapshot!=null && snapshot.exists()){
+//
+//            Log.d("ttt","other user created a messaging documetn amn");
+//
+//          }else{
+//
+//            Log.d("ttt","no other messaging document created");
+//          }
+//
+//        }
+//        @Override
+//        public void onCancelled(@NonNull DatabaseError error) {
+//          Log.d("ttt","cancceled document: "+error.getMessage());
+//        }
+//      });
+//      if()
+//
       HashMap<String, String> lastSeenMap = new HashMap<>();
       lastSeenMap.put(currentUid,"0");
       lastSeenMap.put(messagingUid,"0");
+
       currentMessagingRef.child("UsersLastSeenMessages").setValue(lastSeenMap);
 
       final Map<String, Object> messageDocumentPreviewMap = new HashMap<>();
@@ -124,7 +168,7 @@ public class PrivateMessagingActivity extends MessagingActivity{
 
       databaseMessagesRef = currentMessagingRef.child("messages");
 
-      firebaseMessageDocRef.set(messageDocumentPreviewMap);
+        firebaseMessageDocRef.set(messageDocumentPreviewMap);
 
       sendNotification(privateMessage);
 
@@ -315,6 +359,33 @@ public class PrivateMessagingActivity extends MessagingActivity{
 
     privateMessagingRv.setAdapter(adapter);
 
+//    List<String> idsList = new ArrayList<>();
+//    idsList.add(currentUid);
+//    idsList.add(messagingUid);
+//    Log.d("ttt","looking for it in ");
+//    FirebaseFirestore.getInstance().collection("PrivateMessages")
+//            .whereEqualTo("type","privateMessages")
+//            .whereEqualTo("users",idsList).limit(1).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//      @Override
+//      public void onSuccess(QuerySnapshot snapshots) {
+//
+//        if(snapshots!=null && !snapshots.isEmpty()){
+//          if(snapshots.getDocuments().get(0).exists()){
+//            Log.d("ttt","found this messages document in firestore at: "
+//            +snapshots.getDocuments().get(0).getId());
+//          }
+//        }else{
+//          Log.d("ttt","no messages found");
+//        }
+//
+//      }
+//    }).addOnFailureListener(new OnFailureListener() {
+//      @Override
+//      public void onFailure(@NonNull Exception e) {
+//        Log.d("ttt","no messages found: "+e.getMessage());
+//      }
+//    });
+
     messagingDatabaseRef.child(currentUid + "-" + messagingUid)
               .addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -347,8 +418,17 @@ public class PrivateMessagingActivity extends MessagingActivity{
 
                                   ValueEventListener valueEventListener;
 
+                                  boolean currentUidIsFirst = currentUid.toUpperCase()
+                                          .compareTo(messagingUid.toUpperCase()) < 0;
+                                  String id;
+                                  if(currentUidIsFirst){
+                                    id = currentUid+"-"+messagingUid;
+                                  }else{
+                                    id = messagingUid+"-"+currentUid;
+                                  }
+
                                   DatabaseReference senderFirstMessageRef
-                                           = messagingDatabaseRef.child(messagingUid + "-" + currentUid);
+                                           = messagingDatabaseRef.child(id);
 
                                   senderFirstMessageRef.addValueEventListener(valueEventListener = new ValueEventListener() {
                                             @Override
@@ -357,10 +437,10 @@ public class PrivateMessagingActivity extends MessagingActivity{
                                               if(snapshot!=null && snapshot.exists()){
 
                                                 Log.d("ttt","on data changed");
-                                                removeSenderFirstMessageListener();
+                                                removeSenderFirstMessageListener(id);
 
                                                 currentMessagingRef = messagingDatabaseRef
-                                                        .child(messagingUid + "-" + currentUid);
+                                                        .child(id);
 
                                                 firebaseMessageDocRef = FirebaseFirestore.getInstance()
                                                         .collection("PrivateMessages")
@@ -384,8 +464,7 @@ public class PrivateMessagingActivity extends MessagingActivity{
                                   }
 
                                   valueEventListeners.put(
-                                          messagingDatabaseRef.child(messagingUid + "-" + currentUid)
-                                          , valueEventListener);
+                                          messagingDatabaseRef.child(id), valueEventListener);
 
 
 //                                  FirebaseFirestore.getInstance()
@@ -496,12 +575,12 @@ public class PrivateMessagingActivity extends MessagingActivity{
   }
 
 
-  private void removeSenderFirstMessageListener(){
+  private void removeSenderFirstMessageListener(String id){
 
     Log.d("ttt", "removeSenderFirstMessageListener: removed");
 
     DatabaseReference senderFirstMessageRef
-            = messagingDatabaseRef.child(messagingUid + "-" + currentUid);
+            = messagingDatabaseRef.child(id);
     senderFirstMessageRef.removeEventListener(
             Objects.requireNonNull(valueEventListeners.get(
                     senderFirstMessageRef.getRef())));

@@ -83,13 +83,20 @@ public class  Home_Activity extends AppCompatActivity implements
             .document(userid).update("status",true);
   }
 
-  @Override
-  protected void onPause() {
-    super.onPause();
+//    public static void main(String[] args){
+//
+//        String car = "Car";
+//        String boy = "boY";
+//        boolean carIsFirst = car.compareTo(boy) < 0;
+//        boolean boyIsFirst = boy.compareTo(car) < 0;
+//
+//        Log.d("ttt","car is first: "+carIsFirst);
+//        Log.d("ttt","boy is first: "+boyIsFirst);
+//
+//    }
 
-  }
 
-  @Override
+    @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.home_activity);
@@ -117,7 +124,16 @@ public class  Home_Activity extends AppCompatActivity implements
       }
     }
 
-
+//    FirebaseFirestore.getInstance().collection("PrivateMessages")
+//            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//        @Override
+//        public void onSuccess(QuerySnapshot snapshots) {
+//            for(DocumentSnapshot documentSnapshot:snapshots){
+//              documentSnapshot.getReference().update("type",
+//                      documentSnapshot.contains("groupId")?"groupMessages":"privateMessages");
+//            }
+//        }
+//    });
 
 
 //    FirebaseFirestore.getInstance().collection("Users")
@@ -334,12 +350,10 @@ public class  Home_Activity extends AppCompatActivity implements
         drawer_layout.openDrawer(GravityCompat.START);
     }
 
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-//      FirebaseFirestore.getInstance().collection("Users")
-//              .document(userid).update("status",false);
 
         if(listenerRegistrations!=null && !listenerRegistrations.isEmpty()){
             for(ListenerRegistration listenerRegistration:listenerRegistrations){
@@ -369,8 +383,6 @@ public class  Home_Activity extends AppCompatActivity implements
         if (AccessToken.getCurrentAccessToken() != null) {
           LoginManager.getInstance().logOut();
         }
-
-
 
         auth.signOut();
 
