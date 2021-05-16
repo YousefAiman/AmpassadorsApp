@@ -211,7 +211,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                                 @Override
                                 public void onSuccess(AuthResult authResult) {
 
-//                                    if (auth.getCurrentUser().isEmailVerified()) {
+                                    if (auth.getCurrentUser().isEmailVerified()) {
 
                                         FirebaseFirestore.getInstance().collection("Users")
                                                 .document(authResult.getUser().getUid())
@@ -293,15 +293,15 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                                             }
                                         });
 
-//                                    } else {
-//                                        auth.signOut();
-//                                        dialog.dismiss();
-//
-//                                        Toast.makeText(sign_in.this,
-//                                                R.string.Email_Verfiy_Message,
-//                                                Toast.LENGTH_SHORT).show();
-//
-//                                    }
+                                    } else {
+                                        auth.signOut();
+                                        dialog.dismiss();
+
+                                        Toast.makeText(sign_in.this,
+                                                R.string.Email_Verfiy_Message,
+                                                Toast.LENGTH_SHORT).show();
+
+                                    }
                                 }
 
                             }).addOnFailureListener(new OnFailureListener() {
