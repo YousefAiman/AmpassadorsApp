@@ -90,7 +90,6 @@ public class MeetingMessagingActivity extends MessagingActivity{
       messagingUid = sourceId;
     }
 
-
     messagingDatabaseRef =
             FirebaseDatabase.getInstance().getReference().child("GroupMessages").getRef();
 
@@ -264,7 +263,7 @@ public class MeetingMessagingActivity extends MessagingActivity{
               groupImageUrl!=null?groupImageUrl:currentImageUrl,
               "Meeting Messages",
               FirestoreNotificationSender.TYPE_MEETING_MESSAGE,
-              currentUid
+              messagingUid
       );
 
     } else {

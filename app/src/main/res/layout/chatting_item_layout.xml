@@ -24,14 +24,18 @@
 
     <TextView
         android:id="@+id/nameTv"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="7dp"
-        android:fontFamily="@font/segoe_ui"
         android:layout_marginBottom="20dp"
+        android:fontFamily="@font/segoe_ui"
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:paddingEnd="5dp"
         android:textColor="@color/black_transparent"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/imageIv"
+        app:layout_constraintEnd_toStartOf="@+id/timeTv"
         app:layout_constraintStart_toEndOf="@+id/imageIv"
         app:layout_constraintTop_toTopOf="@+id/imageIv" />
 

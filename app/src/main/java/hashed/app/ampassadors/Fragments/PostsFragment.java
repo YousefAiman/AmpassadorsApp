@@ -24,12 +24,14 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -43,8 +45,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 import hashed.app.ampassadors.Activities.CreatePollActivity;
 import hashed.app.ampassadors.Activities.Home_Activity;
@@ -61,6 +65,7 @@ import hashed.app.ampassadors.Objects.Course;
 import hashed.app.ampassadors.Objects.Meeting;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.Objects.PostNewsPreview;
+import hashed.app.ampassadors.Objects.PrivateMessage;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 
@@ -90,6 +95,45 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     private FirebaseFirestore firestore;
     private ViewPager.OnPageChangeListener pageChangeListener;
     private List<ListenerRegistration> listenerRegistrations;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        String car = "car";
+        String boy = "boY";
+        boolean carIsFirst = car.compareTo(boy) < 0;
+        boolean boyIsFirst = boy.compareTo(car) < 0;
+
+        Log.d("ttt","car is first: "+carIsFirst);
+        Log.d("ttt","boy is first: "+boyIsFirst);
+
+
+//        Log.d("ttt","on start");
+//        String id = UUID.randomUUID().toString();
+//
+////        currentMessagingRef.child("messages").child(
+////                String.valueOf(System.currentTimeMillis())).setValue(privateMessage);
+//
+//        PrivateMessage privateMessage = new PrivateMessage();
+//        privateMessage.setContent("Sdfsd");
+//
+//        FirebaseDatabase.getInstance().getReference().child("PrivateMessages")
+//                .child("asadasd").child("messages")
+//                .child(String.valueOf(System.currentTimeMillis())).setValue(privateMessage)
+//                .addOnSuccessListener(new OnSuccessListener<Void>() {
+//            @Override
+//            public void onSuccess(Void aVoid) {
+//                Log.d("ttt","added: "+id);
+//            }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//                Log.d("ttt","failed: "+id);
+//            }
+//        });
+
+    }
 
     public PostsFragment() {
         // Required empty public constructor

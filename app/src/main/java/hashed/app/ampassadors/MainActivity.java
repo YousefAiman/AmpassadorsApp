@@ -30,6 +30,7 @@ import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingAct
 import hashed.app.ampassadors.Activities.VideoWelcomeActivity;
 import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.Services.FirebaseMessagingService;
+import hashed.app.ampassadors.Services.ShutdownService;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.WifiUtil;
 
@@ -42,10 +43,11 @@ public class MainActivity extends AppCompatActivity {
 
     if (WifiUtil.isConnectedToInternet(this)) {
       checkUserCredentials();
-
     } else {
       startConnectionActivity();
     }
+
+    startService(new Intent(getBaseContext(), ShutdownService.class));
   }
 
   private void checkUserCredentials(){
@@ -85,12 +87,11 @@ public class MainActivity extends AppCompatActivity {
                   addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-
                       GlobalVariables.getInstance().setRole(documentSnapshot.getString("Role"));
                       if(documentSnapshot.contains("token")){
                         GlobalVariables.getInstance().setCurrentToken(documentSnapshot.getString("token"));
                       }
+
                     }
                   }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -122,27 +123,34 @@ public class MainActivity extends AppCompatActivity {
 
                     default:
                       startHomeActivity();
-                      break;
+                      return;
                   }
 
 
+
                   Intent finalIntent = intent;
-                  new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                      startActivity(finalIntent);
-                      finish();
-                    }
-                  }, 800);
+                  startActivity(finalIntent);
+                  finish();
+
+//                  Intent finalIntent = intent;
+//                  new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//
+//                    }
+//                  }, 800);
 
                 } else {
-                  new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                      startHomeActivity();
-                      finish();
-                    }
-                  }, 500);
+
+                  startHomeActivity();
+                  finish();
+
+//                  new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//
+//                    }
+//                  }, 500);
                 }
               }
             }
@@ -155,8 +163,6 @@ public class MainActivity extends AppCompatActivity {
             }
           }, 1000);
         }
-
-
       } else {
 
         FirebaseAuth.getInstance().signInAnonymously()

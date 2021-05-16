@@ -108,36 +108,39 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         swipeRefresh = view.findViewById(R.id.swipeRefreshLayout);
         swipeRefresh.setOnRefreshListener(this);
         biotext = view.findViewById(R.id.bio_profile);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                collectionReference.document(userid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        String image = documentSnapshot.get("imageUrl").toString();
-//                        Toolbar toolbar1 = view.findViewById(R.id.fullScreenToolbar);
-                        floatingButton.setVisibility(View.GONE);
-                        toolbar.setVisibility(View.GONE);
-                        frameLayout.setVisibility(View.VISIBLE);
-                        getFragmentManager().beginTransaction().replace(frameLayout.getId(),
-                                new ImageFullScreenFragment(image), "FullScreen")
-                                .commit();
-//                        toolbar1.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                replaceFragment(new PostsProfileFragment());
-//                            }
-//                        });
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getContext(), "Empty image", Toast.LENGTH_SHORT).show();
-                    }
-                });
+        getUserNaImg();
+
+        collectionReference.document(userid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot snapshot) {
+
+                if(snapshot.contains("imageUrl")){
+
+                    imageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            String image = snapshot.getString("imageUrl");
+
+
+                            floatingButton.setVisibility(View.GONE);
+                            toolbar.setVisibility(View.GONE);
+                            frameLayout.setVisibility(View.VISIBLE);
+
+
+                            getFragmentManager().beginTransaction().replace(frameLayout.getId(),
+                                    new ImageFullScreenFragment(image), "FullScreen")
+                                    .commit();
+
+                        }
+                    });
+                }
+
             }
         });
+
+
         if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
 //            roleTv.setText(getResources().getString(R.string.guest));
 //        }else if(GlobalVariables.getRole()!=null){
@@ -170,7 +173,7 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         setupNotificationReceiver();
 
 
-        getUserNaImg();
+
         firebaseFirestore = FirebaseFirestore.getInstance();
         query = firebaseFirestore.collection("Users").
                 document(FirebaseAuth.getInstance().getCurrentUser().getUid())

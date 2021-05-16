@@ -138,8 +138,13 @@ public class GroupMessagingActivity extends MessagingActivity{
 
             Log.d("ttt", "firebase messaigng doc event");
 
+            if (!value.contains("users")) {
+              return;
+            }
 
-            if(!((List<String>)value.get("users")).contains(currentUid)){
+           final  List<String> users = (List<String>)value.get("users");
+
+            if(users!=null && !users.contains(currentUid)){
 
               Toast.makeText(GroupMessagingActivity.this,
                       "You have been removed from this group by an admin!",

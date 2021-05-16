@@ -25,13 +25,17 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import hashed.app.ampassadors.Activities.MeetingActivity;
 import hashed.app.ampassadors.Activities.MessagingActivities.CourseMessagingActivity;
 import hashed.app.ampassadors.Activities.MessagingActivities.GroupMessagingActivity;
 import hashed.app.ampassadors.Activities.MessagingActivities.MeetingMessagingActivity;
 import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity;
 import hashed.app.ampassadors.Activities.PostNewsActivity;
+import hashed.app.ampassadors.Activities.PostPollActivity;
 import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
+import hashed.app.ampassadors.Objects.Meeting;
 import hashed.app.ampassadors.Objects.Notification;
+import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.TimeFormatter;
 
@@ -53,7 +57,6 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     this.type = type;
     this.notificationDeleter = notificationDeleter;
   }
-
 
   @NonNull
   @Override
@@ -215,9 +218,26 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
           break;
 
 
-        case FirestoreNotificationSender.TYPE_MEETING_ADDED:
         case FirestoreNotificationSender.TYPE_ZOOM:
+
+          Intent intent = new Intent(view.getContext(),
+                        MeetingMessagingActivity.class)
+                        .putExtra("messagingUid", notification.getDestinationId())
+                  .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                if(notification.getType().equals(FirestoreNotificationSender.TYPE_ZOOM)){
+                        intent.putExtra("type",notification.getType());
+                }
+
+                itemView.getContext().startActivity(intent);
+
+          break;
+
+        case FirestoreNotificationSender.TYPE_MEETING_ADDED:
         case FirestoreNotificationSender.TYPE_MEETING_STARTED:
+
+          final Intent meetingIntent = new Intent(view.getContext(), MeetingActivity.class)
+                  .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
           firestore.collection("Meetings").document(notification.getDestinationId())
                   .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -225,25 +245,27 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             public void onSuccess(DocumentSnapshot documentSnapshot) {
               if (documentSnapshot.exists()) {
 
-                boolean hasEnded = documentSnapshot.getBoolean("hasEnded");
-                long startTime = documentSnapshot.getLong("startTime");
+                meetingIntent.putExtra("meeting",documentSnapshot.toObject(Meeting.class));
 
-                if (hasEnded || startTime < System.currentTimeMillis()) {
-
-                  String message;
-
-                  if (hasEnded) {
-                    message = "This meeting has ended";
-                  } else {
-                    message = "This meeting hasn't started yet";
-                  }
-
-
-                  Toast.makeText(view.getContext(), message, Toast.LENGTH_SHORT).show();
-                  notifications.remove(getAdapterPosition());
-                  notifyItemRemoved(getAdapterPosition());
-
-                }
+//                boolean hasEnded = documentSnapshot.getBoolean("hasEnded");
+//                long startTime = documentSnapshot.getLong("startTime");
+//
+//                if (hasEnded || startTime < System.currentTimeMillis()) {
+//
+//                  String message;
+//
+//                  if (hasEnded) {
+//                    message = "This meeting has ended";
+//                  } else {
+//                    message = "This meeting hasn't started yet";
+//                  }
+//
+//
+//                  Toast.makeText(view.getContext(), message, Toast.LENGTH_SHORT).show();
+//                  notifications.remove(getAdapterPosition());
+//                  notifyItemRemoved(getAdapterPosition());
+//
+//                }
               }
             }
           }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -251,17 +273,19 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
               if (task.isSuccessful() && notifications.contains(notification)) {
 
-                notificationDeleter.deleteNotification(notification);
-                Intent intent = new Intent(view.getContext(),
-                        MeetingMessagingActivity.class)
-                        .putExtra("messagingUid", notification.getDestinationId());
-
-                if(notification.getType().equals(FirestoreNotificationSender.TYPE_ZOOM)){
-                        intent.putExtra("type","zoomMeeting");
+                if(meetingIntent.hasExtra("meeting")){
+                  notificationDeleter.deleteNotification(notification);
+                  itemView.getContext().startActivity(meetingIntent);
                 }
-
-                view.getContext().startActivity(intent);
-
+//                Intent intent = new Intent(view.getContext(),
+//                        MeetingMessagingActivity.class)
+//                        .putExtra("messagingUid", notification.getDestinationId());
+//
+//                if(notification.getType().equals(FirestoreNotificationSender.TYPE_ZOOM)){
+//                        intent.putExtra("type","zoomMeeting");
+//                }
+//
+//                view.getContext().startActivity(intent);
               }
             }
           });
@@ -273,9 +297,9 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
           notificationDeleter.deleteNotification(notification);
 
-          Intent intent = new Intent(view.getContext(), PostNewsActivity.class)
-                  .putExtra("postId", notification.getDestinationId())
-                  .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//          Intent postIntent = new Intent(view.getContext(), PostNewsActivity.class)
+//                  .putExtra("postId", notification.getDestinationId())
+//                  .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
           FirebaseFirestore.getInstance().collection("Users")
                   .document(notification.getReceiverId())
@@ -284,15 +308,54 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                   .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-              if(documentSnapshot.exists()){
-                intent.putExtra("isForUser",true);
-                intent.putExtra("publisherId",notification.getReceiverId());
-              }
+//
+//              if(documentSnapshot.exists()){
+//                postIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                        .putExtra("postId", notification.getDestinationId());
+//
+//                itemView.getContext().startActivity(postIntent);
+//              }
 
-              view.getContext().startActivity(intent);
+              if(documentSnapshot.exists()){
+
+                notificationDeleter.deleteNotification(notification);
+
+                Intent postIntent = new Intent(view.getContext(),
+                          documentSnapshot.getLong("type") == PostData.TYPE_NEWS?
+                                  PostNewsActivity.class:PostPollActivity.class)
+                        .putExtra("isForUser",true).
+                putExtra("publisherId",notification.getReceiverId())
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                view.getContext().startActivity(postIntent);
+
+              }else{
+
+                firestore.collection("Posts").document(notification.getDestinationId())
+                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                  @Override
+                  public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                    if(documentSnapshot.exists()){
+
+                      notificationDeleter.deleteNotification(notification);
+
+                      Intent postIntent = new Intent(view.getContext(),
+                              documentSnapshot.getLong("type") == PostData.TYPE_NEWS?
+                                      PostNewsActivity.class:
+                                      PostPollActivity.class)
+                              .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                              .putExtra("postId", notification.getDestinationId());
+
+                      itemView.getContext().startActivity(postIntent);
+
+                    }
+
+                  }
+                });
+              }
             }
           });
-
 //          final ProgressDialog progressDialog = new ProgressDialog(itemView.getContext());
 //          progressDialog.show();
 //

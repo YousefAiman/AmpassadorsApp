@@ -275,6 +275,10 @@ public class MessagesFragment extends Fragment{
                       }
                     }
 
+                    if(index >= chatItems.size()){
+                      return;
+                    }
+
                     final ChatItem chatItem1 = chatItems.get(index);
 
                     Log.d("ttt", "found at: " + index + " " +
