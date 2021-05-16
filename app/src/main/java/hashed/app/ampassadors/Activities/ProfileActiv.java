@@ -48,6 +48,7 @@ import hashed.app.ampassadors.Fragments.PostsProfileFragment;
 import hashed.app.ampassadors.Fragments.ProfileFragment;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.FullScreenImagesUtil;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 
 public class ProfileActiv extends AppCompatActivity implements
@@ -56,8 +57,6 @@ public class ProfileActiv extends AppCompatActivity implements
     FirebaseFirestore firebaseFirestore;
     Query query;
     List<PostData> postData;
-
-
     PostAdapter adapter;
     RecyclerView post_list;
     DocumentSnapshot lastDocSnap;
@@ -65,8 +64,8 @@ public class ProfileActiv extends AppCompatActivity implements
     SwipeRefreshLayout swipeRefresh;
     TextView username;
     FirebaseAuth fAuth;
-FirebaseFirestore fStore;
-    String userid;
+    FirebaseFirestore fStore;
+    String userId;
     ImageView imageView;
     boolean status;
     FloatingActionButton floatingButton;
@@ -77,7 +76,8 @@ FirebaseFirestore fStore;
     private FrameLayout frameLayout;
     private NotificationIndicatorReceiver notificationIndicatorReceiver;
     Intent userimage;
-    String id;
+    String userimg;
+
     public ProfileActiv() {
         // Required empty public constructor
     }
@@ -99,40 +99,62 @@ FirebaseFirestore fStore;
         collectionReference = FirebaseFirestore.getInstance().collection("Users");
         swipeRefresh.setOnRefreshListener(this);
 
-        id = getIntent().getStringExtra("userId");
+//        imageView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                collectionReference.document(id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                    @Override
+//                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                        String image = documentSnapshot.get("imageUrl").toString();
+////                        Toolbar toolbar1 = view.findViewById(R.id.fullScreenToolbar);
+//
+//                        toolbar.setVisibility(View.GONE);
+//                        frameLayout.setVisibility(View.VISIBLE);
+//                        getSupportFragmentManager().beginTransaction().replace(frameLayout.getId(),
+//                                new ImageFullScreenFragment(image), "FullScreen")
+//                                .commit();
+//
+//                    }
+//                }).addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Toast.makeText(ProfileActiv.this, "Empty image", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//            }
+//        });
+        getUserNaImg();
 
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+//        collectionReference.document(userId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//            @Override
+//            public void onSuccess(DocumentSnapshot snapshot) {
+//
+//                if(snapshot.contains("imageUrl")){
+//
+//                    String image = snapshot.getString("imageUrl");
+//
+//                    if(image!=null){
+//
+//                        imageView.setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//
+//                                FullScreenImagesUtil.showImageFullScreen(ProfileActiv.this,
+//                                        image,null);
+//
+//                            }
+//                        });
+//                    }
+//                }
+//
+//            }
+//        });
 
-                collectionReference.document(id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        String image = documentSnapshot.get("imageUrl").toString();
-//                        Toolbar toolbar1 = view.findViewById(R.id.fullScreenToolbar);
 
-                        toolbar.setVisibility(View.GONE);
-                        frameLayout.setVisibility(View.VISIBLE);
-                        getSupportFragmentManager().beginTransaction().replace(frameLayout.getId(),
-                                new ImageFullScreenFragment(image), "FullScreen")
-                                .commit();
-
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(ProfileActiv.this, "Empty image", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });
-        Intent id = getIntent();
-        if (id.hasExtra("userId")) {
-
-            String mn = id.getStringExtra("userId");
             firebaseFirestore = FirebaseFirestore.getInstance();
             query = firebaseFirestore.collection("Users").
-                    document(mn)
+                    document(userId)
                     .collection("UserPosts")
                     .orderBy("publishTime", Query.Direction.DESCENDING).limit(10);
             postData = new ArrayList<>();
@@ -141,9 +163,8 @@ FirebaseFirestore fStore;
             post_list.setLayoutManager(new LinearLayoutManager(ProfileActiv.this, RecyclerView.VERTICAL,
                     false));
             post_list.setAdapter(adapter);
-            getUserNaImg();
+//            getUserNaImg();
             ReadPost(true);
-        }
 
 //        firebaseFirestore = FirebaseFirestore.getInstance();
 //        query = firebaseFirestore.collection("Users").
@@ -158,6 +179,8 @@ FirebaseFirestore fStore;
 //                false));
 //        post_list.setAdapter(adapter);
 //        ReadPost(true);
+
+
     }
 
     @Override
@@ -244,16 +267,16 @@ FirebaseFirestore fStore;
 //
     private void getUserNaImg() {
         fAuth = FirebaseAuth.getInstance();
-        userid = fAuth.getCurrentUser().getUid();
         fStore = FirebaseFirestore.getInstance();
 
         Intent userimage = getIntent();
         if (userimage.hasExtra("username") && userimage.hasExtra("ImageUrl")) {
-            String userimg = userimage.getStringExtra("ImageUrl");
+             userimg = userimage.getStringExtra("ImageUrl");
             String usernam = userimage.getStringExtra("username");
-             id  = userimage.getStringExtra("userId");
+             userId  = userimage.getStringExtra("userId");
 
-            fStore.collection("Users").document(id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            fStore.collection("Users").document(userId).get()
+                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
 
@@ -267,14 +290,27 @@ FirebaseFirestore fStore;
                     }
                     Picasso.get().load(userimg).fit().into(imageView);
                     username.setText(usernam);
+
+
+                    if(userimg!=null && !userimg.isEmpty()){
+                        imageView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                FullScreenImagesUtil.showImageFullScreen(
+                                        ProfileActiv.this,
+                                        userimg,null,null);
+
+                            }
+                        });
+                    }
+
                 }
             });
-                   }
-
-
-
-
+            }
         }
+
+
 //        fStore.collection("Users").document(userid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
 //            @Override
 //            public void onComplete(@NonNull Task<DocumentSnapshot> task) {

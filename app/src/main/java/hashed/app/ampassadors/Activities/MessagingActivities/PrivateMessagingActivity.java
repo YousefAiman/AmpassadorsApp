@@ -436,7 +436,7 @@ public class PrivateMessagingActivity extends MessagingActivity{
 
                                               if(snapshot!=null && snapshot.exists()){
 
-                                                Log.d("ttt","on data changed");
+                                                Log.d("ttt","first message sender data changed");
                                                 removeSenderFirstMessageListener(id);
 
                                                 currentMessagingRef = messagingDatabaseRef
@@ -581,9 +581,12 @@ public class PrivateMessagingActivity extends MessagingActivity{
 
     DatabaseReference senderFirstMessageRef
             = messagingDatabaseRef.child(id);
-    senderFirstMessageRef.removeEventListener(
-            Objects.requireNonNull(valueEventListeners.get(
-                    senderFirstMessageRef.getRef())));
+    if(valueEventListeners.get(senderFirstMessageRef.getRef()) != null ){
+
+      senderFirstMessageRef.removeEventListener(
+              valueEventListeners.get(senderFirstMessageRef.getRef()));
+
+    }
     valueEventListeners.remove(senderFirstMessageRef.getRef());
   }
 }

@@ -3,8 +3,6 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
 android {
-
-
     compileSdkVersion 30
     buildToolsVersion "30.0.2"
 
@@ -12,8 +10,8 @@ android {
         applicationId "hashed.app.ampassadors"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "1.1.1"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 

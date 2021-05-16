@@ -42,6 +42,7 @@ import hashed.app.ampassadors.Objects.UserInfo;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.FileDownloadUtil;
 import hashed.app.ampassadors.Utils.Files;
+import hashed.app.ampassadors.Utils.FullScreenImagesUtil;
 
 public class Profile extends AppCompatActivity {
 
@@ -84,9 +85,13 @@ public class Profile extends AppCompatActivity {
                   edit_profile.setVisibility(View.GONE);
                   toolbar.setVisibility(View.GONE);
                     frameLayout.setVisibility(View.VISIBLE);
-                    getSupportFragmentManager().beginTransaction().replace(frameLayout.getId(),
-                            new ImageFullScreenFragment(image), "FullScreen")
-                            .commit();
+//                    getSupportFragmentManager().beginTransaction().replace(frameLayout.getId(),
+//                            new ImageFullScreenFragment(image), "FullScreen")
+//                            .commit();
+
+                    FullScreenImagesUtil.showImageFullScreen(Profile.this,
+                            image,null,null);
+
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override

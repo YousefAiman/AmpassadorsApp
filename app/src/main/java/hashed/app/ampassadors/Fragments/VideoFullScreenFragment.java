@@ -96,7 +96,7 @@ public class VideoFullScreenFragment extends DialogFragment {
     View view = inflater.inflate(R.layout.fragment_video_full_screen, container, false);
 
     final Toolbar fullScreenToolbar = view.findViewById(R.id.fullScreenToolbar);
-    fullScreenToolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
+    fullScreenToolbar.setNavigationOnClickListener(v -> dismiss());
 
     if(attachmentName!=null){
 
