@@ -152,6 +152,11 @@ public class ImageFullScreenFragment extends DialogFragment {
 
   }
 
+//  @Override
+//  public void setStyle(int style, int theme) {
+//    super.setStyle(android.R.style.Theme_Black_NoTitleBar_Fullscreen, theme);
+//  }
+
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater,
@@ -168,9 +173,9 @@ public class ImageFullScreenFragment extends DialogFragment {
     fullScreenIv = view.findViewById(R.id.fullScreenIv);
 
     final Toolbar fullScreenToolbar = view.findViewById(R.id.fullScreenToolbar);
-    fullScreenToolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
+    fullScreenToolbar.setNavigationOnClickListener(v -> dismiss());
 
-    if(attachmentName!=null){
+    if(attachmentName != null){
 
       fullScreenToolbar.inflateMenu(R.menu.download_menu);
       fullScreenToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {

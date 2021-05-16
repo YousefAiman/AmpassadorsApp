@@ -84,6 +84,7 @@ import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.Objects.PrivateMessage;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
+import hashed.app.ampassadors.Utils.FullScreenImagesUtil;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.UploadTaskUtil;
 
@@ -740,7 +741,6 @@ public abstract class MessagingActivity extends AppCompatActivity
   private void scrollToBottom() {
     privateMessagingRv.post(() ->
             privateMessagingRv.scrollToPosition(privateMessages.size() - 1));
-
   }
 
   private void getMoreTopMessages() {
@@ -1266,7 +1266,10 @@ public abstract class MessagingActivity extends AppCompatActivity
 
   @Override
   public void showImage(String url,String fileName) {
-    new ImageFullScreenFragment(url,fileName).show(getSupportFragmentManager(),"fullScreen");
+
+    FullScreenImagesUtil.showImageFullScreen(this, url,null,fileName);
+
+//    new ImageFullScreenFragment(url,fileName).show(getSupportFragmentManager(),"fullScreen");
   }
 
 

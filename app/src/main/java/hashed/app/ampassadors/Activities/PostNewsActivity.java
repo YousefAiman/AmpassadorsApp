@@ -40,6 +40,7 @@ import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.FileDownloadUtil;
 import hashed.app.ampassadors.Utils.Files;
+import hashed.app.ampassadors.Utils.FullScreenImagesUtil;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.SigninUtil;
 import hashed.app.ampassadors.Utils.TimeFormatter;
@@ -289,9 +290,14 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 //                                    getFileName()), "FullScreen")
 //                            .commit();
 
-                    new ImageFullScreenFragment(postData.getAttachmentUrl(),
-                            getFileName()).show(getSupportFragmentManager(),
-                            "fullScreen");
+                    FullScreenImagesUtil.showImageFullScreen(this,
+                            postData.getAttachmentUrl(),
+                            null,
+                            getFileName());
+
+//                    new ImageFullScreenFragment(postData.getAttachmentUrl(),
+//                            getFileName()).show(getSupportFragmentManager(),
+//                            "fullScreen");
 
 
                 } else if (postData.getAttachmentType() == Files.VIDEO) {

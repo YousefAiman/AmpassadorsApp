@@ -63,6 +63,7 @@ import hashed.app.ampassadors.Objects.UserInfo;
 import hashed.app.ampassadors.Objects.UserPostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
+import hashed.app.ampassadors.Utils.FullScreenImagesUtil;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 
 public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItemClickListener,
@@ -117,24 +118,26 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
 
                 if(snapshot.contains("imageUrl")){
 
-                    imageView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                    String image = snapshot.getString("imageUrl");
 
-                            String image = snapshot.getString("imageUrl");
+                    if(image!=null){
 
+                        imageView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
 
-                            floatingButton.setVisibility(View.GONE);
-                            toolbar.setVisibility(View.GONE);
-                            frameLayout.setVisibility(View.VISIBLE);
+//                            floatingButton.setVisibility(View.GONE);
+//                            toolbar.setVisibility(View.GONE);
+//                            frameLayout.setVisibility(View.VISIBLE);
+                                FullScreenImagesUtil.showImageFullScreen(requireContext(),
+                                        image,null,null);
+//                            getFragmentManager().beginTransaction().replace(frameLayout.getId(),
+//                                    new ImageFullScreenFragment(image), "FullScreen")
+//                                    .commit();
 
-
-                            getFragmentManager().beginTransaction().replace(frameLayout.getId(),
-                                    new ImageFullScreenFragment(image), "FullScreen")
-                                    .commit();
-
-                        }
-                    });
+                            }
+                        });
+                    }
                 }
 
             }
