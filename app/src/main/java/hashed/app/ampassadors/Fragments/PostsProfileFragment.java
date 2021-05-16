@@ -332,16 +332,20 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         fAuth = FirebaseAuth.getInstance();
         userid = fAuth.getCurrentUser().getUid();
         fStore = FirebaseFirestore.getInstance();
-
         listenerRegistration = fStore.collection("Users").document(userid)
                 .addSnapshotListener(new EventListener<DocumentSnapshot>() {
                     @Override
                     public void onEvent(@Nullable DocumentSnapshot value,
                                         @Nullable FirebaseFirestoreException error) {
                         Log.d("ttt", "value change");
+                        String bio = value.getString("Bio");
+                        if (bio.isEmpty()) {
+                            biotext.setVisibility(View.GONE);
+                        }else {
+                            biotext.setText(bio);
 
+                        }
                         username.setText(value.getString("username"));
-                        biotext.setText(value.getString("Bio"));
                         Picasso.get().load(value.getString("imageUrl")).fit().into(imageView);
                     }
                 });
