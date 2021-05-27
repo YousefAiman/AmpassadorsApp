@@ -6,12 +6,6 @@
         android:id="@+id/news"
         android:title="@string/news" />
 
-<!--    <item-->
-<!--        android:id="@+id/awreaness_post"-->
-<!--        android:title="@string/AwarenessPosts" />-->
-<!--    <item-->
-<!--        android:id="@+id/courses"-->
-<!--        android:title="@string/Courses" />-->
 
     <item
         android:id="@+id/polls"
@@ -31,6 +25,8 @@
     <item
         android:id="@+id/about"
         android:title="@string/Aboutus" />
+
+
 
     <item
         android:id="@+id/log_out"

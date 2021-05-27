@@ -453,9 +453,11 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                     Log.d("ttt", "signInWithCredential:success");
 
                     if (authResult.getAdditionalUserInfo().isNewUser()) {
+
                         addUserToFirestore(account.getDisplayName(),account.getEmail()
                                 , auth.getCurrentUser().getUid(),
                                 account.getPhotoUrl().toString());
+
                     } else {
 
                         Log.d("ttt","not a new user");
