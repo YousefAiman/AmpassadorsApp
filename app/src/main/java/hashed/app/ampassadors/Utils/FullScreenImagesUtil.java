@@ -4,8 +4,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.net.Uri;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -19,10 +17,10 @@ import hashed.app.ampassadors.R;
 
 public class FullScreenImagesUtil {
 
-    public static void showImageFullScreen(Context context,
-                                           @Nullable String imageUrl,
-                                           @Nullable Uri imageUri,
-                                           @Nullable String attachmentName) {
+    public static Dialog showImageFullScreen(Context context,
+                                             @Nullable String imageUrl,
+                                             @Nullable Uri imageUri,
+                                             @Nullable String attachmentName) {
 
         final Dialog imageDialog = new Dialog(context,
                 android.R.style.Theme_Black_NoTitleBar_Fullscreen);
@@ -70,6 +68,8 @@ public class FullScreenImagesUtil {
 
 
         imageDialog.show();
+
+        return imageDialog;
 //        final ScaleGestureDetector scaleGestureDetector
 //                = new ScaleGestureDetector(context, new ScaleListener(fullScreenIv));
 //

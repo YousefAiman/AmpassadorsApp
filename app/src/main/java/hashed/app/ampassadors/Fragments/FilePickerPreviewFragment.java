@@ -122,14 +122,14 @@ public class FilePickerPreviewFragment extends Fragment {
     public void onClick(View view) {
 
       final String content = messagingPickerEd.getText().toString();
-      if (!content.isEmpty() && uri != null) {
+      if (uri != null) {
 
         if(getActivity()!=null){
 
           ((MessagingActivity) getActivity()).sendFileMessage(
                   uri,
                   type,
-                  content,
+                  "",
                   0,
                   fileName);
 

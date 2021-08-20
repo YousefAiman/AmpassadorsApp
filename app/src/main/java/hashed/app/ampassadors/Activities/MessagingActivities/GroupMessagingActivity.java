@@ -156,9 +156,7 @@ public class GroupMessagingActivity extends MessagingActivity{
 
             if(!userIsGroupCreator){
 
-
-            if(value.contains("messagingSenders")){
-              String newMessagingStatus = value.getString("messagingSenders");
+              final String newMessagingStatus = value.getString("messagingSenders");
 
               if(!newMessagingStatus.equals(currentMessagingSenders)){
 
@@ -170,21 +168,26 @@ public class GroupMessagingActivity extends MessagingActivity{
                 currentMessagingSenders = newMessagingStatus;
 
               }
-            }
 
             if(value.contains("groupAdmins")){
               groupAdmins = (List<String>) value.get("groupAdmins");
               if(!userISAnAdmin && groupAdmins.contains(currentUid)){
                 //user is now an admin
-//                toolbar.getMenu().setvi
                 userISAnAdmin = true;
                 toolbar.getMenu().clear();
                 toolbar.inflateMenu(R.menu.group_creator_menu);
+
+                enableMessaging();
+
+//                changeMessagingStatus(newMessagingStatus,currentMessagingSenders);
               }else if(userISAnAdmin && !groupAdmins.contains(currentUid)){
                 //user is removed from admins
                 userISAnAdmin = false;
                 toolbar.getMenu().clear();
                 toolbar.inflateMenu(R.menu.group_user_menu);
+
+                changeMessagingStatus(newMessagingStatus,currentMessagingSenders);
+
               }
             }
             }else{
