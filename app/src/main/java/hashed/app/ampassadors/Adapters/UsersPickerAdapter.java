@@ -1,9 +1,11 @@
 package hashed.app.ampassadors.Adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
@@ -101,7 +103,8 @@ public class UsersPickerAdapter extends RecyclerView.Adapter<UsersPickerAdapter.
     };
   }
 
-  public class UsersVh extends RecyclerView.ViewHolder implements View.OnClickListener {
+  public class UsersVh extends RecyclerView.ViewHolder implements View.OnClickListener,
+          CompoundButton.OnCheckedChangeListener {
 
     private final CircleImageView userIv;
     private final TextView usernameTv;
@@ -130,12 +133,14 @@ public class UsersPickerAdapter extends RecyclerView.Adapter<UsersPickerAdapter.
       usernameTv.setText(user.getUsername());
 
       itemView.setOnClickListener(this);
+//      selectCheckBox.setOnCheckedChangeListener(this);
 
     }
 
     @Override
     public void onClick(View view) {
 
+      Log.d("ttt","clicked");
       if (filteredUsers != null) {
 
         if (selectedUserIds.contains(filteredUsers.get(getAdapterPosition()).getUserId())) {
@@ -157,6 +162,28 @@ public class UsersPickerAdapter extends RecyclerView.Adapter<UsersPickerAdapter.
         }
 
       }
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+      if (filteredUsers != null) {
+
+        if(b){
+          selectedUserIds.add(filteredUsers.get(getAdapterPosition()).getUserId());
+        }else{
+          selectedUserIds.remove(filteredUsers.get(getAdapterPosition()).getUserId());
+        }
+
+      } else {
+
+        if(b){
+          selectedUserIds.add(users.get(getAdapterPosition()).getUserId());
+        }else{
+          selectedUserIds.remove(users.get(getAdapterPosition()).getUserId());
+        }
+      }
+
     }
   }
 }

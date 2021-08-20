@@ -55,7 +55,9 @@ public class Files {
           Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
   private static final String[] supportedMimeTypes = {"application/pdf", "application/msword",
-          "text/*", "application/mspowerpoint", "application/vnd.ms-excel", "application/zip"};
+          "text/*", "application/mspowerpoint",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          ,"application/vnd.ms-excel", "application/zip"};
 
   public static void startImageFetchIntent(Activity activity) {
 

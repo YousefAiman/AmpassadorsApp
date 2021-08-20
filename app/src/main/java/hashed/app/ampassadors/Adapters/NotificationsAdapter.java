@@ -325,7 +325,10 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                                   PostNewsActivity.class:PostPollActivity.class)
                         .putExtra("isForUser",true).
                 putExtra("publisherId",notification.getReceiverId())
+                        .putExtra("postId", notification.getDestinationId())
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+
 
                 view.getContext().startActivity(postIntent);
 

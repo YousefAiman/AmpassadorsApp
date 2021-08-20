@@ -387,7 +387,6 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                        if (documentSnapshot.exists()){
                            intent.putExtra("justForUser", "justForUser");
-
                        }
                         startActivity(intent);
                         finish();

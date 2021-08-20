@@ -8,6 +8,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -74,33 +75,53 @@ public class Profile extends AppCompatActivity {
         imageView = findViewById(R.id.profile_picture);
         bio = findViewById(R.id.bio_text);
         userInfo = new UserInfo();
-        imageView.setOnClickListener(new View.OnClickListener() {
+        userInfo.setUserId(userid);
+
+        collectionReference.document(userid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
-            public void onClick(View v) {
-            userInfo.setUserId(userid);
-            collectionReference.document(userid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                  String image = documentSnapshot.get("imageUrl").toString();
-                  edit_profile.setVisibility(View.GONE);
-                  toolbar.setVisibility(View.GONE);
-                    frameLayout.setVisibility(View.VISIBLE);
-//                    getSupportFragmentManager().beginTransaction().replace(frameLayout.getId(),
-//                            new ImageFullScreenFragment(image), "FullScreen")
-//                            .commit();
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                    FullScreenImagesUtil.showImageFullScreen(Profile.this,
-                            image,null,null);
+                if(documentSnapshot.contains("imageUrl")){
+
+                    String image = documentSnapshot.get("imageUrl").toString();
+
+                    imageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            edit_profile.setVisibility(View.GONE);
+                            toolbar.setVisibility(View.GONE);
+                            frameLayout.setVisibility(View.VISIBLE);
+
+                            FullScreenImagesUtil.showImageFullScreen(Profile.this,
+                                    image,null,null).setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialogInterface) {
+
+                                    edit_profile.setVisibility(View.VISIBLE);
+                                    toolbar.setVisibility(View.VISIBLE);
+                                    frameLayout.setVisibility(View.GONE);
+
+                                }
+                            });
+
+                        }
+                    });
 
                 }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(Profile.this, "Empty image", Toast.LENGTH_SHORT).show();
-                }
-            });
-                }
+
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(Profile.this, "Empty image", Toast.LENGTH_SHORT).show();
+            }
         });
+
+
+
+
         final UserInfo[] userInfo = new UserInfo[1];
         listenerRegistration =  FirebaseFirestore.getInstance().collection("Users")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
