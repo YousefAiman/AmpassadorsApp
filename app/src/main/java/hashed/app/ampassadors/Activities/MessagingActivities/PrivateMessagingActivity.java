@@ -87,7 +87,6 @@ public class PrivateMessagingActivity extends MessagingActivity{
   @Override
   void createMessagingDocument(PrivateMessage privateMessage) {
 
-
     boolean currentUidIsFirst = currentUid.toUpperCase()
             .compareTo(messagingUid.toUpperCase()) < 0;
     String id;
