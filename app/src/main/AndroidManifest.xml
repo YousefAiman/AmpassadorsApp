@@ -23,9 +23,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AmpassadorsApp">
-
-        <activity android:name=".Activities.NotificationSenderActivity"/>
-
+        <activity android:name=".Activities.ContactUsActivity"></activity>
+        <activity android:name=".Activities.NotificationSenderActivity" />
         <activity
             android:name=".Activities.GroupInfoActivity"
             android:screenOrientation="portrait" />
@@ -154,12 +153,12 @@
         <activity
             android:name=".Activities.SuggestionsActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

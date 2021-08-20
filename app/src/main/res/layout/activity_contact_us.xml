@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/light_grey"
+    tools:context=".Activities.ContactUsActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/contactUsToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:background="@color/medium_green"
+        android:elevation="4dp"
+        android:fitsSystemWindows="true"
+        android:textAlignment="center"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationContentDescription="navigate back"
+        app:navigationIcon="@drawable/back_arrow_icon"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:title="@string/contact_us"
+        app:titleTextAppearance="@style/ToolbarTitleAppearance"
+        app:titleTextColor="@color/white" />
+
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="20dp"
+        android:src="@drawable/ic_baseline_email"
+        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/contactUsToolbar"
+        app:layout_constraintWidth_percent="0.15"
+        app:tint="@color/light_green" />
+
+    <TextView
+        android:id="@+id/textView16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/segoe_ui"
+        android:clickable="true"
+        android:focusable="true"
+        android:textIsSelectable="true"
+        android:autoLink="email"
+        android:textColorLink="@color/light_blue_900"
+        android:text="ampassadors2021@gmail.com"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView5" />
+
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="50dp"
+        android:src="@drawable/ic_baseline_phone"
+        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView16"
+        app:layout_constraintWidth_percent="0.15"
+        app:tint="@color/light_green" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/segoe_ui"
+        android:text="+970 599 780 388"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:layout_marginTop="20dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:textIsSelectable="true"
+        android:autoLink="phone"
+        android:textColorLink="@color/light_blue_900"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView6" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

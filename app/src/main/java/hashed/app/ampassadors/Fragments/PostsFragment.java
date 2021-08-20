@@ -845,7 +845,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 //                                index,
 //                                headerItem);
 
-                        dotsLinear.removeViewAt(index);
+//                        dotsLinear.removeViewAt(index);
                         if(dotsLinear.getChildCount() == 1){
                             dotsLinear.setVisibility(View.GONE);
                         }

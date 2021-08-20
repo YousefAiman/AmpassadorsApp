@@ -24,7 +24,9 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.AuthResult;
@@ -35,6 +37,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -43,10 +46,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import hashed.app.ampassadors.BroadcastReceivers.NotificationIndicatorReceiver;
@@ -60,28 +65,29 @@ import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.Objects.PostNewsPreview;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Services.FirebaseMessagingService;
+import hashed.app.ampassadors.Utils.Files;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.SigninUtil;
 
 public class  Home_Activity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
 
-  private final FirebaseAuth auth = FirebaseAuth.getInstance();
-  private final String userid = auth.getCurrentUser().getUid();
-  private DocumentReference reference;
-  private FirebaseFirestore firebaseFirestore;
-  private BottomNavigationView nav_btom;
-  private FrameLayout homeFrameLayout;
-  private DrawerLayout drawer_layout;
-  private NavigationView navigationview;
-  private List<ListenerRegistration> listenerRegistrations;
+    private final FirebaseAuth auth = FirebaseAuth.getInstance();
+    private final String userid = auth.getCurrentUser().getUid();
+    private DocumentReference reference;
+    private FirebaseFirestore firebaseFirestore;
+    private BottomNavigationView nav_btom;
+    private FrameLayout homeFrameLayout;
+    private DrawerLayout drawer_layout;
+    private NavigationView navigationview;
+    private List<ListenerRegistration> listenerRegistrations;
 
-  @Override
-  protected void onResume() {
-    super.onResume();
-    FirebaseFirestore.getInstance().collection("Users")
-            .document(userid).update("status",true);
-  }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FirebaseFirestore.getInstance().collection("Users")
+                .document(userid).update("status", true);
+    }
 
 //    public static void main(String[] args){
 //
@@ -97,43 +103,243 @@ public class  Home_Activity extends AppCompatActivity implements
 
 
     @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.home_activity);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.home_activity);
 
-    SetUpCompetent();
-    GlobalVariables.getInstance().setAppIsRunning(true);
-
-
-    firebaseFirestore = FirebaseFirestore.getInstance();
-
-    replaceFragment(new PostsFragment());
-
-    if(nav_btom.getSelectedItemId()!=R.id.home){
-      nav_btom.setSelectedItemId(R.id.home);
-    }
+        SetUpCompetent();
+        GlobalVariables.getInstance().setAppIsRunning(true);
 
 
-    if(auth.getCurrentUser().isAnonymous()){
-      navigationview.inflateMenu(R.menu.menu_nav);
-    }else{
-      if (GlobalVariables.getInstance().getRole()!=null && GlobalVariables.getInstance().getRole().equals("Admin")) {
-        navigationview.inflateMenu(R.menu.menu_admin);
-      } else {
-        navigationview.inflateMenu(R.menu.menu_nav);
-      }
-    }
+        firebaseFirestore = FirebaseFirestore.getInstance();
 
-//    FirebaseFirestore.getInstance().collection("PrivateMessages")
-//            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        replaceFragment(new PostsFragment());
+
+        if (nav_btom.getSelectedItemId() != R.id.home) {
+            nav_btom.setSelectedItemId(R.id.home);
+        }
+
+
+        if (auth.getCurrentUser().isAnonymous()) {
+            navigationview.inflateMenu(R.menu.menu_nav);
+        } else {
+            if (GlobalVariables.getInstance().getRole() != null && GlobalVariables.getInstance().getRole().equals("Admin")) {
+                navigationview.inflateMenu(R.menu.menu_admin);
+            } else {
+                navigationview.inflateMenu(R.menu.menu_nav);
+            }
+        }
+
+//        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+//
+//        FirebaseFirestore.getInstance().collection("Users").get()
+//                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//            @Override
+//            public void onSuccess(QuerySnapshot snapshots) {
+//
+//                for(DocumentSnapshot snapshot:snapshots){
+//
+//                    String email = snapshot.getString("email");
+//                    String password = snapshot.getString("password");
+
+//
+//                    String imageUrl = snapshot.getString("imageUrl");
+//                    if(imageUrl!=null && !imageUrl.isEmpty()){
+//                        firebaseStorage.getReferenceFromUrl(imageUrl).delete();
+//                    }
+//
+
+//                    if(email!=null && !email.isEmpty() && password!=null && !password.isEmpty()){
+//
+//                        auth.signInWithEmailAndPassword(email,password)
+//                                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+//                            @Override
+//                            public void onSuccess(AuthResult authResult) {
+//
+//                                authResult.getUser().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                    @Override
+//                                    public void onSuccess(Void aVoid) {
+//                                        snapshot.getReference().delete();
+//                                    }
+//                                });
+//                            }
+//                        });
+//                    }else{
+//
+//                        snapshot.getReference().delete();
+//
+//                    }
+//
+//                }
+//            }
+//        });
+
+//        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+//
+//
+//        FirebaseDatabase.getInstance().getReference().child("PrivateMessages")
+//                .addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//
+//                        for (DataSnapshot child : snapshot.getChildren()) {
+//
+//                            for (DataSnapshot snapshot1 : child.child("messages").getChildren()) {
+//                                if (snapshot1.hasChild("attachmentUrl")) {
+//                                    firebaseStorage.getReferenceFromUrl(Objects.requireNonNull(snapshot1
+//                                            .child("attachmentUrl").getValue(String.class)))
+//                                            .delete();
+//                                }
+//
+//                                if (snapshot1.hasChild("videoThumbnail")) {
+//                                    firebaseStorage.getReferenceFromUrl(Objects.requireNonNull(snapshot1
+//                                            .child("videoThumbnail").getValue(String.class)))
+//                                            .delete();
+//                                }
+//                            }
+//
+//                            child.getRef().removeValue();
+//
+//
+//                        }
+//
+//
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//
+//                    }
+//                });
+
+
+
+
+//    CollectionReference postRef = FirebaseFirestore.getInstance().collection("Posts");
+//
+//     postRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
 //        @Override
 //        public void onSuccess(QuerySnapshot snapshots) {
+//
+//
 //            for(DocumentSnapshot documentSnapshot:snapshots){
-//              documentSnapshot.getReference().update("type",
-//                      documentSnapshot.contains("groupId")?"groupMessages":"privateMessages");
+//
+//                documentSnapshot.getReference().collection("Likes")
+//                        .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onSuccess(QuerySnapshot snapshots) {
+//
+//                        for(DocumentSnapshot snapshot:snapshots){
+//                            snapshot.getReference().delete();
+//                        }
+//                    }
+//                });
+////
+//                postRef.collection(collectionName).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onSuccess(QuerySnapshot snapshots) {
+//                        if(snapshots != null){
+//                            for(DocumentSnapshot documentSnapshot:snapshots){
+//                                documentSnapshot.getReference().delete();
+//                            }
+//                        }
+//                    }
+//                });
+//
+//                Log.d("ttt",);
+//
+//                long postType =  documentSnapshot.getLong("type");
+//
+//                DocumentReference deletedPostRef = documentSnapshot.getReference();
+//
+//                deleteCollection("Likes",deletedPostRef);
+//                deleteCollection("Comments",deletedPostRef);
+//
+//                if(postType == PostData.TYPE_POLL){
+//                    deleteCollection("Options",deletedPostRef);
+//                    deleteCollection("UserVotes",deletedPostRef);
+//                }
+
+//
+//                String attachmentUrl =  documentSnapshot.getString("attachmentUrl");
+//                String videoThumbnailUrl =  documentSnapshot.getString("videoThumbnailUrl");
+//
+//
+//                DocumentReference deletedPostRef = documentSnapshot.getReference();
+//
+//                deletedPostRef.update("deleting",true).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void aVoid) {
+//
+//                        deletedPostRef.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<Void> task) {
+//                                if(task.isSuccessful()){
+//                                    deleteCollection("Likes",deletedPostRef);
+//                                    deleteCollection("Comments",deletedPostRef);
+//
+//
+//                                    if(postType == PostData.TYPE_POLL){
+//                                        deleteCollection("Options",deletedPostRef);
+//                                        deleteCollection("UserVotes",deletedPostRef);
+//                                    }
+//
+//                                    final FirebaseStorage storage = FirebaseStorage.getInstance();
+//
+//                                    if(attachmentUrl!=null){
+//                                        storage.getReferenceFromUrl(attachmentUrl).delete();
+//                                    }
+//
+//                                    if(videoThumbnailUrl!=null){
+//                                        storage.getReferenceFromUrl(videoThumbnailUrl).delete();
+//                                    }
+//
+//                                    FirebaseFirestore.getInstance().collection("Notifications")
+//                                            .whereEqualTo("destinationId",documentSnapshot.getId())
+//                                            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//                                        @Override
+//                                        public void onSuccess(QuerySnapshot snapshots) {
+//                                            for(DocumentSnapshot documentSnapshot:snapshots){
+//                                                documentSnapshot.getReference().delete();
+//                                            }
+//                                        }
+//                                    });
+//                                }
+//                            }
+//                        });
+
+//                    }
+//                });
+//
 //            }
 //        }
 //    });
+//
+//        CollectionReference privateMessagesRef = FirebaseFirestore.getInstance().collection("PrivateMessages");
+//
+//        final FirebaseStorage storage = FirebaseStorage.getInstance();
+//
+//        privateMessagesRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//            @Override
+//            public void onSuccess(QuerySnapshot snapshots) {
+//                for(DocumentSnapshot snapshot:snapshots){
+//
+//                    if(snapshot.contains("imageUrl")) {
+//                        String imageUrl = snapshot.getString("imageUrl");
+//
+//                        if (imageUrl != null && !imageUrl.isEmpty()) {
+//                            storage.getReferenceFromUrl(imageUrl).delete();
+//                        }
+//
+//                    }
+//                    snapshot.getReference().delete();
+//                }
+//            }
+//        });
+
+
+
+
 
 
 //    FirebaseFirestore.getInstance().collection("Users")
@@ -220,7 +426,21 @@ public class  Home_Activity extends AppCompatActivity implements
 
   }
 
-  private void createUserLikesListener() {
+    private static void deleteCollection(String collectionName,DocumentReference postRef){
+        postRef.collection(collectionName).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot snapshots) {
+                if(snapshots != null){
+                    for(DocumentSnapshot documentSnapshot:snapshots){
+                        documentSnapshot.getReference().delete();
+                    }
+                }
+            }
+        });
+    }
+
+
+    private void createUserLikesListener() {
 
     listenerRegistrations = new ArrayList<>();
 
@@ -512,6 +732,10 @@ public class  Home_Activity extends AppCompatActivity implements
             startActivity(intent);
         } else if (item.getItemId() == R.id.user_requests) {
             Intent intent = new Intent(Home_Activity.this, Admin.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } else if (item.getItemId() == R.id.contact_us) {
+            Intent intent = new Intent(Home_Activity.this, ContactUsActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }else  if (item.getItemId() == R.id.repotred){

@@ -35,6 +35,10 @@
         android:title="@string/Aboutus" />
 
     <item
+        android:id="@+id/contact_us"
+        android:title="@string/contact_us" />
+
+    <item
         android:id="@+id/log_out"
         android:title="@string/logout" />
 </menu>
