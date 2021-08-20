@@ -646,16 +646,13 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                     public void onPageScrolled(int position, float positionOffset,
                                                int positionOffsetPixels) {
                     }
-
                     @Override
                     public void onPageSelected(int position) {
 
                         dots[previousPage].setImageResource(R.drawable.indicator_inactive_icon);
                         dots[position].setImageResource(R.drawable.indicator_active_icon);
-
                         previousPage = position;
                     }
-
                     @Override
                     public void onPageScrollStateChanged(int state) {
                     }

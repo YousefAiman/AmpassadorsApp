@@ -95,7 +95,7 @@ public class ProfileActiv extends AppCompatActivity implements
         bio = findViewById(R.id.textView15);
         imageView = findViewById(R.id.profile_picture);
         swipeRefresh = findViewById(R.id.swipeRefreshLayout);
-        frameLayout = findViewById(R.id.frameLayout);
+        frameLayout = findViewById(R.id.profileframeLayout);
         collectionReference = FirebaseFirestore.getInstance().collection("Users");
         swipeRefresh.setOnRefreshListener(this);
 
@@ -233,6 +233,17 @@ public class ProfileActiv extends AppCompatActivity implements
 
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (frameLayout.getVisibility() == View.VISIBLE){
+            getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager().findFragmentByTag("FullScreen"))
+                    .commit();
+            frameLayout.setVisibility(View.GONE);
+        }else{
+            super.onBackPressed();
+        }
     }
 
     private void setupNotificationReceiver() {
