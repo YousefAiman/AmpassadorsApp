@@ -110,29 +110,29 @@ public class Files {
 
   }
 
-  private static boolean checkStoragePermissions(Activity activity, int requestCode) {
+    private static boolean checkStoragePermissions(Activity activity, int requestCode) {
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
-      if (activity.checkSelfPermission(permissions[0]) != PackageManager.PERMISSION_GRANTED) {
+        if (activity.checkSelfPermission(permissions[0]) != PackageManager.PERMISSION_GRANTED) {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-          //doesn't need to request write persmission
-          activity.requestPermissions(new String[]{permissions[0]}, requestCode);
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            //doesn't need to request write persmission
+            activity.requestPermissions(new String[]{permissions[0]}, requestCode);
+          } else {
+            //needs to request write persmission
+            activity.requestPermissions(permissions, requestCode);
+
+          }
+
+          return false;
         } else {
-          //needs to request write persmission
-          activity.requestPermissions(permissions, requestCode);
-
+          return true;
         }
 
-        return false;
-      } else {
-        return true;
       }
-
+      return true;
     }
-    return true;
-  }
 
   public static boolean checkStorageWritePermission(Activity activity) {
 

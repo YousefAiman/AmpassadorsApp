@@ -242,7 +242,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
 
                     return;
                 } else {
-                    register(txt_username, txt_password, txt_email, txt_country, txt_city, txt_phone, day ,year ,month);
+                    register(txt_username, txt_password, txt_email, txt_country, txt_city, txt_phone, day, year, month);
 //          Intent intent = new Intent(sign_up.this, sign_in.class);
 //          startActivity(intent);
 //          finish();
@@ -254,13 +254,13 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
     }
 
     private void register(String username, String passwrod, String email,
-                          String country, String city, String phone  , int day  , int year , int month) {
+                          String country, String city, String phone, int day, int year, int month) {
 
         ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.creating_account));
         progressDialog.setCancelable(false);
         progressDialog.show();
-        String bio  = "";
+        String bio = "";
 
         final Task<AuthResult> task = auth.createUserWithEmailAndPassword(email, passwrod);
         task.addOnSuccessListener(new OnSuccessListener<AuthResult>() {
@@ -277,19 +277,19 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                 hashMap.put("email", email);
                 hashMap.put("country", country);
                 hashMap.put("city", city);
-             //   hashMap.put("approvement", false);
+                //   hashMap.put("approvement", false);
                 hashMap.put("rejected", false);
                 hashMap.put("phone", phone);
                 hashMap.put("userId", authResult.getUser().getUid());
                 hashMap.put("imageUrl", imageUrl);
                 hashMap.put("status", true);
-                hashMap.put("Year",year);
-                hashMap.put("isEmailVerified",false);
+                hashMap.put("Year", year);
+                hashMap.put("isEmailVerified", false);
                 hashMap.put("Month'", month);
                 hashMap.put("Day", day);
                 hashMap.put("Role", "Ambassador");
                 hashMap.put("phoneCode", spinner.getSelectedItem());
-                hashMap.put("Bio",bio);
+                hashMap.put("Bio", bio);
                 if (locationRequester != null && locationRequester.countryCode != null &&
                         !locationRequester.countryCode.isEmpty()) {
                     hashMap.put("countryCode", locationRequester.countryCode);
@@ -469,13 +469,13 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (options[i].equals("Take photo")) {
-                    if (ActivityCompat.checkSelfPermission(sign_up.this,Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.checkSelfPermission(sign_up.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
 
                         Intent pikPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         startActivityForResult(pikPhoto, 1);
 
-                    }else {
-                        ActivityCompat.requestPermissions(sign_up.this,new String[]{Manifest.permission.CAMERA},2);
+                    } else {
+                        ActivityCompat.requestPermissions(sign_up.this, new String[]{Manifest.permission.CAMERA}, 2);
 
                     }
                     Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -496,13 +496,13 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                         }
                     }
                 } else if (options[i].equals("open Gallery")) {
-                    if (ActivityCompat.checkSelfPermission(sign_up.this,Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.checkSelfPermission(sign_up.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
 
                         Intent pikPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         startActivityForResult(pikPhoto, 2);
 
-                    }else {
-                        ActivityCompat.requestPermissions(sign_up.this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},2);
+                    } else {
+                        ActivityCompat.requestPermissions(sign_up.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 2);
 
                     }
                 } else if (options[i].equals("Cancel")) {
@@ -604,7 +604,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                 + " +" + PhoneNumberUtil.getInstance().getCountryCodeForRegion(countryCode.toUpperCase());
 
 
-        Log.d("ttt","default phone code: "+defaultSpinnerChoice);
+        Log.d("ttt", "default phone code: " + defaultSpinnerChoice);
 
         spinner.setSelection(spinnerArray.indexOf(defaultSpinnerChoice));
     }

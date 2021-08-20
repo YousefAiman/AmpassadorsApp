@@ -614,7 +614,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
               uploadTaskMap.remove(uploadTask);
               reference.getDownloadUrl().addOnSuccessListener(uri1 -> {
 
-                final String attachmentUrl = uri1.toString();
+                  final String attachmentUrl = uri1.toString();
 
                 if (isForEditing) {
                   publishPostUpdate(title, description, attachmentUrl, null, progressDialog);
