@@ -1,8 +1,10 @@
 package hashed.app.ampassadors.Activities;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -65,7 +67,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
     EditText email, password;
     Button btn_login, create_account_btn,gmailbtn,facebookbtn;
     FirebaseAuth auth;
-    TextView verifyEmail, forgetPass;
+    TextView verifyEmail, forgetPass,termsAndConditionsTv;
     FirebaseFirestore fStore;
     FirebaseAuth fAuth;
 
@@ -173,8 +175,12 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
         gmailbtn = findViewById(R.id.gmailbtn);
         facebookbtn = findViewById(R.id.facebookbtn);
         facebookLoginBtn = findViewById(R.id.facebookLoginBtn);
+        termsAndConditionsTv = findViewById(R.id.termsAndConditionsTv);
+
+
         gmailbtn.setOnClickListener(this);
         facebookbtn.setOnClickListener(this);
+        termsAndConditionsTv.setOnClickListener(this);
 
 
         facebookbtn = findViewById(R.id.facebookbtn);
@@ -332,6 +338,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
     }
 
 
+    @SuppressLint("QueryPermissionsNeeded")
     @Override
     public void onClick(View view) {
         if(view.getId() == gmailbtn.getId()){
@@ -376,6 +383,17 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
 
             }
 //            facebookLoginBtn.performClick();
+        }else if(view.getId() == termsAndConditionsTv.getId()){
+
+            final Uri uri = Uri.parse(getString(R.string.terms_and_conditions_url));
+
+            final Intent urlIntent = new Intent(Intent.ACTION_VIEW,uri);
+
+            if(urlIntent.resolveActivity(getPackageManager()) !=null){
+                startActivity(urlIntent);
+            }
+
+
         }
     }
 

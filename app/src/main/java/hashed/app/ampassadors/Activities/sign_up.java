@@ -90,6 +90,8 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
     private ImageView locationIv;
     DatePicker dob;
 
+    private TextView termsAndConditionsTv;
+
     private static final int
             REQUEST_CHECK_SETTINGS = 100,
             REQUEST_LOCATION_PERMISSION = 10;
@@ -390,6 +392,9 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
         locationIv.setOnClickListener(this);
         spinner = findViewById(R.id.phoneSpinner);
         dob = findViewById(R.id.dateofbirth);
+        termsAndConditionsTv = findViewById(R.id.termsAndConditionsTv);
+
+        termsAndConditionsTv.setOnClickListener(this);
         //
     }
 
@@ -545,6 +550,16 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
             } else {
                 intilizeLocationRequester();
                 locationIv.setClickable(false);
+            }
+
+        }else if(view.getId() == termsAndConditionsTv.getId()){
+
+            final Uri uri = Uri.parse(getString(R.string.terms_and_conditions_url));
+
+            final Intent urlIntent = new Intent(Intent.ACTION_VIEW,uri);
+
+            if(urlIntent.resolveActivity(getPackageManager()) !=null){
+                startActivity(urlIntent);
             }
 
         }

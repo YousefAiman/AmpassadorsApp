@@ -6,6 +6,10 @@
     <string name="facebook_app_id" translatable="false">278409073993872</string>
     <string name="fb_login_protocol_scheme" translatable="false">fb485863972787866</string>
 
+    <string name="terms_and_conditions_url" translatable="false">
+        https://www.websitepolicies.com/policies/view/RdFNkzUb
+    </string>
+
     <string name="app_name">The National Mainstream</string>
     <string name="more">More</string>
     <string name="notification_indicator">notification indicator</string>
@@ -400,5 +404,6 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="delete_group">Delete group</string>
 
     <string name="contact_us">Contact Us</string>
+    <string name="terms_and_conditions">Terms and Conditions</string>
 
 </resources>
