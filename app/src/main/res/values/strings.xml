@@ -405,5 +405,8 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
 
     <string name="contact_us">Contact Us</string>
     <string name="terms_and_conditions">Terms and Conditions</string>
+    <string name="createPoll">Create poll</string>
+    <string name="publish_in_home_page">Publish in home page</string>
+    <string name="add_another_tutor">Add another tutor</string>
 
 </resources>

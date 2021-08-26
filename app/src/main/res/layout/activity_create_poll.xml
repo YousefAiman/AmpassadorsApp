@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:title="Create poll"
+        app:title="@string/createPoll"
         android:fitsSystemWindows="true"
         app:titleTextColor="@color/light_green"
         app:titleTextAppearance="@style/ToolbarTitleAppearanceEnd"/>
