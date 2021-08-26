@@ -361,5 +361,7 @@
 
         <string name="contact_us">تواصل معنا</string>
         <string name="terms_and_conditions">الأحكام والشروط</string>
+        <string name="meeting_from_time_error_after_time">موعد البداية للاجتماع لا يمكن ان يكون بعد موعد نهايته</string>
+        <string name="meeting_to_time_error_before_time">موعد النهاية للاجتماع لا يمكن ان يكون قبل موعد بدايته</string>
 
     </resources>

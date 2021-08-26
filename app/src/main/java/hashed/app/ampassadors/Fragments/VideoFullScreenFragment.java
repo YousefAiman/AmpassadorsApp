@@ -163,7 +163,8 @@ public class VideoFullScreenFragment extends DialogFragment {
                     .createMediaSource(MediaItem.fromUri(videoUrl));
 
     exoPlayer.setPlayWhenReady(true);
-    exoPlayer.prepare(mediaSource);
+    exoPlayer.setMediaSource(mediaSource);
+    exoPlayer.prepare();
 
 
     playerView.setPlayer(exoPlayer);

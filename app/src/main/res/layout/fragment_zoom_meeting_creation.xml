@@ -97,47 +97,106 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
+<!--        <TextView-->
+<!--            android:id="@+id/textView9"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="20dp"-->
+<!--            android:fontFamily="@font/segoe_ui"-->
+<!--            android:text="@string/meeting_duration"-->
+<!--            android:textColor="@color/black_transparent"-->
+<!--            android:layout_marginTop="25dp"-->
+<!--            android:textSize="16sp"-->
+<!--            app:layout_constraintStart_toStartOf="@+id/descriptionEd"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/descriptionEd" />-->
+
+
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="14dp"-->
+<!--            android:fontFamily="@font/segoe_ui"-->
+<!--            android:text="@string/minute"-->
+<!--            android:textColor="@color/black_transparent"-->
+<!--            android:textSize="16sp"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/minutesTv"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/minutesTv"-->
+<!--            app:layout_constraintTop_toTopOf="@+id/minutesTv" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/minutesTv"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="10dp"-->
+<!--            android:background="@drawable/meeting_topic_ed_border"-->
+<!--            android:fontFamily="@font/segoe_ui_bold"-->
+<!--            android:paddingHorizontal="10dp"-->
+<!--            android:paddingVertical="8dp"-->
+<!--            android:hint="00"-->
+<!--            android:textColor="@color/black_transparent"-->
+<!--            android:textSize="16sp"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/textView9"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/textView9"-->
+<!--            app:layout_constraintTop_toTopOf="@+id/textView9" />-->
+
         <TextView
-            android:id="@+id/textView9"
+            android:id="@+id/fromTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="From:"
             android:layout_marginStart="20dp"
             android:fontFamily="@font/segoe_ui"
-            android:text="@string/meeting_duration"
             android:textColor="@color/black_transparent"
             android:layout_marginTop="25dp"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="@+id/descriptionEd"
-            app:layout_constraintTop_toBottomOf="@+id/descriptionEd" />
+            app:layout_constraintTop_toBottomOf="@+id/descriptionEd"
+            />
 
+                <TextView
+                    android:id="@+id/fromTimeTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/meeting_topic_ed_border"
+                    android:fontFamily="@font/segoe_ui_bold"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="8dp"
+                    android:hint="00:00"
+                    android:textColor="@color/black_transparent"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/fromTv"
+                    app:layout_constraintStart_toEndOf="@+id/fromTv"
+                    app:layout_constraintTop_toTopOf="@+id/fromTv" />
 
         <TextView
+            android:id="@+id/toTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="14dp"
+            android:layout_marginStart="20dp"
             android:fontFamily="@font/segoe_ui"
-            android:text="@string/minute"
+            android:text="To:"
             android:textColor="@color/black_transparent"
             android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="@+id/minutesTv"
-            app:layout_constraintStart_toEndOf="@+id/minutesTv"
-            app:layout_constraintTop_toTopOf="@+id/minutesTv" />
+            app:layout_constraintBottom_toBottomOf="@+id/fromTimeTv"
+            app:layout_constraintStart_toEndOf="@id/fromTimeTv"
+            app:layout_constraintTop_toTopOf="@+id/fromTimeTv" />
 
         <TextView
-            android:id="@+id/minutesTv"
+            android:id="@+id/toTimeTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
             android:background="@drawable/meeting_topic_ed_border"
             android:fontFamily="@font/segoe_ui_bold"
+            android:hint="00:00"
+            android:layout_marginStart="10dp"
             android:paddingHorizontal="10dp"
             android:paddingVertical="8dp"
-            android:hint="00"
             android:textColor="@color/black_transparent"
             android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="@+id/textView9"
-            app:layout_constraintStart_toEndOf="@+id/textView9"
-            app:layout_constraintTop_toTopOf="@+id/textView9" />
+            app:layout_constraintBottom_toBottomOf="@+id/fromTv"
+            app:layout_constraintStart_toEndOf="@+id/toTv"
+            app:layout_constraintTop_toTopOf="@+id/fromTv" />
 
 
         <androidx.appcompat.widget.AppCompatCheckBox
@@ -147,8 +206,8 @@
             android:layout_marginTop="50dp"
             android:button="@drawable/check_box_selector"
             android:checked="true"
-            app:layout_constraintStart_toStartOf="@+id/textView9"
-            app:layout_constraintTop_toBottomOf="@+id/textView9" />
+            app:layout_constraintStart_toStartOf="@+id/fromTv"
+            app:layout_constraintTop_toBottomOf="@+id/fromTv" />
 
         <TextView
             android:id="@+id/textView12"
@@ -169,7 +228,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:button="@drawable/check_box_selector"
-            app:layout_constraintStart_toStartOf="@+id/textView9"
+            app:layout_constraintStart_toStartOf="@+id/fromTv"
             app:layout_constraintTop_toBottomOf="@+id/createNowCheckbox" />
 
         <TextView

@@ -17,7 +17,7 @@
             android:id="@+id/zoomConstraint"
             android:layout_width="match_parent"
             android:background="@color/white"
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/privateMessagingTb"
             android:orientation="horizontal">
@@ -45,7 +45,8 @@
                 android:ellipsize="marquee"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                app:layout_constraintBottom_toTopOf="@+id/zoomMeetingDurationTv"
+                android:layout_marginBottom="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/zoomMeetingJoinBtn"
                 app:layout_constraintStart_toEndOf="@+id/imageView4"
                 app:layout_constraintTop_toTopOf="@+id/imageView4" />
@@ -60,16 +61,16 @@
                 app:layout_constraintBottom_toBottomOf="@+id/imageView4"
                 app:layout_constraintStart_toStartOf="@+id/zoomMeetingTopicTv" />
 
-            <TextView
-                android:id="@+id/zoomMeetingDurationTv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/segoe_ui"
-                android:textColor="@color/black"
-                android:layout_marginStart="20dp"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView4"
-                app:layout_constraintStart_toEndOf="@+id/zoomMeetingStartTimeTv" />
+<!--            <TextView-->
+<!--                android:id="@+id/zoomMeetingDurationTv"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:fontFamily="@font/segoe_ui"-->
+<!--                android:textColor="@color/black"-->
+<!--                android:layout_marginStart="20dp"-->
+<!--                android:textSize="14sp"-->
+<!--                app:layout_constraintBottom_toBottomOf="@+id/imageView4"-->
+<!--                app:layout_constraintStart_toEndOf="@+id/zoomMeetingStartTimeTv" />-->
 
 
             <android.widget.Button

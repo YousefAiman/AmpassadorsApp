@@ -953,7 +953,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
   static class PrivateMessagingZoomVh extends RecyclerView.ViewHolder
           implements View.OnLongClickListener, View.OnClickListener {
 
-    private final TextView titleTv, senderTv, timeTv, startTimeTv, durationTv;
+    private final TextView titleTv, senderTv, timeTv, startTimeTv, estimatedTimeRangeTv;
 
     public PrivateMessagingZoomVh(@NonNull View itemView) {
       super(itemView);
@@ -961,7 +961,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
       senderTv = itemView.findViewById(R.id.senderTv);
       timeTv = itemView.findViewById(R.id.timeTv);
       startTimeTv = itemView.findViewById(R.id.startTimeTv);
-      durationTv = itemView.findViewById(R.id.durationTv);
+      estimatedTimeRangeTv = itemView.findViewById(R.id.estimatedTimeRangeTv);
     }
 
     private void bindMessage(PrivateMessage message) {
@@ -978,10 +978,14 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
       final ZoomMeeting meeting = message.getZoomMeeting();
       titleTv.setText(meeting.getTopic());
 
-      int hours = meeting.getDuration() / 60;
-      int minutes = meeting.getDuration() % 60;
+//      int hours = meeting.getDuration() / 60;
+//      int minutes = meeting.getDuration() % 60;
 
-      durationTv.setText(String.format(Locale.getDefault(),"%d:%d", hours, minutes));
+      estimatedTimeRangeTv.setText(
+              TimeFormatter.formatWithPattern(meeting.getEstimatedStartTime(),TimeFormatter.HOUR_MINUTE)
+      +" - " + TimeFormatter.formatWithPattern(meeting.getEstimatedEndTime(),TimeFormatter.HOUR_MINUTE));
+
+//      durationTv.setText(String.format(Locale.getDefault(),"%d:%d", hours, minutes));
 
       if (meeting.getType() == 1) {
         startTimeTv.setText(TimeFormatter.formatTime(message.getTime()));
@@ -1016,20 +1020,21 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
                 "Meeting will start on: " + TimeFormatter.formatTime(meeting.getStartTime())
                 , Toast.LENGTH_SHORT).show();
         return;
-      } else if (meeting.getType() == 1) {
-
-        if (privateMessages.get(getAdapterPosition()).getTime() +
-                (privateMessages.get(getAdapterPosition()).getZoomMeeting().getDuration() *
-                        DateUtils.MINUTE_IN_MILLIS) >= System.currentTimeMillis()) {
-
-          //meeting has ended
-          Toast.makeText(itemView.getContext(),
-                  "Meeting has ended! you can't join it"
-                  , Toast.LENGTH_SHORT).show();
-          return;
-        }
-
       }
+//      else if (meeting.getType() == 1) {
+//
+//        if (privateMessages.get(getAdapterPosition()).getTime() +
+//                (privateMessages.get(getAdapterPosition()).getZoomMeeting().getDuration() *
+//                        DateUtils.MINUTE_IN_MILLIS) >= System.currentTimeMillis()) {
+//
+//          //meeting has ended
+//          Toast.makeText(itemView.getContext(),
+//                  "Meeting has ended! you can't join it"
+//                  , Toast.LENGTH_SHORT).show();
+//          return;
+//        }
+//
+//      }
 
       final PackageManager pm = itemView.getContext().getPackageManager();
 //      Intent intent = pm.getLaunchIntentForPackage("us.zoom.videomeetings");

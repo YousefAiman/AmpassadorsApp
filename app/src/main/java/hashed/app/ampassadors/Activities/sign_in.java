@@ -357,7 +357,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
             progressDialog.show();
 
             if(callbackManager == null){
-                FacebookSdk.fullyInitialize();
+//                FacebookSdk.fullyInitialize();
                 callbackManager = CallbackManager.Factory.create();
 //                facebookLoginBtn.setLoginBehavior(LoginBehavior.WEB_VIEW_ONLY);
                 facebookLoginBtn.setReadPermissions("email", "public_profile");
@@ -556,7 +556,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
         hashMap.put("Role", "Ambassador");
         hashMap.put("isEmailVerified", true);
          hashMap.put("Bio","");
-        GlobalVariables.getInstance().setRole("Ambassador");
+        GlobalVariables.setRole("Ambassador");
 
         final DocumentReference userRef =
                 FirebaseFirestore.getInstance().collection("Users").document(userId);
@@ -663,9 +663,14 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                                             e.printStackTrace();
                                         }
                                     }
+
+                                    String photoUrl = null;
+                                    if(facebookUser.getPhotoUrl()!=null){
+                                        photoUrl = facebookUser.getPhotoUrl().toString()+ "?height=500";
+                                    }
+
                                     addUserToFirestore(facebookUser.getDisplayName(), email,
-                                            facebookUser.getUid(),
-                                            facebookUser.getPhotoUrl().toString());
+                                            facebookUser.getUid(), photoUrl);
                                 } else {
 
                                     final DocumentReference userRef = task.getResult().getReference();

@@ -405,5 +405,7 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
 
     <string name="contact_us">Contact Us</string>
     <string name="terms_and_conditions">Terms and Conditions</string>
+    <string name="meeting_from_time_error_after_time">The meeting\'s start time can\'t be after the end time</string>
+    <string name="meeting_to_time_error_before_time">The meeting\'s end time can\'t be before the start time</string>
 
 </resources>
