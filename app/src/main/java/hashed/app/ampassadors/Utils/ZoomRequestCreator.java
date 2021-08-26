@@ -1,11 +1,8 @@
 package hashed.app.ampassadors.Utils;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import com.android.volley.AuthFailureError;
@@ -19,27 +16,11 @@ import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 import hashed.app.ampassadors.Objects.ZoomMeeting;
-import hashed.app.ampassadors.Objects.ZoomRequest;
-import okhttp3.Interceptor;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.Body;
-import retrofit2.http.Header;
-import retrofit2.http.Headers;
-import retrofit2.http.POST;
-import retrofit2.http.Path;
 
 public class ZoomRequestCreator {
 
