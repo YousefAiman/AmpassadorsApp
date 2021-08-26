@@ -51,6 +51,8 @@
         android:drawableStart="@drawable/ic_baseline_lock"
         android:ems="10"
         android:elevation="4dp"
+        android:textAlignment="viewStart"
+
         android:hint="@string/password"
         android:inputType="textPassword"
         android:padding="10dp"
@@ -68,6 +70,8 @@
         android:ems="10"
         android:hint="@string/confirm_password"
         android:inputType="textPassword"
+        android:textAlignment="viewStart"
+
         android:padding="10dp"
         app:layout_constraintEnd_toStartOf="@+id/guideline33"
         app:layout_constraintStart_toStartOf="@+id/guideline32"
@@ -151,6 +155,8 @@
         android:ems="10"
         android:hint="@string/phone"
         android:inputType="phone"
+        android:textAlignment="viewStart"
+
         android:padding="10dp"
         app:layout_constraintEnd_toStartOf="@+id/guideline33"
         app:layout_constraintTop_toBottomOf="@+id/input_city" />
