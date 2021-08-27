@@ -370,5 +370,5 @@
         <string name="createPoll">انشاء  استطلاع </string>
         <string name="publish_in_home_page">النشر في الواجهة الرئيسة</string>
         <string name="add_another_tutor">اضافة اسم مدرب </string>
-
+        <string name="changerRole">تم تغير صلاحية المستخدم </string>
     </resources>

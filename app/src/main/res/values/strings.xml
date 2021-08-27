@@ -402,7 +402,6 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="important_meeting">Important meeting</string>
     <string name="report">Report</string>
     <string name="delete_group">Delete group</string>
-
     <string name="contact_us">Contact Us</string>
     <string name="terms_and_conditions">Terms and Conditions</string>
     <string name="meeting_from_time_error_after_time">The meeting\'s start time can\'t be after the end time</string>
@@ -410,5 +409,6 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="createPoll">Create poll</string>
     <string name="publish_in_home_page">Publish in home page</string>
     <string name="add_another_tutor">Add another tutor</string>
+    <string name="changerRole">Role Changed</string>
 
 </resources>

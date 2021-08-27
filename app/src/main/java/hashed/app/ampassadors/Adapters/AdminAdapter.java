@@ -105,7 +105,7 @@ public class AdminAdapter extends RecyclerView.Adapter<AdminAdapter.AdminHolder>
                     public void onSuccess(Void aVoid) {
 //                      data.remove(userApprovment);
 //                      notifyItemRemoved(getAdapterPosition());
-                      Toast.makeText(context, "Validity Confirmation Is deleted", Toast.LENGTH_SHORT).show();
+                      Toast.makeText(context, R.string.changerRole, Toast.LENGTH_SHORT).show();
                     }
                   });
         }
