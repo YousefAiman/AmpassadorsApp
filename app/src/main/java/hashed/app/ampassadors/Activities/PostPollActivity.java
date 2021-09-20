@@ -140,10 +140,14 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
 
             if (postData.getPublisherId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
               toolbar.inflateMenu(R.menu.poll_menu);
-            } else if (GlobalVariables.getInstance().getRole().equals("Admin")) {
-              toolbar.inflateMenu(R.menu.admin_menu);
-            } else {
-              toolbar.inflateMenu(R.menu.users_post_menu);
+            } else if (GlobalVariables.getRole()!=null) {
+
+              if(GlobalVariables.getRole().equals("Admin")){
+                toolbar.inflateMenu(R.menu.admin_menu);
+              }else {
+                toolbar.inflateMenu(R.menu.users_post_menu);
+
+              }
             }
 
 
