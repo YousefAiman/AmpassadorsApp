@@ -167,17 +167,19 @@ public class CourseMessagingActivity extends MessagingActivity{
 
                       if (zoomMeeting != null) {
 
-                        final long endTime = zoomMeeting.getStartTime() +
-                                (zoomMeeting.getDuration() * DateUtils.MINUTE_IN_MILLIS);
+//                        final long endTime = zoomMeeting.getStartTime() +
+//                                (zoomMeeting.getDuration() * DateUtils.MINUTE_IN_MILLIS);
+//
+//                        Log.d("ttt", "current time: " + System.currentTimeMillis());
+//                        Log.d("ttt", "endTime: " + endTime);
+//
+//                        if (System.currentTimeMillis() >= endTime) {
+//                          value.getReference().update("currentZoomMeeting", null);
+//                        } else {
+//                          showZoomMeeting(zoomMeeting);
+//                        }
 
-                        Log.d("ttt", "current time: " + System.currentTimeMillis());
-                        Log.d("ttt", "endTime: " + endTime);
-
-                        if (System.currentTimeMillis() >= endTime) {
-                          value.getReference().update("currentZoomMeeting", null);
-                        } else {
-                          showZoomMeeting(zoomMeeting);
-                        }
+                        showZoomMeeting(zoomMeeting);
                       } else if (zoomConstraint.getVisibility() == View.VISIBLE) {
 
                         zoomConstraint.setVisibility(View.GONE);
@@ -386,20 +388,19 @@ public class CourseMessagingActivity extends MessagingActivity{
   }
 
 
-  private void startZoomEndingWorker(PrivateMessage privateMessage,String messageId){
-
-    androidx.work.Data workerData = new androidx.work.Data.Builder()
-            .putString("groupId",messagingUid)
-            .putString("zoomMeetingId",privateMessage.getZoomMeeting().getId())
-            .putString("messageId",messageId)
-            .build();
-
-    WorkRequester.requestWork(ZoomMeetingWorker.class,
-            this, privateMessage.getZoomMeeting().getStartTime() +
-                    (privateMessage.getZoomMeeting().getDuration() * DateUtils.MINUTE_IN_MILLIS),
-            workerData);
-
-  }
+//  private void startZoomEndingWorker(PrivateMessage privateMessage,String messageId){
+//
+//    androidx.work.Data workerData = new androidx.work.Data.Builder()
+//            .putString("groupId",messagingUid)
+//            .putString("zoomMeetingId",privateMessage.getZoomMeeting().getId())
+//            .putString("messageId",messageId)
+//            .build();
+//
+//    WorkRequester.requestWork(ZoomMeetingWorker.class,
+//            this, privateMessage.getZoomMeeting().getStartTime() +
+//                    (privateMessage.getZoomMeeting().getDuration() * DateUtils.MINUTE_IN_MILLIS),
+//            workerData);
+//  }
 
 
   @Override
@@ -426,7 +427,7 @@ public class CourseMessagingActivity extends MessagingActivity{
 
               if (privateMessage.getType() == Files.ZOOM) {
 
-                startZoomEndingWorker(privateMessage,messageId);
+//                startZoomEndingWorker(privateMessage,messageId);
 
                 sendZoomMeetingNotification(privateMessage.getZoomMeeting().getTopic(),
                         privateMessage.getZoomMeeting().getJoinUrl());
@@ -547,7 +548,7 @@ public class CourseMessagingActivity extends MessagingActivity{
 
     TextView zoomMeetingTopicTv = findViewById(R.id.zoomMeetingTopicTv);
     TextView zoomMeetingStartTimeTv = findViewById(R.id.zoomMeetingStartTimeTv);
-    TextView zoomMeetingDurationTv = findViewById(R.id.zoomMeetingDurationTv);
+//    TextView zoomMeetingDurationTv = findViewById(R.id.zoomMeetingDurationTv);
     Button zoomMeetingJoinBtn = findViewById(R.id.zoomMeetingJoinBtn);
 
     zoomConstraint.setVisibility(View.VISIBLE);
@@ -555,12 +556,12 @@ public class CourseMessagingActivity extends MessagingActivity{
     zoomMeetingTopicTv.setText(zoomMeeting.getTopic());
     zoomMeetingStartTimeTv.setText(TimeFormatter.formatTime(zoomMeeting.getStartTime()));
 
-    int hours = zoomMeeting.getDuration() / 60;
-    int minutes = zoomMeeting.getDuration() % 60;
+//    int hours = zoomMeeting.getDuration() / 60;
+//    int minutes = zoomMeeting.getDuration() % 60;
 
 //    String time = String.format(Locale.getDefault(),"%02d", hours, minutes);
 
-    zoomMeetingDurationTv.setText(hours+":"+minutes);
+//    zoomMeetingDurationTv.setText(hours+":"+minutes);
 
     zoomMeetingJoinBtn.setOnClickListener(new View.OnClickListener() {
       @Override

@@ -1376,19 +1376,40 @@ public abstract class MessagingActivity extends AppCompatActivity
 
   }
 
+  void enableMessaging(){
+
+    findViewById(R.id.adminMessagingStatusRl).setVisibility(View.GONE);
+    final View messagingEditText = findViewById(R.id.messagingEditText);
+    messagingEditText.setVisibility(View.VISIBLE);
+    messagingEditText.setClickable(true);
+
+  }
+
+  void disableMessaging(){
+
+    findViewById(R.id.adminMessagingStatusRl).setVisibility(View.VISIBLE);
+    final View messagingEditText = findViewById(R.id.messagingEditText);
+    messagingEditText.setVisibility(View.INVISIBLE);
+    messagingEditText.setClickable(false);
+  }
+
   void changeMessagingStatus(String status,String currentMessagingSenders){
 
 
-      if(status.equals(ADMINS) && (currentMessagingSenders == null ||
-              !currentMessagingSenders.equals(ADMINS))){
+      if(status.equals(ADMINS)
+//              && (currentMessagingSenders == null ||
+//              !currentMessagingSenders.equals(ADMINS))
+      ){
 
         findViewById(R.id.adminMessagingStatusRl).setVisibility(View.VISIBLE);
         final View messagingEditText = findViewById(R.id.messagingEditText);
         messagingEditText.setVisibility(View.INVISIBLE);
         messagingEditText.setClickable(false);
 
-      }else if(status.equals(MEMBERS) && (currentMessagingSenders == null ||
-              !currentMessagingSenders.equals(MEMBERS))){
+      }else if(status.equals(MEMBERS)
+//              && (currentMessagingSenders == null ||
+//              !currentMessagingSenders.equals(MEMBERS))
+      ){
 
         findViewById(R.id.adminMessagingStatusRl).setVisibility(View.GONE);
         final View messagingEditText = findViewById(R.id.messagingEditText);
@@ -1396,7 +1417,6 @@ public abstract class MessagingActivity extends AppCompatActivity
         messagingEditText.setClickable(true);
 
       }
-
   }
 
   void showAdminOptionsBottomSheet() {

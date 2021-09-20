@@ -85,18 +85,30 @@ public class VideoWelcomeActivity extends AppCompatActivity implements View.OnCl
 
   private void initializePlayer(){
 
+    final DefaultTrackSelector trackSelector = new DefaultTrackSelector(this);
+
+    trackSelector.setParameters(
+            trackSelector.buildUponParameters().setMaxVideoSizeSd());
+
     exoPlayer = new SimpleExoPlayer.Builder(this)
-            .setBandwidthMeter(new DefaultBandwidthMeter.Builder(this).build())
-            .build();
+            .setTrackSelector(trackSelector).build();
+
+
+//    exoPlayer = new SimpleExoPlayer.Builder(this)
+//            .setBandwidthMeter(new DefaultBandwidthMeter.Builder(this).build())
+//            .build();
 
     playerView.setPlayer(exoPlayer);
 
-    DefaultDataSourceFactory mediaDataSourceFactory = new
-            DefaultDataSourceFactory(this, Util.getUserAgent(this, getString(R.string.app_name)));
+//    DefaultDataSourceFactory mediaDataSourceFactory = new
+//            DefaultDataSourceFactory(this, Util.getUserAgent(this, getString(R.string.app_name)));
+//    MediaSource mediaSource = new ProgressiveMediaSource.Factory(mediaDataSourceFactory)
+//            .createMediaSource(MediaItem.fromUri(videoUrl));
 
+    final MediaSource mediaSource =
+            new ProgressiveMediaSource.Factory(new VideoDataSourceFactory(this))
+                    .createMediaSource(MediaItem.fromUri(videoUrl));
 
-    MediaSource mediaSource = new ProgressiveMediaSource.Factory(mediaDataSourceFactory)
-            .createMediaSource(MediaItem.fromUri(videoUrl));
 
     exoPlayer.setMediaSource(mediaSource);
     exoPlayer.prepare();

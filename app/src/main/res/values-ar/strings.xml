@@ -358,7 +358,17 @@
         <string name="report">ابلاغ</string>
         <string name="delete_group">حذف المجموعة</string>
 
-
+        <string name="Dleteing">جاري المسح …</string>
+        <string name="Repored">تم عمل ابلاغ </string>
+        <string name="PostRepored">بلاغات المنشورات </string>
+        <string name="ReportedPosts">المن</string>
         <string name="contact_us">تواصل معنا</string>
+        <string name="terms_and_conditions">الأحكام والشروط</string>
+        <string name="meeting_from_time_error_after_time">موعد البداية للاجتماع لا يمكن ان يكون بعد موعد نهايته</string>
+        <string name="meeting_to_time_error_before_time">موعد النهاية للاجتماع لا يمكن ان يكون قبل موعد بدايته</string>
+        <string name="EditingMessage">جاري تعديل المنشور </string>
+        <string name="createPoll">انشاء  استطلاع </string>
+        <string name="publish_in_home_page">النشر في الواجهة الرئيسة</string>
+        <string name="add_another_tutor">اضافة اسم مدرب </string>
 
     </resources>

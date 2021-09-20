@@ -281,10 +281,12 @@ public class ProfileActiv extends AppCompatActivity implements
         fStore = FirebaseFirestore.getInstance();
 
         Intent userimage = getIntent();
+
+        userId  = userimage.getStringExtra("userId");
+
         if (userimage.hasExtra("username") && userimage.hasExtra("ImageUrl")) {
              userimg = userimage.getStringExtra("ImageUrl");
             String usernam = userimage.getStringExtra("username");
-             userId  = userimage.getStringExtra("userId");
 
             fStore.collection("Users").document(userId).get()
                     .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {

@@ -362,8 +362,8 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
         documentReference =
               FirebaseFirestore.getInstance().collection("Posts")
                       .document(postData.getPostId());
-
     }
+
       if(postData.getAttachmentUrl()!=null){
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -381,31 +381,29 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
                   "documentSize",FieldValue.delete());
 
         }
-
-
-
-      documentReference.update(updateMap).addOnSuccessListener(new OnSuccessListener<Void>() {
-        @Override
-        public void onSuccess(Void aVoid) {
-          Toast.makeText(PostNewActivity.this, "Successfully updated post",
-                  Toast.LENGTH_SHORT).show();
-          progressDialog.dismiss();
-
-          finish();
-
-        }
-      }).addOnFailureListener(new OnFailureListener() {
-        @Override
-        public void onFailure(@NonNull Exception e) {
-
-          Toast.makeText(PostNewActivity.this, R.string.Error_UpdateFail,
-                  Toast.LENGTH_SHORT).show();
-          progressDialog.dismiss();
-          Log.d("qqq",e.getMessage());
-        }
-      });
-
     }
+
+    documentReference.update(updateMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+      @Override
+      public void onSuccess(Void aVoid) {
+        Toast.makeText(PostNewActivity.this, "Successfully updated post",
+                Toast.LENGTH_SHORT).show();
+        progressDialog.dismiss();
+
+        finish();
+
+      }
+    }).addOnFailureListener(new OnFailureListener() {
+      @Override
+      public void onFailure(@NonNull Exception e) {
+
+        Toast.makeText(PostNewActivity.this, R.string.Error_UpdateFail,
+                Toast.LENGTH_SHORT).show();
+        progressDialog.dismiss();
+        Log.d("qqq",e.getMessage());
+      }
+    });
+
 
   }
 
@@ -614,7 +612,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
               uploadTaskMap.remove(uploadTask);
               reference.getDownloadUrl().addOnSuccessListener(uri1 -> {
 
-                final String attachmentUrl = uri1.toString();
+                  final String attachmentUrl = uri1.toString();
 
                 if (isForEditing) {
                   publishPostUpdate(title, description, attachmentUrl, null, progressDialog);

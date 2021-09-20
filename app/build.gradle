@@ -5,7 +5,7 @@ apply plugin: 'com.google.firebase.crashlytics'
 android {
     signingConfigs {
         release {
-            storeFile file('C:\\Users\\pc\\AmpassadorsApp\\keystore.jks')
+            storeFile file('C:\\Users\\yousef\\AndroidStudioProjects\\AmpassadorsApp\\keystore.jks')
             storePassword '123456'
             keyAlias 'key0'
             keyPassword '123456'
@@ -33,6 +33,7 @@ android {
 
     buildTypes {
         release {
+            debuggable true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }

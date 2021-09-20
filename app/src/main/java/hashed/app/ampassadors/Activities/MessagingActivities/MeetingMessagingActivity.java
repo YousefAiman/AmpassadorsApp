@@ -172,17 +172,19 @@ public class MeetingMessagingActivity extends MessagingActivity{
 
                       if (zoomMeeting != null) {
 
-                        final long endTime = zoomMeeting.getStartTime() +
-                                (zoomMeeting.getDuration() * DateUtils.MINUTE_IN_MILLIS);
+//                        final long endTime = zoomMeeting.getStartTime() +
+//                                (zoomMeeting.getDuration() * DateUtils.MINUTE_IN_MILLIS);
+//
+//                        Log.d("ttt", "current time: " + System.currentTimeMillis());
+//                        Log.d("ttt", "endTime: " + endTime);
+//
+//                        if (System.currentTimeMillis() >= endTime) {
+//                          value.getReference().update("currentZoomMeeting", null);
+//                        } else {
+//                          showZoomMeeting(zoomMeeting);
+//                        }
+                        showZoomMeeting(zoomMeeting);
 
-                        Log.d("ttt", "current time: " + System.currentTimeMillis());
-                        Log.d("ttt", "endTime: " + endTime);
-
-                        if (System.currentTimeMillis() >= endTime) {
-                          value.getReference().update("currentZoomMeeting", null);
-                        } else {
-                          showZoomMeeting(zoomMeeting);
-                        }
                       } else if (zoomConstraint.getVisibility() == View.VISIBLE) {
 
                         zoomConstraint.setVisibility(View.GONE);
@@ -408,7 +410,7 @@ public class MeetingMessagingActivity extends MessagingActivity{
 
               if (privateMessage.getType() == Files.ZOOM) {
 
-                startZoomEndingWorker(privateMessage,messageId);
+//                startZoomEndingWorker(privateMessage,messageId);
 
                 sendZoomMeetingNotification(privateMessage.getZoomMeeting().getTopic(),
                         privateMessage.getZoomMeeting().getJoinUrl());
@@ -451,6 +453,7 @@ public class MeetingMessagingActivity extends MessagingActivity{
 
     listenerRegistrations.add(
             firebaseMessageDocRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+              boolean isInitial = true;
               @Override
               public void onEvent(@Nullable DocumentSnapshot value,
                                   @Nullable FirebaseFirestoreException error) {
@@ -469,26 +472,35 @@ public class MeetingMessagingActivity extends MessagingActivity{
 
                     if(zoomMeeting!=null){
 
-                      final long endTime = zoomMeeting.getStartTime() +
-                              (zoomMeeting.getDuration() * DateUtils.MINUTE_IN_MILLIS);
+//                      final long endTime = zoomMeeting.getStartTime() +
+//                              (zoomMeeting.getDuration() * DateUtils.MINUTE_IN_MILLIS);
+//
+//                      Log.d("ttt","current time: "+System.currentTimeMillis());
+//                      Log.d("ttt","endTime: "+endTime);
+//
+//                      if(System.currentTimeMillis() >= endTime){
+//                        value.getReference().update("currentZoomMeeting",null);
+//                      }else{
+//                        showZoomMeeting(zoomMeeting);
+//                      }
+                      showZoomMeeting(zoomMeeting);
 
-                      Log.d("ttt","current time: "+System.currentTimeMillis());
-                      Log.d("ttt","endTime: "+endTime);
 
-                      if(System.currentTimeMillis() >= endTime){
-                        value.getReference().update("currentZoomMeeting",null);
-                      }else{
-                        showZoomMeeting(zoomMeeting);
-                      }
                     }else if(zoomConstraint.getVisibility() == View.VISIBLE){
 
                       zoomConstraint.setVisibility(View.GONE);
 
-                      Toast.makeText(MeetingMessagingActivity.this, "Zoom Meeting has ended!",
-                              Toast.LENGTH_SHORT).show();
+                      if(!isInitial){
+                        Toast.makeText(MeetingMessagingActivity.this, "Zoom Meeting has ended!",
+                                Toast.LENGTH_SHORT).show();
+                      }
+
+
                     }
                   }
+                  isInitial = false;
                 }
+
               }
             }));
     Log.d("ttt", "looking to group");
@@ -568,7 +580,7 @@ public class MeetingMessagingActivity extends MessagingActivity{
 
     TextView zoomMeetingTopicTv = findViewById(R.id.zoomMeetingTopicTv);
     TextView zoomMeetingStartTimeTv = findViewById(R.id.zoomMeetingStartTimeTv);
-    TextView zoomMeetingDurationTv = findViewById(R.id.zoomMeetingDurationTv);
+//    TextView zoomMeetingDurationTv = findViewById(R.id.zoomMeetingDurationTv);
     Button zoomMeetingJoinBtn = findViewById(R.id.zoomMeetingJoinBtn);
 
     zoomConstraint.setVisibility(View.VISIBLE);
@@ -576,12 +588,10 @@ public class MeetingMessagingActivity extends MessagingActivity{
     zoomMeetingTopicTv.setText(zoomMeeting.getTopic());
     zoomMeetingStartTimeTv.setText(TimeFormatter.formatTime(zoomMeeting.getStartTime()));
 
-    int hours = zoomMeeting.getDuration() / 60;
-    int minutes = zoomMeeting.getDuration() % 60;
-
+//    int hours = zoomMeeting.getDuration() / 60;
+//    int minutes = zoomMeeting.getDuration() % 60;
 //    String time = String.format(Locale.getDefault(),"%02d", hours, minutes);
-
-    zoomMeetingDurationTv.setText(hours+":"+minutes);
+//    zoomMeetingDurationTv.setText(hours+":"+minutes);
 
     zoomMeetingJoinBtn.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -597,20 +607,20 @@ public class MeetingMessagingActivity extends MessagingActivity{
   }
 
 
-  private void startZoomEndingWorker(PrivateMessage privateMessage,String messageId){
-
-    androidx.work.Data workerData = new androidx.work.Data.Builder()
-            .putString("groupId",messagingUid)
-            .putString("zoomMeetingId",privateMessage.getZoomMeeting().getId())
-            .putString("messageId",messageId)
-            .build();
-
-    WorkRequester.requestWork(ZoomMeetingWorker.class,
-            this, privateMessage.getZoomMeeting().getStartTime() +
-                    (privateMessage.getZoomMeeting().getDuration() * DateUtils.MINUTE_IN_MILLIS),
-            workerData);
-
-  }
+//  private void startZoomEndingWorker(PrivateMessage privateMessage,String messageId){
+//
+//    androidx.work.Data workerData = new androidx.work.Data.Builder()
+//            .putString("groupId",messagingUid)
+//            .putString("zoomMeetingId",privateMessage.getZoomMeeting().getId())
+//            .putString("messageId",messageId)
+//            .build();
+//
+//    WorkRequester.requestWork(ZoomMeetingWorker.class,
+//            this, privateMessage.getZoomMeeting().getStartTime() +
+//                    (privateMessage.getZoomMeeting().getDuration() * DateUtils.MINUTE_IN_MILLIS),
+//            workerData);
+//
+//  }
 
   @Override
   public boolean onMenuItemClick(MenuItem item) {
