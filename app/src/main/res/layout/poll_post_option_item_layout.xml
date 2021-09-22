@@ -1,27 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginTop="20dp">
+    android:background="@drawable/poll_post_item_back"
+    android:layout_marginTop="20dp"
+    android:layout_marginBottom="5dp">
+
+
+    <ProgressBar
+        android:id="@+id/optionProgress"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:elevation="5dp"
+        android:layout_height="0dp"
+        android:layout_alignTop="@id/optionTv"
+        android:layout_alignBottom="@id/optionTv"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:max="100"
+        android:progressDrawable="@drawable/poll_progress_bar" />
+
 
     <TextView
         android:id="@+id/optionTv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:layout_marginHorizontal="5dp"
-        android:layout_marginBottom="5dp"
-        android:background="@drawable/poll_post_item_back"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:fontFamily="@font/segoe_ui_light"
+        android:layout_toStartOf="@id/percentageTv"
+        android:layout_toEndOf="@id/checkIv"
+        android:background="@null"
         android:drawablePadding="10dp"
-        android:paddingHorizontal="35dp"
-        android:paddingVertical="4dp"
-        android:ellipsize="marquee"
         android:elevation="5dp"
+        android:ellipsize="marquee"
+        android:fontFamily="@font/segoe_ui_light"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="4dp"
+        android:singleLine="true"
         android:textColor="@color/black_transparent"
-        android:textSize="18sp"
-        android:singleLine="true" />
+        android:textSize="18sp" />
 
 <!--    <TextView-->
 <!--        android:id="@+id/optionPercentageTv"-->
@@ -39,32 +57,28 @@
 <!--        android:textSize="18sp" />-->
 
 
-    <ProgressBar
-        android:id="@+id/optionProgress"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="0dp"
-        android:elevation="5dp"
-        android:layout_height="0dp"
-        android:layout_alignStart="@id/optionTv"
-        android:layout_alignTop="@id/optionTv"
-        android:layout_alignEnd="@id/optionTv"
-        android:layout_alignBottom="@id/optionTv"
-        android:max="100"
-        android:progressDrawable="@drawable/poll_progress_bar" />
-
-
-
     <ImageView
         android:id="@+id/checkIv"
-        android:contentDescription="@string/vote_check"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="6dp"
+        android:contentDescription="@string/vote_check"
         android:elevation="5dp"
-        android:visibility="gone"
         android:src="@drawable/check_icon_round"
-        android:layout_alignTop="@id/optionTv"
-        android:layout_alignBottom="@id/optionTv"
-        android:layout_alignStart="@id/optionTv"
-        android:layout_marginStart="6dp" />
+        android:visibility="gone" />
+
+
+    <TextView
+        android:id="@+id/percentageTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@id/optionProgress"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="10dp"
+        android:visibility="gone"
+        android:fontFamily="@font/segoe_ui_bold"
+        android:textColor="@color/black_transparent" />
 
 </RelativeLayout>

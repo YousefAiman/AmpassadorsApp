@@ -43,15 +43,13 @@ public class FilePickerPreviewFragment extends Fragment {
     int layout;
     switch (type) {
       case Files.IMAGE:
+
+      case Files.AUDIO:
         layout = R.layout.fragment_image_picker_preview;
         break;
 
       case Files.DOCUMENT:
         layout = R.layout.fragment_file_picker_preview;
-        break;
-
-      case Files.AUDIO:
-        layout = R.layout.fragment_image_picker_preview;
         break;
 
       default:
@@ -121,7 +119,7 @@ public class FilePickerPreviewFragment extends Fragment {
     @Override
     public void onClick(View view) {
 
-      final String content = messagingPickerEd.getText().toString();
+      final String content = messagingPickerEd.getText().toString().trim();
       if (uri != null) {
 
         if(getActivity()!=null){
@@ -129,7 +127,7 @@ public class FilePickerPreviewFragment extends Fragment {
           ((MessagingActivity) getActivity()).sendFileMessage(
                   uri,
                   type,
-                  "",
+                  !content.isEmpty()?content:"",
                   0,
                   fileName);
 

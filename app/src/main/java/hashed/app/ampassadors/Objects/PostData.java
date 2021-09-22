@@ -140,7 +140,7 @@ public class PostData implements Serializable {
 
   public static void likePost(String postId, String postTitle, int type,
                               String creatorId, Context context, boolean isUserPost,
-                              View likeView) {
+                              int postType,View likeView) {
 
     likeView.setClickable(false);
 
@@ -187,7 +187,7 @@ public class PostData implements Serializable {
                           if(!creatorId.equals(currentUid)) {
 
                             final String notificationPath = creatorId + "_" + postId + "_" +
-                                    FirestoreNotificationSender.TYPE_LIKE;
+                                    (type == TYPE_NEWS?FirestoreNotificationSender.TYPE_POST_LIKE:FirestoreNotificationSender.TYPE_POLL_LIKE);
 
                             FirebaseFirestore.getInstance().collection("Notifications")
                                     .document(notificationPath)
@@ -204,8 +204,11 @@ public class PostData implements Serializable {
                                       final String message = username + " " + context.getResources()
                                               .getString(R.string.liked_post);
 
+                                      final String notificationType = postType == PostData.TYPE_NEWS?FirestoreNotificationSender.TYPE_POST_LIKE:FirestoreNotificationSender.TYPE_POLL_LIKE;
+
                                       FirestoreNotificationSender.sendFirestoreNotification(
-                                              creatorId, FirestoreNotificationSender.TYPE_LIKE,
+                                              creatorId,
+                                              notificationType,
                                               message, username, postId);
 
                                       final Data data = new Data(
@@ -214,7 +217,7 @@ public class PostData implements Serializable {
                                               postTitle,
                                               null,
                                               "Post Like",
-                                              FirestoreNotificationSender.TYPE_LIKE,
+                                              notificationType,
                                               postId);
 
                                       if (imageUrl != null && !imageUrl.isEmpty()) {

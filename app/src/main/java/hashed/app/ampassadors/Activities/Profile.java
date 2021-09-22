@@ -81,9 +81,10 @@ public class Profile extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                if(documentSnapshot.contains("imageUrl")){
 
-                    String image = documentSnapshot.get("imageUrl").toString();
+                if(documentSnapshot.contains("imageUrl") && documentSnapshot.getString("imageUrl")!=null){
+
+                    final String image = documentSnapshot.getString("imageUrl");
 
                     imageView.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -94,7 +95,8 @@ public class Profile extends AppCompatActivity {
                             frameLayout.setVisibility(View.VISIBLE);
 
                             FullScreenImagesUtil.showImageFullScreen(Profile.this,
-                                    image,null,null).setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                    image,null,null)
+                                    .setOnDismissListener(new DialogInterface.OnDismissListener() {
                                 @Override
                                 public void onDismiss(DialogInterface dialogInterface) {
 

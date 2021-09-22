@@ -1429,7 +1429,6 @@ public abstract class MessagingActivity extends AppCompatActivity
     parentView.setBackgroundColor(Color.TRANSPARENT);
 
     parentView.findViewById(R.id.imageIv).setOnClickListener(view -> {
-
       bsd.dismiss();
       Files.startImageFetchIntent(MessagingActivity.this);
     });

@@ -4,20 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.core.widget.NestedScrollView;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -26,13 +12,21 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.widget.NestedScrollView;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.BuildConfig;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -48,21 +42,14 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-import hashed.app.ampassadors.Activities.ComplaintsActivity;
 import hashed.app.ampassadors.Activities.Home_Activity;
 import hashed.app.ampassadors.Activities.NotificationsActivity;
 import hashed.app.ampassadors.Activities.PostNewActivity;
 import hashed.app.ampassadors.Activities.Profile;
-import hashed.app.ampassadors.Activities.profile_edit;
 import hashed.app.ampassadors.Adapters.PostAdapter;
 import hashed.app.ampassadors.BroadcastReceivers.NotificationIndicatorReceiver;
-import hashed.app.ampassadors.BuildConfig;
 import hashed.app.ampassadors.Objects.PostData;
-import hashed.app.ampassadors.Objects.PostNewsPreview;
-import hashed.app.ampassadors.Objects.UserInfo;
-import hashed.app.ampassadors.Objects.UserPostData;
 import hashed.app.ampassadors.R;
-import hashed.app.ampassadors.Utils.Files;
 import hashed.app.ampassadors.Utils.FullScreenImagesUtil;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 
@@ -144,14 +131,14 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         });
 
 
-        if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
-//            roleTv.setText(getResources().getString(R.string.guest));
-//        }else if(GlobalVariables.getRole()!=null){
-//            roleTv.setText(GlobalVariables.getRole());
-        }
+//        if (FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
+////            roleTv.setText(getResources().getString(R.string.guest));
+////        }else if(GlobalVariables.getRole()!=null){
+////            roleTv.setText(GlobalVariables.getRole());
+//        }
 
-        NestedScrollView nestedScrollView = view.findViewById(R.id.nestedScrollView);
-        nestedScrollView.setNestedScrollingEnabled(false);
+//        NestedScrollView nestedScrollView = view.findViewById(R.id.nestedScrollView);
+//        nestedScrollView.setNestedScrollingEnabled(false);
 
         floatingButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -85,8 +85,9 @@ public class NotificationClickReceiver extends BroadcastReceiver {
                       Meeting.class,sourceId,"meeting");
 
               break;
-            case FirestoreNotificationSender.TYPE_LIKE:
-            case FirestoreNotificationSender.TYPE_COMMENT:
+            case FirestoreNotificationSender.TYPE_POST_COMMENT:
+            case FirestoreNotificationSender.TYPE_POST_COMMENT_LIKE:
+            case FirestoreNotificationSender.TYPE_POST_LIKE:
 
               Intent postIntent = new Intent(context, PostNewsActivity.class)
                       .putExtra("postId",sourceId).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -121,9 +122,7 @@ public class NotificationClickReceiver extends BroadcastReceiver {
 
       }else{
 
-
         Log.d("ttt","AppIs not Running");
-
 
       }
     }

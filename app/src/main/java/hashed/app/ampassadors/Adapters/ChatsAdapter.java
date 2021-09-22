@@ -118,7 +118,14 @@ public class ChatsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         getUserInfo(chatItem, chatItem.getMessagingUid(), imageIv, nameTv);
       }
 
-      messageTv.setText(getMessageText(chatItem.getMessage()));
+      if(chatItem.getMessage().getContent()!=null && !
+              chatItem.getMessage().getContent().isEmpty()){
+        messageTv.setText(getMessageText(chatItem.getMessage()));
+      }else{
+        messageTv.setVisibility(View.GONE);
+      }
+
+
 
 //      if (!chatItem.isSeen()) {
 //        messageTv.setTypeface(boldFont);

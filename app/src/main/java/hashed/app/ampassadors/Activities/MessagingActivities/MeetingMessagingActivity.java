@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,6 +33,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -59,7 +61,7 @@ public class MeetingMessagingActivity extends MessagingActivity{
   private ConstraintLayout zoomConstraint;
   private String currentMessagingSenders = MEMBERS;
   private String creatorId;
-
+  private ZoomMeeting currentZoomMeeting;
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -129,7 +131,7 @@ public class MeetingMessagingActivity extends MessagingActivity{
                     if(value.contains("messagingSenders")){
                       String newMessagingStatus = value.getString("messagingSenders");
 
-                      if(creatorId == null || !creatorId.equals(currentUid)){
+                      if((creatorId == null || !creatorId.equals(currentUid)) && newMessagingStatus!=null){
                         changeMessagingStatus(newMessagingStatus,currentMessagingSenders);
                       }
 
@@ -167,10 +169,10 @@ public class MeetingMessagingActivity extends MessagingActivity{
 
                     if (value.contains("currentZoomMeeting")) {
 
-                      final ZoomMeeting zoomMeeting =
-                              value.get("currentZoomMeeting", ZoomMeeting.class);
 
-                      if (zoomMeeting != null) {
+                      if (value.get("currentZoomMeeting", ZoomMeeting.class)!=null) {
+
+                        currentZoomMeeting = value.get("currentZoomMeeting", ZoomMeeting.class);
 
 //                        final long endTime = zoomMeeting.getStartTime() +
 //                                (zoomMeeting.getDuration() * DateUtils.MINUTE_IN_MILLIS);
@@ -183,15 +185,19 @@ public class MeetingMessagingActivity extends MessagingActivity{
 //                        } else {
 //                          showZoomMeeting(zoomMeeting);
 //                        }
-                        showZoomMeeting(zoomMeeting);
+                        showZoomMeeting(currentZoomMeeting);
 
                       } else if (zoomConstraint.getVisibility() == View.VISIBLE) {
 
+                        if(currentZoomMeeting!=null){
+                          FirebaseMessaging.getInstance().subscribeToTopic(currentZoomMeeting.getTopic());
+                        }
                         zoomConstraint.setVisibility(View.GONE);
 
                         Toast.makeText(MeetingMessagingActivity.this,
                                 "Zoom Meeting has ended!",
                                 Toast.LENGTH_SHORT).show();
+                        currentZoomMeeting = null;
                     }
                   }
                   }
@@ -372,12 +378,18 @@ public class MeetingMessagingActivity extends MessagingActivity{
 
     privateMessage.setZoomMeeting(zoomMeeting);
 
-    firebaseMessageDocRef.update("currentZoomMeeting", zoomMeeting);
+    firebaseMessageDocRef.update("currentZoomMeeting", zoomMeeting)
+    .addOnSuccessListener(new OnSuccessListener<Void>() {
+      @Override
+      public void onSuccess(Void unused) {
+
+        FirebaseMessaging.getInstance().subscribeToTopic(zoomMeeting.getTopic());
+
+      }
+    });
 
     sendMessage(privateMessage);
   }
-
-
 
   @Override
   void showMessageOptionsBottomSheet() {
@@ -441,7 +453,6 @@ public class MeetingMessagingActivity extends MessagingActivity{
   @Override
   void fetchPreviousMessages() {
 
-
     messagesProgressBar.setVisibility(View.VISIBLE);
 
     adapter = new PrivateMessagingAdapter(privateMessages,
@@ -468,10 +479,11 @@ public class MeetingMessagingActivity extends MessagingActivity{
 
                   }else if(value.contains("currentZoomMeeting")){
 
-                    final ZoomMeeting zoomMeeting =  value.get("currentZoomMeeting",ZoomMeeting.class);
+                    final ZoomMeeting zoomMeeting = value.get("currentZoomMeeting",ZoomMeeting.class);
 
                     if(zoomMeeting!=null){
 
+                      currentZoomMeeting = zoomMeeting;
 //                      final long endTime = zoomMeeting.getStartTime() +
 //                              (zoomMeeting.getDuration() * DateUtils.MINUTE_IN_MILLIS);
 //
@@ -483,7 +495,7 @@ public class MeetingMessagingActivity extends MessagingActivity{
 //                      }else{
 //                        showZoomMeeting(zoomMeeting);
 //                      }
-                      showZoomMeeting(zoomMeeting);
+                      showZoomMeeting(currentZoomMeeting);
 
 
                     }else if(zoomConstraint.getVisibility() == View.VISIBLE){
@@ -503,6 +515,7 @@ public class MeetingMessagingActivity extends MessagingActivity{
 
               }
             }));
+
     Log.d("ttt", "looking to group");
     currentMessagingRef.addListenerForSingleValueEvent(new ValueEventListener() {
       @Override
@@ -532,6 +545,7 @@ public class MeetingMessagingActivity extends MessagingActivity{
 
       }
     });
+
   }
 
   private class FirstMessageClickListener implements View.OnClickListener {

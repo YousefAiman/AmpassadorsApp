@@ -53,15 +53,46 @@ public class MeetingActivity extends AppCompatActivity implements View.OnClickLi
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_meeting);
 
-    meeting = (Meeting) getIntent().getSerializableExtra("meeting");
-
-    setUpToolbar();
-
     getViews();
-
     setUpAdapter();
 
-    fillMeetingInfo();
+    final Intent intent = getIntent();
+
+    if(intent == null){
+      finish();
+      return;
+    }
+
+    if(intent.hasExtra("meeting")){
+      meeting = (Meeting) getIntent().getSerializableExtra("meeting");
+      setUpToolbar();
+      fillMeetingInfo();
+    }else if(intent.hasExtra("meetingID")){
+
+      FirebaseFirestore.getInstance().collection("Meetings")
+              .document(intent.getStringExtra("meetingID"))
+              .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        @Override
+        public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+          if(documentSnapshot!=null && documentSnapshot.exists()){
+            meeting = documentSnapshot.toObject(Meeting.class);
+
+            setUpToolbar();
+            fillMeetingInfo();
+
+          }else{
+            finish();
+          }
+
+        }
+      });
+
+    }else{
+      finish();
+    }
+
+
 
   }
 
