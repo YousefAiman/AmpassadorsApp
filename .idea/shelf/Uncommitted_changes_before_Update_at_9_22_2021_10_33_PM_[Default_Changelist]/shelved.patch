@@ -1,0 +1,84 @@
+Index: .idea/runConfigurations.xml
+===================================================================
+diff --git a/.idea/runConfigurations.xml b/.idea/runConfigurations.xml
+deleted file mode 100644
+--- a/.idea/runConfigurations.xml	(revision 4c35747ad2fd5916afe4291e83f3397a0fddde5c)
++++ /dev/null	(revision 4c35747ad2fd5916afe4291e83f3397a0fddde5c)
+@@ -1,10 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="RunConfigurationProducerService">
+-    <option name="ignoredProducers">
+-      <set>
+-        <option value="com.android.tools.idea.compose.preview.runconfiguration.ComposePreviewRunConfigurationProducer" />
+-      </set>
+-    </option>
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"GradleMigrationSettings\" migrationVersion=\"1\" />\r\n  <component name=\"GradleSettings\">\r\n    <option name=\"linkedExternalProjectsSettings\">\r\n      <GradleProjectSettings>\r\n        <option name=\"testRunner\" value=\"PLATFORM\" />\r\n        <option name=\"disableWrapperSourceDistributionNotification\" value=\"true\" />\r\n        <option name=\"distributionType\" value=\"DEFAULT_WRAPPED\" />\r\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$\" />\r\n        <option name=\"modules\">\r\n          <set>\r\n            <option value=\"$PROJECT_DIR$\" />\r\n            <option value=\"$PROJECT_DIR$/app\" />\r\n          </set>\r\n        </option>\r\n        <option name=\"resolveModulePerSourceSet\" value=\"false\" />\r\n        <option name=\"useQualifiedModuleNames\" value=\"true\" />\r\n      </GradleProjectSettings>\r\n    </option>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/gradle.xml b/.idea/gradle.xml
+--- a/.idea/gradle.xml	(revision 4c35747ad2fd5916afe4291e83f3397a0fddde5c)
++++ b/.idea/gradle.xml	(date 1632238931293)
+@@ -4,7 +4,7 @@
+   <component name="GradleSettings">
+     <option name="linkedExternalProjectsSettings">
+       <GradleProjectSettings>
+-        <option name="testRunner" value="PLATFORM" />
++        <option name="testRunner" value="GRADLE" />
+         <option name="disableWrapperSourceDistributionNotification" value="true" />
+         <option name="distributionType" value="DEFAULT_WRAPPED" />
+         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+@@ -15,7 +15,6 @@
+           </set>
+         </option>
+         <option name="resolveModulePerSourceSet" value="false" />
+-        <option name="useQualifiedModuleNames" value="true" />
+       </GradleProjectSettings>
+     </option>
+   </component>
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_11\" default=\"false\" project-jdk-name=\"1.8\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/build/classes\" />\r\n  </component>\r\n  <component name=\"ProjectType\">\r\n    <option name=\"id\" value=\"Android\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 4c35747ad2fd5916afe4291e83f3397a0fddde5c)
++++ b/.idea/misc.xml	(date 1632323072777)
+@@ -1,6 +1,27 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="false" project-jdk-name="1.8" project-jdk-type="JavaSDK">
++  <component name="DesignSurface">
++    <option name="filePathToZoomLevelMap">
++      <map>
++        <entry key="..\:/Users/yousef/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/activity_post_poll.xml" value="0.209375" />
++        <entry key="..\:/Users/yousef/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/activity_privacy_policy.xml" value="0.25" />
++        <entry key="..\:/Users/yousef/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/activity_private_messaging.xml" value="0.209375" />
++        <entry key="..\:/Users/yousef/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/activity_profile.xml" value="0.209375" />
++        <entry key="..\:/Users/yousef/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/activity_profile2.xml" value="0.209375" />
++        <entry key="..\:/Users/yousef/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/fragment_posts_profile.xml" value="0.2" />
++        <entry key="..\:/Users/yousef/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/fragment_profile.xml" value="0.209375" />
++        <entry key="..\:/Users/yousef/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/fragment_zoom_meeting_creation.xml" value="0.209375" />
++        <entry key="..\:/Users/yousef/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/group_chat_item_received_zoom_message.xml" value="0.5" />
++        <entry key="..\:/Users/yousef/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/group_chat_item_sent_zoom_message.xml" value="0.33" />
++        <entry key="..\:/Users/yousef/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/group_message_options_bsd.xml" value="0.209375" />
++        <entry key="..\:/Users/yousef/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/poll_post_option_item_layout.xml" value="0.33" />
++        <entry key="..\:/Users/yousef/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/poll_preview_item_layout.xml" value="0.209375" />
++        <entry key="..\:/Users/yousef/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/private_chat_item_received_image_message.xml" value="0.209375" />
++        <entry key="..\:/Users/yousef/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/private_chat_item_sent_image_message.xml" value="0.209375" />
++      </map>
++    </option>
++  </component>
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="JDK" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$/build/classes" />
+   </component>
+   <component name="ProjectType">
