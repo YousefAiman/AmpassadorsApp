@@ -76,7 +76,7 @@ public class ProfileFragment extends Fragment {
           country.setText(userInfo[0].getCountry());
           city.setText(userInfo[0].getCity());
           phone.setText(userInfo[0].getPhone());
-          Picasso.get().load(userInfo[0].getImageUrl()).fit().into(imageView);
+          Picasso.get().load(userInfo[0].getImageUrl()).fit().centerCrop().into(imageView);
           if (bio.equals("")){
             String biotxt = getString(R.string.add_Bio);
             bio.setText(biotxt);

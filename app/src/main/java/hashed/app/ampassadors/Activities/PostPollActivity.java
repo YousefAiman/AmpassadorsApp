@@ -186,7 +186,7 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
         final String imageUrl = snapshot.getString("imageUrl");
 
         if (imageUrl != null && !imageUrl.isEmpty()) {
-          Picasso.get().load(imageUrl).fit().into(userIv);
+          Picasso.get().load(imageUrl).fit().centerCrop().into(userIv);
         }
         usernameTv.setText(snapshot.getString("username"));
 

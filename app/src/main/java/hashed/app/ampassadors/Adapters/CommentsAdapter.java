@@ -157,7 +157,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
         getUserData(comment.getUserId(), comment);
 
       } else {
-        Picasso.get().load(comment.getUserImage()).fit().into(imageIv);
+        Picasso.get().load(comment.getUserImage()).fit().centerCrop().into(imageIv);
         usernameTv.setText(comment.getUserName());
       }
 
@@ -186,6 +186,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
 
           if (comment.getUserImage() != null && !comment.getUserImage().isEmpty()) {
             Picasso.get().load(comment.getUserImage()).fit()
+                    .centerCrop()
                     .into(imageIv);
           }
           usernameTv.setText(comment.getUserName());

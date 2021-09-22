@@ -421,7 +421,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                         @Override
                         public void onSuccess(Uri uri) {
                             imageUrl = uri.toString();
-                            Picasso.get().load(imageUrl).fit().into(iamge);
+                            Picasso.get().load(imageUrl).fit().centerCrop().into(iamge);
                             Log.d("ttt", imageUrl);
                         }
                     });
@@ -444,7 +444,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                         @Override
                         public void onSuccess(Uri uri) {
                             String imageUrl = uri.toString();
-                            Picasso.get().load(imageUrl).fit().into(iamge);
+                            Picasso.get().load(imageUrl).fit().centerCrop().into(iamge);
                             Log.d("ttt", imageUrl);
                             Toast.makeText(sign_up.this, imageUrl, Toast.LENGTH_SHORT).show();
                         }

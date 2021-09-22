@@ -140,7 +140,7 @@ public class Profile extends AppCompatActivity {
                             city.setText(userInfo[0].getCity());
 
                             phone.setText(userInfo[0].getPhone());
-                            Picasso.get().load(userInfo[0].getImageUrl()).fit().into(imageView);
+                            Picasso.get().load(userInfo[0].getImageUrl()).fit().centerCrop().into(imageView);
                             bio.setText(userInfo[0].getBio());
                             Log.d("tttt",userInfo[0].getBio() + "bio;");
 
@@ -153,8 +153,7 @@ public class Profile extends AppCompatActivity {
                             bio.setText(value.getString("Bio"));
 
                             if(value.contains("imageUrl")){
-                                Picasso.get().load(value.getString("imageUrl")).
-                                        fit().into(imageView);
+                                Picasso.get().load(value.getString("imageUrl")).fit().centerCrop().into(imageView);
                             }
 
                         }

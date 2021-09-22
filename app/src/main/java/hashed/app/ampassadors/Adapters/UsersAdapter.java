@@ -171,7 +171,7 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return;
 
       if (user.getImageUrl() != null) {
-        picasso.load(user.getImageUrl()).fit().into(userIv);
+        picasso.load(user.getImageUrl()).fit().centerCrop().into(userIv);
       }else{
         userIv.setImageResource(R.color.white);
       }
@@ -219,7 +219,7 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return;
 
       if (user.getImageUrl() != null) {
-        picasso.load(user.getImageUrl()).fit().into(imageIv);
+        picasso.load(user.getImageUrl()).fit().centerCrop().into(imageIv);
       }else{
         imageIv.setImageResource(R.color.white);
       }
@@ -281,7 +281,7 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return;
 
       if (user.getImageUrl() != null) {
-        picasso.load(user.getImageUrl()).fit().into(contributorImageIv);
+        picasso.load(user.getImageUrl()).fit().centerCrop().into(contributorImageIv);
       }else{
         contributorImageIv.setImageResource(R.color.white);
       }

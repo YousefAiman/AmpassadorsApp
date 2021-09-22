@@ -325,7 +325,7 @@ public class ChatsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
       if (task.isSuccessful()) {
         if (chatItem.getImageUrl() != null && !chatItem.getImageUrl().isEmpty()) {
-          Picasso.get().load(chatItem.getImageUrl()).fit().into(imageIv);
+          Picasso.get().load(chatItem.getImageUrl()).fit().centerCrop().into(imageIv);
         }
         nameTv.setText(chatItem.getUsername());
       }
@@ -350,7 +350,7 @@ public class ChatsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
       if (task.isSuccessful()) {
         if (chatItem.getImageUrl() != null && !chatItem.getImageUrl().isEmpty()) {
-          Picasso.get().load(chatItem.getImageUrl()).fit().into(imageIv);
+          Picasso.get().load(chatItem.getImageUrl()).fit().centerCrop().into(imageIv);
         }
         nameTv.setText(chatItem.getUsername());
       }

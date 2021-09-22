@@ -3,9 +3,19 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/drawable/notification_indicator_icon.xml" value="0.2601851851851852" />
         <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/activity_about_us.xml" value="0.18907400232468036" />
+        <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/activity_post_news.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/activity_privacy_policy.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/activity_profile.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/activity_profile2.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/activity_video_welcome.xml" value="0.264" />
+        <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/fragment_chatting.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/fragment_posts.xml" value="0.2" />
+        <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/fragment_profile.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/home_activity.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/home_toolbar.xml" value="0.6" />
+        <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/menu/menu_admin.xml" value="0.25416666666666665" />
       </map>
     </option>
   </component>

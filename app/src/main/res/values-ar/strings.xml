@@ -85,7 +85,7 @@
     <string name="logout">تسجيل خروج</string>
     <string name="Error_message_defname">أدخل اسمك مناشدات</string>
     <string name="user_requests">طلبات التسجيل </string>
-    <string name="already_have_an_account_sign_in">هل لديك حساب مسبقا ؟ انشاء حساب </string>
+    <string name="already_have_an_account_sign_in">هل لا تملك حساب ؟ انشاء حساب </string>
 
     <string name="new_message">رسالة جديدة من</string>
     <string name="fullscreen_image">صورة ملء الشاشة</string>

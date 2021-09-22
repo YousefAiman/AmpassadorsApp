@@ -75,7 +75,7 @@ public class GroupMembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private void bind(UserPreview user) {
 
       if (user.getImageUrl() != null && !user.getImageUrl().isEmpty()) {
-        Picasso.get().load(user.getImageUrl()).fit().into(memberImageIv);
+        Picasso.get().load(user.getImageUrl()).fit().centerCrop().into(memberImageIv);
       }else{
         memberImageIv.setImageResource(R.color.white);
       }

@@ -169,7 +169,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
           final String imageUrl = documentSnapshot.getString("imageUrl");
           if(imageUrl!=null && !imageUrl.isEmpty()){
-            Picasso.get().load(imageUrl).fit().into(iv);
+            Picasso.get().load(imageUrl).fit().centerCrop().into(iv);
           }
         }
       }
