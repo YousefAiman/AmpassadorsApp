@@ -336,7 +336,7 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
 
                         }
                         username.setText(value.getString("username"));
-                        Picasso.get().load(value.getString("imageUrl")).fit().into(imageView);
+                        Picasso.get().load(value.getString("imageUrl")).fit().centerCrop().into(imageView);
                     }
                 });
     }

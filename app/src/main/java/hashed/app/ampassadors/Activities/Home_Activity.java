@@ -105,7 +105,9 @@ public class  Home_Activity extends AppCompatActivity implements
         if (auth.getCurrentUser().isAnonymous()) {
             navigationview.inflateMenu(R.menu.menu_nav);
         } else {
-            if (GlobalVariables.getInstance().getRole() != null && GlobalVariables.getInstance().getRole().equals("Admin")) {
+            if (GlobalVariables.getInstance().getRole() != null
+                    && GlobalVariables.getInstance().getRole().equals("Admin")
+                    || GlobalVariables.getInstance().getRole().equals("Coordinator")  ) {
                 navigationview.inflateMenu(R.menu.menu_admin);
             } else {
                 navigationview.inflateMenu(R.menu.menu_nav);
@@ -680,7 +682,7 @@ public class  Home_Activity extends AppCompatActivity implements
           }
 
         } else if (item.getItemId() == R.id.listComplaints &&
-              GlobalVariables.getInstance().getRole().equals("Admin")) {
+              GlobalVariables.getInstance().getRole().equals("Admin") || GlobalVariables.getInstance().getRole().equals("Coordinator")) {
 
             Intent intent = new Intent(Home_Activity.this, ComplanitsListActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -704,7 +706,7 @@ public class  Home_Activity extends AppCompatActivity implements
 
 
         } else if (item.getItemId() == R.id.listSuggestion &&
-              GlobalVariables.getInstance().getRole().equals("Admin")) {
+              GlobalVariables.getInstance().getRole().equals("Admin") || GlobalVariables.getInstance().getRole().equals("Coordinator")) {
             Intent intent = new Intent(Home_Activity.this, List_Sug_Activity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);

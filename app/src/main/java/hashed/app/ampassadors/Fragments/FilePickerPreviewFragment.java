@@ -79,7 +79,7 @@ public class FilePickerPreviewFragment extends Fragment {
     });
 
     if (type == Files.IMAGE) {
-      Picasso.get().load(uri).fit().into(fullScreenIv);
+      Picasso.get().load(uri).fit().centerInside().into(fullScreenIv);
 
       messagingPickerSendIv.setOnClickListener(new sendClickListener(messagingPickerEd));
 

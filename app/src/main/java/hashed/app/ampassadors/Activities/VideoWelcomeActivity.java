@@ -157,14 +157,13 @@ public class VideoWelcomeActivity extends AppCompatActivity implements View.OnCl
     }else if(view.getId() == guestBtn.getId()){
       enterAsGuest();
     }else if(view.getId() == createAccountBtn.getId()){
-
-      startActivity(new Intent(VideoWelcomeActivity.this, sign_up.class)
+      startActivity(new Intent(VideoWelcomeActivity.this, sign_in.class)
               .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
       finish();
 
     }else if(view.getId() == signInTv.getId()){
 
-      startActivity(new Intent(VideoWelcomeActivity.this, sign_in.class)
+      startActivity(new Intent(VideoWelcomeActivity.this, sign_up.class)
               .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
       finish();
 

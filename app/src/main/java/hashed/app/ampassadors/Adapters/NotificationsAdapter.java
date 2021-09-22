@@ -128,7 +128,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
           final String imageUrl = documentSnapshot.getString("imageUrl");
           if(imageUrl!=null && !imageUrl.isEmpty()){
             notification.setImageUrl(imageUrl);
-            Picasso.get().load(imageUrl).fit().into(imageView);
+            Picasso.get().load(imageUrl).fit().centerCrop().into(imageView);
           }
         }
       }
@@ -171,7 +171,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
       if (notification.getImageUrl() == null) {
         if (notification.getType().equals("zoomMeeting")) {
-          Picasso.get().load(R.drawable.zoom_icon).fit().into(userIv);
+          Picasso.get().load(R.drawable.zoom_icon).fit().centerCrop().into(userIv);
         } else {
           getNotificationImage(notification, userIv);
         }

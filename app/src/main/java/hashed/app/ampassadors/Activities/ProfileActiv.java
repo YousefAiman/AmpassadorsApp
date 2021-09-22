@@ -290,7 +290,7 @@ public class ProfileActiv extends AppCompatActivity implements
                         bio_txt = documentSnapshot.getString("Bio");
                         bio.setText(bio_txt);
                     }
-                    Picasso.get().load(userimg).fit().into(imageView);
+                    Picasso.get().load(userimg).fit().centerCrop().into(imageView);
                     username.setText(usernam);
 
 
