@@ -42,7 +42,7 @@
         android:layout_marginBottom="8dp"
         android:background="@drawable/edit_text_design"
         android:paddingTop="20dp"
-        android:paddingRight="30dp"
+        android:paddingHorizontal="30dp"
         android:text="@string/Details"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline28"
