@@ -15,6 +15,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.MediaRecorder;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -983,11 +984,27 @@ public abstract class MessagingActivity extends AppCompatActivity
   public void onDestroy() {
     super.onDestroy();
 
+    GlobalVariables.setAppIsRunning(false);
+
     if (sharedPreferences != null) {
       sharedPreferences.edit().remove("isPaused").remove("currentlyMessagingUid").apply();
     }
 
     privateMessagingRv.removeOnLayoutChangeListener(this);
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
+            GlobalVariables.getRegisteredNetworkCallback() != null) {
+      ((ConnectivityManager) getApplicationContext()
+              .getSystemService(Context.CONNECTIVITY_SERVICE))
+              .unregisterNetworkCallback(GlobalVariables.getRegisteredNetworkCallback());
+
+      GlobalVariables.setRegisteredNetworkCallback(null);
+
+    } else if (GlobalVariables.getCurrentWifiReceiver() != null) {
+      unregisterReceiver(GlobalVariables.getCurrentWifiReceiver());
+      GlobalVariables.setCurrentWifiReceiver(null);
+    }
+
 
     if (childEventListeners != null && !childEventListeners.isEmpty()) {
       for (DatabaseReference reference : childEventListeners.keySet()) {

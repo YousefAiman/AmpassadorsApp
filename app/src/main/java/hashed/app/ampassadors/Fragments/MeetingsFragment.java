@@ -72,6 +72,7 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
   private DocumentSnapshot lastDocSnap;
   private boolean isLoading;
   private ListenerRegistration listenerRegistration;
+  private TextView notificationCountTv;
 
   public MeetingsFragment() {
     // Required empty public constructor
@@ -133,7 +134,7 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
 
 
 
-    Toolbar toolbar = view.findViewById(R.id.groupToolbar);
+    final Toolbar toolbar = view.findViewById(R.id.groupToolbar);
     toolbar.setNavigationOnClickListener(v -> ((Home_Activity) requireActivity()).showDrawer());
     toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
       @Override
@@ -148,6 +149,8 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
       }
     });
 
+    notificationCountTv = toolbar.getMenu().findItem(R.id.action_notifications)
+            .getActionView().findViewById(R.id.notificationCountTv);
 
     swipeRefreshLayout.setOnRefreshListener(this);
 
@@ -159,11 +162,16 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
     super.onViewCreated(view, savedInstanceState);
 
 
-    toolbar.getMenu().findItem(R.id.action_notifications)
-            .setIcon(GlobalVariables.getInstance().getNotificationsCount() > 0 ?
-                    R.drawable.notification_indicator_icon :
-                    R.drawable.notification_icon);
+    if(GlobalVariables.getNotificationsCount() > 0){
+      if(notificationCountTv.getVisibility() == View.GONE){
+        notificationCountTv.setVisibility(View.VISIBLE);
+      }
+      notificationCountTv.setText(GlobalVariables.getNotificationsCount() > 99?"99+":
+              String.valueOf(GlobalVariables.getNotificationsCount()));
 
+    }else if(notificationCountTv.getVisibility() == View.VISIBLE){
+      notificationCountTv.setVisibility(View.GONE);
+    }
     setupNotificationReceiver();
 
     getMoreMeetings(true);
@@ -329,13 +337,15 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
             new NotificationIndicatorReceiver() {
               @Override
               public void onReceive(Context context, Intent intent) {
-                if (intent.hasExtra("showIndicator")) {
-                  final MenuItem item = toolbar.getMenu().findItem(R.id.action_notifications);
-                  if (intent.getBooleanExtra("showIndicator", false)) {
-                    item.setIcon(R.drawable.notification_indicator_icon);
-                  } else {
-                    item.setIcon(R.drawable.notification_icon);
+                if(GlobalVariables.getNotificationsCount() > 0){
+                  if(notificationCountTv.getVisibility() == View.GONE){
+                    notificationCountTv.setVisibility(View.VISIBLE);
                   }
+                  notificationCountTv.setText(GlobalVariables.getNotificationsCount() > 99?
+                          "99+":String.valueOf(GlobalVariables.getNotificationsCount()));
+
+                }else if(notificationCountTv.getVisibility() == View.VISIBLE){
+                  notificationCountTv.setVisibility(View.GONE);
                 }
               }
             };

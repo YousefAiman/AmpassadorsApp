@@ -14,6 +14,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,10 +50,17 @@ public class WifiUtil {
 
     ConnectivityManager.NetworkCallback networkCallback;
 
+    final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+    DocumentReference userRef = null;
+    if(currentUser!=null){
+      userRef =  FirebaseFirestore.getInstance().collection("Users")
+              .document(currentUser.getUid());
+    }
 
+
+    DocumentReference finalUserRef = userRef;
     cm.registerNetworkCallback(builder.build(),
             networkCallback = new ConnectivityManager.NetworkCallback() {
-
               final List<Network> activeNetworks = new ArrayList<>();
 
               @Override
@@ -80,6 +92,11 @@ public class WifiUtil {
 //                            });
 
                     GlobalVariables.setWifiIsOn(true);
+
+                    if(GlobalVariables.isAppIsRunning() && finalUserRef !=null){
+                      finalUserRef.update("status", true);
+                    }
+
                   }
 
                   Log.d("ttt", "network is on man");
@@ -102,6 +119,10 @@ public class WifiUtil {
 
                   if (GlobalVariables.isWifiIsOn()) {
                     GlobalVariables.setWifiIsOn(false);
+                  }
+
+                  if(GlobalVariables.isAppIsRunning() && finalUserRef !=null){
+                    finalUserRef.update("status", false);
                   }
 
                   Log.d("ttt", "wifi offline: " + network.toString());

@@ -280,7 +280,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     progressDialog.setCancelable(false);
     progressDialog.show();
 
-    if (attachmentUri != null) {
+//    if (attachmentUri != null) {
 
       uploadTaskMap = new HashMap<>();
 
@@ -308,9 +308,9 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
           break;
       }
 
-    }else{
-      publishPostUpdate(title, description,null,null,progressDialog);
-    }
+//    }else{
+//      publishPostUpdate(title, description,null,null,progressDialog);
+//    }
 
   }
 
@@ -362,12 +362,12 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
                       .document(postData.getPostId());
     }
 
-      if(postData.getAttachmentUrl()!=null){
+      if(attachmentUri!=null && postData.getAttachmentUrl()!=null && !postData.getAttachmentUrl().equals(attachmentUrl)){
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storage.getReferenceFromUrl(postData.getAttachmentUrl()).delete();
 
-        if(postData.getAttachmentType() == Files.VIDEO){
+        if(postData.getAttachmentType() == Files.VIDEO && postData.getVideoThumbnailUrl()!=null && !postData.getVideoThumbnailUrl().equals(videoThumbnailUrl)){
 
           documentReference.update("videoThumbnailUrl", FieldValue.delete());
 
@@ -554,71 +554,89 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
 
   private void uploadImage(String title, String description, ProgressDialog progressDialog) {
 
-    final StorageReference reference = FirebaseStorage.getInstance().getReference()
-            .child(Files.POST_IMAGE_REF).child(UUID.randomUUID().toString() + "-" +
-                    System.currentTimeMillis());
+    if (attachmentUri != null) {
 
-    final UploadTask uploadTask = reference.putFile(attachmentUri);
+      final StorageReference reference = FirebaseStorage.getInstance().getReference()
+              .child(Files.POST_IMAGE_REF).child(UUID.randomUUID().toString() + "-" +
+                      System.currentTimeMillis());
 
-    final StorageTask<UploadTask.TaskSnapshot> onSuccessListener =
-            uploadTask.addOnSuccessListener(taskSnapshot -> {
-              uploadTaskMap.remove(uploadTask);
-              reference.getDownloadUrl().addOnSuccessListener(uri1 -> {
+      final UploadTask uploadTask = reference.putFile(attachmentUri);
 
-                final String attachmentUrl = uri1.toString();
+      final StorageTask<UploadTask.TaskSnapshot> onSuccessListener =
+              uploadTask.addOnSuccessListener(taskSnapshot -> {
+                uploadTaskMap.remove(uploadTask);
+                reference.getDownloadUrl().addOnSuccessListener(uri1 -> {
 
-                if (isForEditing) {
-                  publishPostUpdate(title, description, attachmentUrl, null, progressDialog);
-                } else {
-                  publishPost(title, description, attachmentUrl, null, progressDialog);
-                }
-              }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                  Toast.makeText(PostNewActivity.this,
-                          R.string.post_publish_error, Toast.LENGTH_LONG).show();
-                  progressDialog.dismiss();
-                }
-              });
-            }).addOnCompleteListener(task ->
-                    new File(attachmentUri.getPath()).delete())
-                    .addOnFailureListener(new OnFailureListener() {
-                      @Override
-                      public void onFailure(@NonNull Exception e) {
+                  final String attachmentUrl = uri1.toString();
 
-                        Toast.makeText(PostNewActivity.this,
-                                R.string.post_publish_error, Toast.LENGTH_LONG).show();
-                        progressDialog.dismiss();
-                      }
-                    });
+                  if (isForEditing) {
+                    publishPostUpdate(title, description, attachmentUrl, null, progressDialog);
+                  } else {
+                    publishPost(title, description, attachmentUrl, null, progressDialog);
+                  }
+                }).addOnFailureListener(new OnFailureListener() {
+                  @Override
+                  public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(PostNewActivity.this,
+                            R.string.post_publish_error, Toast.LENGTH_LONG).show();
+                    progressDialog.dismiss();
+                  }
+                });
+              }).addOnCompleteListener(task ->
+                      new File(attachmentUri.getPath()).delete())
+                      .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
 
-    uploadTaskMap.put(uploadTask, onSuccessListener);
+                          Toast.makeText(PostNewActivity.this,
+                                  R.string.post_publish_error, Toast.LENGTH_LONG).show();
+                          progressDialog.dismiss();
+                        }
+                      });
+
+      uploadTaskMap.put(uploadTask, onSuccessListener);
+    }else{
+
+      publishPostUpdate(title,description,postData.getAttachmentUrl(),null,progressDialog);
+
+    }
 
   }
 
 
   private void uploadDocument(String title, String description, ProgressDialog progressDialog) {
 
-    final StorageReference reference = FirebaseStorage.getInstance().getReference()
-            .child(Files.POST_DOCUMENT_REF).child(UUID.randomUUID().toString() + "-" +
-                    System.currentTimeMillis());
+    if(attachmentUri!=null) {
 
-    final UploadTask uploadTask = reference.putFile(attachmentUri);
+      final StorageReference reference = FirebaseStorage.getInstance().getReference()
+              .child(Files.POST_DOCUMENT_REF).child(UUID.randomUUID().toString() + "-" +
+                      System.currentTimeMillis());
 
-    final StorageTask<UploadTask.TaskSnapshot> onSuccessListener =
-            uploadTask.addOnSuccessListener(taskSnapshot -> {
-              uploadTaskMap.remove(uploadTask);
-              reference.getDownloadUrl().addOnSuccessListener(uri1 -> {
+      final UploadTask uploadTask = reference.putFile(attachmentUri);
+
+      final StorageTask<UploadTask.TaskSnapshot> onSuccessListener =
+              uploadTask.addOnSuccessListener(taskSnapshot -> {
+                uploadTaskMap.remove(uploadTask);
+                reference.getDownloadUrl().addOnSuccessListener(uri1 -> {
 
                   final String attachmentUrl = uri1.toString();
 
-                if (isForEditing) {
-                  publishPostUpdate(title, description, attachmentUrl, null, progressDialog);
-                } else {
-                  publishPost(title, description, attachmentUrl, null, progressDialog);
-                }
+                  if (isForEditing) {
+                    publishPostUpdate(title, description, attachmentUrl, null, progressDialog);
+                  } else {
+                    publishPost(title, description, attachmentUrl, null, progressDialog);
+                  }
 
-              }).addOnFailureListener(new OnFailureListener() {
+                }).addOnFailureListener(new OnFailureListener() {
+                  @Override
+                  public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(PostNewActivity.this,
+                            R.string.post_publish_error, Toast.LENGTH_LONG).show();
+                    progressDialog.dismiss();
+                  }
+                });
+              }).addOnCompleteListener(task ->
+                      new File(attachmentUri.getPath()).delete()).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                   Toast.makeText(PostNewActivity.this,
@@ -626,17 +644,14 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
                   progressDialog.dismiss();
                 }
               });
-            }).addOnCompleteListener(task ->
-                    new File(attachmentUri.getPath()).delete()).addOnFailureListener(new OnFailureListener() {
-              @Override
-              public void onFailure(@NonNull Exception e) {
-                Toast.makeText(PostNewActivity.this,
-                        R.string.post_publish_error, Toast.LENGTH_LONG).show();
-                progressDialog.dismiss();
-              }
-            });
 
-    uploadTaskMap.put(uploadTask, onSuccessListener);
+      uploadTaskMap.put(uploadTask, onSuccessListener);
+
+    }else{
+
+      publishPostUpdate(title,description,postData.getAttachmentUrl(),null,progressDialog);
+
+    }
 
   }
 
@@ -645,8 +660,7 @@ public class PostNewActivity extends AppCompatActivity implements View.OnClickLi
     if(attachmentUri != null) {
 
       final StorageReference reference = FirebaseStorage.getInstance().getReference()
-              .child(Files.POST_VIDEO_REF).child(UUID.randomUUID().toString() + "-" +
-                      System.currentTimeMillis());
+              .child(Files.POST_VIDEO_REF).child(UUID.randomUUID().toString() + "-" + System.currentTimeMillis());
 
       final UploadTask uploadTask = reference.putFile(attachmentUri);
 

@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    FirebaseMessaging.getInstance().subscribeToTopic("82900345876");
+//    FirebaseMessaging.getInstance().subscribeToTopic("82900345876");
 
     if (WifiUtil.isConnectedToInternet(this)) {
       checkUserCredentials();
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
       startConnectionActivity();
     }
 
-    startService(new Intent(getBaseContext(), ShutdownService.class));
+//    startService(new Intent(getBaseContext(), ShutdownService.class));
   }
 
   private void checkUserCredentials(){

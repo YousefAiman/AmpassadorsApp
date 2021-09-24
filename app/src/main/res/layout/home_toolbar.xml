@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="?actionBarSize"
@@ -25,6 +24,7 @@
         android:layoutDirection="ltr"
         android:fontFamily="@font/segoe_ui_bold"
         android:text="@string/menu_home"
-        android:textSize="24sp"
-        />
+        android:textSize="24sp" />
+
+
 </androidx.appcompat.widget.Toolbar>

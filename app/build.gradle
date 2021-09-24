@@ -6,7 +6,7 @@ android {
     signingConfigs {
         release {
 //            storeFile file('C:\\Users\\yousef\\AndroidStudioProjects\\AmpassadorsApp\\keystore.jks')
-            storeFile file('C:\\Users\\Ayman\\AndroidStudioProjects\\AmpassadorsApp\\keystore.jks')
+            storeFile file('C:\\Users\\yousef\\AndroidStudioProjects\\AmpassadorsApp\\keystore.jks')
             storePassword '123456'
             keyAlias 'key0'
             keyPassword '123456'

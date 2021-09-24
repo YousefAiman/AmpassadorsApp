@@ -235,27 +235,6 @@ public class ProfileActiv extends AppCompatActivity implements
         });
     }
 
-    private void setupNotificationReceiver() {
-
-        notificationIndicatorReceiver =
-                new NotificationIndicatorReceiver() {
-                    @Override
-                    public void onReceive(Context context, Intent intent) {
-                        if (intent.hasExtra("showIndicator")) {
-                            final MenuItem item = toolbar.getMenu().findItem(R.id.action_notifications);
-                            if (intent.getBooleanExtra("showIndicator", false)) {
-                                item.setIcon(R.drawable.notification_indicator_icon);
-                            } else {
-                                item.setIcon(R.drawable.notification_icon);
-                            }
-                        }
-                    }
-                };
-
-        ProfileActiv.this.registerReceiver(notificationIndicatorReceiver,
-                new IntentFilter(BuildConfig.APPLICATION_ID + ".notificationIndicator"));
-    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();

@@ -284,7 +284,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                 hashMap.put("phone", phone);
                 hashMap.put("userId", authResult.getUser().getUid());
                 hashMap.put("imageUrl", imageUrl);
-                hashMap.put("status", true);
+                hashMap.put("status", false);
                 hashMap.put("Year", year);
                 hashMap.put("isEmailVerified", false);
                 hashMap.put("Month'", month);

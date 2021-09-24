@@ -26,7 +26,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.BuildConfig;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -48,6 +47,7 @@ import hashed.app.ampassadors.Activities.PostNewActivity;
 import hashed.app.ampassadors.Activities.Profile;
 import hashed.app.ampassadors.Adapters.PostAdapter;
 import hashed.app.ampassadors.BroadcastReceivers.NotificationIndicatorReceiver;
+import hashed.app.ampassadors.BuildConfig;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.FullScreenImagesUtil;
@@ -79,6 +79,8 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
     private TextView roleTv;
     private ListenerRegistration listenerRegistration;
     CollectionReference collectionReference = FirebaseFirestore.getInstance().collection("Users");
+
+    private TextView notificationCountTv;
 
     public PostsProfileFragment() {
         // Required empty public constructor
@@ -155,12 +157,11 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
 
         toolbar.setOnMenuItemClickListener(this);
 
-        toolbar.getMenu().findItem(R.id.action_notifications)
-                .setIcon(GlobalVariables.getNotificationsCount() > 0 ?
-                        R.drawable.notification_indicator_icon :
-                        R.drawable.notification_icon);
+        notificationCountTv = toolbar.getMenu().findItem(R.id.action_notifications)
+                .getActionView().findViewById(R.id.notificationCountTv);
 
-        setupNotificationReceiver();
+
+
 
 
 
@@ -186,6 +187,20 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        if(GlobalVariables.getNotificationsCount() > 0){
+            if(notificationCountTv.getVisibility() == View.GONE){
+                notificationCountTv.setVisibility(View.VISIBLE);
+            }
+            notificationCountTv.setText(GlobalVariables.getNotificationsCount() > 99?"99+":
+                    String.valueOf(GlobalVariables.getNotificationsCount()));
+
+        }else if(notificationCountTv.getVisibility() == View.VISIBLE){
+            notificationCountTv.setVisibility(View.GONE);
+        }
+
+        setupNotificationReceiver();
+
         ReadPost(true);
     }
 
@@ -196,10 +211,14 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
 
             DocumentReference reference = fStore.collection("Users").document(userid);
 
+            updateOfflineStatusPreference(status);
+
             if (status) {
+
                 reference.update("status", false).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
+
                         status = false;
                         toolbar.getMenu().findItem(R.id.action_online).setTitle("online");
                     }
@@ -228,11 +247,17 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         return false;
     }
 
+    private void updateOfflineStatusPreference(boolean alwaysOffline){
+        requireContext().getSharedPreferences(getResources().getString(R.string.app_name),
+                Context.MODE_PRIVATE).edit().putBoolean("alwaysOffline",alwaysOffline).apply();
+    }
+
     @Override
     public void onRefresh() {
 
+        final int previousSize = postData.size();
         postData.clear();
-        adapter.notifyDataSetChanged();
+        adapter.notifyItemRangeRemoved(0,previousSize);
         lastDocSnap = null;
         ReadPost(true);
     }
@@ -291,21 +316,24 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
                 new NotificationIndicatorReceiver() {
                     @Override
                     public void onReceive(Context context, Intent intent) {
-                        if (intent.hasExtra("showIndicator")) {
-                            final MenuItem item = toolbar.getMenu().findItem(R.id.action_notifications);
-                            if (intent.getBooleanExtra("showIndicator", false)) {
-                                item.setIcon(R.drawable.notification_indicator_icon);
-                            } else {
-                                item.setIcon(R.drawable.notification_icon);
+                        if(GlobalVariables.getNotificationsCount() > 0){
+                            if(notificationCountTv.getVisibility() == View.GONE){
+                                notificationCountTv.setVisibility(View.VISIBLE);
                             }
+                            notificationCountTv.setText(GlobalVariables.getNotificationsCount() > 99?
+                                    "99+":String.valueOf(GlobalVariables.getNotificationsCount()));
+
+                        }else if(notificationCountTv.getVisibility() == View.VISIBLE){
+                            notificationCountTv.setVisibility(View.GONE);
                         }
                     }
                 };
 
-        getContext().registerReceiver(notificationIndicatorReceiver,
+        requireContext().registerReceiver(notificationIndicatorReceiver,
                 new IntentFilter(BuildConfig.APPLICATION_ID + ".notificationIndicator"));
 
     }
+
 
     @Override
     public void onDestroy() {

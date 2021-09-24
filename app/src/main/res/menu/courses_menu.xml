@@ -16,8 +16,8 @@
 
     <item
         android:id="@+id/action_notifications"
-        app:showAsAction="ifRoom"
-        android:icon="@drawable/notification_icon"
+        app:showAsAction="always"
+        app:actionLayout="@layout/notification_counter"
         android:title="Notifications"/>
 
 </menu>

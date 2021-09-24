@@ -95,12 +95,21 @@ public class CoursesActivity extends AppCompatActivity implements
             }
         });
 
-        courseToolbar.getMenu().findItem(R.id.action_notifications)
-                .setIcon(GlobalVariables.getInstance().getNotificationsCount() > 0 ?
-                        R.drawable.notification_indicator_icon :
-                        R.drawable.notification_icon);
+        final TextView notificationCountTv = courseToolbar.getMenu()
+                .findItem(R.id.action_notifications).getActionView().findViewById(R.id.notificationCountTv);
 
-        setupNotificationReceiver(courseToolbar);
+        if(GlobalVariables.getNotificationsCount() > 0){
+            if(notificationCountTv.getVisibility() == View.GONE){
+                notificationCountTv.setVisibility(View.VISIBLE);
+            }
+            notificationCountTv.setText(GlobalVariables.getNotificationsCount() > 99?"99+":
+                    String.valueOf(GlobalVariables.getNotificationsCount()));
+
+        }else if(notificationCountTv.getVisibility() == View.VISIBLE){
+            notificationCountTv.setVisibility(View.GONE);
+        }
+
+        setupNotificationReceiver(notificationCountTv);
 
     }
 
@@ -142,6 +151,9 @@ public class CoursesActivity extends AppCompatActivity implements
                 }
             }
         });
+
+
+
 
     }
 
@@ -315,27 +327,29 @@ public class CoursesActivity extends AppCompatActivity implements
         });
     }
 
-    private void setupNotificationReceiver(Toolbar courseToolbar) {
+    private void setupNotificationReceiver(final TextView notificationCountTv) {
 
         notificationIndicatorReceiver =
                 new NotificationIndicatorReceiver() {
                     @Override
                     public void onReceive(Context context, Intent intent) {
-                        if (intent.hasExtra("showIndicator")) {
-                            final MenuItem item = courseToolbar.getMenu().findItem(R.id.action_notifications);
-                            if (intent.getBooleanExtra("showIndicator", false)) {
-                                item.setIcon(R.drawable.notification_indicator_icon);
-                            } else {
-                                item.setIcon(R.drawable.notification_icon);
+                        if(GlobalVariables.getNotificationsCount() > 0){
+                            if(notificationCountTv.getVisibility() == View.GONE){
+                                notificationCountTv.setVisibility(View.VISIBLE);
                             }
+                            notificationCountTv.setText(GlobalVariables.getNotificationsCount() > 99?
+                                    "99+":String.valueOf(GlobalVariables.getNotificationsCount()));
+
+                        }else if(notificationCountTv.getVisibility() == View.VISIBLE){
+                            notificationCountTv.setVisibility(View.GONE);
                         }
                     }
                 };
 
         registerReceiver(notificationIndicatorReceiver,
                 new IntentFilter(BuildConfig.APPLICATION_ID + ".notificationIndicator"));
-
     }
+
 
     private class ScrollListener extends RecyclerView.OnScrollListener {
         @Override
