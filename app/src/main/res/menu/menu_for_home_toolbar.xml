@@ -20,4 +20,4 @@
             app:actionLayout="@layout/notification_counter"
             android:title="@string/notifications"/>
 
-    </menu>
+</menu>

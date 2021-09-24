@@ -238,7 +238,7 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
         //header pager
         headerItems.clear();
-//        headerViewPager.removeAllViews();
+        //headerViewPager.removeAllViews();
         pagerAdapter.notifyDataSetChanged();
         fetchHeaderItems();
 
