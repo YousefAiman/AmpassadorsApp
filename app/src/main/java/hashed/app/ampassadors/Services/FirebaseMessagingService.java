@@ -453,7 +453,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
           }
 
           destinationIntent.setFlags(getIntentFlags(sourceId));
-          this.startActivity(destinationIntent);
+//          this.startActivity(destinationIntent);
 
         }else{
 
