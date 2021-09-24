@@ -140,10 +140,14 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
 
             if (postData.getPublisherId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
               toolbar.inflateMenu(R.menu.poll_menu);
-            } else if (GlobalVariables.getInstance().getRole().equals("Admin")) {
-              toolbar.inflateMenu(R.menu.admin_menu);
-            } else {
-              toolbar.inflateMenu(R.menu.users_post_menu);
+            } else if (GlobalVariables.getRole()!=null) {
+
+              if(GlobalVariables.getRole().equals("Admin")){
+                toolbar.inflateMenu(R.menu.admin_menu);
+              }else {
+                toolbar.inflateMenu(R.menu.users_post_menu);
+
+              }
             }
 
 
@@ -186,7 +190,7 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
         final String imageUrl = snapshot.getString("imageUrl");
 
         if (imageUrl != null && !imageUrl.isEmpty()) {
-          Picasso.get().load(imageUrl).fit().into(userIv);
+          Picasso.get().load(imageUrl).fit().centerCrop().into(userIv);
         }
         usernameTv.setText(snapshot.getString("username"));
 
@@ -205,7 +209,7 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
       likeOrDislike();
     } else if (id == commentTv.getId()) {
       CommentsFragment commentsFragment = new CommentsFragment(postData.getPostId(),
-              postData.getComments(),getIntent().hasExtra("isForUser"),postData.getPublisherId());
+              postData.getComments(),getIntent().hasExtra("isForUser"),postData.getPublisherId(),PostData.TYPE_POLL);
       commentsFragment.show(getSupportFragmentManager(), "CommentsFragment");
     }
   }
@@ -224,18 +228,18 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
             likesTv.setText(String.valueOf(
                     (Integer.parseInt(likesTv.getText().toString()) - 1)));
 
-            PostData.likePost(postData.getPostId(),postData.getTitle(), 2,
+            PostData.likePost(postData.getPostId(),postData.getTitle(), PostData.TYPE_POLL,
                     postData.getPublisherId(), this
-                    ,getIntent().hasExtra("isForUser"),likeTv);
+                    ,getIntent().hasExtra("isForUser"),PostData.TYPE_POLL,likeTv);
           } else {
             likeTv.setTextColor(getResources().getColor(R.color.red));
 
             likesTv.setText(String.valueOf(
                     (Integer.parseInt(likesTv.getText().toString()) + 1)));
 
-            PostData.likePost(postData.getPostId(),postData.getTitle(), 1,
+            PostData.likePost(postData.getPostId(),postData.getTitle(), PostData.TYPE_POLL,
                     postData.getPublisherId(), this
-                    ,getIntent().hasExtra("isForUser"),likeTv);
+                    ,getIntent().hasExtra("isForUser"),PostData.TYPE_POLL,likeTv);
 
 
           }

@@ -81,9 +81,10 @@ public class Profile extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                if(documentSnapshot.contains("imageUrl")){
 
-                    String image = documentSnapshot.get("imageUrl").toString();
+                if(documentSnapshot.contains("imageUrl") && documentSnapshot.getString("imageUrl")!=null){
+
+                    final String image = documentSnapshot.getString("imageUrl");
 
                     imageView.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -94,7 +95,8 @@ public class Profile extends AppCompatActivity {
                             frameLayout.setVisibility(View.VISIBLE);
 
                             FullScreenImagesUtil.showImageFullScreen(Profile.this,
-                                    image,null,null).setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                    image,null,null)
+                                    .setOnDismissListener(new DialogInterface.OnDismissListener() {
                                 @Override
                                 public void onDismiss(DialogInterface dialogInterface) {
 
@@ -140,7 +142,7 @@ public class Profile extends AppCompatActivity {
                             city.setText(userInfo[0].getCity());
 
                             phone.setText(userInfo[0].getPhone());
-                            Picasso.get().load(userInfo[0].getImageUrl()).fit().into(imageView);
+                            Picasso.get().load(userInfo[0].getImageUrl()).fit().centerCrop().into(imageView);
                             bio.setText(userInfo[0].getBio());
                             Log.d("tttt",userInfo[0].getBio() + "bio;");
 
@@ -153,8 +155,7 @@ public class Profile extends AppCompatActivity {
                             bio.setText(value.getString("Bio"));
 
                             if(value.contains("imageUrl")){
-                                Picasso.get().load(value.getString("imageUrl")).
-                                        fit().into(imageView);
+                                Picasso.get().load(value.getString("imageUrl")).fit().centerCrop().into(imageView);
                             }
 
                         }

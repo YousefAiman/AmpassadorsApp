@@ -87,8 +87,12 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     switch (notification.getType()) {
 
       case FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE:
-      case FirestoreNotificationSender.TYPE_LIKE:
-      case FirestoreNotificationSender.TYPE_COMMENT:
+      case FirestoreNotificationSender.TYPE_POLL_LIKE:
+      case FirestoreNotificationSender.TYPE_POST_LIKE:
+      case FirestoreNotificationSender.TYPE_POST_COMMENT:
+      case FirestoreNotificationSender.TYPE_POLL_COMMENT:
+      case FirestoreNotificationSender.TYPE_POST_COMMENT_LIKE:
+      case FirestoreNotificationSender.TYPE_POLL_COMMENT_LIKE:
         documentReference = firestore.collection("Users")
                 .document(notification.getSenderId());
         break;
@@ -124,7 +128,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
           final String imageUrl = documentSnapshot.getString("imageUrl");
           if(imageUrl!=null && !imageUrl.isEmpty()){
             notification.setImageUrl(imageUrl);
-            Picasso.get().load(imageUrl).fit().into(imageView);
+            Picasso.get().load(imageUrl).fit().centerCrop().into(imageView);
           }
         }
       }
@@ -167,13 +171,13 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
       if (notification.getImageUrl() == null) {
         if (notification.getType().equals("zoomMeeting")) {
-          Picasso.get().load(R.drawable.zoom_icon).fit().into(userIv);
+          Picasso.get().load(R.drawable.zoom_icon).fit().centerCrop().into(userIv);
         } else {
           getNotificationImage(notification, userIv);
         }
 
       } else {
-        Picasso.get().load(notification.getImageUrl()).fit().into(userIv);
+        Picasso.get().load(notification.getImageUrl()).fit().centerCrop().into(userIv);
       }
 
 
@@ -292,8 +296,12 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
           break;
 
-        case FirestoreNotificationSender.TYPE_LIKE:
-        case FirestoreNotificationSender.TYPE_COMMENT:
+        case FirestoreNotificationSender.TYPE_POST_LIKE:
+        case FirestoreNotificationSender.TYPE_POLL_LIKE:
+        case FirestoreNotificationSender.TYPE_POST_COMMENT:
+        case FirestoreNotificationSender.TYPE_POLL_COMMENT:
+        case FirestoreNotificationSender.TYPE_POST_COMMENT_LIKE:
+        case FirestoreNotificationSender.TYPE_POLL_COMMENT_LIKE:
 
           notificationDeleter.deleteNotification(notification);
 

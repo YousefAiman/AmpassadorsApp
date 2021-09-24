@@ -25,6 +25,7 @@ import java.util.Map;
 
 import hashed.app.ampassadors.Objects.PollOption;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.GlobalVariables;
 
 public class PollPostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -168,13 +169,14 @@ public class PollPostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
   public class PollChooseVh extends RecyclerView.ViewHolder
           implements View.OnClickListener {
 
-    private final TextView optionTv;
+    private final TextView optionTv,percentageTv;
     private final ProgressBar optionProgress;
     private final ImageView checkIv;
 
     public PollChooseVh(@NonNull View itemView) {
       super(itemView);
       optionTv = itemView.findViewById(R.id.optionTv);
+      percentageTv = itemView.findViewById(R.id.percentageTv);
       optionProgress = itemView.findViewById(R.id.optionProgress);
       checkIv = itemView.findViewById(R.id.checkIv);
     }
@@ -194,6 +196,10 @@ public class PollPostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         optionProgress.post(() ->
                 optionProgress.setProgress(progress));
+
+        if(GlobalVariables.getRole().equals("Admin")){
+          percentageTv.setText(progress+"%");
+        }
       }
 
       checkIv.setVisibility(pollOption.getId() == chosenOption ? View.VISIBLE:View.GONE);
@@ -220,13 +226,14 @@ public class PollPostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
   private class PollEndedVh extends RecyclerView.ViewHolder {
 
-    private final TextView optionTv;
+    private final TextView optionTv,percentageTv;
     private final ProgressBar optionProgress;
     private final ImageView checkIv;
 
     public PollEndedVh(@NonNull View itemView) {
       super(itemView);
       optionTv = itemView.findViewById(R.id.optionTv);
+      percentageTv = itemView.findViewById(R.id.percentageTv);
       optionProgress = itemView.findViewById(R.id.optionProgress);
       checkIv = itemView.findViewById(R.id.checkIv);
     }
@@ -249,6 +256,10 @@ public class PollPostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         Log.d("ttt", "percentage for: " + pollOption.getOption()
                 + " - " + percentage);
+
+        if(GlobalVariables.getRole().equals("Admin")){
+          percentageTv.setText(percentage+"%");
+        }
       }
 
       checkIv.setVisibility(pollOption.getId() == chosenOption ? View.VISIBLE:View.GONE);

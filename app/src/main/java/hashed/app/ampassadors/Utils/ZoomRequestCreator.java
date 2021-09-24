@@ -24,6 +24,8 @@ import hashed.app.ampassadors.Objects.ZoomMeeting;
 
 public class ZoomRequestCreator {
 
+    public static final int ZOOM_MEETING_ENDED = 1;
+
     public interface ZoomRequester {
 
         // Endpoints

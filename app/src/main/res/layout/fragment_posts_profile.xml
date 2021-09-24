@@ -5,7 +5,8 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F2F2F2">
+    android:background="#F2F2F2"
+    tools:context=".Fragments.PostsProfileFragment">
 
     <include
         android:id="@+id/toolbar"
@@ -31,10 +32,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_below="@id/toolbar"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="0dp">
-
+        android:layout_alignParentBottom="true">
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/nestedScrollView"
@@ -53,7 +51,7 @@
                     android:id="@+id/view8"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:background="#2F6529"
+                    android:background="@color/dark_green"
                     app:layout_constraintDimensionRatio="5:1"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -77,94 +75,59 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profile_picture"
-                    android:layout_width="130dp"
-                    android:layout_height="130dp"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
                     android:background="@drawable/profile_background"
                     android:scaleType="centerCrop"
                     app:layout_constraintBottom_toBottomOf="@+id/view8"
                     app:layout_constraintDimensionRatio="1"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.112"
+                    app:layout_constraintHorizontal_bias="0.209"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/view8"
-                    app:layout_constraintVertical_bias="0.458"
-                    app:layout_constraintWidth_percent="0.35" />
+                    app:layout_constraintWidth_percent="0.32" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/userpost_recycler"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="24dp"
                     android:clipToPadding="false"
                     android:overScrollMode="never"
                     android:paddingBottom="20dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/guideline33" />
+                    app:layout_constraintTop_toBottomOf="@+id/view9" />
 
                 <TextView
                     android:id="@+id/bio_profile"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginRight="20dp"
-                    android:drawableStart="@drawable/ic_bio"
-                    android:gravity="start"
-                    android:paddingStart="10dp"
-                    app:layout_constraintBottom_toTopOf="@+id/guideline34"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/guideline32"
-                    app:layout_constraintVertical_bias="0.0"
-                    tools:ignore="RtlCompat" />
+                    app:layout_constraintTop_toBottomOf="@+id/profile_picture"
+                    app:drawableStartCompat="@drawable/ic_bio" />
 
                 <View
                     android:id="@+id/view9"
                     android:layout_width="0dp"
                     android:layout_height="1dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     android:background="#707070"
-                    app:layout_constraintBottom_toTopOf="@+id/userpost_recycler"
                     app:layout_constraintEnd_toEndOf="@+id/bio_profile"
-                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="@+id/bio_profile"
-                    app:layout_constraintTop_toTopOf="@+id/guideline34"
-                    app:layout_constraintVertical_bias="0.0" />
-
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline32"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layout_constraintGuide_percent="0.26"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline33"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="1205dp"
-                    android:orientation="horizontal"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintGuide_percent="0.36" />
-
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline34"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layout_constraintGuide_percent="0.32"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@+id/bio_profile" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-
         </androidx.core.widget.NestedScrollView>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"

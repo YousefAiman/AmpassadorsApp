@@ -169,7 +169,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
           final String imageUrl = documentSnapshot.getString("imageUrl");
           if(imageUrl!=null && !imageUrl.isEmpty()){
-            Picasso.get().load(imageUrl).fit().into(iv);
+            Picasso.get().load(imageUrl).fit().centerCrop().into(iv);
           }
         }
       }
@@ -519,7 +519,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
     @Override
     public boolean onLongClick(View view) {
 
-      showMessageDeletionDialog(privateMessages.get(getAdapterPosition()), itemView.getContext());
+      showMessageDeletionDialog(privateMessages.get(getBindingAdapterPosition()), itemView.getContext());
 
       return false;
     }
@@ -529,9 +529,9 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
       Log.d("ttt","clicked");
 
-//      timeClickListener.hideTime(getAdapterPosition());
+//      timeClickListener.hideTime(getBindingAdapterPosition());
 
-      showOrHideTime(timeTv,getAdapterPosition());
+      showOrHideTime(timeTv,getBindingAdapterPosition());
 
     }
 
@@ -583,7 +583,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public boolean onLongClick(View view) {
-      showMessageDeletionDialog(privateMessages.get(getAdapterPosition()), itemView.getContext());
+      showMessageDeletionDialog(privateMessages.get(getBindingAdapterPosition()), itemView.getContext());
       return false;
     }
 
@@ -591,12 +591,12 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
     public void onClick(View view) {
 
       if (view.getId() == R.id.imageIv) {
-        if (privateMessages.get(getAdapterPosition()).getAttachmentUrl() != null) {
-          imageMessageListener.showImage(privateMessages.get(getAdapterPosition()).getAttachmentUrl(),
-                  privateMessages.get(getAdapterPosition()).getFileName());
+        if (privateMessages.get(getBindingAdapterPosition()).getAttachmentUrl() != null) {
+          imageMessageListener.showImage(privateMessages.get(getBindingAdapterPosition()).getAttachmentUrl(),
+                  privateMessages.get(getBindingAdapterPosition()).getFileName());
         }
       }else{
-        showOrHideTime(timeTv,getAdapterPosition());
+        showOrHideTime(timeTv,getBindingAdapterPosition());
       }
 
     }
@@ -687,7 +687,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public boolean onLongClick(View view) {
-      showMessageDeletionDialog(privateMessages.get(getAdapterPosition()), itemView.getContext());
+      showMessageDeletionDialog(privateMessages.get(getBindingAdapterPosition()), itemView.getContext());
       return false;
     }
 
@@ -701,7 +701,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
           PrivateMessage message = privateMessages.get(getBindingAdapterPosition());
 
-//        if(lastClicked != -1 && lastClicked != getAdapterPosition()){
+//        if(lastClicked != -1 && lastClicked != getBindingAdapterPosition()){
 //
 //          if (audioPlayer != null) {
 //            Log.d("audioMessage","previous audio player is not null so releasing it");
@@ -758,7 +758,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 //
 //        Log.d("ttt","lastClicked: "+lastClicked);
 //
-//        lastClicked = getAdapterPosition();
+//        lastClicked = getBindingAdapterPosition();
           if (lastClicked == -1) {
 
             audioPlayer = new AudioPlayer(itemView.getContext(),
@@ -770,7 +770,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
             lastMediaPlayer.setOnCompletionListener(this);
 
-          } else if (lastClicked == getAdapterPosition()) {
+          } else if (lastClicked == getBindingAdapterPosition()) {
 
             if (lastMediaPlayer != null && audioPlayer != null) {
               if (lastMediaPlayer.isPlaying()) {
@@ -847,11 +847,11 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
           }
 
-          lastClicked = getAdapterPosition();
+          lastClicked = getBindingAdapterPosition();
 
         }
       }else{
-        showOrHideTime(timeTv,getAdapterPosition());
+        showOrHideTime(timeTv,getBindingAdapterPosition());
       }
 
     }
@@ -931,7 +931,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public boolean onLongClick(View view) {
-      showMessageDeletionDialog(privateMessages.get(getAdapterPosition()), itemView.getContext());
+      showMessageDeletionDialog(privateMessages.get(getBindingAdapterPosition()), itemView.getContext());
       return false;
     }
 
@@ -940,10 +940,10 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
       if(view.getId() == imageIv.getId()){
 
-        videoMessageListener.playVideo(privateMessages.get(getAdapterPosition()).getAttachmentUrl(),
-                privateMessages.get(getAdapterPosition()).getFileName());
+        videoMessageListener.playVideo(privateMessages.get(getBindingAdapterPosition()).getAttachmentUrl(),
+                privateMessages.get(getBindingAdapterPosition()).getFileName());
       }else{
-        showOrHideTime(timeTv,getAdapterPosition());
+        showOrHideTime(timeTv,getBindingAdapterPosition());
       }
 
     }
@@ -1007,14 +1007,14 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public boolean onLongClick(View view) {
-      showMessageDeletionDialog(privateMessages.get(getAdapterPosition()), itemView.getContext());
+      showMessageDeletionDialog(privateMessages.get(getBindingAdapterPosition()), itemView.getContext());
       return false;
     }
 
     @Override
     public void onClick(View view) {
 
-      final ZoomMeeting meeting = privateMessages.get(getAdapterPosition()).getZoomMeeting();
+      final ZoomMeeting meeting = privateMessages.get(getBindingAdapterPosition()).getZoomMeeting();
       if (meeting.getType() == 2 && meeting.getStartTime() < System.currentTimeMillis()) {
         Toast.makeText(itemView.getContext(),
                 "Meeting will start on: " + TimeFormatter.formatTime(meeting.getStartTime())
@@ -1023,8 +1023,8 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
       }
 //      else if (meeting.getType() == 1) {
 //
-//        if (privateMessages.get(getAdapterPosition()).getTime() +
-//                (privateMessages.get(getAdapterPosition()).getZoomMeeting().getDuration() *
+//        if (privateMessages.get(getBindingAdapterPosition()).getTime() +
+//                (privateMessages.get(getBindingAdapterPosition()).getZoomMeeting().getDuration() *
 //                        DateUtils.MINUTE_IN_MILLIS) >= System.currentTimeMillis()) {
 //
 //          //meeting has ended
@@ -1046,7 +1046,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 //      }else{
 
       final Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(
-              privateMessages.get(getAdapterPosition()).getZoomMeeting().getJoinUrl()));
+              privateMessages.get(getBindingAdapterPosition()).getZoomMeeting().getJoinUrl()));
       try {
 
         if (urlIntent.resolveActivity(pm) != null) {
@@ -1060,7 +1060,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
 
 //      if(view.getId() == R.id.imageIv){
-//        imageMessageListener.showImage(privateMessages.get(getAdapterPosition())
+//        imageMessageListener.showImage(privateMessages.get(getBindingAdapterPosition())
 //                .getAttachmentUrl());
 //      }
 
@@ -1085,8 +1085,8 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     private void bindUserName() {
 
-      if (!privateMessages.get(getAdapterPosition()).getSender().equals(currentUid)) {
-        getUserName(privateMessages.get(getAdapterPosition()).getSender(), senderTv);
+      if (!privateMessages.get(getBindingAdapterPosition()).getSender().equals(currentUid)) {
+        getUserName(privateMessages.get(getBindingAdapterPosition()).getSender(), senderTv);
       }
 
     }
@@ -1170,7 +1170,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public boolean onLongClick(View view) {
-      showMessageDeletionDialog(privateMessages.get(getAdapterPosition()), itemView.getContext());
+      showMessageDeletionDialog(privateMessages.get(getBindingAdapterPosition()), itemView.getContext());
       return false;
     }
 
@@ -1178,25 +1178,25 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
     public void onClick(View view) {
 
       if(view.getId() == downloadIv.getId()) {
-        final PrivateMessage message = privateMessages.get(getAdapterPosition());
+        final PrivateMessage message = privateMessages.get(getBindingAdapterPosition());
 
         if (message.getUploadTask() != null &&
                 message.getUploadTask().isDownloading()) {
 
           if (!documentMessageListener.cancelDownload(
-                  getAdapterPosition(), message.getUploadTask().getDownloadId())) {
+                  getBindingAdapterPosition(), message.getUploadTask().getDownloadId())) {
             Toast.makeText(context, "Failed to cancel download!", Toast.LENGTH_SHORT).show();
           }
 
         } else {
           documentMessageListener.startDownload(
-                  getAdapterPosition(),
+                  getBindingAdapterPosition(),
                   message.getAttachmentUrl(),
                   message.getFileName());
 
         }
       }else{
-        showOrHideTime(timeTv,getAdapterPosition());
+        showOrHideTime(timeTv,getBindingAdapterPosition());
       }
 
     }

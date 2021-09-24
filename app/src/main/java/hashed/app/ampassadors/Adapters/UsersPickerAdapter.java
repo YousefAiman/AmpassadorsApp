@@ -125,7 +125,7 @@ public class UsersPickerAdapter extends RecyclerView.Adapter<UsersPickerAdapter.
       selectCheckBox.setChecked(selectedUserIds.contains(user.getUserId()));
 
       if (user.getImageUrl() != null) {
-        Picasso.get().load(user.getImageUrl()).fit().into(userIv);
+        Picasso.get().load(user.getImageUrl()).fit().centerCrop().into(userIv);
       }else{
         userIv.setImageResource(R.color.white);
       }

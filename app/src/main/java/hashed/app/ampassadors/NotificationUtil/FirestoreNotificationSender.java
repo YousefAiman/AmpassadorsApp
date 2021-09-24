@@ -16,17 +16,36 @@ public class FirestoreNotificationSender {
 
   public static final String
           TYPE_PRIVATE_MESSAGE = "privateMessaging",
+
           TYPE_GROUP_MESSAGE = "groupMessaging",
           TYPE_GROUP_ADDED = "groupAdded",
-          TYPE_LIKE = "postLike",
-          TYPE_COMMENT_LIKE = "commentLike",
-          TYPE_COMMENT = "postComment",
-          TYPE_ZOOM = "zoomMeeting",
+
+          TYPE_POST_LIKE = "postLike",
+          TYPE_POLL_LIKE = "pollLike",
+          TYPE_POST_COMMENT = "postComment",
+          TYPE_POLL_COMMENT = "pollComment",
+
+//          TYPE_POLL_COMMENT = "pollComment",
+//          TYPE_POLL_COMMENT = "pollComment",
+
+          TYPE_POST_COMMENT_LIKE = "postCommentLike",
+          TYPE_POLL_COMMENT_LIKE = "pollCommentLike",
+
+          TYPE_ZOOM = "zoom",
+
+          TYPE_ZOOM_MEETING = "zoomMeeting",
+          TYPE_ZOOM_COURSE = "zoomCourse",
+
+          TYPE_ZOOM_MEETING_ENDED = "zoomMeetingEnded",
+          TYPE_ZOOM_COURSE_ENDED = "zoomCourseEnded",
+
           TYPE_MEETING_ADDED = "meetingAdded",
           TYPE_MEETING_STARTED = "meetingStarted",
           TYPE_MEETING_MESSAGE = "meetingMessaging",
+
           TYPE_COURSE_STARTED = "courseStarted",
-          TYPE_COURSE_MESSAGE = "courseMessaging";
+          TYPE_COURSE_MESSAGE = "courseMessaging",
+          TYPE_COURSE_ADDED = "courseAdded";
 
 
   private static final CollectionReference notificationRef =

@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,14 +25,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -42,13 +41,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
 
 import hashed.app.ampassadors.Activities.CreatePollActivity;
 import hashed.app.ampassadors.Activities.Home_Activity;
@@ -58,14 +51,12 @@ import hashed.app.ampassadors.Activities.PostsSearchActivity;
 import hashed.app.ampassadors.Adapters.NewsAdapter;
 import hashed.app.ampassadors.Objects.HeaderItem;
 import hashed.app.ampassadors.Adapters.HomeHeaderViewPagerAdapter;
-import hashed.app.ampassadors.Adapters.PostAdapter;
 import hashed.app.ampassadors.BroadcastReceivers.NotificationIndicatorReceiver;
 import hashed.app.ampassadors.BuildConfig;
 import hashed.app.ampassadors.Objects.Course;
 import hashed.app.ampassadors.Objects.Meeting;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.Objects.PostNewsPreview;
-import hashed.app.ampassadors.Objects.PrivateMessage;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 
@@ -96,17 +87,18 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     private ViewPager.OnPageChangeListener pageChangeListener;
     private List<ListenerRegistration> listenerRegistrations;
 
+    private TextView notificationCountTv;
     @Override
     public void onStart() {
         super.onStart();
 
-        String car = "car";
-        String boy = "boY";
-        boolean carIsFirst = car.compareTo(boy) < 0;
-        boolean boyIsFirst = boy.compareTo(car) < 0;
-
-        Log.d("ttt","car is first: "+carIsFirst);
-        Log.d("ttt","boy is first: "+boyIsFirst);
+//        String car = "car";
+//        String boy = "boY";
+//        boolean carIsFirst = car.compareTo(boy) < 0;
+//        boolean boyIsFirst = boy.compareTo(car) < 0;
+//
+//        Log.d("ttt","car is first: "+carIsFirst);
+//        Log.d("ttt","boy is first: "+boyIsFirst);
 
 
 //        Log.d("ttt","on start");
@@ -180,6 +172,9 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         floatingButton = view.findViewById(R.id.floatingButton);
         floatingButton.setOnClickListener(this);
 
+         notificationCountTv = toolbar.getMenu()
+                .findItem(R.id.action_notifications).getActionView().findViewById(R.id.notificationCountTv);
+
         return view;
     }
 
@@ -187,16 +182,29 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        toolbar.getMenu().findItem(R.id.action_notifications)
-                .setIcon(GlobalVariables.getInstance().getNotificationsCount() > 0 ?
-                        R.drawable.notification_indicator_icon :
-                        R.drawable.notification_icon);
+//        toolbar.getMenu().findItem(R.id.action_notifications)
+//                .setIcon(GlobalVariables.getNotificationsCount() > 0 ?
+//                        R.drawable.notification_indicator_icon :
+//                        R.drawable.notification_icon);
+
+        if(GlobalVariables.getNotificationsCount() > 0){
+            if(notificationCountTv.getVisibility() == View.GONE){
+                notificationCountTv.setVisibility(View.VISIBLE);
+            }
+            notificationCountTv.setText(GlobalVariables.getNotificationsCount() > 99?"99+":
+                    String.valueOf(GlobalVariables.getNotificationsCount()));
+
+        }else if(notificationCountTv.getVisibility() == View.VISIBLE){
+            notificationCountTv.setVisibility(View.GONE);
+        }
+
+
 //    Log.d("tttt", GlobalVariables.getRole());
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null && !user.isAnonymous()) {
-            if(GlobalVariables.getInstance().getRole()!=null){
-                if (GlobalVariables.getInstance().getRole().equals("Admin") ||
-                        GlobalVariables.getInstance().getRole().equals("Publisher")) {
+            if(GlobalVariables.getRole()!=null){
+                if (GlobalVariables.getRole().equals("Admin") ||
+                        GlobalVariables.getRole().equals("Publisher")) {
                     floatingButton.setVisibility(View.VISIBLE);
                 }
             }
@@ -716,20 +724,21 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                 new NotificationIndicatorReceiver() {
                     @Override
                     public void onReceive(Context context, Intent intent) {
-                        if (intent.hasExtra("showIndicator")) {
-                            final MenuItem item = toolbar.getMenu().findItem(R.id.action_notifications);
-                            if (intent.getBooleanExtra("showIndicator", false)) {
-                                item.setIcon(R.drawable.notification_indicator_icon);
-                            } else {
-                                item.setIcon(R.drawable.notification_icon);
-                            }
-                        }
+                                if(GlobalVariables.getNotificationsCount() > 0){
+                                    if(notificationCountTv.getVisibility() == View.GONE){
+                                        notificationCountTv.setVisibility(View.VISIBLE);
+                                    }
+                                    notificationCountTv.setText(GlobalVariables.getNotificationsCount() > 99?
+                                            "99+":String.valueOf(GlobalVariables.getNotificationsCount()));
+
+                                }else if(notificationCountTv.getVisibility() == View.VISIBLE){
+                                    notificationCountTv.setVisibility(View.GONE);
+                                }
                     }
                 };
 
-        getContext().registerReceiver(notificationIndicatorReceiver,
+        requireContext().registerReceiver(notificationIndicatorReceiver,
                 new IntentFilter(BuildConfig.APPLICATION_ID + ".notificationIndicator"));
-
     }
 
     @Override

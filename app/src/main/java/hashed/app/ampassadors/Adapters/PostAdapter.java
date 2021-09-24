@@ -166,7 +166,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
               .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
       if(isForUser){
-        intent.putExtra("isForUser",isForUser);
+        intent.putExtra("isForUser", true);
         intent.putExtra("publisherId",posts.get(getAdapterPosition()).getPublisherId());
       }
 

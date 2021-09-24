@@ -83,8 +83,21 @@ public class CourseMessagingActivity extends MessagingActivity{
   void getMessagingUid() {
 
     final Intent intent = getIntent();
-    messagingUid = intent.getStringExtra("messagingUid");
+    final String sourceId = intent.getStringExtra("messagingUid");
 
+    if (intent.hasExtra("type") &&
+            intent.getStringExtra("type").equals(FirestoreNotificationSender.TYPE_ZOOM)) {
+
+      messagingUid = sourceId.split("-")[0];
+      final String joinUrl = sourceId.split("-")[1];
+
+      if (joinUrl != null && !joinUrl.isEmpty()) {
+        startZoomMeetingIntent(joinUrl);
+      }
+
+    } else {
+      messagingUid = sourceId;
+    }
 
     messagingDatabaseRef =
             FirebaseDatabase.getInstance().getReference().child("GroupMessages").getRef();
@@ -166,6 +179,7 @@ public class CourseMessagingActivity extends MessagingActivity{
                               value.get("currentZoomMeeting", ZoomMeeting.class);
 
                       if (zoomMeeting != null) {
+
 
 //                        final long endTime = zoomMeeting.getStartTime() +
 //                                (zoomMeeting.getDuration() * DateUtils.MINUTE_IN_MILLIS);

@@ -23,6 +23,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -62,6 +63,9 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
     //download
     private FileDownloadUtil fileDownloadUtil;
     private String fileName;
+
+    private DocumentReference postRef;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,26 +115,61 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
     private void getPostData() {
 
+        final Intent intent = getIntent();
 
-        if(getIntent()== null || !getIntent().hasExtra("postId"))
+        if(intent == null){
+            finish();
             return;
-
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        DocumentReference postRef;
-
-        if(getIntent().hasExtra("isForUser") && getIntent().getBooleanExtra("isForUser",false)){
-
-            postRef = FirebaseFirestore.getInstance().collection("Users")
-                    .document(getIntent().getStringExtra("publisherId"))
-                    .collection("UserPosts")
-                    .document(getIntent().getStringExtra("postId"));
-
-        }else{
-            postRef = FirebaseFirestore.getInstance().collection("Posts")
-                    .document(getIntent().getStringExtra("postId"));
         }
 
+        final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if(intent.hasExtra("postId")){
+
+
+            if(getIntent().hasExtra("isForUser") && getIntent().getBooleanExtra("isForUser",false)){
+
+                postRef = firestore.collection("Users")
+                        .document(getIntent().getStringExtra("publisherId"))
+                        .collection("UserPosts")
+                        .document(getIntent().getStringExtra("postId"));
+
+            }else{
+                postRef = firestore.collection("Posts")
+                        .document(getIntent().getStringExtra("postId"));
+            }
+
+        }else if(intent.hasExtra("notificationPostId")){
+
+            final String postId = intent.getStringExtra("notificationPostId");
+
+            if(user!=null){
+
+                firestore.collection("Users").document(user.getUid())
+                        .collection("UserPosts").document(postId)
+                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if(documentSnapshot.exists()){
+                            postRef = documentSnapshot.getReference();
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        postRef = firestore.collection("Posts").document(postId);
+                    }
+                });
+
+            }else{
+                finish();
+                return;
+            }
+        }else{
+            finish();
+            return;
+        }
 
         postRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -259,7 +298,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
                 final String imageUrl = snapshot.getString("imageUrl");
 
                 if (imageUrl != null && !imageUrl.isEmpty()) {
-                    Picasso.get().load(imageUrl).fit().into(userIv);
+                    Picasso.get().load(imageUrl).fit().centerCrop().into(userIv);
                 }
                 usernameTv.setText(snapshot.getString("username"));
             }
@@ -277,7 +316,8 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
         } else if (id == commentTv.getId()) {
 
             CommentsFragment commentsFragment = new CommentsFragment(postData.getPostId(),
-                    postData.getComments(),getIntent().hasExtra("isForUser"),postData.getPublisherId());
+                    postData.getComments(),getIntent().hasExtra("isForUser"),postData.getPublisherId(),
+                    PostData.TYPE_NEWS);
             commentsFragment.show(getSupportFragmentManager(), "CommentsFragment");
         } else if (id == newsIv.getId()) {
 
@@ -353,7 +393,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
                 PostData.likePost(postData.getPostId(), postData.getTitle(), 2,
                         postData.getPublisherId(), this,
-                        getIntent().hasExtra("isForUser"),likeTv);
+                        getIntent().hasExtra("isForUser"), PostData.TYPE_NEWS,likeTv);
 
             } else {
 
@@ -364,7 +404,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
                 PostData.likePost(postData.getPostId(), postData.getTitle(), 1,
                         postData.getPublisherId(), this,
-                        getIntent().hasExtra("isForUser"),likeTv);
+                        getIntent().hasExtra("isForUser"),PostData.TYPE_NEWS,likeTv);
 
             }
         }

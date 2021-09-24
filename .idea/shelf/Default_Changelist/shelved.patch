@@ -1,0 +1,22 @@
+Index: .gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>*.iml\r\n.gradle\r\n/local.properties\r\n/.idea/caches\r\n/.idea/libraries\r\n/.idea/modules.xml\r\n/.idea/workspace.xml\r\n/.idea/navEditor.xml\r\n/.idea/assetWizardSettings.xml\r\n.DS_Store\r\n/build\r\n/captures\r\n.externalNativeBuild\r\n.cxx\r\nlocal.properties\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.gitignore b/.gitignore
+--- a/.gitignore	(revision b883ce2a0feddbd97847f917d2f00b2dafe2c787)
++++ b/.gitignore	(date 1632339321507)
+@@ -13,3 +13,11 @@
+ .externalNativeBuild
+ .cxx
+ local.properties
++/app/release/output-metadata.json
++/.idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_4_09_PM_[Default_Changelist]/shelved.patch
++/.idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_4_13_PM_[Default_Changelist]/shelved.patch
++/app/release/TheNationalMainstream.apk
++/app/release/TheNationalMainstream-NewRelease.apk
++/.idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_4_09_PM__Default_Changelist_.xml
++/.idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_4_13_PM__Default_Changelist_.xml
++/.idea/shelf/Uncommitted_changes_before_Update_at_9_22_2021_10_33_PM__Default_Changelist_.xml

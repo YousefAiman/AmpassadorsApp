@@ -95,7 +95,7 @@ public class ProfileActiv extends AppCompatActivity implements
         bio = findViewById(R.id.textView15);
         imageView = findViewById(R.id.profile_picture);
         swipeRefresh = findViewById(R.id.swipeRefreshLayout);
-        frameLayout = findViewById(R.id.profileframeLayout);
+        frameLayout = findViewById(R.id.frameLayout);
         collectionReference = FirebaseFirestore.getInstance().collection("Users");
         swipeRefresh.setOnRefreshListener(this);
 
@@ -236,38 +236,6 @@ public class ProfileActiv extends AppCompatActivity implements
     }
 
     @Override
-    public void onBackPressed() {
-        if (frameLayout.getVisibility() == View.VISIBLE){
-            getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager().findFragmentByTag("FullScreen"))
-                    .commit();
-            frameLayout.setVisibility(View.GONE);
-        }else{
-            super.onBackPressed();
-        }
-    }
-
-    private void setupNotificationReceiver() {
-
-        notificationIndicatorReceiver =
-                new NotificationIndicatorReceiver() {
-                    @Override
-                    public void onReceive(Context context, Intent intent) {
-                        if (intent.hasExtra("showIndicator")) {
-                            final MenuItem item = toolbar.getMenu().findItem(R.id.action_notifications);
-                            if (intent.getBooleanExtra("showIndicator", false)) {
-                                item.setIcon(R.drawable.notification_indicator_icon);
-                            } else {
-                                item.setIcon(R.drawable.notification_icon);
-                            }
-                        }
-                    }
-                };
-
-        ProfileActiv.this.registerReceiver(notificationIndicatorReceiver,
-                new IntentFilter(BuildConfig.APPLICATION_ID + ".notificationIndicator"));
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
         if (notificationIndicatorReceiver != null) {
@@ -301,7 +269,7 @@ public class ProfileActiv extends AppCompatActivity implements
                         bio_txt = documentSnapshot.getString("Bio");
                         bio.setText(bio_txt);
                     }
-                    Picasso.get().load(userimg).fit().into(imageView);
+                    Picasso.get().load(userimg).fit().centerCrop().into(imageView);
                     username.setText(usernam);
 
 

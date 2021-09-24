@@ -16,18 +16,19 @@
         tools:ignore="ScopedStorage" />
 
     <application
-        android:name=".Utils.GlobalVariables"
+        android:name=".BaseApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AmpassadorsApp">
-        <activity android:name=".Activities.ContactUsActivity"></activity>
+        <activity android:name=".Activities.ContactUsActivity" />
         <activity android:name=".Activities.NotificationSenderActivity" />
         <activity
             android:name=".Activities.GroupInfoActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".Activities.MessagingActivities.CourseMessagingActivity"
             android:screenOrientation="portrait" />
@@ -218,11 +219,9 @@
             </intent-filter>
         </receiver>
 
-        <service
-            android:name=".Services.ShutdownService"
-            android:enabled="true"
-            android:exported="false"
-            android:stopWithTask="false" />
+<!--        <service-->
+<!--            android:name=".Services.ShutdownService"-->
+<!--            android:stopWithTask="false" />-->
 
         <receiver android:name=".NotificationUtil.NotificationClickReceiver" />
         <receiver android:name=".NotificationUtil.NotificationDeleteListener" />

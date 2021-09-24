@@ -1,0 +1,75 @@
+Index: .idea/runConfigurations.xml
+===================================================================
+diff --git a/.idea/runConfigurations.xml b/.idea/runConfigurations.xml
+deleted file mode 100644
+--- a/.idea/runConfigurations.xml	(revision 52405fc4bb92f3f303a37cab86fd988742a37752)
++++ /dev/null	(revision 52405fc4bb92f3f303a37cab86fd988742a37752)
+@@ -1,10 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="RunConfigurationProducerService">
+-    <option name="ignoredProducers">
+-      <set>
+-        <option value="com.android.tools.idea.compose.preview.runconfiguration.ComposePreviewRunConfigurationProducer" />
+-      </set>
+-    </option>
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"GradleMigrationSettings\" migrationVersion=\"1\" />\r\n  <component name=\"GradleSettings\">\r\n    <option name=\"linkedExternalProjectsSettings\">\r\n      <GradleProjectSettings>\r\n        <option name=\"testRunner\" value=\"PLATFORM\" />\r\n        <option name=\"disableWrapperSourceDistributionNotification\" value=\"true\" />\r\n        <option name=\"distributionType\" value=\"DEFAULT_WRAPPED\" />\r\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$\" />\r\n        <option name=\"modules\">\r\n          <set>\r\n            <option value=\"$PROJECT_DIR$\" />\r\n            <option value=\"$PROJECT_DIR$/app\" />\r\n          </set>\r\n        </option>\r\n        <option name=\"resolveModulePerSourceSet\" value=\"false\" />\r\n        <option name=\"useQualifiedModuleNames\" value=\"true\" />\r\n      </GradleProjectSettings>\r\n    </option>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/gradle.xml b/.idea/gradle.xml
+--- a/.idea/gradle.xml	(revision 52405fc4bb92f3f303a37cab86fd988742a37752)
++++ b/.idea/gradle.xml	(date 1632339488766)
+@@ -4,7 +4,7 @@
+   <component name="GradleSettings">
+     <option name="linkedExternalProjectsSettings">
+       <GradleProjectSettings>
+-        <option name="testRunner" value="PLATFORM" />
++        <option name="testRunner" value="GRADLE" />
+         <option name="disableWrapperSourceDistributionNotification" value="true" />
+         <option name="distributionType" value="DEFAULT_WRAPPED" />
+         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+@@ -15,7 +15,6 @@
+           </set>
+         </option>
+         <option name="resolveModulePerSourceSet" value="false" />
+-        <option name="useQualifiedModuleNames" value="true" />
+       </GradleProjectSettings>
+     </option>
+   </component>
+Index: .gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>*.iml\r\n.gradle\r\n/local.properties\r\n/.idea/caches\r\n/.idea/libraries\r\n/.idea/modules.xml\r\n/.idea/workspace.xml\r\n/.idea/navEditor.xml\r\n/.idea/assetWizardSettings.xml\r\n.DS_Store\r\n/build\r\n/captures\r\n.externalNativeBuild\r\n.cxx\r\nlocal.properties\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.gitignore b/.gitignore
+--- a/.gitignore	(revision 52405fc4bb92f3f303a37cab86fd988742a37752)
++++ b/.gitignore	(date 1632339487570)
+@@ -13,3 +13,19 @@
+ .externalNativeBuild
+ .cxx
+ local.properties
++/app/release/output-metadata.json
++/.idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_4_09_PM_[Default_Changelist]/shelved.patch
++/.idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_4_13_PM_[Default_Changelist]/shelved.patch
++/app/release/TheNationalMainstream.apk
++/app/release/TheNationalMainstream-NewRelease.apk
++/.idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_4_09_PM__Default_Changelist_.xml
++/.idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_4_13_PM__Default_Changelist_.xml
++/.idea/shelf/Uncommitted_changes_before_Update_at_9_22_2021_10_33_PM__Default_Changelist_.xml
++/app/release/output-metadata.json
++/.idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_4_09_PM_[Default_Changelist]/shelved.patch
++/.idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_4_13_PM_[Default_Changelist]/shelved.patch
++/app/release/TheNationalMainstream.apk
++/app/release/TheNationalMainstream-NewRelease.apk
++/.idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_4_09_PM__Default_Changelist_.xml
++/.idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_4_13_PM__Default_Changelist_.xml
++/.idea/shelf/Uncommitted_changes_before_Update_at_9_22_2021_10_33_PM__Default_Changelist_.xml

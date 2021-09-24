@@ -14,6 +14,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,10 +50,17 @@ public class WifiUtil {
 
     ConnectivityManager.NetworkCallback networkCallback;
 
+    final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+    DocumentReference userRef = null;
+    if(currentUser!=null){
+      userRef =  FirebaseFirestore.getInstance().collection("Users")
+              .document(currentUser.getUid());
+    }
 
+
+    DocumentReference finalUserRef = userRef;
     cm.registerNetworkCallback(builder.build(),
             networkCallback = new ConnectivityManager.NetworkCallback() {
-
               final List<Network> activeNetworks = new ArrayList<>();
 
               @Override
@@ -79,7 +91,12 @@ public class WifiUtil {
 //                              }
 //                            });
 
-                    GlobalVariables.getInstance().setWifiIsOn(true);
+                    GlobalVariables.setWifiIsOn(true);
+
+                    if(GlobalVariables.isAppIsRunning() && finalUserRef !=null){
+                      finalUserRef.update("status", true);
+                    }
+
                   }
 
                   Log.d("ttt", "network is on man");
@@ -101,7 +118,11 @@ public class WifiUtil {
                 if (activeNetworks.size() == 0) {
 
                   if (GlobalVariables.isWifiIsOn()) {
-                    GlobalVariables.getInstance().setWifiIsOn(false);
+                    GlobalVariables.setWifiIsOn(false);
+                  }
+
+                  if(GlobalVariables.isAppIsRunning() && finalUserRef !=null){
+                    finalUserRef.update("status", false);
                   }
 
                   Log.d("ttt", "wifi offline: " + network.toString());
@@ -113,7 +134,7 @@ public class WifiUtil {
             });
 
 
-    GlobalVariables.getInstance().setRegisteredNetworkCallback(networkCallback);
+    GlobalVariables.setRegisteredNetworkCallback(networkCallback);
 
 
   }
@@ -123,7 +144,7 @@ public class WifiUtil {
     final IntentFilter intentFilter = new IntentFilter();
     intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
     final WifiReceiver wifiReceiver = new WifiReceiver();
-    GlobalVariables.getInstance().setCurrentWifiReceiver(wifiReceiver);
+    GlobalVariables.setCurrentWifiReceiver(wifiReceiver);
     context.registerReceiver(wifiReceiver, intentFilter);
 
   }

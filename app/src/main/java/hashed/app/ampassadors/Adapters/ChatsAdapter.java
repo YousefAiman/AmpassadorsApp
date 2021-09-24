@@ -118,7 +118,14 @@ public class ChatsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         getUserInfo(chatItem, chatItem.getMessagingUid(), imageIv, nameTv);
       }
 
-      messageTv.setText(getMessageText(chatItem.getMessage()));
+      if(chatItem.getMessage().getContent()!=null && !
+              chatItem.getMessage().getContent().isEmpty()){
+        messageTv.setText(getMessageText(chatItem.getMessage()));
+      }else{
+        messageTv.setVisibility(View.GONE);
+      }
+
+
 
 //      if (!chatItem.isSeen()) {
 //        messageTv.setTypeface(boldFont);
@@ -325,7 +332,7 @@ public class ChatsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
       if (task.isSuccessful()) {
         if (chatItem.getImageUrl() != null && !chatItem.getImageUrl().isEmpty()) {
-          Picasso.get().load(chatItem.getImageUrl()).fit().into(imageIv);
+          Picasso.get().load(chatItem.getImageUrl()).fit().centerCrop().into(imageIv);
         }
         nameTv.setText(chatItem.getUsername());
       }
@@ -350,7 +357,7 @@ public class ChatsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
       if (task.isSuccessful()) {
         if (chatItem.getImageUrl() != null && !chatItem.getImageUrl().isEmpty()) {
-          Picasso.get().load(chatItem.getImageUrl()).fit().into(imageIv);
+          Picasso.get().load(chatItem.getImageUrl()).fit().centerCrop().into(imageIv);
         }
         nameTv.setText(chatItem.getUsername());
       }

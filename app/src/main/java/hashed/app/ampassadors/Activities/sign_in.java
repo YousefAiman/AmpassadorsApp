@@ -539,7 +539,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
         if (imageUrl != null) {
             hashMap.put("imageUrl", imageUrl);
         }
-        hashMap.put("status", true);
+        hashMap.put("status", false);
         hashMap.put("Role", "Ambassador");
         hashMap.put("isEmailVerified", true);
          hashMap.put("Bio","");

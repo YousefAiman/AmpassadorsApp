@@ -51,6 +51,7 @@ import hashed.app.ampassadors.NotificationUtil.Data;
 import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.Objects.Comment;
 import hashed.app.ampassadors.Objects.CommentReply;
+import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.SigninUtil;
 
@@ -59,6 +60,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
         CommentsAdapter.CommentsListener, RepliesAdapter.RepliesListener {
 
   private static final int COMMENTS_SIZE = 10;
+  private static final int TYPE_COMMENT_LIKE = 1,TYPE_REPLY_LIKE = 2;
   private final String postId;
   //database
   CollectionReference postsRef;
@@ -78,13 +80,15 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
   private Comment currentFocusedComment;
   private boolean isUserPost;
   private String creatorId;
+  private int postType;
 
   public CommentsFragment(String postId, int commentsCount,boolean isUserPost,
-                          String creatorId) {
+                          String creatorId,int postType) {
     this.postId = postId;
     this.commentsCount = commentsCount;
     this.isUserPost = isUserPost;
     this.creatorId = creatorId;
+    this.postType = postType;
   }
 
 
@@ -129,6 +133,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
 
     }else{
       documentReference = postsRef.document(postId);
+
     }
 
     commentsQuery = documentReference.collection("Comments")
@@ -343,7 +348,9 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                   final String currentUid =FirebaseAuth.getInstance().getCurrentUser().getUid();
 
                   FirestoreNotificationSender.sendFirestoreNotification(
-                          creatorId, FirestoreNotificationSender.TYPE_COMMENT, message,
+                          creatorId,
+                          postType == PostData.TYPE_NEWS? FirestoreNotificationSender.TYPE_POLL_COMMENT:FirestoreNotificationSender.TYPE_POLL_COMMENT,
+                          message,
                           username + " Commented on your post", postId);
 
                   final Data data = new Data(
@@ -352,7 +359,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                           username + " Commented on your post",
                           null,
                           "Post Comment",
-                          FirestoreNotificationSender.TYPE_COMMENT,
+                          postType == PostData.TYPE_NEWS? FirestoreNotificationSender.TYPE_POLL_COMMENT:FirestoreNotificationSender.TYPE_POLL_COMMENT,
                           postId);
 
                   if(imageUrl!=null && !imageUrl.isEmpty()){
@@ -371,7 +378,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
 
   }
 
-  private void sendCommentLikeNotification(String userId,String body,String likeType) {
+  private void sendCommentLikeNotification(String userId,String body,int likeType) {
 
     DocumentReference documentReference;
     if(isUserPost){
@@ -410,23 +417,23 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                   final String currentUid =FirebaseAuth.getInstance().getCurrentUser().getUid();
 
                   final String senderName =
-                          likeType.equals(FirestoreNotificationSender.TYPE_COMMENT_LIKE)?
-                  username + " Liked your comment":
-                  username + " Liked your comment";
+                          username + (likeType == TYPE_COMMENT_LIKE?" Liked your comment":" Liked your reply");
+
+                  final String notificationType =
+                          postType == PostData.TYPE_NEWS
+                                  ?FirestoreNotificationSender.TYPE_POST_COMMENT_LIKE
+                                  :FirestoreNotificationSender.TYPE_POLL_COMMENT_LIKE;
 
                   FirestoreNotificationSender.sendFirestoreNotification(
-                          userId, likeType,
-                          body,
-                          senderName
-                          , postId);
+                          userId, notificationType, body, senderName, postId);
 
                   final Data data = new Data(
                           currentUid,
                           body,
                           senderName,
                           null,
-                          FirestoreNotificationSender.TYPE_COMMENT_LIKE,
-                          likeType,
+                          notificationType,
+                          notificationType,
                           postId);
 
                   if(imageUrl!=null && !imageUrl.isEmpty()){
@@ -670,8 +677,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
 
                               if(!comment.getUserId().equals(currentUid)){
                                 sendCommentLikeNotification(comment.getUserId(),
-                                        comment.getComment(),
-                                        FirestoreNotificationSender.TYPE_COMMENT_LIKE);
+                                        comment.getComment(), TYPE_COMMENT_LIKE);
                               }
                             }
                           }).addOnFailureListener(new OnFailureListener() {
@@ -801,7 +807,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
 
                               if(!reply.getUserId().equals(currentUid)){
                                 sendCommentLikeNotification(reply.getUserId(),reply.getReply(),
-                                        FirestoreNotificationSender.TYPE_COMMENT_LIKE);
+                                        TYPE_REPLY_LIKE);
 
                               }
 

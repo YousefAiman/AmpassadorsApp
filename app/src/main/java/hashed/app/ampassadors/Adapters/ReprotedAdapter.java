@@ -38,7 +38,7 @@ public class ReprotedAdapter extends RecyclerView.Adapter<ReprotedAdapter.Report
     public void onBindViewHolder(@NonNull ReportedHolder holder, int position) {
         PostData post = postData.get(position);
         holder.title.setText(post.getTitle());
-        Picasso.get().load(post.getAttachmentUrl()).fit().into(holder.postImage);
+        Picasso.get().load(post.getAttachmentUrl()).fit().centerCrop().into(holder.postImage);
 
 
     }

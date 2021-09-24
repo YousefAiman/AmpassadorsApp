@@ -7,10 +7,15 @@ import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.tasks.OnCanceledListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -20,60 +25,87 @@ import hashed.app.ampassadors.Utils.GlobalVariables;
 
 public class ShutdownService extends Service {
 
-  @Nullable
-  @Override
-  public IBinder onBind(Intent intent) {
-    return null;
-  }
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
 
-  @Override
-  public void onCreate() {
-    super.onCreate();
-    Log.d("ttt","shut down service created");
-  }
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Log.d("ttt", "shut down service created");
+    }
 
-  @Override
-  public int onStartCommand(Intent intent, int flags, int startId) {
-    return START_NOT_STICKY;
-  }
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return START_NOT_STICKY;
+    }
 
-  @Override
-  public void onTaskRemoved(Intent rootIntent) {
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
 
-    super.onTaskRemoved(rootIntent);
 //    Toast.makeText(this, "app shutdown", Toast.LENGTH_SHORT).show();
+        super.onTaskRemoved(rootIntent);
 
-    Log.d("ttt","task removed");
+        Log.d("ttt", "task removed");
 
-    GlobalVariables.getInstance().setAppIsRunning(false);
+//        GlobalVariables.setAppIsRunning(false);
+//        getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE).edit()
+//                .remove("isPaused")
+//                .remove("currentlyMessagingUid").apply();
 
-    getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE).edit()
-            .remove("isPaused")
-            .remove("currentlyMessagingUid").apply();
+        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
+        if (currentUser != null && !currentUser.isAnonymous()) {
+            Log.d("ttt","current user exitst");
 
-    final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                    FirebaseFirestore.getInstance().collection("Users")
+                            .document(currentUser.getUid()).update("status", false)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    Log.d("ttt","updating status to false is successful");
+                                }
+                            }).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Log.d("ttt","updating status to false is complete");
 
-    if(currentUser != null && !currentUser.isAnonymous()){
-      FirebaseFirestore.getInstance().collection("Users")
-              .document(currentUser.getUid()).update("status",false);
-    }
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
-            GlobalVariables.getInstance().getRegisteredNetworkCallback() != null) {
-      ((ConnectivityManager) getApplicationContext()
-              .getSystemService(Context.CONNECTIVITY_SERVICE))
-              .unregisterNetworkCallback(GlobalVariables.getInstance().getRegisteredNetworkCallback());
+                            Log.d("ttt","updating status to false has failed because: "+e.getMessage());
+                        }
+                    }).addOnCanceledListener(new OnCanceledListener() {
+                        @Override
+                        public void onCanceled() {
+                            Log.d("ttt","updating status was cancelled");
+                        }
+                    });
 
-      GlobalVariables.getInstance().setRegisteredNetworkCallback(null);
+        }else{
+            Log.d("ttt","curretn user is null or anon");
+        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
+//                GlobalVariables.getRegisteredNetworkCallback() != null) {
+//            ((ConnectivityManager) getApplicationContext()
+//                    .getSystemService(Context.CONNECTIVITY_SERVICE))
+//                    .unregisterNetworkCallback(GlobalVariables.getRegisteredNetworkCallback());
+//
+//            GlobalVariables.setRegisteredNetworkCallback(null);
+//
+//        } else if (GlobalVariables.getCurrentWifiReceiver() != null) {
+//            unregisterReceiver(GlobalVariables.getCurrentWifiReceiver());
+//            GlobalVariables.setCurrentWifiReceiver(null);
+//        }
 
-    } else if (GlobalVariables.getInstance().getCurrentWifiReceiver() != null) {
-      unregisterReceiver(GlobalVariables.getInstance().getCurrentWifiReceiver());
-      GlobalVariables.getInstance().setCurrentWifiReceiver(null);
-    }
-
+        Log.d("ttt","before app destroy tasks done");
 //  stopService(rootIntent);
+        stopSelf();
 
-    this.stopSelf();
-  }
+        Log.d("ttt","after super calls");
+    }
 }

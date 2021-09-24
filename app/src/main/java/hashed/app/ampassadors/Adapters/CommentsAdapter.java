@@ -36,8 +36,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
   private final CommentsListener commentsListener;
   private final CollectionReference commentsRef;
   private final int redColor
-//            ,blackColor
-          ;
+            ,blackColor;
 
   public CommentsAdapter(List<Comment> comments, CommentsListener commentsListener, String postId,
                          Context context) {
@@ -46,7 +45,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     commentsRef = FirebaseFirestore.getInstance().collection("Posts")
             .document(postId).collection("Comments");
     redColor = context.getResources().getColor(R.color.red);
-//        blackColor = context.getResources().getColor(R.color.black);
+        blackColor = context.getResources().getColor(R.color.black);
   }
 
   @NonNull
@@ -75,10 +74,13 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
 
     commentsRef.document(commentId).collection("CommentLikes")
             .document(currentUid).get().addOnSuccessListener(documentSnapshot -> {
+      comment.setHasBeenCheckedForUserLike(documentSnapshot.exists());
+      comment.setLikedByUser(documentSnapshot.exists());
+
       if (documentSnapshot.exists()) {
-        comment.setHasBeenCheckedForUserLike(true);
-        comment.setLikedByUser(true);
         likesTv.setTextColor(redColor);
+      }else{
+        likesTv.setTextColor(blackColor);
       }
     });
 
@@ -134,6 +136,8 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
       if (comment.isHasBeenCheckedForUserLike()) {
         if (comment.isLikedByUser()) {
           likesTv.setTextColor(redColor);
+        }else{
+          likesTv.setTextColor(blackColor);
         }
       } else {
         checkUserLikedComment(comment.getCommentId(), likesTv, comment);
@@ -157,7 +161,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
         getUserData(comment.getUserId(), comment);
 
       } else {
-        Picasso.get().load(comment.getUserImage()).fit().into(imageIv);
+        Picasso.get().load(comment.getUserImage()).fit().centerCrop().into(imageIv);
         usernameTv.setText(comment.getUserName());
       }
 
@@ -186,6 +190,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
 
           if (comment.getUserImage() != null && !comment.getUserImage().isEmpty()) {
             Picasso.get().load(comment.getUserImage()).fit()
+                    .centerCrop()
                     .into(imageIv);
           }
           usernameTv.setText(comment.getUserName());

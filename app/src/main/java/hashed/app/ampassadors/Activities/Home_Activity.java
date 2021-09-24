@@ -1,9 +1,12 @@
 package hashed.app.ampassadors.Activities;
 
+import android.app.ActivityManager;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -17,6 +20,7 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
@@ -56,10 +60,10 @@ public class  Home_Activity extends AppCompatActivity implements
 
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
     private final String userid = auth.getCurrentUser().getUid();
-    private DocumentReference reference;
-    private FirebaseFirestore firebaseFirestore;
+//    private DocumentReference reference;
+//    private FirebaseFirestore firebaseFirestore;
     private BottomNavigationView nav_btom;
-    private FrameLayout homeFrameLayout;
+//    private FrameLayout homeFrameLayout;
     private DrawerLayout drawer_layout;
     private NavigationView navigationview;
     private List<ListenerRegistration> listenerRegistrations;
@@ -67,9 +71,16 @@ public class  Home_Activity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        FirebaseFirestore.getInstance().collection("Users")
-                .document(userid).update("status", true);
+        Log.d("ttt","onResume");
+
+//        if(userid != null){
+//            FirebaseFirestore.getInstance().collection("Users")
+//                    .document(userid)
+//                    .update("status",true);
+//        }
     }
+
+
 
 //    public static void main(String[] args){
 //
@@ -89,11 +100,17 @@ public class  Home_Activity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
 
+//        if(userid != null){
+//            FirebaseFirestore.getInstance().collection("Users")
+//                    .document(userid).update("status",true);
+//        }
+
+
         SetUpCompetent();
-        GlobalVariables.getInstance().setAppIsRunning(true);
+        GlobalVariables.setAppIsRunning(true);
 
 
-        firebaseFirestore = FirebaseFirestore.getInstance();
+//        firebaseFirestore = FirebaseFirestore.getInstance();
 
         replaceFragment(new PostsFragment());
 
@@ -105,7 +122,9 @@ public class  Home_Activity extends AppCompatActivity implements
         if (auth.getCurrentUser().isAnonymous()) {
             navigationview.inflateMenu(R.menu.menu_nav);
         } else {
-            if (GlobalVariables.getInstance().getRole() != null && GlobalVariables.getInstance().getRole().equals("Admin")) {
+            if (GlobalVariables.getRole() != null
+                    && GlobalVariables.getRole().equals("Admin")
+                    || GlobalVariables.getRole().equals("Coordinator")  ) {
                 navigationview.inflateMenu(R.menu.menu_admin);
             } else {
                 navigationview.inflateMenu(R.menu.menu_nav);
@@ -436,20 +455,20 @@ public class  Home_Activity extends AppCompatActivity implements
 
                         if (value != null && value.exists()) {
 
-                          if (GlobalVariables.getInstance().getCurrentUsername() == null) {
+                          if (GlobalVariables.getCurrentUsername() == null) {
 
-                            GlobalVariables.getInstance().setCurrentUsername(
+                            GlobalVariables.setCurrentUsername(
                                     value.getString("username"));
 
-                            GlobalVariables.getInstance().setCurrentUserImageUrl(
+                            GlobalVariables.setCurrentUserImageUrl(
                                     value.getString("imageUrl"));
 
                           }
 
-                          GlobalVariables.getInstance().setRole(value.getString("Role"));
+                          GlobalVariables.setRole(value.getString("Role"));
                           if (value.contains("Likes")) {
                             final List<String> likes = (List<String>) value.get("Likes");
-                            GlobalVariables.getInstance().setLikesList(likes);
+                            GlobalVariables.setLikesList(likes);
                           }
                         }
                       }
@@ -461,7 +480,7 @@ public class  Home_Activity extends AppCompatActivity implements
   public void SetUpCompetent() {
 
     nav_btom = findViewById(R.id.nav_btom);
-    homeFrameLayout = findViewById(R.id.homeFrameLayout);
+//    homeFrameLayout = findViewById(R.id.homeFrameLayout);
     drawer_layout = findViewById(R.id.drawer_layout);
     navigationview = findViewById(R.id.navigationview);
 
@@ -473,7 +492,7 @@ public class  Home_Activity extends AppCompatActivity implements
 
     navigationview.setNavigationItemSelectedListener(this);
 
-    nav_btom.setOnNavigationItemSelectedListener(item -> {
+    nav_btom.setOnItemSelectedListener(item -> {
       if (item.getItemId() == R.id.home) {
         if (nav_btom.getSelectedItemId() != R.id.home) {
           replaceFragment(new PostsFragment());
@@ -554,14 +573,52 @@ public class  Home_Activity extends AppCompatActivity implements
 
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("ttt","onStart");
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d("ttt","onPause");
+
+        Log.d("ttt","app is running? "+isAppIsInBackground());
+
+        Log.d("ttt","is in foreground? "+getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED));
+//        List<ActivityManager.RunningTaskInfo> runningTasks = ((ActivityManager)getSystemService(Context.ACTIVITY_SERVICE))
+//                .getRunningTasks(1);
+//
+//        for(ActivityManager.RunningTaskInfo taskInfo:runningTasks){
+//            Log.d("ttt","class name: "+taskInfo.topActivity.getClassName());
+//        }
+
+//        if(!((ActivityManager)getSystemService(Context.ACTIVITY_SERVICE))
+//                .getRunningTasks(1)
+//                .get(0).topActivity.getPackageName().equals(getPackageName())){
+//            //app is either in recent apps, or home was pressed, or back
+//            if(userid != null){
+//                FirebaseFirestore.getInstance().collection("Users")
+//                        .document(userid)
+//                        .update("status",false);
+//            }
+//        }
+        super.onPause();
+    }
+
+
+    @Override
     protected void onDestroy() {
-        super.onDestroy();
+
+
+        Log.d("ttt","onDestroy");
 
         if(listenerRegistrations!=null && !listenerRegistrations.isEmpty()){
             for(ListenerRegistration listenerRegistration:listenerRegistrations){
                 listenerRegistration.remove();
             }
         }
+
+        super.onDestroy();
     }
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -680,7 +737,7 @@ public class  Home_Activity extends AppCompatActivity implements
           }
 
         } else if (item.getItemId() == R.id.listComplaints &&
-              GlobalVariables.getInstance().getRole().equals("Admin")) {
+              GlobalVariables.getRole().equals("Admin") || GlobalVariables.getRole().equals("Coordinator")) {
 
             Intent intent = new Intent(Home_Activity.this, ComplanitsListActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -704,7 +761,7 @@ public class  Home_Activity extends AppCompatActivity implements
 
 
         } else if (item.getItemId() == R.id.listSuggestion &&
-              GlobalVariables.getInstance().getRole().equals("Admin")) {
+              GlobalVariables.getRole().equals("Admin") || GlobalVariables.getRole().equals("Coordinator")) {
             Intent intent = new Intent(Home_Activity.this, List_Sug_Activity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
@@ -762,37 +819,48 @@ public class  Home_Activity extends AppCompatActivity implements
                             return;
                         for(DocumentChange dc:value.getDocumentChanges()){
 
-                            switch (dc.getType()){
-                                case ADDED:
-
-                                    Log.d("ttt","added notificationn");
-
-                                    Log.d("ttt","notificationCount: "+
-                                            notificationCount.get());
-                                    if(notificationCount.getAndIncrement() == 0){
-                                        Intent intent = new Intent(indicatorAction);
-                                        intent.putExtra("showIndicator",true);
-                                        sendBroadcast(intent);
-                                    }
-
-
-                              Log.d("ttt", "notificationCount: " +
-                                      notificationCount.get());
-
-                              break;
-                              case REMOVED:
-
-                                if(notificationCount.decrementAndGet() == 0){
-
-                                  Intent intent = new Intent(indicatorAction);
-                                  intent.putExtra("showIndicator",false);
-                                  sendBroadcast(intent);
-
-                                }
-                                break;
+                            if(dc.getType() == DocumentChange.Type.ADDED){
+                                notificationCount.incrementAndGet();
+                            }else if(dc.getType() == DocumentChange.Type.REMOVED){
+                                notificationCount.decrementAndGet();
                             }
 
-                            GlobalVariables.getInstance().setNotificationsCount(notificationCount.get());
+                            GlobalVariables.setNotificationsCount(notificationCount.get());
+
+                            Intent intent = new Intent(indicatorAction);
+//                            intent.putExtra("notificationCount",notificationCount);
+                            sendBroadcast(intent);
+
+//                            switch (dc.getType()){
+//                                case ADDED:
+//
+//                                    Log.d("ttt","added notificationn");
+//
+//                                    Log.d("ttt","notificationCount: "+
+//                                            notificationCount.get());
+//
+////                                    if(notificationCount.getAndIncrement() == 0){
+//                                        Intent intent = new Intent(indicatorAction);
+//                                        intent.putExtra("notificationCount",notificationCount);
+//                                        sendBroadcast(intent);
+////                                    }
+//
+//
+//                              Log.d("ttt", "notificationCount: " +
+//                                      notificationCount.get());
+//
+//                              break;
+//                              case REMOVED:
+////                                if(notificationCount.decrementAndGet() == 0){
+//
+//                                    Intent intent = new Intent(indicatorAction);
+//                                    intent.putExtra("notificationCount",notificationCount);
+//                                    sendBroadcast(intent);
+////                                }
+//                                break;
+//                            }
+
+
 
                         }
                     }
@@ -805,5 +873,32 @@ public class  Home_Activity extends AppCompatActivity implements
 
   }
 
+
+    public boolean isAppIsInBackground() {
+
+        boolean isInBackground = true;
+        ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
+
+            List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
+            for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
+//                Log.d("ttt",processInfo.importance);
+                if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                    for (String activeProcess : processInfo.pkgList) {
+                        if (activeProcess.equals(getPackageName())) {
+                            isInBackground = false;
+                        }
+                    }
+                }
+            }
+        } else {
+            List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
+            ComponentName componentInfo = taskInfo.get(0).topActivity;
+            if (componentInfo.getPackageName().equals(getPackageName())) {
+                isInBackground = false;
+            }
+        }
+        return isInBackground;
+    }
 
   }

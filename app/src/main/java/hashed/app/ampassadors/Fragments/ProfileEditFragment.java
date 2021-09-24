@@ -158,7 +158,7 @@ public class ProfileEditFragment extends Fragment {
             @Override
             public void onSuccess(Uri uri) {
               imageUrl = uri.toString();
-              Picasso.get().load(imageUrl).fit().into(imageView);
+              Picasso.get().load(imageUrl).fit().centerCrop().into(imageView);
               Log.d("ttt", imageUrl);
             }
           });
@@ -181,7 +181,7 @@ public class ProfileEditFragment extends Fragment {
             @Override
             public void onSuccess(Uri uri) {
               String imageUrl = uri.toString();
-              Picasso.get().load(imageUrl).fit().into(imageView);
+              Picasso.get().load(imageUrl).fit().centerCrop().into(imageView);
               Log.d("ttt", imageUrl);
               Toast.makeText(getActivity(), imageUrl, Toast.LENGTH_SHORT).show();
             }

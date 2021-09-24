@@ -24,13 +24,13 @@
             android:id="@+id/imageIv"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintWidth_percent="0.25"
-            app:layout_constraintDimensionRatio="1"
             android:layout_marginStart="14dp"
-            android:src="@drawable/zoom_icon"
             android:layout_marginTop="28dp"
+            android:src="@drawable/zoom_icon"
+            app:layout_constraintDimensionRatio="1"
             app:layout_constraintStart_toStartOf="@+id/view2"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.25" />
 
         <TextView
             android:id="@+id/titleTv"
@@ -62,21 +62,20 @@
         <!--            app:layout_constraintTop_toBottomOf="@+id/titleTv" />-->
 
 
-
         <TextView
             android:id="@+id/estimatedTimeRangeTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginTop="20dp"
-            android:layout_marginEnd="17dp"
             android:layout_marginBottom="5dp"
             android:fontFamily="@font/segoe_ui"
-            android:layout_marginStart="20dp"
+            android:layout_marginEnd="12dp"
             android:textColor="@color/white"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
             app:layout_constraintStart_toEndOf="@+id/startTimeTv"
             app:layout_constraintTop_toBottomOf="@+id/titleTv" />
 
@@ -88,9 +87,9 @@
             android:fontFamily="@font/segoe_ui"
             android:textColor="@color/white"
             android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="@+id/imageIv"
+            app:layout_constraintBottom_toBottomOf="@+id/estimatedTimeRangeTv"
             app:layout_constraintStart_toEndOf="@+id/imageIv"
-            app:layout_constraintTop_toTopOf="@+id/durationTv" />
+            app:layout_constraintStart_toStartOf="@+id/imageIv" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -98,13 +97,14 @@
         android:id="@+id/timeTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/segoe_ui_bold"
         android:layout_marginStart="5dp"
+        android:fontFamily="@font/segoe_ui_bold"
+        android:text="fasdfasdf"
         android:textColor="@color/black_transparent"
         android:textSize="12sp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/view2"
         app:layout_constraintTop_toBottomOf="@+id/view2" />
 
 

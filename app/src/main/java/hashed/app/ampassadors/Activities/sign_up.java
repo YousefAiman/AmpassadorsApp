@@ -283,7 +283,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                 hashMap.put("phone", phone);
                 hashMap.put("userId", authResult.getUser().getUid());
                 hashMap.put("imageUrl", imageUrl);
-                hashMap.put("status", true);
+                hashMap.put("status", false);
                 hashMap.put("Year", year);
                 hashMap.put("isEmailVerified", false);
                 hashMap.put("Month'", month);
@@ -420,7 +420,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                         @Override
                         public void onSuccess(Uri uri) {
                             imageUrl = uri.toString();
-                            Picasso.get().load(imageUrl).fit().into(iamge);
+                            Picasso.get().load(imageUrl).fit().centerCrop().into(iamge);
                             Log.d("ttt", imageUrl);
                         }
                     });
@@ -443,7 +443,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
                         @Override
                         public void onSuccess(Uri uri) {
                             String imageUrl = uri.toString();
-                            Picasso.get().load(imageUrl).fit().into(iamge);
+                            Picasso.get().load(imageUrl).fit().centerCrop().into(iamge);
                             Log.d("ttt", imageUrl);
                             Toast.makeText(sign_up.this, imageUrl, Toast.LENGTH_SHORT).show();
                         }

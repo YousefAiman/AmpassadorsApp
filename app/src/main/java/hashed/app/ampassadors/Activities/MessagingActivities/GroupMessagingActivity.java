@@ -158,7 +158,7 @@ public class GroupMessagingActivity extends MessagingActivity{
 
               final String newMessagingStatus = value.getString("messagingSenders");
 
-              if(!newMessagingStatus.equals(currentMessagingSenders)){
+              if(newMessagingStatus != null && !newMessagingStatus.equals(currentMessagingSenders)){
 
                 groupAdmins = (List<String>) value.get("groupAdmins");
 

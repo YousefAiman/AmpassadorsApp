@@ -39,6 +39,8 @@ public class ChattingFragment extends Fragment implements MenuItem.OnMenuItemCli
   private NotificationIndicatorReceiver notificationIndicatorReceiver;
 //  private SearchView chattingSearchView;
   private TextView searchTv;
+
+  private TextView notificationCountTv;
   public ChattingFragment() {
     // Required empty public constructor
   }
@@ -69,6 +71,10 @@ public class ChattingFragment extends Fragment implements MenuItem.OnMenuItemCli
 //    chattingSearchView = view.findViewById(R.id.chattingSearchView);
     toolbar.setNavigationOnClickListener(v -> ((Home_Activity) requireActivity()).showDrawer());
     toolbar.setOnMenuItemClickListener(this::onMenuItemClick);
+
+    notificationCountTv = toolbar.getMenu().findItem(R.id.action_notifications)
+            .getActionView().findViewById(R.id.notificationCountTv);
+
     return view;
   }
 
@@ -76,10 +82,17 @@ public class ChattingFragment extends Fragment implements MenuItem.OnMenuItemCli
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
-    toolbar.getMenu().findItem(R.id.action_notifications)
-            .setIcon(GlobalVariables.getInstance().getNotificationsCount() > 0 ?
-                    R.drawable.notification_indicator_icon :
-                    R.drawable.notification_icon);
+
+    if(GlobalVariables.getNotificationsCount() > 0){
+      if(notificationCountTv.getVisibility() == View.GONE){
+        notificationCountTv.setVisibility(View.VISIBLE);
+      }
+      notificationCountTv.setText(GlobalVariables.getNotificationsCount() > 99?"99+":
+              String.valueOf(GlobalVariables.getNotificationsCount()));
+
+    }else if(notificationCountTv.getVisibility() == View.VISIBLE){
+      notificationCountTv.setVisibility(View.GONE);
+    }
 
     setupNotificationReceiver();
 
@@ -96,18 +109,20 @@ public class ChattingFragment extends Fragment implements MenuItem.OnMenuItemCli
             new NotificationIndicatorReceiver() {
               @Override
               public void onReceive(Context context, Intent intent) {
-                if (intent.hasExtra("showIndicator")) {
-                  final MenuItem item = toolbar.getMenu().findItem(R.id.action_notifications);
-                  if (intent.getBooleanExtra("showIndicator", false)) {
-                    item.setIcon(R.drawable.notification_indicator_icon);
-                  } else {
-                    item.setIcon(R.drawable.notification_icon);
+                if(GlobalVariables.getNotificationsCount() > 0){
+                  if(notificationCountTv.getVisibility() == View.GONE){
+                    notificationCountTv.setVisibility(View.VISIBLE);
                   }
+                  notificationCountTv.setText(GlobalVariables.getNotificationsCount() > 99?
+                          "99+":String.valueOf(GlobalVariables.getNotificationsCount()));
+
+                }else if(notificationCountTv.getVisibility() == View.VISIBLE){
+                  notificationCountTv.setVisibility(View.GONE);
                 }
               }
             };
 
-    getContext().registerReceiver(notificationIndicatorReceiver,
+    requireContext().registerReceiver(notificationIndicatorReceiver,
             new IntentFilter(BuildConfig.APPLICATION_ID + ".notificationIndicator"));
 
   }

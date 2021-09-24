@@ -20,7 +20,6 @@
         <!--        <item name="android:backgroundDimAmount">0.3</item>-->
         <!--        <item name="android:windowFrame">@null</item>-->
         <item name="android:windowIsFloating">true</item>
-
     </style>
 
     <style name="ToolbarTitleAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
