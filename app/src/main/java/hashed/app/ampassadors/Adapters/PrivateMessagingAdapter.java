@@ -42,6 +42,7 @@ import hashed.app.ampassadors.Objects.ZoomMeeting;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.AudioPlayer;
 import hashed.app.ampassadors.Utils.Files;
+import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.TimeFormatter;
 import hashed.app.ampassadors.Utils.WifiUtil;
 
@@ -1043,6 +1044,25 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 //        }
 //
 //      }
+      final ZoomMeeting zoomMeeting = privateMessages.get(getBindingAdapterPosition()).getZoomMeeting();
+      String url = zoomMeeting.getJoinUrl();
+
+      if (GlobalVariables.getRole().equals("Admin") || GlobalVariables.getRole().equals("Coordinator")) {
+
+        Log.d("ttt","zoomMeeting.getJoinUrl(): ");
+
+        if(zoomMeeting.getStatus().equals("started")){
+          url = zoomMeeting.getJoinUrl();
+          Log.d("ttt","started froms joinurl: "+zoomMeeting.getJoinUrl());
+        }else{
+          Log.d("ttt","started froms starturl: "+zoomMeeting.getStartUrl());
+          url = zoomMeeting.getStartUrl();
+        }
+
+      }else if(zoomMeeting.getStartUrl() != null && !zoomMeeting.getStartUrl().isEmpty()){
+        Log.d("ttt","started froms joinurl: "+zoomMeeting.getJoinUrl());
+        url = zoomMeeting.getJoinUrl();
+      }
 
       final PackageManager pm = itemView.getContext().getPackageManager();
 //      Intent intent = pm.getLaunchIntentForPackage("us.zoom.videomeetings");
@@ -1053,8 +1073,7 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
 //
 //      }else{
 
-      final Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(
-              privateMessages.get(getBindingAdapterPosition()).getZoomMeeting().getJoinUrl()));
+      final Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
       try {
 
         if (urlIntent.resolveActivity(pm) != null) {

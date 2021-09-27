@@ -482,11 +482,12 @@ public class MeetingMessagingActivity extends MessagingActivity{
                     if(zoomMeeting!=null){
 
                       if(currentZoomMeeting!=null && currentZoomMeeting.getId().equals(zoomMeeting.getId())){
-                        currentZoomMeeting.setStatus("started");
+                        if(zoomMeeting.getStatus().equals("started")){
+                          currentZoomMeeting.setStatus("started");
+                        }
                       }else{
                         currentZoomMeeting = zoomMeeting;
                         showZoomMeeting(currentZoomMeeting);
-
                       }
 
 //                      final long endTime = zoomMeeting.getStartTime() +
@@ -500,8 +501,6 @@ public class MeetingMessagingActivity extends MessagingActivity{
 //                      }else{
 //                        showZoomMeeting(zoomMeeting);
 //                      }
-
-
 
                     }else if(zoomConstraint.getVisibility() == View.VISIBLE){
 
@@ -616,16 +615,20 @@ public class MeetingMessagingActivity extends MessagingActivity{
       @Override
       public void onClick(View view) {
 
-        if (GlobalVariables.getRole().equals("Admin") || GlobalVariables.getRole().equals("Coordinator")) {
+        if (GlobalVariables.getRole()!=null && (GlobalVariables.getRole().equals("Admin") || GlobalVariables.getRole().equals("Coordinator"))) {
+
+          Log.d("ttt","zoomMeeting.getJoinUrl(): ");
 
           if(zoomMeeting.getStatus().equals("started")){
             startZoomMeetingIntent(zoomMeeting.getJoinUrl());
+            Log.d("ttt","started froms joinurl: "+zoomMeeting.getJoinUrl());
           }else{
+            Log.d("ttt","started froms starturl: "+zoomMeeting.getStartUrl());
             startZoomMeetingIntent(zoomMeeting.getStartUrl());
           }
 
-
         }else if(zoomMeeting.getStartUrl() != null && !zoomMeeting.getStartUrl().isEmpty()){
+          Log.d("ttt","started froms joinurl: "+zoomMeeting.getJoinUrl());
           startZoomMeetingIntent(zoomMeeting.getJoinUrl());
         }
 

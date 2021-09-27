@@ -329,7 +329,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                   notificationType,
                   message,
                   username + " replied to your comment",
-                  postId);
+                  postId + "|" + creatorId);
 
           final Data data = new Data(
                   currentUid,
@@ -338,7 +338,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                   null,
                   "Post Comment",
                   notificationType,
-                  postId);
+                  postId + "|" + creatorId);
 
           if(imageUrl!=null && !imageUrl.isEmpty()){
             data.setSenderImageUrl(imageUrl);
@@ -469,7 +469,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                                   :FirestoreNotificationSender.TYPE_POLL_COMMENT_LIKE;
 
                   FirestoreNotificationSender.sendFirestoreNotification(
-                          userId, notificationType, body, senderName, postId);
+                          userId, notificationType, body, senderName, postId + "|" + creatorId);
 
                   final Data data = new Data(
                           currentUid,
@@ -478,7 +478,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                           null,
                           notificationType,
                           notificationType,
-                          postId);
+                          postId + "|" + creatorId);
 
                   if(imageUrl!=null && !imageUrl.isEmpty()){
                     data.setSenderImageUrl(imageUrl);

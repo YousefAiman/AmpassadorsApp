@@ -138,11 +138,12 @@ public class CourseMessagingActivity extends MessagingActivity{
                     if (zoomMeeting != null) {
 
                       if(currentZoomMeeting!=null && currentZoomMeeting.getId().equals(zoomMeeting.getId())){
-                        currentZoomMeeting.setStatus("started");
+                        if(zoomMeeting.getStatus().equals("started")){
+                          currentZoomMeeting.setStatus("started");
+                        }
                       }else{
                         currentZoomMeeting = zoomMeeting;
                         showZoomMeeting(currentZoomMeeting);
-
                       }
 
                     } else if (zoomConstraint.getVisibility() == View.VISIBLE) {

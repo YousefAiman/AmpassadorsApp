@@ -539,11 +539,26 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
             case FirestoreNotificationSender.TYPE_POST_LIKE:
             case FirestoreNotificationSender.TYPE_POST_COMMENT:
-            case FirestoreNotificationSender.TYPE_POST_COMMENT_LIKE:
-            case FirestoreNotificationSender.TYPE_POST_REPLY:
 
               destinationIntent = new Intent(this,PostNewsActivity.class)
                       .putExtra("notificationPostId",sourceId);
+
+              break;
+
+            case FirestoreNotificationSender.TYPE_POST_COMMENT_LIKE:
+            case FirestoreNotificationSender.TYPE_POST_REPLY:
+
+              String[] arr = sourceId.split("\\|");
+
+              if(arr.length>0){
+                destinationIntent = new Intent(this,PostNewsActivity.class)
+                        .putExtra("notificationPostId",arr[0])
+                        .putExtra("notificationCreatorId",arr[1]);
+              }else{
+                destinationIntent = new Intent(this,PostNewsActivity.class)
+                        .putExtra("notificationPostId",sourceId);
+              }
+
 
               break;
 

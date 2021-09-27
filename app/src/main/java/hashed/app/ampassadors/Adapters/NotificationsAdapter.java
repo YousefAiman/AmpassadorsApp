@@ -94,6 +94,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
       case FirestoreNotificationSender.TYPE_POLL_COMMENT:
       case FirestoreNotificationSender.TYPE_POST_COMMENT_LIKE:
       case FirestoreNotificationSender.TYPE_POLL_COMMENT_LIKE:
+      case FirestoreNotificationSender.TYPE_POST_REPLY:
+      case FirestoreNotificationSender.TYPE_POLL_REPLY:
         documentReference = firestore.collection("Users")
                 .document(notification.getSenderId());
         break;
@@ -301,6 +303,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         case FirestoreNotificationSender.TYPE_POLL_LIKE:
         case FirestoreNotificationSender.TYPE_POST_COMMENT:
         case FirestoreNotificationSender.TYPE_POLL_COMMENT:
+        case FirestoreNotificationSender.TYPE_POST_REPLY:
+        case FirestoreNotificationSender.TYPE_POLL_REPLY:
         case FirestoreNotificationSender.TYPE_POST_COMMENT_LIKE:
         case FirestoreNotificationSender.TYPE_POLL_COMMENT_LIKE:
 

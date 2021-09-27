@@ -152,9 +152,11 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
                 GlobalVariables.getMessagesNotificationMap().remove(postId + notificationType);
             }
 
+
             if(user!=null){
 
-                firestore.collection("Users").document(user.getUid())
+                firestore.collection("Users").document(
+                        getIntent().hasExtra("notificationCreatorId")?getIntent().getStringExtra("notificationCreatorId"):user.getUid())
                         .collection("UserPosts").document(postId)
                         .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
