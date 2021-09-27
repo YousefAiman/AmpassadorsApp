@@ -130,6 +130,9 @@ public class ZoomMeetingCreationFragment extends Fragment implements View.OnClic
     settingsIv1.setOnClickListener(this);
     settingsIv2.setOnClickListener(this);
 
+    dateSetterTv.setClickable(false);
+    timeSetterTv.setClickable(false);
+
 
     createNowCheckbox.setOnCheckedChangeListener(this);
     scheduleCheckBox.setOnCheckedChangeListener(this);

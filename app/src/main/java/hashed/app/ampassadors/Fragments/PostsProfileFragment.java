@@ -156,10 +156,17 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
         toolbar.setNavigationOnClickListener(v -> ((Home_Activity) requireActivity()).showDrawer());
 
         toolbar.setOnMenuItemClickListener(this);
+        final View notificationActionView = toolbar.getMenu()
+                .findItem(R.id.action_notifications).getActionView();
+        notificationCountTv = notificationActionView.findViewById(R.id.notificationCountTv);
 
-        notificationCountTv = toolbar.getMenu().findItem(R.id.action_notifications)
-                .getActionView().findViewById(R.id.notificationCountTv);
-
+        notificationActionView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getContext(), NotificationsActivity.class)
+                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            }
+        });
 
 
 
@@ -239,10 +246,11 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
 
             Intent mapIntent = new Intent(getActivity(), Profile.class);
             startActivity(mapIntent);
-        } else if (item.getItemId() == R.id.action_notifications) {
-            startActivity(new Intent(getContext(), NotificationsActivity.class)
-                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         }
+//        else if (item.getItemId() == R.id.action_notifications) {
+//            startActivity(new Intent(getContext(), NotificationsActivity.class)
+//                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+//        }
 
         return false;
     }

@@ -81,22 +81,31 @@ public class CoursesActivity extends AppCompatActivity implements
 
         final Toolbar courseToolbar = findViewById(R.id.courseToolbar);
         courseToolbar.setNavigationOnClickListener(v -> finish());
-        courseToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+//        courseToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//
+//                if (item.getItemId() == R.id.action_notifications) {
+//                    startActivity(new Intent(CoursesActivity.this,
+//                            NotificationsActivity.class)
+//                            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+//                }
+//
+//                return false;
+//            }
+//        });
+
+        final View notificationActionView = courseToolbar.getMenu()
+                .findItem(R.id.action_notifications).getActionView();
+        final TextView notificationCountTv  = notificationActionView.findViewById(R.id.notificationCountTv);
+
+        notificationActionView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onMenuItemClick(MenuItem item) {
-
-                if (item.getItemId() == R.id.action_notifications) {
-                    startActivity(new Intent(CoursesActivity.this,
-                            NotificationsActivity.class)
-                            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                }
-
-                return false;
+            public void onClick(View view) {
+                startActivity(new Intent(CoursesActivity.this, NotificationsActivity.class)
+                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             }
         });
-
-        final TextView notificationCountTv = courseToolbar.getMenu()
-                .findItem(R.id.action_notifications).getActionView().findViewById(R.id.notificationCountTv);
 
         if(GlobalVariables.getNotificationsCount() > 0){
             if(notificationCountTv.getVisibility() == View.GONE){

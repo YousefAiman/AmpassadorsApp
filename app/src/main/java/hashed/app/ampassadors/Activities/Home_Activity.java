@@ -123,8 +123,8 @@ public class  Home_Activity extends AppCompatActivity implements
             navigationview.inflateMenu(R.menu.menu_nav);
         } else {
             if (GlobalVariables.getRole() != null
-                    && GlobalVariables.getRole().equals("Admin")
-                    || GlobalVariables.getRole().equals("Coordinator")  ) {
+                    && (GlobalVariables.getRole().equals("Admin")
+                    || GlobalVariables.getRole().equals("Coordinator"))) {
                 navigationview.inflateMenu(R.menu.menu_admin);
             } else {
                 navigationview.inflateMenu(R.menu.menu_nav);

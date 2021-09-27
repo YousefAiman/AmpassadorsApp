@@ -172,8 +172,17 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         floatingButton = view.findViewById(R.id.floatingButton);
         floatingButton.setOnClickListener(this);
 
-         notificationCountTv = toolbar.getMenu()
-                .findItem(R.id.action_notifications).getActionView().findViewById(R.id.notificationCountTv);
+        final View notificationActionView = toolbar.getMenu()
+                .findItem(R.id.action_notifications).getActionView();
+         notificationCountTv = notificationActionView.findViewById(R.id.notificationCountTv);
+
+        notificationActionView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getContext(), NotificationsActivity.class)
+                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            }
+        });
 
         return view;
     }
@@ -222,10 +231,11 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     @Override
     public boolean onMenuItemClick(MenuItem item) {
 
-        if (item.getItemId() == R.id.action_notifications) {
-            startActivity(new Intent(getContext(), NotificationsActivity.class)
-                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-        } else if (item.getItemId() == R.id.action_search) {
+//        if (item.getItemId() == R.id.action_notifications) {
+//            startActivity(new Intent(getContext(), NotificationsActivity.class)
+//                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+//        } else
+            if (item.getItemId() == R.id.action_search) {
             startActivity(new Intent(getContext(), PostsSearchActivity.class)
                     .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         }

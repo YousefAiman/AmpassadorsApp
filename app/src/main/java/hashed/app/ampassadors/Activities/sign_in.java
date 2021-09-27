@@ -1,10 +1,13 @@
 package hashed.app.ampassadors.Activities;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -14,6 +17,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -51,6 +56,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Services.FirebaseMessagingService;
 import hashed.app.ampassadors.Utils.GlobalVariables;
+import hashed.app.ampassadors.Utils.LocationRequester;
 import hashed.app.ampassadors.Utils.WifiUtil;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -71,18 +77,45 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
     FirebaseFirestore fStore;
     FirebaseAuth fAuth;
 
+    private static final int
+            REQUEST_CHECK_SETTINGS = 100,
+            REQUEST_LOCATION_PERMISSION = 10;
 
     private ProgressDialog googleProgressDialog;
 
 
     LoginButton facebookLoginBtn;
     CallbackManager callbackManager;
+    private LocationRequester locationRequester;
+    private HashMap<String,Object> hashMap;
+    private DocumentReference userRef;
+
+    final LocationRequester.LocationRequesterListener locationRequesterListener =
+            new LocationRequester.LocationRequesterListener() {
+                @Override
+                public void onAddressFetched(String country, String city) {
+                    hashMap.put("country",country);
+                    hashMap.put("city",city);
+                    updateFirebaseUser(userRef,hashMap);
+                }
+            };
+
+
+    final ActivityResultLauncher<String> permissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(),
+                    isGranted -> {
+                        if(isGranted){
+                            intilizeLocationRequester(locationRequesterListener);
+                        }else{
+                            updateFirebaseUser(userRef,hashMap);
+                        }
+                    });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         setContentView(R.layout.activity_sign_in);
+
         init();
         LogIn();
         CreateAccount();
@@ -470,6 +503,13 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                 .addOnSuccessListener(authResult -> {
                     Log.d("ttt", "signInWithCredential:success");
 
+                    if(authResult.getAdditionalUserInfo() == null || auth.getCurrentUser() == null){
+                        if(googleProgressDialog!=null){
+                            googleProgressDialog.dismiss();
+                        }
+                        return;
+                    }
+
                     if (authResult.getAdditionalUserInfo().isNewUser()) {
 
                         addUserToFirestore(account.getDisplayName(),account.getEmail()
@@ -516,7 +556,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
 
                                     addUserToFirestore(account.getDisplayName(),account.getEmail()
                                             , auth.getCurrentUser().getUid(),
-                                            account.getPhotoUrl().toString());
+                                            account.getPhotoUrl()!=null?account.getPhotoUrl().toString():"");
 
                                     Log.d("ttt","task isn't succesffuly or " +
                                             "snapshot doesn't eixits");
@@ -544,7 +584,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
     private void addUserToFirestore(String username,String email,String userId,
                                     String imageUrl){
 
-        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap = new HashMap<>();
         hashMap.put("username", username);
         hashMap.put("email", email);
         hashMap.put("rejected", false);
@@ -558,9 +598,20 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
          hashMap.put("Bio","");
         GlobalVariables.setRole("Ambassador");
 
-        final DocumentReference userRef =
-                FirebaseFirestore.getInstance().collection("Users").document(userId);
+        userRef = FirebaseFirestore.getInstance().collection("Users").document(userId);
 
+        final String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                checkSelfPermission(permissions[0]) != PackageManager.PERMISSION_GRANTED) {
+//            requestPermissions(permissions, REQUEST_LOCATION_PERMISSION);
+            permissionLauncher.launch(permissions[0]);
+        } else {
+            intilizeLocationRequester(locationRequesterListener);
+        }
+    }
+
+    private void updateFirebaseUser(DocumentReference userRef,HashMap<String, Object> hashMap){
         FirebaseMessaging.getInstance().getToken().addOnSuccessListener(new OnSuccessListener<String>() {
             @Override
             public void onSuccess(String s) {
@@ -571,9 +622,9 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                     public void onSuccess(Void aVoid) {
 
                         FirebaseMessagingService.
-                            startMessagingService(sign_in.this);
+                                startMessagingService(sign_in.this);
                         startActivity(new Intent(sign_in.this,Home_Activity.class)
-                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                         finish();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -585,7 +636,28 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                 });
             }
         });
+    }
 
+
+    void intilizeLocationRequester(LocationRequester.LocationRequesterListener locationRequesterListener) {
+        locationRequester = new LocationRequester(this, this,locationRequesterListener);
+        locationRequester.geCountryFromLocation();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (locationRequester != null) {
+            locationRequester.resumeLocationUpdates();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (locationRequester != null) {
+            locationRequester.stopLocationUpdates();
+        }
     }
 
 

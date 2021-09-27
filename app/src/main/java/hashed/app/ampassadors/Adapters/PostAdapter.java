@@ -162,12 +162,12 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void onClick(View view) {
 
       final Intent intent = new Intent(view.getContext(), PostNewsActivity.class)
-              .putExtra("postId", posts.get(getAdapterPosition()).getPostId())
+              .putExtra("postId", posts.get(getBindingAdapterPosition()).getPostId())
               .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
       if(isForUser){
         intent.putExtra("isForUser", true);
-        intent.putExtra("publisherId",posts.get(getAdapterPosition()).getPublisherId());
+        intent.putExtra("publisherId",posts.get(getBindingAdapterPosition()).getPublisherId());
       }
 
       view.getContext().startActivity(intent);
@@ -202,12 +202,12 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void onClick(View view) {
 
       final Intent intent = new Intent(view.getContext(), PostNewsActivity.class)
-              .putExtra("postId", posts.get(getAdapterPosition()).getPostId())
+              .putExtra("postId", posts.get(getBindingAdapterPosition()).getPostId())
               .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
       if(isForUser){
         intent.putExtra("isForUser",isForUser);
-        intent.putExtra("publisherId",posts.get(getAdapterPosition()).getPublisherId());
+        intent.putExtra("publisherId",posts.get(getBindingAdapterPosition()).getPublisherId());
       }
 
       view.getContext().startActivity(intent);
@@ -234,12 +234,12 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void onClick(View view) {
 
       final Intent intent = new Intent(view.getContext(), PostNewsActivity.class)
-              .putExtra("postId", posts.get(getAdapterPosition()).getPostId())
+              .putExtra("postId", posts.get(getBindingAdapterPosition()).getPostId())
               .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
       if(isForUser){
         intent.putExtra("isForUser",isForUser);
-        intent.putExtra("publisherId",posts.get(getAdapterPosition()).getPublisherId());
+        intent.putExtra("publisherId",posts.get(getBindingAdapterPosition()).getPublisherId());
       }
 
       view.getContext().startActivity(intent);
@@ -271,12 +271,12 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //      if()
 
       final Intent intent = new Intent(view.getContext(), PostNewsActivity.class)
-              .putExtra("postId", posts.get(getAdapterPosition()).getPostId())
+              .putExtra("postId", posts.get(getBindingAdapterPosition()).getPostId())
               .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
       if(isForUser){
         intent.putExtra("isForUser",isForUser);
-        intent.putExtra("publisherId",posts.get(getAdapterPosition()).getPublisherId());
+        intent.putExtra("publisherId",posts.get(getBindingAdapterPosition()).getPublisherId());
       }
 
       view.getContext().startActivity(intent);
@@ -349,8 +349,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         } else {
 
-          getPollRecycler(postData,false,
-                  postData.getChosenPollOption() != -1);
+          getPollRecycler(postData,false, postData.getChosenPollOption() != -1);
 
         }
       }
@@ -375,9 +374,9 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
       adapter.setHasStableIds(true);
       pollRv.setAdapter(adapter);
 
-      if(!loadingItems.contains(getAdapterPosition())){
+      if(!loadingItems.contains(getBindingAdapterPosition())){
 
-        loadingItems.add(getAdapterPosition());
+        loadingItems.add(getBindingAdapterPosition());
 
         postsCollectionRef.document(postData.getPostId())
                 .collection("Options")
@@ -419,12 +418,12 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void onClick(View view) {
 
       final Intent intent = new Intent(view.getContext(), PostNewsActivity.class)
-              .putExtra("postId", posts.get(getAdapterPosition()).getPostId())
+              .putExtra("postId", posts.get(getBindingAdapterPosition()).getPostId())
               .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
       if(isForUser){
         intent.putExtra("isForUser",isForUser);
-        intent.putExtra("publisherId",posts.get(getAdapterPosition()).getPublisherId());
+        intent.putExtra("publisherId",posts.get(getBindingAdapterPosition()).getPublisherId());
       }
 
       view.getContext().startActivity(intent);
@@ -532,7 +531,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //
 //            view.getContext().startActivity(new Intent(view.getContext(),
 //                    PostPollActivity.class).putExtra("postData",(Serializable)
-//                    posts.get(getAdapterPosition())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+//                    posts.get(getBindingAdapterPosition())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 //
 //          }
 //        });
@@ -541,7 +540,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //
 //      private void getPollRecycler(boolean hasEnded){
 //
-//        final PostData postData = posts.get(getAdapterPosition());
+//        final PostData postData = posts.get(getBindingAdapterPosition());
 //        postData.setPollOptions(new ArrayList<>());
 //
 //        final PollPostAdapter adapter = new PollPostAdapter(postData.getPollOptions()
@@ -604,22 +603,22 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //            likeTv.setTextColor(itemView.getContext()
 //                    .getResources().getColor(R.color.black));
 //
-//            PostData.likePost(posts.get(getAdapterPosition()).getPostId(),2
-//                    ,posts.get(getAdapterPosition()).getPublisherId(),view.getContext());
+//            PostData.likePost(posts.get(getBindingAdapterPosition()).getPostId(),2
+//                    ,posts.get(getBindingAdapterPosition()).getPublisherId(),view.getContext());
 //
 //          }else{
 //
 //            likeTv.setTextColor(itemView.getContext()
 //                    .getResources().getColor(R.color.red));
 //
-//            PostData.likePost(posts.get(getAdapterPosition()).getPostId(),1,
-//                    posts.get(getAdapterPosition()).getPublisherId(),view.getContext());
+//            PostData.likePost(posts.get(getBindingAdapterPosition()).getPostId(),1,
+//                    posts.get(getBindingAdapterPosition()).getPublisherId(),view.getContext());
 //
 //          }
 //
 //        }else if(view.getId() == R.id.commentTv){
 //
-//          final PostData postData = posts.get(getAdapterPosition());
+//          final PostData postData = posts.get(getBindingAdapterPosition());
 //
 //          commentsInterface.showComments(postData.getPostId(),postData.getComments());
 //
@@ -742,8 +741,8 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //                        (Integer.parseInt(likesTv.getText().toString())-1)
 //                ));
 //
-//                PostData.likePost(posts.get(getAdapterPosition()).getPostId(),2,
-//                        posts.get(getAdapterPosition()).getPublisherId(),view.getContext());
+//                PostData.likePost(posts.get(getBindingAdapterPosition()).getPostId(),2,
+//                        posts.get(getBindingAdapterPosition()).getPublisherId(),view.getContext());
 //
 //
 //              }else{
@@ -755,14 +754,14 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //                        (Integer.parseInt(likesTv.getText().toString())+1)
 //                ));
 //
-//                PostData.likePost(posts.get(getAdapterPosition()).getPostId(),1,
-//                        posts.get(getAdapterPosition()).getPublisherId(),view.getContext());
+//                PostData.likePost(posts.get(getBindingAdapterPosition()).getPostId(),1,
+//                        posts.get(getBindingAdapterPosition()).getPublisherId(),view.getContext());
 //
 //              }
 //
 //            }else if(view.getId() == R.id.commentTv){
 //
-//              final PostData postData = posts.get(getAdapterPosition());
+//              final PostData postData = posts.get(getBindingAdapterPosition());
 //
 //              commentsInterface.showComments(postData.getPostId(),postData.getComments());
 //
@@ -781,8 +780,8 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //
 //            }else if(view.getId() == R.id.postIv){
 //
-//              if(posts.get(getAdapterPosition()).getImageUrl()!=null){
-//                imageInterface.showImage(posts.get(getAdapterPosition()).getImageUrl());
+//              if(posts.get(getBindingAdapterPosition()).getImageUrl()!=null){
+//                imageInterface.showImage(posts.get(getBindingAdapterPosition()).getImageUrl());
 //              }
 //
 //

@@ -72,8 +72,19 @@ public class ChattingFragment extends Fragment implements MenuItem.OnMenuItemCli
     toolbar.setNavigationOnClickListener(v -> ((Home_Activity) requireActivity()).showDrawer());
     toolbar.setOnMenuItemClickListener(this::onMenuItemClick);
 
-    notificationCountTv = toolbar.getMenu().findItem(R.id.action_notifications)
-            .getActionView().findViewById(R.id.notificationCountTv);
+
+    final View notificationActionView = toolbar.getMenu()
+            .findItem(R.id.action_notifications).getActionView();
+    notificationCountTv = notificationActionView.findViewById(R.id.notificationCountTv);
+
+    notificationActionView.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        startActivity(new Intent(getContext(), NotificationsActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+      }
+    });
+
 
     return view;
   }
@@ -142,10 +153,10 @@ public class ChattingFragment extends Fragment implements MenuItem.OnMenuItemCli
   @Override
   public boolean onMenuItemClick(MenuItem item) {
 
-    if (item.getItemId() == R.id.action_notifications) {
-      startActivity(new Intent(getContext(), NotificationsActivity.class)
-              .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-    }
+//    if (item.getItemId() == R.id.action_notifications) {
+//      startActivity(new Intent(getContext(), NotificationsActivity.class)
+//              .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+//    }
 
     return false;
   }

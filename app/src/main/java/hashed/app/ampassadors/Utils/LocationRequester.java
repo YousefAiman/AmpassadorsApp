@@ -51,7 +51,7 @@ public class LocationRequester {
 
   private static final int REQUEST_CHECK_SETTINGS = 100;
   private final Context context;
-  private final Activity activity;
+  private Activity activity;
   private Boolean mRequestingLocationUpdates;
   private FusedLocationProviderClient fusedLocationClient;
   private LocationRequest locationRequest;
@@ -63,9 +63,21 @@ public class LocationRequester {
   private ImageView locationIv;
   public String countryCode;
 
+  private LocationRequesterListener locationRequesterListener;
+
+
+  public interface LocationRequesterListener{
+    void onAddressFetched(String country,String city);
+  }
+
   public LocationRequester(Context context, Activity activity) {
     this.activity = activity;
     this.context = context;
+  }
+  public LocationRequester(Context context,Activity activity,LocationRequesterListener locationRequesterListener) {
+    this.context = context;
+    this.activity = activity;
+    this.locationRequesterListener = locationRequesterListener;
   }
 
   public LocationRequester(Context context, Activity activity, EditText countryEd,
@@ -248,14 +260,21 @@ public class LocationRequester {
         countryCode= a.getCountryCode();
         final String city = a.getLocality();
 
+        if(locationRequesterListener!=null){
+
+          locationRequesterListener.onAddressFetched(country,city);
+
+        }else{
+          countryEd.setText(country);
+          cityEd.setText(city);
+          locationIv.setVisibility(View.GONE);
+
+          ((sign_up)activity).selectDefaultPhoneCode(countryCode.toUpperCase());
+          dismissProgressDialog();
+        }
         Log.d("ttt",a.toString());
-        countryEd.setText(country);
-        cityEd.setText(city);
-        locationIv.setVisibility(View.GONE);
 
-        ((sign_up)activity).selectDefaultPhoneCode(countryCode.toUpperCase());
 
-        dismissProgressDialog();
       } else {
         fetchFromApi(location.getLatitude(), location.getLongitude());
       }
@@ -287,13 +306,21 @@ public class LocationRequester {
           countryCode = address.getString("country_code");
           final String city = address.getString("city");
 
-          countryEd.setText(country);
-          cityEd.setText(city);
-          locationIv.setVisibility(View.GONE);
+          if(locationRequesterListener!=null){
 
-          ((sign_up)activity).selectDefaultPhoneCode(countryCode.toUpperCase());
+            locationRequesterListener.onAddressFetched(country,city);
 
-          dismissProgressDialog();
+          }else{
+
+            countryEd.setText(country);
+            cityEd.setText(city);
+            locationIv.setVisibility(View.GONE);
+            ((sign_up)activity).selectDefaultPhoneCode(countryCode.toUpperCase());
+            dismissProgressDialog();
+
+          }
+
+
 
         } else {
           failedInfo();
@@ -322,7 +349,7 @@ public class LocationRequester {
       Log.d("ttt", "error here man 2: "+error.getMessage());
     });
     queue.add(jsonObjectRequest);
-    queue.start();
+//    queue.start();
   }
 
   private void failedInfo(){

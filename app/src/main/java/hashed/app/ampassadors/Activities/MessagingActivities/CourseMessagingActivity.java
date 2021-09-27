@@ -372,8 +372,11 @@ public class CourseMessagingActivity extends MessagingActivity{
     firebaseMessageDocRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
       @Override
       public void onSuccess(DocumentSnapshot snapshot) {
-        if(snapshot.exists()){
-          groupUsers.addAll((List<String>) snapshot.get("members"));
+        if(snapshot.exists() && snapshot.contains("members")){
+          final List<String> members = (List<String>)snapshot.get("members");
+          if(members!=null){
+            groupUsers.addAll(members);
+          }
         }
       }
     }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

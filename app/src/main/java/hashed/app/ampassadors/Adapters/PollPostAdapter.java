@@ -19,6 +19,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -192,13 +194,18 @@ public class PollPostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         Log.d("ttt", "pollOption.getVotes() / totalVotes) * 100" +
                 ((pollOption.getVotes() / totalVotes) * 100f));
 
-        final int progress = (int) (((float) pollOption.getVotes() / totalVotes) * 100f);
+
+        float percentage = ((float) pollOption.getVotes() / totalVotes) * 100f;
 
         optionProgress.post(() ->
-                optionProgress.setProgress(progress));
+                optionProgress.setProgress((int)percentage));
 
         if(GlobalVariables.getRole().equals("Admin")){
-          percentageTv.setText(progress+"%");
+          percentageTv.setVisibility(View.VISIBLE);
+
+          final BigDecimal roundedPercentage = new BigDecimal(String.valueOf(percentage)).setScale(2, RoundingMode.CEILING);
+
+          percentageTv.setText(roundedPercentage +"%");
         }
       }
 
@@ -258,7 +265,10 @@ public class PollPostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 + " - " + percentage);
 
         if(GlobalVariables.getRole().equals("Admin")){
-          percentageTv.setText(percentage+"%");
+          percentageTv.setVisibility(View.VISIBLE);
+
+          final BigDecimal roundedPercentage = new BigDecimal(String.valueOf(percentage)).setScale(2, RoundingMode.CEILING);
+          percentageTv.setText(roundedPercentage+"%");
         }
       }
 

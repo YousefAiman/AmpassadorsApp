@@ -20,6 +20,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -129,12 +133,12 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         return;
       }
 
-//      if (remoteMessage.getData().containsKey("senderUid")
-//              && remoteMessage.getData().get("senderUid").
-//              equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-//        Log.d("ttt", "this notification is from me wtf");
-//        return;
-//      }
+      if (remoteMessage.getData().containsKey("senderUid")
+              && remoteMessage.getData().get("senderUid").
+              equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+        Log.d("ttt", "this notification is from me wtf");
+        return;
+      }
 
       try {
         final String sourceType = remoteMessage.getData().get("sourceType");
@@ -389,6 +393,26 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
           if(snap.contains("currentZoomMeeting") && snap.get("currentZoomMeeting") != null){
             queryDocumentSnapshots.getDocuments().get(0).getReference()
                     .update("currentZoomMeeting",null);
+
+            FirebaseDatabase.getInstance().getReference()
+                    .child("GroupMessages").child(snap.getId()).child("Messages")
+                    .orderByChild("zoomMeeting.id").equalTo(zoomMeetingId)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                      @Override
+                      public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                        if(snapshot.exists()) {
+                          snapshot.getRef().child("zoomMeeting")
+                                  .child("status").setValue("ended");
+                        }
+                      }
+
+                      @Override
+                      public void onCancelled(@NonNull DatabaseError error) {
+
+                      }
+                    });
+
           }
         }
 

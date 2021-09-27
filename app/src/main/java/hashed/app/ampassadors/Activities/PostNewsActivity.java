@@ -127,7 +127,6 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
         if(intent.hasExtra("postId")){
 
-
             if(getIntent().hasExtra("isForUser") && getIntent().getBooleanExtra("isForUser",false)){
 
                 postRef = firestore.collection("Users")
@@ -140,6 +139,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
                         .document(getIntent().getStringExtra("postId"));
             }
 
+            fetchPostData(user);
         }else if(intent.hasExtra("notificationPostId")){
 
             final String postId = intent.getStringExtra("notificationPostId");
@@ -153,24 +153,32 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if(documentSnapshot.exists()){
                             postRef = documentSnapshot.getReference();
+                        }else{
+                            postRef = firestore.collection("Posts").document(postId);
                         }
+
+                        fetchPostData(user);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         postRef = firestore.collection("Posts").document(postId);
+
+                        fetchPostData(user);
                     }
                 });
 
             }else{
                 finish();
-                return;
             }
         }else{
             finish();
-            return;
         }
 
+    }
+
+
+    private void fetchPostData(FirebaseUser user){
         postRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -223,10 +231,6 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 
             }
         });
-
-
-
-
     }
 
     private void getNewsType() {
@@ -384,7 +388,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 //
 //            }
 
-            if (GlobalVariables.getInstance().getLikesList().contains(postData.getPostId())) {
+            if (GlobalVariables.getLikesList().contains(postData.getPostId())) {
 
                 likeTv.setTextColor(getResources().getColor(R.color.black));
 

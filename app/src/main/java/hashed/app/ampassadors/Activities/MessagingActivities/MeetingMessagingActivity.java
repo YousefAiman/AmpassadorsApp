@@ -383,7 +383,7 @@ public class MeetingMessagingActivity extends MessagingActivity{
       @Override
       public void onSuccess(Void unused) {
 
-        FirebaseMessaging.getInstance().subscribeToTopic(zoomMeeting.getTopic());
+        FirebaseMessaging.getInstance().subscribeToTopic(zoomMeeting.getId());
 
       }
     });

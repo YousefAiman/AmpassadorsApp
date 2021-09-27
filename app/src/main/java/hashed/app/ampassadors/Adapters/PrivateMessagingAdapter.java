@@ -1015,12 +1015,20 @@ public class PrivateMessagingAdapter extends RecyclerView.Adapter<RecyclerView.V
     public void onClick(View view) {
 
       final ZoomMeeting meeting = privateMessages.get(getBindingAdapterPosition()).getZoomMeeting();
+
+      if(meeting.getStatus().equals("ended")){
+        Toast.makeText(itemView.getContext(),"This meeting has already ended!", Toast.LENGTH_SHORT).show();
+        return;
+      }
+
       if (meeting.getType() == 2 && meeting.getStartTime() < System.currentTimeMillis()) {
         Toast.makeText(itemView.getContext(),
                 "Meeting will start on: " + TimeFormatter.formatTime(meeting.getStartTime())
                 , Toast.LENGTH_SHORT).show();
         return;
       }
+
+
 //      else if (meeting.getType() == 1) {
 //
 //        if (privateMessages.get(getBindingAdapterPosition()).getTime() +

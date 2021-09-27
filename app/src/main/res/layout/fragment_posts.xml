@@ -25,6 +25,7 @@
         android:visibility="gone"
         app:maxImageSize="40dp"
         app:tint="@color/white" />
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"

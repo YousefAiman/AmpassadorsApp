@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -221,28 +222,27 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
       SigninUtil.getInstance(PostPollActivity.this,
               PostPollActivity.this).show();
     }else {
-          if (likeTv.getCurrentTextColor() == getResources().getColor(R.color.red)) {
+          int type = 0;
+          if (GlobalVariables.getLikesList().contains(postData.getPostId())) {
 
             likeTv.setTextColor(getResources().getColor(R.color.black));
 
             likesTv.setText(String.valueOf(
                     (Integer.parseInt(likesTv.getText().toString()) - 1)));
 
-            PostData.likePost(postData.getPostId(),postData.getTitle(), PostData.TYPE_POLL,
-                    postData.getPublisherId(), this
-                    ,getIntent().hasExtra("isForUser"),PostData.TYPE_POLL,likeTv);
+            type = 2;
           } else {
             likeTv.setTextColor(getResources().getColor(R.color.red));
 
             likesTv.setText(String.valueOf(
                     (Integer.parseInt(likesTv.getText().toString()) + 1)));
 
-            PostData.likePost(postData.getPostId(),postData.getTitle(), PostData.TYPE_POLL,
-                    postData.getPublisherId(), this
-                    ,getIntent().hasExtra("isForUser"),PostData.TYPE_POLL,likeTv);
-
-
+            type = 1;
           }
+
+          PostData.likePost(postData.getPostId(),postData.getTitle(), type,
+                  postData.getPublisherId(), this
+                  ,getIntent().hasExtra("isForUser"),PostData.TYPE_POLL,likeTv);
         }
 
 
@@ -277,7 +277,6 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
     pollRv.setHasFixedSize(true);
 
 
-
     postRef.collection("UserVotes")
             .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
             .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -287,8 +286,6 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
         if (snapshot.exists()) {
           chosenOption = snapshot.get("voteOption", Integer.class);
         }
-
-
 
         boolean hasEnded;
 
@@ -322,6 +319,12 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
         }else{
           Log.d("ttt","no option selected");
           adapter.showProgress = hasEnded;
+        }
+
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (GlobalVariables.getRole().equals("Admin") || (user!=null && user.getUid().equals(postData.getPublisherId()))) {
+          adapter.showProgress = true;
         }
 
         Log.d("ttt","chosenOption: "+chosenOption);

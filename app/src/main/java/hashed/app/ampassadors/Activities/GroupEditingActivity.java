@@ -733,8 +733,7 @@ public class GroupEditingActivity extends AppCompatActivity implements View.OnCl
 
                   final Data data = new Data(
                           currentUid,
-                          username+" "+
-                                  getResources().getString(R.string.added_to_group),
+                          username+" "+ getResources().getString(R.string.added_to_group),
                           groupNameEd.getText().toString().trim(),
                           groupImageUrl,
                           "Group added",
