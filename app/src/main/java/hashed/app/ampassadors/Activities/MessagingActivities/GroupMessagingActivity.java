@@ -93,7 +93,7 @@ public class GroupMessagingActivity extends MessagingActivity{
             if (value.contains("imageUrl")) {
               groupImageUrl = value.getString("imageUrl");
               if(groupImageUrl!=null && !groupImageUrl.isEmpty()){
-                Picasso.get().load(groupImageUrl).fit().into(messagingTbProfileIv);
+                Picasso.get().load(groupImageUrl).fit().centerCrop().into(messagingTbProfileIv);
               }
             }
             messagingTbNameTv.setText(groupName = value.getString("groupName"));
