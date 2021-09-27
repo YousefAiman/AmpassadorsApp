@@ -120,10 +120,15 @@ public class MainActivity extends AppCompatActivity {
                   addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                      GlobalVariables.getInstance().setRole(documentSnapshot.getString("Role"));
-                      if(documentSnapshot.contains("token")){
-                        GlobalVariables.setCurrentToken(documentSnapshot.getString("token"));
-                      }
+                      GlobalVariables.setRole(documentSnapshot.getString("Role"));
+
+                      FirebaseMessaging.getInstance().getToken().addOnSuccessListener(new OnSuccessListener<String>() {
+                        @Override
+                        public void onSuccess(String s) {
+                          documentSnapshot.getReference().update("token",s);
+                          GlobalVariables.setCurrentToken(s);
+                        }
+                      });
 
                     }
                   }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -158,8 +163,6 @@ public class MainActivity extends AppCompatActivity {
                       startHomeActivity();
                       return;
                   }
-
-
 
                   Intent finalIntent = intent;
                   startActivity(finalIntent);

@@ -105,7 +105,7 @@ public class CourseMessagingActivity extends MessagingActivity{
     messagingDatabaseRef =
             FirebaseDatabase.getInstance().getReference().child("GroupMessages").getRef();
 
-    databaseMessagesRef =  messagingDatabaseRef.child(messagingUid).child("Messages");
+    databaseMessagesRef = messagingDatabaseRef.child(messagingUid).child("Messages");
 
     firebaseMessageDocRef = FirebaseFirestore.getInstance()
             .collection("Courses").document(messagingUid);
@@ -147,9 +147,12 @@ public class CourseMessagingActivity extends MessagingActivity{
 
                     } else if (zoomConstraint.getVisibility() == View.VISIBLE) {
 
-                      zoomConstraint.setVisibility(View.GONE);
-                      currentZoomMeeting = null;
+                      if(currentZoomMeeting!=null){
+                        FirebaseMessaging.getInstance().unsubscribeFromTopic(currentZoomMeeting.getTopic());
+                        currentZoomMeeting = null;
+                      }
 
+                      zoomConstraint.setVisibility(View.GONE);
 
                       if(!isInitial[0]){
                         Toast.makeText(CourseMessagingActivity.this, "Zoom Meeting has ended!",

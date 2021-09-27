@@ -170,35 +170,32 @@ public class MeetingMessagingActivity extends MessagingActivity{
 
                     if (value.contains("currentZoomMeeting")) {
 
+                      final ZoomMeeting zoomMeeting =
+                              value.get("currentZoomMeeting", ZoomMeeting.class);
 
-                      if (value.get("currentZoomMeeting", ZoomMeeting.class)!=null) {
+                      if (zoomMeeting != null) {
 
-                        currentZoomMeeting = value.get("currentZoomMeeting", ZoomMeeting.class);
+                        if(currentZoomMeeting != null &&
+                                currentZoomMeeting.getId().equals(zoomMeeting.getId())){
+                          currentZoomMeeting.setStatus("started");
+                        }else{
+                          currentZoomMeeting = zoomMeeting;
+                          showZoomMeeting(currentZoomMeeting);
+                        }
 
-//                        final long endTime = zoomMeeting.getStartTime() +
-//                                (zoomMeeting.getDuration() * DateUtils.MINUTE_IN_MILLIS);
-//
-//                        Log.d("ttt", "current time: " + System.currentTimeMillis());
-//                        Log.d("ttt", "endTime: " + endTime);
-//
-//                        if (System.currentTimeMillis() >= endTime) {
-//                          value.getReference().update("currentZoomMeeting", null);
-//                        } else {
-//                          showZoomMeeting(zoomMeeting);
-//                        }
-                        showZoomMeeting(currentZoomMeeting);
 
                       } else if (zoomConstraint.getVisibility() == View.VISIBLE) {
 
                         if(currentZoomMeeting!=null){
-                          FirebaseMessaging.getInstance().subscribeToTopic(currentZoomMeeting.getTopic());
+                          FirebaseMessaging.getInstance().unsubscribeFromTopic(currentZoomMeeting.getTopic());
+                          currentZoomMeeting = null;
                         }
+
                         zoomConstraint.setVisibility(View.GONE);
 
                         Toast.makeText(MeetingMessagingActivity.this,
                                 "Zoom Meeting has ended!",
                                 Toast.LENGTH_SHORT).show();
-                        currentZoomMeeting = null;
                     }
                   }
                   }
@@ -626,6 +623,7 @@ public class MeetingMessagingActivity extends MessagingActivity{
           }else{
             startZoomMeetingIntent(zoomMeeting.getStartUrl());
           }
+
 
         }else if(zoomMeeting.getStartUrl() != null && !zoomMeeting.getStartUrl().isEmpty()){
           startZoomMeetingIntent(zoomMeeting.getJoinUrl());

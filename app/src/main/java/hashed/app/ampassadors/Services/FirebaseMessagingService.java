@@ -123,8 +123,9 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
               case ZoomRequestCreator.ZOOM_MEETING_STARTED:
 
+              updateStartedZoomMeeting(zoomMeetingId);
 
-                break;
+              break;
           }
 
         }catch (NumberFormatException e){
@@ -398,7 +399,14 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
           if(snap.contains("currentZoomMeeting") && snap.get("currentZoomMeeting") != null){
 
             queryDocumentSnapshots.getDocuments().get(0).getReference()
-                    .update("currentZoomMeeting.status","started");
+                    .update("currentZoomMeeting.status","started").addOnSuccessListener(new OnSuccessListener<Void>() {
+              @Override
+              public void onSuccess(Void unused) {
+
+
+
+              }
+            });
 
           }
         }
