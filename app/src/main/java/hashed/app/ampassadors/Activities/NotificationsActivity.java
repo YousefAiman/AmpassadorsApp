@@ -359,6 +359,8 @@ public class NotificationsActivity extends AppCompatActivity implements
 
     final String notificationPath = currentUid + "_" + n.getDestinationId() + "_" + n.getType();
 
+    GlobalVariables.getMessagesNotificationMap().remove(n.getDestinationId() + n.getType());
+
     FirebaseFirestore.getInstance().collection("Notifications")
             .document(notificationPath).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
       @Override
@@ -416,6 +418,8 @@ public class NotificationsActivity extends AppCompatActivity implements
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
 
       if (WifiUtil.checkWifiConnection(viewHolder.itemView.getContext())) {
+
+
 
         deleteNotif(newerNotifications.get(viewHolder.getAdapterPosition()));
 

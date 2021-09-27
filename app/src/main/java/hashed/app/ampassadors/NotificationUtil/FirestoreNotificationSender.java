@@ -24,6 +24,8 @@ public class FirestoreNotificationSender {
           TYPE_POLL_LIKE = "pollLike",
   /*works*/     TYPE_POST_COMMENT = "postComment",
   /*works*/     TYPE_POLL_COMMENT = "pollComment",
+  /*works*/     TYPE_POST_REPLY = "postReply",
+  /*works*/     TYPE_POLL_REPLY = "pollReply",
 
 //          TYPE_POLL_COMMENT = "pollComment",
 //          TYPE_POLL_COMMENT = "pollComment",

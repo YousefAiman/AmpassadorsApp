@@ -120,18 +120,19 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
     setStyle(DialogFragment.STYLE_NORMAL, R.style.ThemeOverlay_Demo_BottomSheetDialog);
 
     comments = new ArrayList<>();
-    commentsAdapter = new CommentsAdapter(comments, this, postId, getContext());
+
     postsRef = FirebaseFirestore.getInstance().collection("Posts");
 
     DocumentReference documentReference;
     if(isUserPost){
-
+      commentsAdapter = new CommentsAdapter(comments, this, postId, requireActivity(),creatorId);
       documentReference = FirebaseFirestore.getInstance().collection("Users")
               .document(creatorId)
               .collection("UserPosts")
               .document(postId);
 
     }else{
+      commentsAdapter = new CommentsAdapter(comments, this, postId, requireActivity());
       documentReference = postsRef.document(postId);
 
     }
@@ -306,6 +307,50 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
 
   }
 
+  private void sendReplyNotification(String message,String userId){
+
+    final DocumentReference userRef =
+            FirebaseFirestore.getInstance().collection("Users")
+                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+    userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+      @Override
+      public void onSuccess(DocumentSnapshot snapshot) {
+        if (snapshot.exists()) {
+          final String username = snapshot.getString("username");
+          final String imageUrl = snapshot.getString("imageUrl");
+
+          final String currentUid =FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+          final String notificationType = postType == PostData.TYPE_NEWS? FirestoreNotificationSender.TYPE_POST_REPLY:FirestoreNotificationSender.TYPE_POLL_REPLY ;
+
+          FirestoreNotificationSender.sendFirestoreNotification(
+                  userId,
+                  notificationType,
+                  message,
+                  username + " replied to your comment",
+                  postId);
+
+          final Data data = new Data(
+                  currentUid,
+                  message,
+                  username + " replied to your comment",
+                  null,
+                  "Post Comment",
+                  notificationType,
+                  postId);
+
+          if(imageUrl!=null && !imageUrl.isEmpty()){
+            data.setSenderImageUrl(imageUrl);
+          }
+
+          CloudMessagingNotificationsSender.sendNotification(userId, data);
+        }
+      }
+    });
+
+  }
+
 
   private void sendCommentNotification(String message) {
 
@@ -335,8 +380,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
 
             final DocumentReference userRef =
                     FirebaseFirestore.getInstance().collection("Users")
-                            .document(FirebaseAuth.getInstance()
-                                    .getCurrentUser().getUid());
+                            .document(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
             userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
               @Override
@@ -582,7 +626,10 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                               adapter.notifyItemInserted(replies.size() - 1);
                               rv.smoothScrollToPosition(replies.size() - 1);
 
-                              sendCommentNotification(getResources().getString(R.string.replied_comment));
+                              sendReplyNotification(getResources().getString(R.string.replied_comment),
+                                      comments.get(commentPosition).getUserId());
+
+//                              sendCommentNotification(getResources().getString(R.string.replied_comment));
 
                             }
                           }).addOnFailureListener(new OnFailureListener() {
@@ -671,10 +718,14 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
 
                               comment.setLikedByUser(false);
 
+
                               commentRef.update("likes", FieldValue.increment(-1));
 
-                              likesTv.setClickable(true);
+//                              FirebaseFirestore.getInstance().collection("Users")
+//                                              .document(currentUid).update("Likes",FieldValue.arrayRemove(comment.getCommentId()));
 
+
+                              likesTv.setClickable(true);
 
                             }
                           }).addOnFailureListener(new OnFailureListener() {
@@ -699,7 +750,6 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                 } else {
 
 
-
                   comment.setLikes(comment.getLikes() + 1);
 
                   likesTv.setText(getResources().getString(R.string.likes) + " " +
@@ -718,6 +768,10 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                               comment.setLikedByUser(true);
 
                               commentRef.update("likes", FieldValue.increment(1));
+
+//                              FirebaseFirestore.getInstance().collection("Users")
+//                                      .document(currentUid).update("Likes",FieldValue.arrayUnion(comment.getCommentId()));
+//
 
                               likesTv.setClickable(true);
 
@@ -804,8 +858,6 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                               replyRef.update("likes", FieldValue.increment(-1));
 
                               likesTv.setClickable(true);
-
-
 
                             }
                           }).addOnFailureListener(new OnFailureListener() {

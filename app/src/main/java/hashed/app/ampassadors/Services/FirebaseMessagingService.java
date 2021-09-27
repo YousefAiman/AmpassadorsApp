@@ -540,6 +540,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
             case FirestoreNotificationSender.TYPE_POST_LIKE:
             case FirestoreNotificationSender.TYPE_POST_COMMENT:
             case FirestoreNotificationSender.TYPE_POST_COMMENT_LIKE:
+            case FirestoreNotificationSender.TYPE_POST_REPLY:
 
               destinationIntent = new Intent(this,PostNewsActivity.class)
                       .putExtra("notificationPostId",sourceId);
@@ -549,6 +550,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
             case FirestoreNotificationSender.TYPE_POLL_LIKE:
             case FirestoreNotificationSender.TYPE_POLL_COMMENT:
             case FirestoreNotificationSender.TYPE_POLL_COMMENT_LIKE:
+            case FirestoreNotificationSender.TYPE_POLL_REPLY:
 
              destinationIntent =  new Intent(this, PostPollActivity.class)
                       .putExtra("postId",sourceId).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -42,10 +42,28 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
                          Context context) {
     this.comments = comments;
     this.commentsListener = commentsListener;
-    commentsRef = FirebaseFirestore.getInstance().collection("Posts")
-            .document(postId).collection("Comments");
+      commentsRef = FirebaseFirestore.getInstance().collection("Posts")
+              .document(postId).collection("Comments");
+
+
     redColor = context.getResources().getColor(R.color.red);
         blackColor = context.getResources().getColor(R.color.black);
+
+  }
+
+
+  public CommentsAdapter(List<Comment> comments, CommentsListener commentsListener, String postId,
+                         Context context,String creatorId) {
+    this.comments = comments;
+    this.commentsListener = commentsListener;
+    commentsRef = FirebaseFirestore.getInstance().collection("Users")
+            .document(creatorId).collection("UserPosts")
+            .document(postId).collection("Comments");
+
+
+    redColor = context.getResources().getColor(R.color.red);
+    blackColor = context.getResources().getColor(R.color.black);
+
   }
 
   @NonNull

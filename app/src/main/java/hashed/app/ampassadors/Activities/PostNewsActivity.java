@@ -332,8 +332,8 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
                     postData.getComments(),isForUser,postData.getPublisherId(),
                     PostData.TYPE_NEWS);
 
-
             commentsFragment.show(getSupportFragmentManager(), "CommentsFragment");
+
         } else if (id == newsIv.getId()) {
 
             if (postData.getAttachmentUrl() != null) {
