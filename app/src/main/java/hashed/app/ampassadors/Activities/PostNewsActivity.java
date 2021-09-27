@@ -399,6 +399,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
 //
 //            }
 
+            int type;
             if (GlobalVariables.getLikesList().contains(postData.getPostId())) {
 
                 likeTv.setTextColor(getResources().getColor(R.color.black));
@@ -406,9 +407,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
                 likesTv.setText(String.valueOf(
                         (Integer.parseInt(likesTv.getText().toString()) - 1)));
 
-                PostData.likePost(postData.getPostId(), postData.getTitle(), 2,
-                        postData.getPublisherId(), this,
-                        getIntent().hasExtra("isForUser"), PostData.TYPE_NEWS,likeTv);
+                type = 2;
 
             } else {
 
@@ -417,11 +416,15 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
                 likesTv.setText(String.valueOf(
                         (Integer.parseInt(likesTv.getText().toString()) + 1)));
 
-                PostData.likePost(postData.getPostId(), postData.getTitle(), 1,
-                        postData.getPublisherId(), this,
-                        getIntent().hasExtra("isForUser"),PostData.TYPE_NEWS,likeTv);
+                type = 1;
 
             }
+
+
+            PostData.likePost(postData.getPostId(), postData.getTitle(), type,
+                    postData.getPublisherId(), this,
+                    getIntent().hasExtra("isForUser"),PostData.TYPE_NEWS,likeTv);
+
         }
     }
 

@@ -120,6 +120,11 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
               endZoomMeeting(zoomMeetingId);
 
               break;
+
+              case ZoomRequestCreator.ZOOM_MEETING_STARTED:
+
+
+                break;
           }
 
         }catch (NumberFormatException e){
@@ -378,6 +383,31 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
             }));
   }
 
+  private void updateStartedZoomMeeting(final String zoomMeetingId){
+
+    FirebaseFirestore.getInstance().collection("Meetings")
+            .whereEqualTo("currentZoomMeeting.id",zoomMeetingId)
+            .limit(1)
+            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+      @Override
+      public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
+        if(queryDocumentSnapshots!=null && !queryDocumentSnapshots.isEmpty()){
+
+          final DocumentSnapshot snap =queryDocumentSnapshots.getDocuments().get(0);
+          if(snap.contains("currentZoomMeeting") && snap.get("currentZoomMeeting") != null){
+
+            queryDocumentSnapshots.getDocuments().get(0).getReference()
+                    .update("currentZoomMeeting.status","started");
+
+          }
+        }
+
+      }
+    });
+
+  }
+
   private void endZoomMeeting(final String zoomMeetingId){
 
     FirebaseFirestore.getInstance().collection("Meetings")
@@ -394,24 +424,24 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
             queryDocumentSnapshots.getDocuments().get(0).getReference()
                     .update("currentZoomMeeting",null);
 
-            FirebaseDatabase.getInstance().getReference()
-                    .child("GroupMessages").child(snap.getId()).child("Messages")
-                    .orderByChild("zoomMeeting.id").equalTo(zoomMeetingId)
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                      @Override
-                      public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                        if(snapshot.exists()) {
-                          snapshot.getRef().child("zoomMeeting")
-                                  .child("status").setValue("ended");
-                        }
-                      }
-
-                      @Override
-                      public void onCancelled(@NonNull DatabaseError error) {
-
-                      }
-                    });
+//            FirebaseDatabase.getInstance().getReference()
+//                    .child("GroupMessages").child(snap.getId()).child("Messages")
+//                    .orderByChild("zoomMeeting").equalTo(zoomMeetingId)
+//                    .addListenerForSingleValueEvent(new ValueEventListener() {
+//                      @Override
+//                      public void onDataChange(@NonNull DataSnapshot snapshot) {
+//
+//                        if(snapshot.exists()) {
+//                          snapshot.getRef().child("zoomMeeting")
+//                                  .child("status").setValue("ended");
+//                        }
+//                      }
+//
+//                      @Override
+//                      public void onCancelled(@NonNull DatabaseError error) {
+//
+//                      }
+//                    });
 
           }
         }

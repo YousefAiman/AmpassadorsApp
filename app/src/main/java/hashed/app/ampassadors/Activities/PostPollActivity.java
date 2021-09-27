@@ -332,11 +332,10 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
           adapter.showProgress = hasEnded;
         }
 
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        if (GlobalVariables.getRole().equals("Admin") || (user!=null && user.getUid().equals(postData.getPublisherId()))) {
-          adapter.showProgress = true;
-        }
+//        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//        if (GlobalVariables.getRole().equals("Admin") || (user!=null && user.getUid().equals(postData.getPublisherId()))) {
+//          adapter.showProgress = true;
+//        }
 
         Log.d("ttt","chosenOption: "+chosenOption);
 

@@ -35,6 +35,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,6 +51,7 @@ import hashed.app.ampassadors.Objects.PrivateMessage;
 import hashed.app.ampassadors.Objects.ZoomMeeting;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
+import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.MessagingUtil;
 import hashed.app.ampassadors.Utils.TimeFormatter;
 import hashed.app.ampassadors.Utils.WorkRequester;
@@ -64,6 +66,7 @@ public class CourseMessagingActivity extends MessagingActivity{
   private List<String> courseMembersIdList;
   private String currentMessagingSenders = MEMBERS;
   private String creatorId;
+  private ZoomMeeting currentZoomMeeting;
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,7 +78,7 @@ public class CourseMessagingActivity extends MessagingActivity{
     zoomConstraint = findViewById(R.id.zoomConstraint);
 
 
-    handleNotification(FirestoreNotificationSender.TYPE_MEETING_MESSAGE);
+    handleNotification(FirestoreNotificationSender.TYPE_GROUP_MESSAGE);
 
   }
 
@@ -86,7 +89,7 @@ public class CourseMessagingActivity extends MessagingActivity{
     final String sourceId = intent.getStringExtra("messagingUid");
 
     if (intent.hasExtra("type") &&
-            intent.getStringExtra("type").equals(FirestoreNotificationSender.TYPE_ZOOM)) {
+            intent.getStringExtra("type").equals(FirestoreNotificationSender.TYPE_ZOOM_COURSE)) {
 
       messagingUid = sourceId.split("-")[0];
       final String joinUrl = sourceId.split("-")[1];
@@ -126,6 +129,35 @@ public class CourseMessagingActivity extends MessagingActivity{
                                   @Nullable FirebaseFirestoreException error) {
 
                 if (value != null) {
+
+                  if (value.contains("currentZoomMeeting")) {
+
+                    final ZoomMeeting zoomMeeting =
+                            value.get("currentZoomMeeting", ZoomMeeting.class);
+
+                    if (zoomMeeting != null) {
+
+                      if(currentZoomMeeting!=null && currentZoomMeeting.getId().equals(zoomMeeting.getId())){
+                        currentZoomMeeting.setStatus("started");
+                      }else{
+                        currentZoomMeeting = zoomMeeting;
+                        showZoomMeeting(currentZoomMeeting);
+
+                      }
+
+                    } else if (zoomConstraint.getVisibility() == View.VISIBLE) {
+
+                      zoomConstraint.setVisibility(View.GONE);
+                      currentZoomMeeting = null;
+
+
+                      if(!isInitial[0]){
+                        Toast.makeText(CourseMessagingActivity.this, "Zoom Meeting has ended!",
+                                Toast.LENGTH_SHORT).show();
+                      }
+
+                    }
+                  }
 
                   if (isInitial[0]) {
                     messagingTbNameTv.setText(groupName = value.getString("title"));
@@ -173,36 +205,10 @@ public class CourseMessagingActivity extends MessagingActivity{
 
                     }
 
-                    if (value.contains("currentZoomMeeting")) {
-
-                      final ZoomMeeting zoomMeeting =
-                              value.get("currentZoomMeeting", ZoomMeeting.class);
-
-                      if (zoomMeeting != null) {
-
-
-//                        final long endTime = zoomMeeting.getStartTime() +
-//                                (zoomMeeting.getDuration() * DateUtils.MINUTE_IN_MILLIS);
-//
-//                        Log.d("ttt", "current time: " + System.currentTimeMillis());
-//                        Log.d("ttt", "endTime: " + endTime);
-//
-//                        if (System.currentTimeMillis() >= endTime) {
-//                          value.getReference().update("currentZoomMeeting", null);
-//                        } else {
-//                          showZoomMeeting(zoomMeeting);
-//                        }
-
-                        showZoomMeeting(zoomMeeting);
-                      } else if (zoomConstraint.getVisibility() == View.VISIBLE) {
-
-                        zoomConstraint.setVisibility(View.GONE);
-
-                        Toast.makeText(CourseMessagingActivity.this, "Zoom Meeting has ended!",
-                                Toast.LENGTH_SHORT).show();
-                      }
-                    }
                   }
+
+
+
                 }
               }
             }));
@@ -399,10 +405,19 @@ public class CourseMessagingActivity extends MessagingActivity{
 
     privateMessage.setZoomMeeting(zoomMeeting);
 
-    firebaseMessageDocRef.update("currentZoomMeeting", zoomMeeting);
+    firebaseMessageDocRef.update("currentZoomMeeting", zoomMeeting)
+            .addOnSuccessListener(new OnSuccessListener<Void>() {
+              @Override
+              public void onSuccess(Void unused) {
+
+                FirebaseMessaging.getInstance().subscribeToTopic(zoomMeeting.getId());
+
+              }
+            });
 
     sendMessage(privateMessage);
   }
+
 
 
 //  private void startZoomEndingWorker(PrivateMessage privateMessage,String messageId){
@@ -584,8 +599,16 @@ public class CourseMessagingActivity extends MessagingActivity{
       @Override
       public void onClick(View view) {
 
-        if (zoomMeeting.getStartUrl() != null && !zoomMeeting.getStartUrl().isEmpty()) {
-          startZoomMeetingIntent(zoomMeeting.getStartUrl());
+        if (GlobalVariables.getRole().equals("Admin") || GlobalVariables.getRole().equals("Coordinator")) {
+
+          if(zoomMeeting.getStatus().equals("started")){
+            startZoomMeetingIntent(zoomMeeting.getJoinUrl());
+          }else{
+            startZoomMeetingIntent(zoomMeeting.getStartUrl());
+          }
+
+        }else if(zoomMeeting.getStartUrl() != null && !zoomMeeting.getStartUrl().isEmpty()){
+          startZoomMeetingIntent(zoomMeeting.getJoinUrl());
         }
 
       }

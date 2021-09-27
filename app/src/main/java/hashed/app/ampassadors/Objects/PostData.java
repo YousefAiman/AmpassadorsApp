@@ -187,7 +187,7 @@ public class PostData implements Serializable {
                           if(!creatorId.equals(currentUid)) {
 
                             final String notificationPath = creatorId + "_" + postId + "_" +
-                                    (type == TYPE_NEWS?FirestoreNotificationSender.TYPE_POST_LIKE:FirestoreNotificationSender.TYPE_POLL_LIKE);
+                                    (postType == TYPE_NEWS?FirestoreNotificationSender.TYPE_POST_LIKE:FirestoreNotificationSender.TYPE_POLL_LIKE);
 
                             FirebaseFirestore.getInstance().collection("Notifications")
                                     .document(notificationPath)

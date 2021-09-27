@@ -49,6 +49,7 @@ import hashed.app.ampassadors.Fragments.ChattingFragment;
 import hashed.app.ampassadors.Fragments.MeetingsFragment;
 import hashed.app.ampassadors.Fragments.PostsFragment;
 import hashed.app.ampassadors.Fragments.PostsProfileFragment;
+import hashed.app.ampassadors.NotificationUtil.BadgeUtil;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Services.FirebaseMessagingService;
@@ -642,6 +643,8 @@ public class  Home_Activity extends AppCompatActivity implements
         if (AccessToken.getCurrentAccessToken() != null) {
           LoginManager.getInstance().logOut();
         }
+
+          BadgeUtil.clearBadge(this);
 
         auth.signOut();
 

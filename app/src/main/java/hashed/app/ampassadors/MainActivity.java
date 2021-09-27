@@ -17,11 +17,17 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.RemoteMessage;
+
+import java.util.Iterator;
 
 import hashed.app.ampassadors.Activities.ConnectionActivity;
 import hashed.app.ampassadors.Activities.Home_Activity;
@@ -48,6 +54,31 @@ public class MainActivity extends AppCompatActivity {
     } else {
       startConnectionActivity();
     }
+
+
+//    FirebaseDatabase.getInstance().getReference()
+//            .child("GroupMessages").child("69803fed-51a6-474c-8a95-fd7d88f09488").child("Messages")
+//            .orderByChild("zoomMeeting")
+//            .addListenerForSingleValueEvent(new ValueEventListener() {
+//              @Override
+//              public void onDataChange(@NonNull DataSnapshot snapshot) {
+//
+//                Iterator<DataSnapshot> iterator=  snapshot.getChildren().iterator();
+//
+//                while(iterator.hasNext()){
+//                  iterator.
+//                }
+//
+//              }
+//
+//              @Override
+//              public void onCancelled(@NonNull DatabaseError error) {
+//
+//              }
+//            });
+
+
+
 
 //    startService(new Intent(getBaseContext(), ShutdownService.class));
   }
@@ -91,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                       GlobalVariables.getInstance().setRole(documentSnapshot.getString("Role"));
                       if(documentSnapshot.contains("token")){
-                        GlobalVariables.getInstance().setCurrentToken(documentSnapshot.getString("token"));
+                        GlobalVariables.setCurrentToken(documentSnapshot.getString("token"));
                       }
 
                     }

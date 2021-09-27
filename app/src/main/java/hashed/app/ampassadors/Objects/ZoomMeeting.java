@@ -42,7 +42,7 @@ public class ZoomMeeting {
   @PropertyName("joinUrl")
   private String joinUrl;
 
-  @SerializedName("")
+  @SerializedName("startTime")
   @PropertyName("startTime")
   private long startTime;
 

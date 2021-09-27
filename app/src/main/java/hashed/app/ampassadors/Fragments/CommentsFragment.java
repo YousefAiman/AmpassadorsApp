@@ -675,10 +675,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
 
                               likesTv.setClickable(true);
 
-                              if(!comment.getUserId().equals(currentUid)){
-                                sendCommentLikeNotification(comment.getUserId(),
-                                        comment.getComment(), TYPE_COMMENT_LIKE);
-                              }
+
                             }
                           }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -724,7 +721,10 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
 
                               likesTv.setClickable(true);
 
-
+                              if(!comment.getUserId().equals(currentUid)){
+                                sendCommentLikeNotification(comment.getUserId(),
+                                        comment.getComment(), TYPE_COMMENT_LIKE);
+                              }
 
                             }
                           }).addOnFailureListener(new OnFailureListener() {
@@ -805,11 +805,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
 
                               likesTv.setClickable(true);
 
-                              if(!reply.getUserId().equals(currentUid)){
-                                sendCommentLikeNotification(reply.getUserId(),reply.getReply(),
-                                        TYPE_REPLY_LIKE);
 
-                              }
 
                             }
                           }).addOnFailureListener(new OnFailureListener() {
@@ -820,8 +816,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
 
                       Toast.makeText(getContext(), R.string.failed_to_remove_like, Toast.LENGTH_SHORT).show();
 
-                      likesTv.setText(getResources().getString(R.string.likes) + " " +
-                              (reply.getLikes()));
+                      likesTv.setText(getResources().getString(R.string.likes) + " " + (reply.getLikes()));
 
                       likesTv.setClickable(true);
 
@@ -852,6 +847,11 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                               replyRef.update("likes", FieldValue.increment(1));
 
                               likesTv.setClickable(true);
+
+                              if(!reply.getUserId().equals(currentUid)){
+                                sendCommentLikeNotification(reply.getUserId(),reply.getReply(),
+                                        TYPE_REPLY_LIKE);
+                              }
 
                             }
                           }).addOnFailureListener(new OnFailureListener() {

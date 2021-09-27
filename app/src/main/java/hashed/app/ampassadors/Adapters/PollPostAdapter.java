@@ -186,7 +186,7 @@ public class PollPostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private void bindItem(PollOption pollOption) {
 
-      if (showProgress && totalVotes > 0) {
+      if (showProgress && totalVotes > 0 || GlobalVariables.getRole().equals("Admin")) {
 
         Log.d("ttt", "pollOption: " + pollOption.getVotes());
         Log.d("ttt", "totalVotes: " + totalVotes);
@@ -207,7 +207,10 @@ public class PollPostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
           percentageTv.setText(roundedPercentage +"%");
         }
+
       }
+
+
 
       checkIv.setVisibility(pollOption.getId() == chosenOption ? View.VISIBLE:View.GONE);
 
