@@ -29,7 +29,6 @@
             android:background="@drawable/bottom_nav_back"
             app:menu="@menu/menu_iten_tab"/>
     </LinearLayout>
-
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigationview"
         android:layout_width="320dp"
@@ -38,6 +37,7 @@
         app:itemTextColor="@color/black"
         app:headerLayout="@layout/layout_navegation_header"
         android:layout_gravity="start"/>
+
 
 </androidx.drawerlayout.widget.DrawerLayout>
 

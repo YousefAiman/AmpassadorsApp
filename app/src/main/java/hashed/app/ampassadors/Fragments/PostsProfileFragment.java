@@ -128,7 +128,6 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
                         });
                     }
                 }
-
             }
         });
 

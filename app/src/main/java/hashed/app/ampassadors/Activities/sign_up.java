@@ -466,57 +466,17 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
     }
 
     private void SelectImage(Context context) {
-        //  CHOOSE WHERE WILL UPLOAD THE IMAGE
-        final CharSequence[] options = {getString(R.string.CaptuerPhoto), getString(R.string.OpenGallray), getString(R.string.cancel)};
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(getString(R.string.Title_AlretDialoge));
-        builder.setItems(options, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                if (options[i].equals("Take photo")) {
-                    if (ActivityCompat.checkSelfPermission(sign_up.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
 
-                        Intent pikPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        startActivityForResult(pikPhoto, 1);
+        if (ActivityCompat.checkSelfPermission(sign_up.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
 
-                    } else {
-                        ActivityCompat.requestPermissions(sign_up.this, new String[]{Manifest.permission.CAMERA}, 2);
+            Intent pikPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(pikPhoto, 2);
 
-                    }
-                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+        } else {
+            ActivityCompat.requestPermissions(sign_up.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 2);
 
-                        File photoFile = null;
-                        try {
-                            photoFile = createImageFile();
-                        } catch (IOException ex) {
+        }
 
-                        }
-                        // Continue only if the File was successfully created
-                        if (photoFile != null) {
-                            Uri photoURI = FileProvider.getUriForFile(sign_up.this,
-                                    "hashed.app.ampassadors.provider", photoFile);
-                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                            startActivityForResult(takePictureIntent, CAMERA_REQUEST_CODE);
-                        }
-                    }
-                } else if (options[i].equals("open Gallery")) {
-                    if (ActivityCompat.checkSelfPermission(sign_up.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-
-                        Intent pikPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        startActivityForResult(pikPhoto, 2);
-
-                    } else {
-                        ActivityCompat.requestPermissions(sign_up.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 2);
-
-                    }
-                } else if (options[i].equals("Cancel")) {
-                    dialogInterface.dismiss();
-                }
-            }
-        });
-
-        builder.show();
     }
 
     private File createImageFile() throws IOException {
@@ -578,6 +538,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
 
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_LOCATION_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 intilizeLocationRequester();

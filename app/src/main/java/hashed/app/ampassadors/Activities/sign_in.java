@@ -138,8 +138,6 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String mail = resetMail.getText().toString().trim();
-
-
                         if (TextUtils.isEmpty(mail)) {
                             Toast.makeText(sign_in.this, "Fields are empty", Toast.LENGTH_LONG).show();
                         } else {
@@ -156,8 +154,6 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                             });
                         }
                     }
-
-
                 });
                 passwordResetDaialog.setNegativeButton(R.string.No, new DialogInterface.OnClickListener() {
                     @Override
@@ -299,16 +295,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                                                         finish();
 
                                                     }
-//                                                    else {
 //
-//                                                        auth.signOut();
-//                                                        dialog.dismiss();
-//
-//                                                        Toast.makeText(sign_in.this,
-//                                                                R.string.Appromvent_Message,
-//                                                                Toast.LENGTH_SHORT).show();
-//                                                    }
-                                              //  }
                                             }
                                         }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                             @Override
