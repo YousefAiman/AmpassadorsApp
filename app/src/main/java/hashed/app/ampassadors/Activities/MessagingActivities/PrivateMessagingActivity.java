@@ -72,7 +72,7 @@ public class PrivateMessagingActivity extends MessagingActivity{
         if (documentSnapshot.contains("imageUrl")) {
           String userImageUrl = documentSnapshot.getString("imageUrl");
           if(userImageUrl!=null && !userImageUrl.isEmpty()){
-            Picasso.get().load(userImageUrl).fit().into(messagingTbProfileIv);
+            Picasso.get().load(userImageUrl).fit().centerCrop().into(messagingTbProfileIv);
           }
         }
         messagingTbNameTv.setText(documentSnapshot.getString("username"));
