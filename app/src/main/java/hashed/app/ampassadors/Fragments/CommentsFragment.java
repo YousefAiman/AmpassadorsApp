@@ -349,7 +349,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
 
                   FirestoreNotificationSender.sendFirestoreNotification(
                           creatorId,
-                          postType == PostData.TYPE_NEWS? FirestoreNotificationSender.TYPE_POLL_COMMENT:FirestoreNotificationSender.TYPE_POLL_COMMENT,
+                          postType == PostData.TYPE_NEWS? FirestoreNotificationSender.TYPE_POST_COMMENT:FirestoreNotificationSender.TYPE_POLL_COMMENT,
                           message,
                           username + " Commented on your post", postId);
 
@@ -359,7 +359,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                           username + " Commented on your post",
                           null,
                           "Post Comment",
-                          postType == PostData.TYPE_NEWS? FirestoreNotificationSender.TYPE_POLL_COMMENT:FirestoreNotificationSender.TYPE_POLL_COMMENT,
+                          postType == PostData.TYPE_NEWS? FirestoreNotificationSender.TYPE_POST_COMMENT:FirestoreNotificationSender.TYPE_POLL_COMMENT,
                           postId);
 
                   if(imageUrl!=null && !imageUrl.isEmpty()){
