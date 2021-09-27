@@ -102,6 +102,8 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
   }
   private void getPostData() {
 
+
+
     userIv.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
@@ -112,17 +114,26 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
       }
     });
 
+//    final String identifierTitle = sourceId + sourceType;
+
+    final String postId = getIntent().getStringExtra("postId");
+
+    if(getIntent().hasExtra("notificationType")){
+      final String notificationType = getIntent().getStringExtra("notificationType");
+      GlobalVariables.getMessagesNotificationMap().remove(postId + notificationType);
+    }
+//
 
     if(getIntent().hasExtra("isForUser") && getIntent().getBooleanExtra("isForUser",false)){
 
       postRef = FirebaseFirestore.getInstance().collection("Users")
-              .document(getIntent().getStringExtra("publisherId"))
+              .document(postId)
               .collection("UserPosts")
-              .document(getIntent().getStringExtra("postId"));
+              .document();
 
     }else{
       postRef = FirebaseFirestore.getInstance().collection("Posts")
-              .document(getIntent().getStringExtra("postId"));
+              .document(postId);
     }
 
     postRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {

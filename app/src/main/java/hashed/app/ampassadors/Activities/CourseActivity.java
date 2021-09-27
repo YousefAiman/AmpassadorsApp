@@ -29,6 +29,7 @@ import hashed.app.ampassadors.Objects.Course;
 import hashed.app.ampassadors.Objects.Meeting;
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.TimeFormatter;
 
 public class CourseActivity extends AppCompatActivity implements View.OnClickListener {
@@ -79,8 +80,17 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
 
     }else if(intent.hasExtra("courseID")){
 
+      final String courseID = intent.getStringExtra("courseID");
+
+
+      if(getIntent().hasExtra("notificationType")){
+        final String notificationType = getIntent().getStringExtra("notificationType");
+        GlobalVariables.getMessagesNotificationMap().remove(courseID + notificationType);
+      }
+
+
       FirebaseFirestore.getInstance().collection("Courses")
-              .document(intent.getStringExtra("courseID"))
+              .document(courseID)
               .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
         @Override
         public void onSuccess(DocumentSnapshot documentSnapshot) {

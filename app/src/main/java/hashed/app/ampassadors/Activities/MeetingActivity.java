@@ -28,6 +28,7 @@ import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.Objects.Meeting;
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.TimeFormatter;
 
 public class MeetingActivity extends AppCompatActivity implements View.OnClickListener {
@@ -69,8 +70,15 @@ public class MeetingActivity extends AppCompatActivity implements View.OnClickLi
       fillMeetingInfo();
     }else if(intent.hasExtra("meetingID")){
 
+      final String meetingId = intent.getStringExtra("meetingID");
+
+      if(getIntent().hasExtra("notificationType")){
+        final String notificationType = getIntent().getStringExtra("notificationType");
+        GlobalVariables.getMessagesNotificationMap().remove(meetingId + notificationType);
+      }
+
       FirebaseFirestore.getInstance().collection("Meetings")
-              .document(intent.getStringExtra("meetingID"))
+              .document(meetingId)
               .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
         @Override
         public void onSuccess(DocumentSnapshot documentSnapshot) {

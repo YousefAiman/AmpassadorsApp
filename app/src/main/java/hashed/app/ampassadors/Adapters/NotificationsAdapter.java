@@ -37,6 +37,7 @@ import hashed.app.ampassadors.Objects.Meeting;
 import hashed.app.ampassadors.Objects.Notification;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.TimeFormatter;
 
 public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdapter.NotificationsVh> {
@@ -304,6 +305,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         case FirestoreNotificationSender.TYPE_POLL_COMMENT_LIKE:
 
           notificationDeleter.deleteNotification(notification);
+
+
 
 //          Intent postIntent = new Intent(view.getContext(), PostNewsActivity.class)
 //                  .putExtra("postId", notification.getDestinationId())

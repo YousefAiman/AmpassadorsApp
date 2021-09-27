@@ -518,6 +518,10 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
           }
         }
 
+        if(destinationIntent!=null){
+          destinationIntent.putExtra("notificationType",sourceType);
+        }
+
         return destinationIntent;
   }
 

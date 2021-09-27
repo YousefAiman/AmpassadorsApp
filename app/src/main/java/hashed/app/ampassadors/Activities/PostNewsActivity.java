@@ -65,6 +65,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
     private String fileName;
 
     private DocumentReference postRef;
+    private boolean isForUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +129,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
         if(intent.hasExtra("postId")){
 
             if(getIntent().hasExtra("isForUser") && getIntent().getBooleanExtra("isForUser",false)){
+                isForUser = true;
 
                 postRef = firestore.collection("Users")
                         .document(getIntent().getStringExtra("publisherId"))
@@ -142,7 +144,13 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
             fetchPostData(user);
         }else if(intent.hasExtra("notificationPostId")){
 
+
             final String postId = intent.getStringExtra("notificationPostId");
+
+            if(getIntent().hasExtra("notificationType")){
+                final String notificationType = getIntent().getStringExtra("notificationType");
+                GlobalVariables.getMessagesNotificationMap().remove(postId + notificationType);
+            }
 
             if(user!=null){
 
@@ -153,6 +161,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if(documentSnapshot.exists()){
                             postRef = documentSnapshot.getReference();
+                            isForUser = true;
                         }else{
                             postRef = firestore.collection("Posts").document(postId);
                         }
@@ -320,8 +329,10 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
         } else if (id == commentTv.getId()) {
 
             CommentsFragment commentsFragment = new CommentsFragment(postData.getPostId(),
-                    postData.getComments(),getIntent().hasExtra("isForUser"),postData.getPublisherId(),
+                    postData.getComments(),isForUser,postData.getPublisherId(),
                     PostData.TYPE_NEWS);
+
+
             commentsFragment.show(getSupportFragmentManager(), "CommentsFragment");
         } else if (id == newsIv.getId()) {
 
