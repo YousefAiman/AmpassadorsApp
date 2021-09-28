@@ -6,10 +6,12 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 
@@ -36,7 +38,7 @@ public class ZoomRequestCreator {
         //  String USER_URL = "/users/";
 //  String MEETING_URL = "/meetings";
 //        String JWT_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6IjlHZndUV3hFVDMySG5jMHpySnM4aHciLCJleHAiOjE2NzIzODcyMDAsImlhdCI6MTYyOTQ3MzU1MH0.V022BU2SRzx9afuqlYj7oiJwGI2l8tQR7fPDgG0SLT4";
-        String JWT_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6InhCbU1lRVVOUWJLNFAxQnFHUUNTYmciLCJleHAiOjE2MzMxMDcyNTQsImlhdCI6MTYzMjUwMjQ4M30.mI56U17LcUmCTHQtVpWrz8Ff757Z6O5RGcHhMaZzyq4";
+        String JWT_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6InhCbU1lRVVOUWJLNFAxQnFHUUNTYmciLCJleHAiOjE2NjQzMDgyMDAsImlhdCI6MTYzMjc2Njg3Mn0.PzNf0xi-NM43j1WIJFSkp7i3wfEv2QICOtGivwKYMqI";
 
 //        @Headers({"Content-Type: application/json"})
 //        @POST("/users/{userId}/meetings/")
@@ -221,6 +223,87 @@ public class ZoomRequestCreator {
     }).start();
 
         return zoomMeeting;
+  }
+
+ public static MutableLiveData<Boolean> endZoomMeeting(Context context,String meetingId){
+
+    final MutableLiveData<Boolean> statusLiveData = new MutableLiveData<>();
+    final RequestQueue queue = Volley.newRequestQueue(context);
+
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+
+        final String url = ZoomRequester.BASE_URL + "/meetings/" + meetingId;
+
+//          JsonObjectRequest request = new JsonObjectRequest(com.android.volley.Request.Method.POST, url,
+//                  null, new Response.Listener<JSONObject>() {
+//              @Override
+//              public void onResponse(JSONObject response) {
+//
+//                  Gson gson=new Gson();
+//                  zoomMeeting.setValue(gson.fromJson(response.toString(),ZoomMeeting.class));
+//
+//              }
+//          },
+//                  new Response.ErrorListener() {
+//                      @Override
+//                      public void onErrorResponse(VolleyError error) {
+//                          zoomMeeting.postValue(null);
+//                          Log.d("ttt", "creating meeting failed: " + error.toString());
+//                      }
+//                  }) {
+//              @Override
+//              public Map<String, String> getHeaders() throws AuthFailureError {
+//                  return getAuthHeaders();
+//              }
+//
+//              @Override
+//              public byte[] getBody() {
+//                  return requestBody.getBytes(StandardCharsets.UTF_8);
+//              }
+//          };
+          StringRequest deleteRequest = new StringRequest(Request.Method.DELETE,url,
+                  new Response.Listener<String>() {
+                      @Override
+                      public void onResponse(String response) {
+                          statusLiveData.setValue(true);
+                      }
+                  }, new Response.ErrorListener() {
+              @Override
+              public void onErrorResponse(VolleyError error) {
+
+                  String fullMessage = "deleting meeting failed: " + error.toString();
+
+
+                  if(error.getMessage()!=null){
+                      fullMessage  =fullMessage.concat(" ,"+error.getMessage());
+                  }
+                  if(error.getCause()!=null){
+                      fullMessage  =fullMessage.concat(" ,"+error.getCause().toString());
+                  }
+
+                  Log.d("ttt", fullMessage);
+
+              }
+          }){
+              @Override
+              public Map<String, String> getHeaders() throws AuthFailureError {
+                  return getAuthHeaders();
+              }
+
+              @Override
+              public byte[] getBody() throws AuthFailureError {
+                  return null;
+              }
+          };
+
+        queue.add(deleteRequest);
+
+      }
+    }).start();
+
+        return statusLiveData;
   }
 
 

@@ -425,6 +425,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
   private void sendCommentLikeNotification(String userId,String body,int likeType) {
 
     DocumentReference documentReference;
+    String destinationID;
     if(isUserPost){
 
       documentReference = FirebaseFirestore.getInstance().collection("Users")
@@ -432,8 +433,12 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
               .collection("UserPosts")
               .document(postId);
 
+      destinationID = postId + "|" + creatorId;
+
     }else{
       documentReference = postsRef.document(postId);
+
+      destinationID = postId;
     }
 
 
@@ -463,13 +468,14 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                   final String senderName =
                           username + (likeType == TYPE_COMMENT_LIKE?" Liked your comment":" Liked your reply");
 
+
                   final String notificationType =
                           postType == PostData.TYPE_NEWS
                                   ?FirestoreNotificationSender.TYPE_POST_COMMENT_LIKE
                                   :FirestoreNotificationSender.TYPE_POLL_COMMENT_LIKE;
 
                   FirestoreNotificationSender.sendFirestoreNotification(
-                          userId, notificationType, body, senderName, postId + "|" + creatorId);
+                          userId, notificationType, body, senderName, destinationID);
 
                   final Data data = new Data(
                           currentUid,
@@ -478,7 +484,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
                           null,
                           notificationType,
                           notificationType,
-                          postId + "|" + creatorId);
+                          destinationID);
 
                   if(imageUrl!=null && !imageUrl.isEmpty()){
                     data.setSenderImageUrl(imageUrl);

@@ -129,11 +129,7 @@ public class NotificationsActivity extends AppCompatActivity implements
     isLoadingNotifications = true;
     swipeRefreshLayout.setRefreshing(true);
 
-    Query query = FirebaseFirestore.getInstance().collection("Notifications")
-            .orderBy("timeCreated", Query.Direction.DESCENDING)
-            .whereLessThan("timeCreated", System.currentTimeMillis())
-            .whereEqualTo("receiverId", FirebaseAuth.getInstance().getCurrentUser().getUid())
-            .limit(NOTIFICATIONS_LIMIT);
+    Query query = mainQuery;
 
     if(!isInitial && lastDocSnapshot!=null){
       query = query.startAfter(lastDocSnapshot);
@@ -172,6 +168,7 @@ public class NotificationsActivity extends AppCompatActivity implements
                 resultSize,resultSize);
         if (resultSize < NOTIFICATIONS_LIMIT && scrollListener != null) {
           newestNotificationsRv.removeOnScrollListener(scrollListener);
+          scrollListener = null;
         }
       }
 
@@ -185,139 +182,14 @@ public class NotificationsActivity extends AppCompatActivity implements
 
         addNotificationChangeAndRemoveListener();
 
-        Query newNotifsQuery = FirebaseFirestore.getInstance().collection("Notifications")
+        final Query newNotifsQuery = FirebaseFirestore.getInstance().collection("Notifications")
                 .whereGreaterThan("timeCreated",System.currentTimeMillis())
                 .whereEqualTo("receiverId", FirebaseAuth.getInstance().getCurrentUser().getUid());
         addNotificationsListenerForQuery(newNotifsQuery);
 
-//      newestNotificationsRv.addOnScrollListener(scrollListener = new ScrollListener());
       }
 
-
     });
-
-
-
-//    initialQuery.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-//      @Override
-//      public void onSuccess(QuerySnapshot snapshots) {
-//
-//        if (!snapshots.getDocuments().isEmpty()) {
-//          newerNotifications.addAll(snapshots.toObjects(Notification.class));
-//
-//        }
-//
-//      }
-//    }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//      @Override
-//      public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//        if (task.isSuccessful()) {
-//
-//          if (!newerNotifications.isEmpty()) {
-//            Log.d("ttt", "!newerNotifications.isEmpty()");
-//            newerAdapter.notifyDataSetChanged();
-//          } else {
-//            Log.d("ttt", "newerNotifications.isEmpty()");
-//          }
-//
-//        }
-//
-//        listener = query.whereGreaterThan("timeCreated", System.currentTimeMillis())
-//                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-//                  @Override
-//                  public void onEvent(@Nullable QuerySnapshot value,
-//                                      @Nullable FirebaseFirestoreException error) {
-//
-//                    if (value == null)
-//                      return;
-//
-//
-//                    for (DocumentChange dc : value.getDocumentChanges()) {
-//
-//
-//                      switch (dc.getType()) {
-//
-//                        case ADDED:
-//
-//
-//                          final Notification n = dc.getDocument().toObject(Notification.class);
-//
-//                          if (newerNotifications.size() == 0) {
-//
-//                            newerNotifications.add(n);
-//                            newerAdapter.notifyItemInserted(0);
-//
-//                          } else {
-//                            if (n.getTimeCreated() > newerNotifications.get(0).getTimeCreated()) {
-//                              newerNotifications.add(0, n);
-//                              newerAdapter.notifyItemInserted(0);
-//                            } else {
-//                              newerNotifications.add(n);
-//                              newerAdapter.notifyItemInserted(newerNotifications.size() - 1);
-//                            }
-//                          }
-//
-//                          break;
-//
-//                        case REMOVED:
-//
-//
-//
-//                          break;
-//
-//                        case MODIFIED:
-//
-//                          Notification modifiedNotification;
-//
-//                          modifiedNotification = findNotification(newerNotifications,
-//                                  dc.getDocument().getId());
-//
-////              if(modifiedNotification == null){
-////                modifiedNotification = findNotification(olderNotifications,
-////                        dc.getDocument().getId());
-////              }
-//
-//
-//                          if (modifiedNotification == null) {
-//                            return;
-//                          }
-//
-//
-//                          modifiedNotification.setTimeCreated(dc.getDocument().getLong("timeCreated"));
-//
-//                          int index;
-//
-//                          if (newerNotifications.contains(modifiedNotification)) {
-//                            index = newerNotifications.indexOf(modifiedNotification);
-//
-//                            newerAdapter.notifyItemChanged(index);
-//
-//                            Collections.swap(newerNotifications, index, 0);
-//                            newerAdapter.notifyItemMoved(index, 0);
-//
-//                          } else {
-//
-////                index = olderNotifications.indexOf(modifiedNotification);
-////
-////                olderAdapter.notifyItemChanged(index);
-////
-////                Collections.swap(olderNotifications, index, 0);
-////                olderAdapter.notifyItemMoved(index, 0);
-//                          }
-//
-//                          break;
-//
-//                      }
-//
-//
-//                    }
-//                  }
-//                });
-//
-////        swipeRefreshLayout.setRefreshing(false);
-//
-//      }
-//    });
 
   }
 
@@ -339,7 +211,6 @@ public class NotificationsActivity extends AppCompatActivity implements
     toolbar.setNavigationOnClickListener(v -> finish());
 
   }
-
 
   @Override
   public void onDestroy() {
@@ -394,11 +265,11 @@ public class NotificationsActivity extends AppCompatActivity implements
       listenerRegistrationList.clear();
     }
 
+
     newerNotifications.clear();
     newerAdapter.notifyDataSetChanged();
     lastDocSnapshot = null;
     getNotifications(true);
-
 
   }
 
@@ -579,7 +450,6 @@ public class NotificationsActivity extends AppCompatActivity implements
   }
 
   private void modifyMessage(DocumentSnapshot documentSnapshot,int index){
-
 
     Notification notification = newerNotifications.get(index);
 

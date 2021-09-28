@@ -253,7 +253,6 @@ public class PostsFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         fetchHeaderItems();
 
         if(pageChangeListener!=null){
-
             headerViewPager.removeOnPageChangeListener(pageChangeListener);
         }
 

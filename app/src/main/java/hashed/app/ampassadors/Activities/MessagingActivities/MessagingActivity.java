@@ -37,6 +37,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -88,6 +90,7 @@ import hashed.app.ampassadors.Utils.Files;
 import hashed.app.ampassadors.Utils.FullScreenImagesUtil;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.UploadTaskUtil;
+import hashed.app.ampassadors.Utils.ZoomRequestCreator;
 
 public abstract class MessagingActivity extends AppCompatActivity
         implements Toolbar.OnMenuItemClickListener, PrivateMessagingAdapter.DeleteMessageListener,
@@ -819,7 +822,6 @@ public abstract class MessagingActivity extends AppCompatActivity
               @Override
               public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-
                 if(snapshot.exists()){
 
                   snapshot.getChildren().iterator().next().getRef().child("deleted")
@@ -832,6 +834,24 @@ public abstract class MessagingActivity extends AppCompatActivity
                                                 message.getTime());
                                       }
 
+                                      if(message.getZoomMeeting()!=null){
+
+                                        final MutableLiveData<Boolean> liveData = ZoomRequestCreator.endZoomMeeting(MessagingActivity.this,message.getZoomMeeting().getId());
+
+                                        liveData.observe(MessagingActivity.this, new Observer<Boolean>() {
+                                          @Override
+                                          public void onChanged(Boolean aBoolean) {
+
+                                            if(aBoolean){
+                                              firebaseMessageDocRef.update("currentZoomMeeting",null);
+                                            }
+                                            liveData.removeObserver(this);
+
+                                          }
+                                        });
+
+                                      }
+
                                       dialog.dismiss();
                                     }).addOnFailureListener(e -> {
                               dialog.dismiss();
@@ -840,8 +860,8 @@ public abstract class MessagingActivity extends AppCompatActivity
                                       "لقد فشل حذف الرسالة", Toast.LENGTH_SHORT).show();
 
                               Log.d("ttt", "failed: " + e.getMessage());
-                            });;
-                            ;
+                            });
+
                           }).addOnFailureListener(e -> dialog.dismiss());
                 }
               }
