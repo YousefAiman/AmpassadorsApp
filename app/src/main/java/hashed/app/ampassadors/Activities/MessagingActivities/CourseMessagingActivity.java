@@ -310,7 +310,7 @@ public class CourseMessagingActivity extends MessagingActivity{
               currentImageUrl,
               "Group Messages",
               FirestoreNotificationSender.TYPE_COURSE_MESSAGE,
-              currentUid
+              messagingUid
       );
 
     } else {
