@@ -1,16 +1,15 @@
 package hashed.app.ampassadors.Activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.RemoteMessage;
 
-import java.util.Map;
 import java.util.UUID;
 
 import hashed.app.ampassadors.NotificationUtil.Data;

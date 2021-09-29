@@ -27,7 +27,7 @@ public class FullScreenImagesUtil {
 
         imageDialog.setContentView(R.layout.fragment_image_full_screen);
 
-        final Toolbar toolbar = ((Toolbar)imageDialog.findViewById(R.id.fullScreenToolbar));
+        final Toolbar toolbar = imageDialog.findViewById(R.id.fullScreenToolbar);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

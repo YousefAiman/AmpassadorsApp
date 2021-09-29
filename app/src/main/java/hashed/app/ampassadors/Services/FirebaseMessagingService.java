@@ -20,10 +20,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -211,7 +207,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     Log.d("ttt", "before builder createiong");
 
     final NotificationCompat.Builder builder = new NotificationCompat.Builder(this, sourceType)
-              .setSmallIcon(R.drawable.app_icon_small)
+              .setSmallIcon(R.drawable.ic_logo)
               .setContentTitle(data.get("title"))
               .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
               .setContentText(data.get("body"))
@@ -233,7 +229,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                         .get());
       } else {
         builder.setLargeIcon(BitmapFactory.decodeResource(getResources(),
-                R.drawable.app_icon_small));
+                R.drawable.ic_logo));
       }
 
       Log.d("ttt", "after imageUrl");

@@ -2,7 +2,6 @@ package hashed.app.ampassadors.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,18 +10,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
 import hashed.app.ampassadors.Activities.Complanits_DetailsActivity;
 import hashed.app.ampassadors.Objects.Complaints;
-import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 
 public class ComplaintsAdapter extends RecyclerView.Adapter<ComplaintsAdapter.ComplainsHolder> {

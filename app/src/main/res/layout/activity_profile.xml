@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="48dp"
-            android:background="@drawable/profile_shape"
+            android:background="@null"
             android:ems="10"
 
             android:inputType="textPersonName"
@@ -81,7 +81,7 @@
             android:layout_height="39dp"
             android:layout_marginTop="16dp"
 
-            android:background="@drawable/profile_shape"
+            android:background="@null"
             android:drawableStart="@drawable/ic_baseline_home"
             android:textAlignment="viewStart"
             android:ems="10"
@@ -96,7 +96,7 @@
             android:layout_width="0dp"
             android:layout_height="39dp"
             android:layout_marginTop="16dp"
-            android:background="@drawable/profile_shape"
+            android:background="@null"
             android:drawableStart="@drawable/ic_baseline_place"
             android:textAlignment="viewStart"
 
@@ -112,7 +112,7 @@
             android:layout_width="0dp"
             android:layout_height="39dp"
             android:layout_marginTop="16dp"
-            android:background="@drawable/profile_shape"
+            android:background="@null"
             android:drawableStart="@drawable/ic_baseline_phone"
             android:ems="10"
             android:padding="10dp"
@@ -127,7 +127,7 @@
             android:layout_height="wrap_content"
 
             android:layout_marginTop="8dp"
-            android:background="@drawable/profile_shape"
+            android:background="@null"
             android:drawableStart="@drawable/ic_bio"
             android:padding="10dp"
             android:paddingStart="10dp"

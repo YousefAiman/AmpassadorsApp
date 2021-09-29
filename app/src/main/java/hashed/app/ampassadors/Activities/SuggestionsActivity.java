@@ -1,7 +1,6 @@
 package hashed.app.ampassadors.Activities;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,7 +22,6 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import hashed.app.ampassadors.R;
-import hashed.app.ampassadors.Utils.SigninUtil;
 
 public class SuggestionsActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener {
 

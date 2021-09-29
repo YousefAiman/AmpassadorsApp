@@ -11,24 +11,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import hashed.app.ampassadors.Activities.PostNewsActivity;
-import hashed.app.ampassadors.Activities.PostPollActivity;
-import hashed.app.ampassadors.Objects.PollOption;
-import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.Objects.PostNewsPreview;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;

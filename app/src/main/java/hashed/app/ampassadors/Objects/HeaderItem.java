@@ -1,23 +1,5 @@
 package hashed.app.ampassadors.Objects;
 
-import android.content.Context;
-import android.content.Intent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.viewpager.widget.PagerAdapter;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-
-import hashed.app.ampassadors.Activities.PostNewsActivity;
-import hashed.app.ampassadors.Objects.Course;
-import hashed.app.ampassadors.Objects.PostData;
-import hashed.app.ampassadors.R;
-
 public class HeaderItem  {
 
     String type ;

@@ -6,7 +6,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -187,9 +186,9 @@ public class MeetingsFragment extends Fragment implements SwipeRefreshLayout.OnR
 
 
     if(!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()){
-      if(GlobalVariables.getInstance().getRole()!=null){
-        if (GlobalVariables.getInstance().getRole().equals("Admin") ||
-                GlobalVariables.getInstance().getRole().equals("Coordinator")){
+      if(GlobalVariables.getRole()!=null){
+        if (GlobalVariables.getRole().equals("Admin") ||
+                GlobalVariables.getRole().equals("Coordinator")){
           floatingButton.setVisibility(View.VISIBLE);
           floatingButton.setOnClickListener(this);
         }

@@ -8,16 +8,12 @@ import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,9 +58,7 @@ import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.Objects.PostNewsPreview;
 import hashed.app.ampassadors.Objects.UserPostData;
 import hashed.app.ampassadors.R;
-import hashed.app.ampassadors.Utils.FileDownloadUtil;
 import hashed.app.ampassadors.Utils.Files;
-import hashed.app.ampassadors.Utils.TimeFormatter;
 import hashed.app.ampassadors.Utils.UploadTaskUtil;
 
 

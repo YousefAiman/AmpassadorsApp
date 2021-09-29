@@ -8,7 +8,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import hashed.app.ampassadors.Utils.GlobalVariables;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

@@ -42,8 +42,6 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.common.collect.Iterables;
 import com.google.firebase.auth.FirebaseAuth;
@@ -74,16 +72,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-import hashed.app.ampassadors.Activities.NotificationsActivity;
 import hashed.app.ampassadors.Adapters.PrivateMessagingAdapter;
 import hashed.app.ampassadors.Fragments.FilePickerPreviewFragment;
-import hashed.app.ampassadors.Fragments.ImageFullScreenFragment;
 import hashed.app.ampassadors.Fragments.VideoFullScreenFragment;
 import hashed.app.ampassadors.Fragments.VideoPickerPreviewFragment;
 import hashed.app.ampassadors.Fragments.ZoomMeetingCreationFragment;
 import hashed.app.ampassadors.NotificationUtil.BadgeUtil;
 import hashed.app.ampassadors.NotificationUtil.Data;
-import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.Objects.PrivateMessage;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
@@ -191,11 +186,11 @@ public abstract class MessagingActivity extends AppCompatActivity
     sharedPreferences.edit()
             .putString("currentlyMessagingUid", messagingUid).apply();
 
-    if (GlobalVariables.getInstance().getMessagesNotificationMap() != null) {
+    if (GlobalVariables.getMessagesNotificationMap() != null) {
 
       String title = messagingUid + type;
 
-      if (GlobalVariables.getInstance().getMessagesNotificationMap().containsKey(title)) {
+      if (GlobalVariables.getMessagesNotificationMap().containsKey(title)) {
         Log.d("ttt", "removing: " + title);
 
         NotificationManager notificationManager =
@@ -203,7 +198,7 @@ public abstract class MessagingActivity extends AppCompatActivity
 
         notificationManager.cancel(GlobalVariables.getMessagesNotificationMap().get(title));
 
-        GlobalVariables.getInstance().getMessagesNotificationMap().remove(title);
+        GlobalVariables.getMessagesNotificationMap().remove(title);
 
         if (Build.VERSION.SDK_INT < 26) {
           BadgeUtil.decrementBadgeNum(this);

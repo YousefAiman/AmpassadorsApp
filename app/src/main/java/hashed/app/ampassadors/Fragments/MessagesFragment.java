@@ -78,7 +78,7 @@ public class MessagesFragment extends Fragment{
   private String currentUid;
   private ChatsAdapter adapter;
 
-  private int fetchedItems = 0;
+  private final int fetchedItems = 0;
 
   public MessagesFragment() {
   }

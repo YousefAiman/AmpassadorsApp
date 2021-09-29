@@ -1,10 +1,7 @@
 package hashed.app.ampassadors.Services;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -19,9 +16,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import hashed.app.ampassadors.R;
-import hashed.app.ampassadors.Utils.GlobalVariables;
 
 public class ShutdownService extends Service {
 

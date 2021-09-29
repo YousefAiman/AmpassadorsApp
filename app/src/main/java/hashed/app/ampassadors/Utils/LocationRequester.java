@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Address;
 import android.location.Geocoder;
@@ -14,7 +13,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -31,19 +29,14 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.annotations.NotNull;
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import hashed.app.ampassadors.Activities.sign_up;
 
@@ -51,7 +44,7 @@ public class LocationRequester {
 
   private static final int REQUEST_CHECK_SETTINGS = 100;
   private final Context context;
-  private Activity activity;
+  private final Activity activity;
   private Boolean mRequestingLocationUpdates;
   private FusedLocationProviderClient fusedLocationClient;
   private LocationRequest locationRequest;

@@ -18,17 +18,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.RemoteMessage;
-
-import java.util.Iterator;
 
 import hashed.app.ampassadors.Activities.ConnectionActivity;
 import hashed.app.ampassadors.Activities.CourseActivity;
@@ -43,7 +35,6 @@ import hashed.app.ampassadors.Activities.PostPollActivity;
 import hashed.app.ampassadors.Activities.VideoWelcomeActivity;
 import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.Services.FirebaseMessagingService;
-import hashed.app.ampassadors.Services.ShutdownService;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.WifiUtil;
 
