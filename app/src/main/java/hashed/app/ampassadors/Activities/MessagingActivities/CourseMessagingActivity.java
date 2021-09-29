@@ -326,7 +326,7 @@ public class CourseMessagingActivity extends MessagingActivity{
   private void sendNotificationsToMembers(String body,List<String> groupUsers) {
 
     if(!currentUid.equals(creatorId)){
-      groupUsers.add("creatorId");
+      groupUsers.add(creatorId);
     }
 
     for (String userId : groupUsers) {
