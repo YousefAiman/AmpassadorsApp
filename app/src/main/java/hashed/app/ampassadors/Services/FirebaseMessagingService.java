@@ -44,6 +44,7 @@ import hashed.app.ampassadors.Activities.MessagingActivities.MeetingMessagingAct
 import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity;
 import hashed.app.ampassadors.Activities.PostNewsActivity;
 import hashed.app.ampassadors.Activities.PostPollActivity;
+import hashed.app.ampassadors.MainActivity;
 import hashed.app.ampassadors.NotificationUtil.BadgeUtil;
 import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.NotificationUtil.NotificationDeleteListener;
@@ -269,7 +270,8 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         final PendingIntent pendingIntent = PendingIntent.getActivity(
                 this,
                 notificationNum,
-                directToIntent(sourceId,sourceType),
+//                directToIntent(sourceId,sourceType),
+                new Intent(this, MainActivity.class).putExtra("sourceId",sourceId).putExtra("sourceType",sourceType),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         builder.setContentIntent(pendingIntent);
@@ -309,8 +311,13 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
       try{
 
-        final PendingIntent pendingIntent = PendingIntent.getActivity(this,
-                notificationNum, directToIntent(sourceId,sourceType), PendingIntent.FLAG_ONE_SHOT);
+//        final PendingIntent pendingIntent = PendingIntent.getActivity(this,
+//                notificationNum, directToIntent(sourceId,sourceType), PendingIntent.FLAG_ONE_SHOT);
+
+final PendingIntent pendingIntent = PendingIntent.getActivity(this,
+                notificationNum,
+        new Intent(this, MainActivity.class).putExtra("sourceId",sourceId).putExtra("sourceType",sourceType)
+        , PendingIntent.FLAG_ONE_SHOT);
 
         builder.setContentIntent(pendingIntent);
         getNotificationManager().notify(notificationNum, builder.build());

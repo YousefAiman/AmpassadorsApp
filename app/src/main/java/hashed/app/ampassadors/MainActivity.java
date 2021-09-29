@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,9 +31,15 @@ import com.google.firebase.messaging.RemoteMessage;
 import java.util.Iterator;
 
 import hashed.app.ampassadors.Activities.ConnectionActivity;
+import hashed.app.ampassadors.Activities.CourseActivity;
 import hashed.app.ampassadors.Activities.Home_Activity;
+import hashed.app.ampassadors.Activities.MeetingActivity;
+import hashed.app.ampassadors.Activities.MessagingActivities.CourseMessagingActivity;
+import hashed.app.ampassadors.Activities.MessagingActivities.GroupMessagingActivity;
 import hashed.app.ampassadors.Activities.MessagingActivities.MeetingMessagingActivity;
 import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingActivity;
+import hashed.app.ampassadors.Activities.PostNewsActivity;
+import hashed.app.ampassadors.Activities.PostPollActivity;
 import hashed.app.ampassadors.Activities.VideoWelcomeActivity;
 import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.Services.FirebaseMessagingService;
@@ -54,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
     } else {
       startConnectionActivity();
     }
-
 
 //    FirebaseDatabase.getInstance().getReference()
 //            .child("GroupMessages").child("69803fed-51a6-474c-8a95-fd7d88f09488").child("Messages")
@@ -81,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 //    startService(new Intent(getBaseContext(), ShutdownService.class));
+
   }
 
   private void checkUserCredentials(){
@@ -135,38 +142,42 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
               if(task.isSuccessful()){
-                if (getIntent().hasExtra("destinationBundle")) {
 
-                  final Bundle destinationBundle = getIntent().getBundleExtra("destinationBundle");
+                final Intent intent = getIntent();
+                if (intent!=null && intent.hasExtra("sourceId") && intent.hasExtra("sourceType")) {
 
-                  final String sourceType = destinationBundle.getString("sourceType");
-                  final String sourceId = destinationBundle.getString("sourceId");
-
-                  Intent intent = null;
-
-                  switch (sourceType) {
-                    case FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE:
-                      intent = startPrivateMessagingActivity("messagingUid",sourceId);
-                      break;
-                    case FirestoreNotificationSender.TYPE_MEETING_MESSAGE:
-                      intent = startMeetingMessagingActivity(sourceId);
-                      break;
-                    case FirestoreNotificationSender.TYPE_MEETING_STARTED:
-                      intent = startMeetingsHomeActivity();
-                      break;
-
-                      case FirestoreNotificationSender.TYPE_GROUP_ADDED:
-                        intent = startPrivateMessagingActivity("groupId",sourceId);
-                      break;
-
-                    default:
-                      startHomeActivity();
-                      return;
-                  }
-
-                  Intent finalIntent = intent;
-                  startActivity(finalIntent);
+                  startActivity(directToIntent(intent.getStringExtra("sourceId"),intent.getStringExtra("sourceType")));
                   finish();
+//                  final Bundle destinationBundle = getIntent().getBundleExtra("destinationBundle");
+//
+//                  final String sourceType = destinationBundle.getString("sourceType");
+//                  final String sourceId = destinationBundle.getString("sourceId");
+//
+//                  Intent intent = null;
+//
+//                  switch (sourceType) {
+//                    case FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE:
+//                      intent = startPrivateMessagingActivity("messagingUid",sourceId);
+//                      break;
+//                    case FirestoreNotificationSender.TYPE_MEETING_MESSAGE:
+//                      intent = startMeetingMessagingActivity(sourceId);
+//                      break;
+//                    case FirestoreNotificationSender.TYPE_MEETING_STARTED:
+//                      intent = startMeetingsHomeActivity();
+//                      break;
+//
+//                      case FirestoreNotificationSender.TYPE_GROUP_ADDED:
+//                        intent = startPrivateMessagingActivity("groupId",sourceId);
+//                      break;
+//
+//                    default:
+//                      startHomeActivity();
+//                      return;
+//                  }
+//
+//                  Intent finalIntent = intent;
+//                  startActivity(finalIntent);
+//                  finish();
 
 //                  Intent finalIntent = intent;
 //                  new Handler().postDelayed(new Runnable() {
@@ -262,4 +273,149 @@ public class MainActivity extends AppCompatActivity {
       checkUserCredentials();
     }
   }
+
+
+  private Intent directToIntent(String sourceId,String sourceType){
+
+    Intent destinationIntent = null;
+
+    Log.d("ttt","AppIsRunning");
+    if(sourceType.equals(FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE)
+
+            || sourceType.equals(FirestoreNotificationSender.TYPE_GROUP_MESSAGE)
+            || sourceType.equals(FirestoreNotificationSender.TYPE_GROUP_ADDED)
+
+            || sourceType.equals(FirestoreNotificationSender.TYPE_COURSE_MESSAGE)
+            || sourceType.equals(FirestoreNotificationSender.TYPE_COURSE_STARTED)
+            || sourceType.equals(FirestoreNotificationSender.TYPE_ZOOM_COURSE)
+
+            || sourceType.equals(FirestoreNotificationSender.TYPE_MEETING_MESSAGE)
+            || sourceType.equals(FirestoreNotificationSender.TYPE_MEETING_STARTED)
+            || sourceType.equals(FirestoreNotificationSender.TYPE_ZOOM_MEETING)
+//                || sourceType.equals(FirestoreNotificationSender.TYPE_ZOOM_COURSE)
+//                || sourceType.equals(FirestoreNotificationSender.TYPE_ZOOM_MEETING)
+    ) {
+
+      Log.d("ttt","messaging type");
+
+      switch (sourceType) {
+        case FirestoreNotificationSender.TYPE_PRIVATE_MESSAGE:
+          destinationIntent = new Intent(this, PrivateMessagingActivity.class);
+          break;
+
+        case FirestoreNotificationSender.TYPE_GROUP_MESSAGE:
+        case FirestoreNotificationSender.TYPE_GROUP_ADDED:
+          destinationIntent = new Intent(this, GroupMessagingActivity.class);
+          break;
+
+        case FirestoreNotificationSender.TYPE_COURSE_MESSAGE:
+        case FirestoreNotificationSender.TYPE_COURSE_STARTED:
+        case FirestoreNotificationSender.TYPE_ZOOM_COURSE:
+          destinationIntent = new Intent(this, CourseMessagingActivity.class);
+          break;
+
+        case FirestoreNotificationSender.TYPE_MEETING_MESSAGE:
+        case FirestoreNotificationSender.TYPE_MEETING_STARTED:
+        case FirestoreNotificationSender.TYPE_ZOOM_MEETING:
+          destinationIntent = new Intent(this, MeetingMessagingActivity.class);
+          break;
+      }
+
+      Log.d("ttt","sourceId: "+sourceId);
+      destinationIntent.putExtra("messagingUid", sourceId);
+
+      if(sourceType.equals(FirestoreNotificationSender.TYPE_ZOOM_MEETING) ||
+              sourceType.equals(FirestoreNotificationSender.TYPE_ZOOM_COURSE)){
+        destinationIntent.putExtra("type",sourceType);
+      }
+
+      destinationIntent.setFlags(getIntentFlags(sourceId));
+//          this.startActivity(destinationIntent);
+
+    }else{
+
+      switch (sourceType){
+        case FirestoreNotificationSender.TYPE_MEETING_ADDED:
+          destinationIntent = new Intent(this, MeetingActivity.class);
+          destinationIntent.putExtra("meetingID",sourceId);
+
+          Log.d("ttt","meeting source: "+sourceId);
+//              fetchObjectAndStartIntent(MeetingActivity.class,context,"Meetings",
+//                      Meeting.class,sourceId,"meeting");
+
+          break;
+
+        case FirestoreNotificationSender.TYPE_COURSE_ADDED:
+
+          destinationIntent = new Intent(this, CourseActivity.class);
+          destinationIntent.putExtra("courseID",sourceId);
+
+          break;
+
+        case FirestoreNotificationSender.TYPE_POST_LIKE:
+        case FirestoreNotificationSender.TYPE_POST_COMMENT:
+
+          destinationIntent = new Intent(this, PostNewsActivity.class)
+                  .putExtra("notificationPostId",sourceId);
+
+          break;
+
+        case FirestoreNotificationSender.TYPE_POST_COMMENT_LIKE:
+        case FirestoreNotificationSender.TYPE_POST_REPLY:
+
+          String[] arr = sourceId.split("\\|");
+
+          if(arr.length>0){
+            destinationIntent = new Intent(this,PostNewsActivity.class)
+                    .putExtra("notificationPostId",arr[0])
+                    .putExtra("notificationCreatorId",arr[1]);
+          }else{
+            destinationIntent = new Intent(this,PostNewsActivity.class)
+                    .putExtra("notificationPostId",sourceId);
+          }
+
+
+          break;
+
+        case FirestoreNotificationSender.TYPE_POLL_LIKE:
+        case FirestoreNotificationSender.TYPE_POLL_COMMENT:
+        case FirestoreNotificationSender.TYPE_POLL_COMMENT_LIKE:
+        case FirestoreNotificationSender.TYPE_POLL_REPLY:
+
+          destinationIntent =  new Intent(this, PostPollActivity.class)
+                  .putExtra("postId",sourceId).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+      }
+    }
+
+    if(destinationIntent!=null){
+      destinationIntent.putExtra("notificationType",sourceType);
+    }
+
+    return destinationIntent;
+  }
+
+  private int getIntentFlags(String sourceId){
+
+    Log.d("ttt","checkCurrentMessagingActivity");
+    final SharedPreferences sharedPreferences = getSharedPreferences(getResources().getString(R.string.app_name),
+            Context.MODE_PRIVATE);
+
+    if (GlobalVariables.isAppIsRunning() && sharedPreferences.contains("currentlyMessagingUid")) {
+      if (sourceId.equals(sharedPreferences.getString("currentlyMessagingUid", ""))) {
+        Log.d("ttt", "this messaging activity is already open man");
+        return Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK;
+      } else {
+        Log.d("ttt", "current messaging is not this");
+        return Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK;
+      }
+    } else {
+      Log.d("ttt", "no current messaging in shared");
+      return Intent.FLAG_ACTIVITY_NEW_TASK;
+    }
+
+  }
+
+
+
 }

@@ -20,6 +20,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -129,9 +130,11 @@ public class CoursesActivity extends AppCompatActivity implements
         coursesRv = findViewById(R.id.coursesRv);
         emptyTv = findViewById(R.id.emptyTv);
 
-        if (!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
-            if (GlobalVariables.getInstance().getRole().equals("Admin") ||
-                    GlobalVariables.getInstance().getRole().equals("Coordinator")) {
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user!=null && !user.isAnonymous()) {
+            if (GlobalVariables.getRole()!=null && (GlobalVariables.getRole().equals("Admin") ||
+                    GlobalVariables.getRole().equals("Coordinator"))) {
                 addCourseBtn.setVisibility(View.VISIBLE);
                 addCourseBtn.setOnClickListener(this);
             }

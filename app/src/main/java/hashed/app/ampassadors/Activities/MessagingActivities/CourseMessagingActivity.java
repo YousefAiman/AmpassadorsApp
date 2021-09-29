@@ -171,12 +171,14 @@ public class CourseMessagingActivity extends MessagingActivity{
                     if(value.contains("messagingSenders")){
                       String newMessagingStatus = value.getString("messagingSenders");
 
-                      if(creatorId == null || !creatorId.equals(currentUid)){
+                      if((creatorId == null || !creatorId.equals(currentUid)) && newMessagingStatus!=null){
                         changeMessagingStatus(newMessagingStatus,currentMessagingSenders);
                       }
 
+
                       currentMessagingSenders = newMessagingStatus;
                     }
+
 
 
                     if(creatorId!=null && creatorId.equals(currentUid)){
@@ -194,7 +196,7 @@ public class CourseMessagingActivity extends MessagingActivity{
                     if(value.contains("messagingSenders")){
                       String newMessagingStatus = value.getString("messagingSenders");
 
-                      if(creatorId == null || !creatorId.equals(currentUid)){
+                      if(newMessagingStatus!=null && (creatorId == null || !creatorId.equals(currentUid))){
                         changeMessagingStatus(newMessagingStatus,currentMessagingSenders);
                       }
 
@@ -641,8 +643,6 @@ public class CourseMessagingActivity extends MessagingActivity{
     }else if(item.getItemId() == R.id.action_send_messages){
 
       showMessageSendingOptionsDialog(currentMessagingSenders);
-
-    }else if(item.getItemId() == R.id.action_edit_group){
 
     }
 

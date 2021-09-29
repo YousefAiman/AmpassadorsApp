@@ -8,9 +8,6 @@
             <item android:id="@+id/action_end_course"
                 android:title="@string/end_course"/>
 
-            <item android:id="@+id/action_edit_group"
-                android:title="@string/edit_group"
-                android:icon="@drawable/ic_baseline_edit"/>
 
             <item android:id="@+id/action_send_messages"
                 android:title="@string/send_messages"/>

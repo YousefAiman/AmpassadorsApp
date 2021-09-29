@@ -196,6 +196,11 @@ public class MeetingMessagingActivity extends MessagingActivity{
                         Toast.makeText(MeetingMessagingActivity.this,
                                 "Zoom Meeting has ended!",
                                 Toast.LENGTH_SHORT).show();
+                        if(!isInitial[0]){
+                          Toast.makeText(MeetingMessagingActivity.this, "Zoom Meeting has ended!",
+                                  Toast.LENGTH_SHORT).show();
+                        }
+
                     }
                   }
                   }
