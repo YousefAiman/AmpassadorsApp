@@ -3,10 +3,8 @@ package hashed.app.ampassadors.Objects;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
-import com.google.firebase.firestore.Exclude;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 @IgnoreExtraProperties

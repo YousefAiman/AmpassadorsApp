@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,18 +19,14 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import hashed.app.ampassadors.Activities.PostNewsActivity;
 import hashed.app.ampassadors.Activities.PostPollActivity;
 import hashed.app.ampassadors.Objects.PollOption;
-import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.Objects.PostPollPreview;
 import hashed.app.ampassadors.R;
-import hashed.app.ampassadors.Utils.Files;
 
 public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.PollPreviewVh> {
 
@@ -60,7 +55,7 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.PollPreviewV
 
   @Override
   public void onBindViewHolder(@NonNull PollPreviewVh holder, int position) {
-    ((PollPreviewVh) holder).bind(posts.get(position));
+    holder.bind(posts.get(position));
   }
 
   @Override

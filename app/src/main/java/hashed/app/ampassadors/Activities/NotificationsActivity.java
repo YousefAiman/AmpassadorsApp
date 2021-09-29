@@ -17,9 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -31,14 +29,11 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import hashed.app.ampassadors.Adapters.NotificationsAdapter;
-import hashed.app.ampassadors.Fragments.PostsFragment;
 import hashed.app.ampassadors.NotificationUtil.BadgeUtil;
 import hashed.app.ampassadors.Objects.Notification;
-import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.WifiUtil;
@@ -333,13 +328,13 @@ public class NotificationsActivity extends AppCompatActivity implements
     final String identifierTitle =
             notification.getDestinationId() + notification.getType();
 
-    if (GlobalVariables.getInstance().getMessagesNotificationMap() != null) {
-      if (GlobalVariables.getInstance().getMessagesNotificationMap().containsKey(identifierTitle)) {
+    if (GlobalVariables.getMessagesNotificationMap() != null) {
+      if (GlobalVariables.getMessagesNotificationMap().containsKey(identifierTitle)) {
 
 
         ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE))
-                .cancel(GlobalVariables.getInstance().getMessagesNotificationMap().get(identifierTitle));
-        GlobalVariables.getInstance().getMessagesNotificationMap().remove(identifierTitle);
+                .cancel(GlobalVariables.getMessagesNotificationMap().get(identifierTitle));
+        GlobalVariables.getMessagesNotificationMap().remove(identifierTitle);
 
       }
     }

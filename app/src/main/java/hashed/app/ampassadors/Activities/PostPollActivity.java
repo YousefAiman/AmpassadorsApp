@@ -1,6 +1,5 @@
 package hashed.app.ampassadors.Activities;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,7 +18,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -31,7 +29,6 @@ import java.util.ArrayList;
 
 import hashed.app.ampassadors.Adapters.PollPostAdapter;
 import hashed.app.ampassadors.Fragments.CommentsFragment;
-import hashed.app.ampassadors.Fragments.PostsFragment;
 import hashed.app.ampassadors.Objects.PollOption;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
@@ -177,7 +174,7 @@ public class PostPollActivity extends AppCompatActivity implements View.OnClickL
                   TimeFormatter.MONTH_DAY_YEAR_HOUR_MINUTE));
 
           likeTv.setTextColor(getResources().getColor(
-                  GlobalVariables.getInstance().getLikesList().contains(postData.getPostId()) ? R.color.red :
+                  GlobalVariables.getLikesList().contains(postData.getPostId()) ? R.color.red :
                           R.color.black));
 
           getPollRecycler();

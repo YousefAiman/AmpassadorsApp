@@ -17,7 +17,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
-import hashed.app.ampassadors.Activities.CourseActivity;
 import hashed.app.ampassadors.Activities.MeetingActivity;
 import hashed.app.ampassadors.Activities.PostNewsActivity;
 import hashed.app.ampassadors.Activities.PostPollActivity;

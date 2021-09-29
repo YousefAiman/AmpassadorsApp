@@ -1,6 +1,9 @@
 package hashed.app.ampassadors.Fragments;
 
 
+import static hashed.app.ampassadors.Objects.PostData.TYPE_NEWS;
+import static hashed.app.ampassadors.Objects.PostData.TYPE_POLL;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -31,9 +34,6 @@ import hashed.app.ampassadors.Activities.Home_Activity;
 import hashed.app.ampassadors.Adapters.PostAdapter;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
-
-import static hashed.app.ampassadors.Objects.PostData.TYPE_NEWS;
-import static hashed.app.ampassadors.Objects.PostData.TYPE_POLL;
 
 public class B_Fragment extends Fragment implements Toolbar.OnMenuItemClickListener,
         SwipeRefreshLayout.OnRefreshListener, View.OnClickListener {

@@ -26,7 +26,6 @@ import java.util.List;
 import hashed.app.ampassadors.Activities.MessagingActivities.CourseMessagingActivity;
 import hashed.app.ampassadors.Adapters.UsersAdapter;
 import hashed.app.ampassadors.Objects.Course;
-import hashed.app.ampassadors.Objects.Meeting;
 import hashed.app.ampassadors.Objects.UserPreview;
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.GlobalVariables;

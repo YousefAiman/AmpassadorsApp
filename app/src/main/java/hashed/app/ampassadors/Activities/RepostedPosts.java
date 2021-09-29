@@ -1,11 +1,6 @@
 package hashed.app.ampassadors.Activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import static hashed.app.ampassadors.Objects.PostData.TYPE_POLL;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,6 +8,13 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -24,11 +26,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import hashed.app.ampassadors.Adapters.PostAdapter;
-import hashed.app.ampassadors.Adapters.ReprotedAdapter;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
-
-import static hashed.app.ampassadors.Objects.PostData.TYPE_POLL;
 
 public class RepostedPosts extends AppCompatActivity implements Toolbar.OnMenuItemClickListener,
         SwipeRefreshLayout.OnRefreshListener, View.OnClickListener {

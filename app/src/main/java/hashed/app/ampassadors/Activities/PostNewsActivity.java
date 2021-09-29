@@ -31,11 +31,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Picasso;
+
 import hashed.app.ampassadors.Fragments.CommentsFragment;
-import hashed.app.ampassadors.Fragments.ImageFullScreenFragment;
 import hashed.app.ampassadors.Fragments.VideoFullScreenFragment;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
@@ -211,7 +210,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
                         if (postData.getPublisherId().equals(user.getUid())) {
                             toolbar.inflateMenu(R.menu.post_menu);
 
-                        } else if (GlobalVariables.getInstance().getRole().equals("Admin")) {
+                        } else if (GlobalVariables.getRole().equals("Admin")) {
                             toolbar.inflateMenu(R.menu.admin_menu);
                         } else {
                             toolbar.inflateMenu(R.menu.users_post_menu);
@@ -233,7 +232,7 @@ public class PostNewsActivity extends AppCompatActivity implements View.OnClickL
                             TimeFormatter.MONTH_DAY_YEAR_HOUR_MINUTE));
 
                     likeTv.setTextColor(getResources().getColor(
-                            GlobalVariables.getInstance().getLikesList().contains(postData.getPostId()) ? R.color.red :
+                            GlobalVariables.getLikesList().contains(postData.getPostId()) ? R.color.red :
                                     R.color.black));
 
                     getNewsType();

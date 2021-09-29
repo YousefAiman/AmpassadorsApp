@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,8 +14,8 @@ import hashed.app.ampassadors.R;
 public class WelcomePagerAdapter extends PagerAdapter {
 
     LayoutInflater layoutInflater;
-    private Context context;
-    private String[] strings;
+    private final Context context;
+    private final String[] strings;
     public WelcomePagerAdapter(Context context, String[] strings) {
         this.context = context;
         this.strings = strings;

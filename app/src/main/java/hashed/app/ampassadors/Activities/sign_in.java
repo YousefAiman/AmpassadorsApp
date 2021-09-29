@@ -28,13 +28,11 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
-import com.facebook.login.LoginBehavior;
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
@@ -53,18 +51,15 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import org.json.JSONException;
+
+import java.util.HashMap;
+
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Services.FirebaseMessagingService;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.LocationRequester;
 import hashed.app.ampassadors.Utils.WifiUtil;
-
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-
-import org.json.JSONException;
-
-import java.util.HashMap;
 
 
 public class sign_in extends AppCompatActivity implements View.OnClickListener {
@@ -282,7 +277,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
 //                                                        });
                                                     snapshot.getReference().update("isEmailVerified",true);
 
-                                                    GlobalVariables.getInstance().getInstance().setRole(snapshot.getString("Role"));
+                                                    GlobalVariables.setRole(snapshot.getString("Role"));
 
                                                         FirebaseMessagingService.startMessagingService(sign_in.this);
 
@@ -518,7 +513,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                                         snapshot.getReference().update("token", s);
                                     });
 
-                                    GlobalVariables.getInstance().setRole(snapshot.getString("Role"));
+                                    GlobalVariables.setRole(snapshot.getString("Role"));
 
                                     FirebaseMessagingService.
                                             startMessagingService(sign_in.this);
@@ -737,7 +732,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                                     FirebaseMessaging.getInstance().getToken().addOnSuccessListener(s ->
                                             userRef.update("token", s));
 
-                                    GlobalVariables.getInstance().setRole(task.getResult().getString("Role"));
+                                    GlobalVariables.setRole(task.getResult().getString("Role"));
 
                                     FirebaseMessagingService.
                                             startMessagingService(sign_in.this);

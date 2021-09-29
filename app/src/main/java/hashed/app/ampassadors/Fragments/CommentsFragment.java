@@ -78,9 +78,9 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
   private ChatsScrollListener chatsScrollListener;
   private DocumentSnapshot lastDocSnap;
   private Comment currentFocusedComment;
-  private boolean isUserPost;
-  private String creatorId;
-  private int postType;
+  private final boolean isUserPost;
+  private final String creatorId;
+  private final int postType;
 
   public CommentsFragment(String postId, int commentsCount,boolean isUserPost,
                           String creatorId,int postType) {

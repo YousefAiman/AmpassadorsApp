@@ -1,26 +1,10 @@
 package hashed.app.ampassadors.Objects;
 
-import android.content.Context;
-
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
-
-import hashed.app.ampassadors.NotificationUtil.CloudMessagingNotificationsSender;
-import hashed.app.ampassadors.NotificationUtil.Data;
-import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
-import hashed.app.ampassadors.R;
 
 @IgnoreExtraProperties
 public class PostNewsPreview implements Serializable {

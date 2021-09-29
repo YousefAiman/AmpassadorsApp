@@ -5,7 +5,6 @@ import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
 
 import java.io.Serializable;
-import java.util.List;
 
 @IgnoreExtraProperties
 public class MeetingPreview implements Serializable {

@@ -1,11 +1,8 @@
 package hashed.app.ampassadors.Activities.MessagingActivities;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,8 +18,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -42,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 
 import hashed.app.ampassadors.Adapters.PrivateMessagingAdapter;
-import hashed.app.ampassadors.Fragments.ZoomMeetingCreationFragment;
 import hashed.app.ampassadors.NotificationUtil.CloudMessagingNotificationsSender;
 import hashed.app.ampassadors.NotificationUtil.Data;
 import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
@@ -52,8 +46,6 @@ import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Utils.Files;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.TimeFormatter;
-import hashed.app.ampassadors.Utils.WorkRequester;
-import hashed.app.ampassadors.Workers.ZoomMeetingWorker;
 
 public class MeetingMessagingActivity extends MessagingActivity{
 
