@@ -307,6 +307,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         }
         notificationNum++;
 
+      try{
 
         final PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 notificationNum, directToIntent(sourceId,sourceType), PendingIntent.FLAG_ONE_SHOT);
@@ -314,6 +315,9 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         builder.setContentIntent(pendingIntent);
         getNotificationManager().notify(notificationNum, builder.build());
 
+      }catch(NullPointerException e){
+      Log.d("ttt",e.getMessage());
+      }
 //        listenToNotificationRemoval(data,notificationNum);
 
       }
