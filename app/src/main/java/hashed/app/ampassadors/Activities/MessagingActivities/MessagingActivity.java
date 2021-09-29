@@ -548,43 +548,54 @@ public abstract class MessagingActivity extends AppCompatActivity
 
   private void stopAudioRecorder(String fileName, long startTime, boolean cancel) {
 
-    mediaRecorder.stop();
-    mediaRecorder.release();
-    mediaRecorder = null;
+    try {
+      mediaRecorder.stop();
+      mediaRecorder.release();
+      mediaRecorder = null;
 
-    if (!cancel) {
+      if (!cancel) {
 
-      final long length = System.currentTimeMillis() - startTime;
+        final long length = System.currentTimeMillis() - startTime;
 
-      sendFileMessage(Uri.fromFile(new File(fileName)), Files.AUDIO, null, length, null);
+        sendFileMessage(Uri.fromFile(new File(fileName)), Files.AUDIO, null, length, null);
 
 //      deleteFile(fileName);
 
+      }
+
+      cancelIv.setOnClickListener(null);
+      micIv.setOnClickListener(this);
+
+      messagingEd.setEnabled(true);
+//    messagingEd.setInputType(InputType.TYPE_CLASS_TEXT);
+      messagingEd.setFocusable(true);
+      messagingEd.setFocusableInTouchMode(true);
+
+      new Handler().post(() -> {
+
+        messageAttachIv.setVisibility(View.VISIBLE);
+        messageSendIv.setVisibility(View.VISIBLE);
+        cancelIv.setVisibility(View.GONE);
+
+        DrawableCompat.setTint(
+                DrawableCompat.wrap(micIv.getDrawable()),
+                getResources().getColor(R.color.black)
+        );
+
+        messagingEd.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+        messagingEd.setText("");
+
+      });
+    }catch (RuntimeException e){
+
+      if(!cancel){
+        stopAudioRecorder(null, 0, true);
+      }
+      Log.d("ttt","stopping audio failed: "+e.getMessage());
+
     }
 
-    cancelIv.setOnClickListener(null);
-    micIv.setOnClickListener(this);
 
-    messagingEd.setEnabled(true);
-//    messagingEd.setInputType(InputType.TYPE_CLASS_TEXT);
-    messagingEd.setFocusable(true);
-    messagingEd.setFocusableInTouchMode(true);
-
-    new Handler().post(() -> {
-
-      messageAttachIv.setVisibility(View.VISIBLE);
-      messageSendIv.setVisibility(View.VISIBLE);
-      cancelIv.setVisibility(View.GONE);
-
-      DrawableCompat.setTint(
-              DrawableCompat.wrap(micIv.getDrawable()),
-              getResources().getColor(R.color.black)
-      );
-
-      messagingEd.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
-      messagingEd.setText("");
-
-    });
 
   }
 
@@ -1470,12 +1481,12 @@ public abstract class MessagingActivity extends AppCompatActivity
       Files.startImageFetchIntent(MessagingActivity.this);
     });
 
-    parentView.findViewById(R.id.audioIv).setOnClickListener(view -> {
-
-//        bsd.dismiss();
+//    parentView.findViewById(R.id.audioIv).setOnClickListener(view -> {
 //
-//        Files.startImageFetchIntent(PrivateMessagingActivity.this);
-    });
+////        bsd.dismiss();
+////
+////        Files.startImageFetchIntent(PrivateMessagingActivity.this);
+//    });
 
     parentView.findViewById(R.id.videoIv).setOnClickListener(view -> {
 
@@ -1528,14 +1539,14 @@ public abstract class MessagingActivity extends AppCompatActivity
       Files.startImageFetchIntent(MessagingActivity.this);
     });
 
-    parentView.findViewById(R.id.audioIv).setOnClickListener(view -> {
-      if (checkIsUploading()) {
-        return;
-      }
-//        bsd.dismiss();
-//
-//        Files.startImageFetchIntent(PrivateMessagingActivity.this);
-    });
+//    parentView.findViewById(R.id.audioIv).setOnClickListener(view -> {
+//      if (checkIsUploading()) {
+//        return;
+//      }
+////        bsd.dismiss();
+////
+////        Files.startImageFetchIntent(PrivateMessagingActivity.this);
+//    });
 
     parentView.findViewById(R.id.videoIv).setOnClickListener(view -> {
       if (checkIsUploading()) {

@@ -284,11 +284,11 @@ public class PrivateMessagingActivity extends MessagingActivity{
       Files.startImageFetchIntent(PrivateMessagingActivity.this);
     });
 
-    parentView.findViewById(R.id.audioIv).setOnClickListener(view -> {
-      if (checkIsUploading()) {
-        return;
-      }
-    });
+//    parentView.findViewById(R.id.audioIv).setOnClickListener(view -> {
+//      if (checkIsUploading()) {
+//        return;
+//      }
+//    });
 
     parentView.findViewById(R.id.videoIv).setOnClickListener(view -> {
       if (checkIsUploading()) {
