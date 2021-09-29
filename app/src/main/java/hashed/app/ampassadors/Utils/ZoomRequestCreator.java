@@ -33,12 +33,12 @@ public class ZoomRequestCreator {
 
         // Endpoints
         String BASE_URL = "https://api.zoom.us/v2/";
-//          String REQUESTER_EMAIL = "info@icspr.ps";
-        String REQUESTER_EMAIL = "yousefaimanjarada@hotmail.com";
+          String REQUESTER_EMAIL = "info@icspr.ps";
+//        String REQUESTER_EMAIL = "yousefaimanjarada@hotmail.com";
         //  String USER_URL = "/users/";
 //  String MEETING_URL = "/meetings";
-//        String JWT_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6IjlHZndUV3hFVDMySG5jMHpySnM4aHciLCJleHAiOjE2NzIzODcyMDAsImlhdCI6MTYyOTQ3MzU1MH0.V022BU2SRzx9afuqlYj7oiJwGI2l8tQR7fPDgG0SLT4";
-        String JWT_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6InhCbU1lRVVOUWJLNFAxQnFHUUNTYmciLCJleHAiOjE2NjQzMDgyMDAsImlhdCI6MTYzMjc2Njg3Mn0.PzNf0xi-NM43j1WIJFSkp7i3wfEv2QICOtGivwKYMqI";
+        String JWT_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6IjlHZndUV3hFVDMySG5jMHpySnM4aHciLCJleHAiOjE3Mjc2MjgzMDAsImlhdCI6MTYzMjkyODU5NX0.nOstpHiw9USheXjxPWWpPaKxF6u4Me1fr6T_t-Gvw1w";
+//        String JWT_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6InhCbU1lRVVOUWJLNFAxQnFHUUNTYmciLCJleHAiOjE2NjQzMDgyMDAsImlhdCI6MTYzMjc2Njg3Mn0.PzNf0xi-NM43j1WIJFSkp7i3wfEv2QICOtGivwKYMqI";
 
 //        @Headers({"Content-Type: application/json"})
 //        @POST("/users/{userId}/meetings/")
