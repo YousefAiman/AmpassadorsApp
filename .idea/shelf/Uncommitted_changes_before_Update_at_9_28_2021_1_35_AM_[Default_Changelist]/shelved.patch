@@ -1,17 +1,9 @@
-Index: .idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_3_48_PM__Default_Changelist_.xml
-===================================================================
---- .idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_3_48_PM__Default_Changelist_.xml	(revision 592f99a01f4ef6d78242d7f569af6528dddcacfb)
-+++ .idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_3_48_PM__Default_Changelist_.xml	(revision 592f99a01f4ef6d78242d7f569af6528dddcacfb)
-@@ -1,4 +0,0 @@
--<changelist name="Uncommitted_changes_before_Update_at_9_20_2021_3_48_PM_[Default_Changelist]" date="1632142184508" recycled="true" deleted="true">
--  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_3_48_PM_[Default_Changelist]/shelved.patch" />
--  <option name="DESCRIPTION" value="Uncommitted changes before Update at 9/20/2021 3:48 PM [Default Changelist]" />
--</changelist>
-\ No newline at end of file
 Index: .idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_3_48_PM_[Default_Changelist]/shelved.patch
 ===================================================================
---- .idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_3_48_PM_[Default_Changelist]/shelved.patch	(revision 592f99a01f4ef6d78242d7f569af6528dddcacfb)
-+++ .idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_3_48_PM_[Default_Changelist]/shelved.patch	(revision 592f99a01f4ef6d78242d7f569af6528dddcacfb)
+diff --git a/.idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_3_48_PM_[Default_Changelist]/shelved.patch b/.idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_3_48_PM_[Default_Changelist]/shelved.patch
+deleted file mode 100644
+--- a/.idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_3_48_PM_[Default_Changelist]/shelved.patch	(revision 592f99a01f4ef6d78242d7f569af6528dddcacfb)
++++ /dev/null	(revision 592f99a01f4ef6d78242d7f569af6528dddcacfb)
 @@ -1,87 +0,0 @@
 -Index: app/src/main/res/values/strings.xml
 -IDEA additional info:
@@ -100,6 +92,70 @@ Index: .idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_3_48_PM_[Defau
 -+}
 -+
 -+
-diff --git .idea/shelf/Uncommitted_changes_before_Update_at_3_18_2021_1_51_PM__Default_Changelist_.xml .idea/shelf/Uncommitted_changes_before_Update_at_3_18_2021_1_51_PM__Default_Changelist_.xml
-diff --git .idea/shelf/Uncommitted_changes_before_Update_at_9_22_2021_10_38_PM__Default_Changelist_.xml .idea/shelf/Uncommitted_changes_before_Update_at_9_22_2021_10_38_PM__Default_Changelist_.xml
-diff --git .idea/shelf/Uncommitted_changes_before_Update_at_9_24_2021_4_44_PM__Default_Changelist_.xml .idea/shelf/Uncommitted_changes_before_Update_at_9_24_2021_4_44_PM__Default_Changelist_.xml
+Index: .idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_3_48_PM__Default_Changelist_.xml
+===================================================================
+diff --git a/.idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_3_48_PM__Default_Changelist_.xml b/.idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_3_48_PM__Default_Changelist_.xml
+deleted file mode 100644
+--- a/.idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_3_48_PM__Default_Changelist_.xml	(revision 592f99a01f4ef6d78242d7f569af6528dddcacfb)
++++ /dev/null	(revision 592f99a01f4ef6d78242d7f569af6528dddcacfb)
+@@ -1,4 +0,0 @@
+-<changelist name="Uncommitted_changes_before_Update_at_9_20_2021_3_48_PM_[Default_Changelist]" date="1632142184508" recycled="true" deleted="true">
+-  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_9_20_2021_3_48_PM_[Default_Changelist]/shelved.patch" />
+-  <option name="DESCRIPTION" value="Uncommitted changes before Update at 9/20/2021 3:48 PM [Default Changelist]" />
+-</changelist>
+\ No newline at end of file
+Index: .idea/deploymentTargetDropDown.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetDropDown.xml b/.idea/deploymentTargetDropDown.xml
+new file mode 100644
+--- /dev/null	(date 1632776679065)
++++ b/.idea/deploymentTargetDropDown.xml	(date 1632776679065)
+@@ -0,0 +1,17 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="deploymentTargetDropDown">
++    <targetSelectedWithDropDown>
++      <Target>
++        <type value="QUICK_BOOT_TARGET" />
++        <deviceKey>
++          <Key>
++            <type value="VIRTUAL_DEVICE_PATH" />
++            <value value="C:\Users\Ayman\.android\avd\Pixel_3a_API_30.avd" />
++          </Key>
++        </deviceKey>
++      </Target>
++    </targetSelectedWithDropDown>
++    <timeTargetWasSelectedWithDropDown value="2021-09-27T13:35:33.852075800Z" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"GradleMigrationSettings\" migrationVersion=\"1\" />\r\n  <component name=\"GradleSettings\">\r\n    <option name=\"linkedExternalProjectsSettings\">\r\n      <GradleProjectSettings>\r\n        <option name=\"testRunner\" value=\"PLATFORM\" />\r\n        <option name=\"disableWrapperSourceDistributionNotification\" value=\"true\" />\r\n        <option name=\"distributionType\" value=\"DEFAULT_WRAPPED\" />\r\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$\" />\r\n        <option name=\"gradleJvm\" value=\"Embedded JDK\" />\r\n        <option name=\"modules\">\r\n          <set>\r\n            <option value=\"$PROJECT_DIR$\" />\r\n            <option value=\"$PROJECT_DIR$/app\" />\r\n          </set>\r\n        </option>\r\n        <option name=\"resolveModulePerSourceSet\" value=\"false\" />\r\n        <option name=\"useQualifiedModuleNames\" value=\"true\" />\r\n      </GradleProjectSettings>\r\n    </option>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/gradle.xml b/.idea/gradle.xml
+--- a/.idea/gradle.xml	(revision 592f99a01f4ef6d78242d7f569af6528dddcacfb)
++++ b/.idea/gradle.xml	(date 1632776679060)
+@@ -4,7 +4,7 @@
+   <component name="GradleSettings">
+     <option name="linkedExternalProjectsSettings">
+       <GradleProjectSettings>
+-        <option name="testRunner" value="PLATFORM" />
++        <option name="testRunner" value="GRADLE" />
+         <option name="disableWrapperSourceDistributionNotification" value="true" />
+         <option name="distributionType" value="DEFAULT_WRAPPED" />
+         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+@@ -16,7 +16,6 @@
+           </set>
+         </option>
+         <option name="resolveModulePerSourceSet" value="false" />
+-        <option name="useQualifiedModuleNames" value="true" />
+       </GradleProjectSettings>
+     </option>
+   </component>

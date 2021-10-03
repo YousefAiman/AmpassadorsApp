@@ -6,7 +6,7 @@ android {
     signingConfigs {
         release {
 //            storeFile file('C:\\Users\\yousef\\AndroidStudioProjects\\AmpassadorsApp\\keystore.jks')
-            storeFile file('C:\\Users\\yousef\\AndroidStudioProjects\\AmpassadorsApp\\keystore.jks')
+            storeFile file('C:\\Users\\Ayman\\AndroidStudioProjects\\AmpassadorsApp\\keystore.jks')
             storePassword '123456'
             keyAlias 'key0'
             keyPassword '123456'
@@ -19,8 +19,8 @@ android {
         applicationId "hashed.app.ampassadors"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 9
-        versionName "1.1.9"
+        versionCode 10
+        versionName "2.0.0"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
@@ -36,7 +36,6 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            debuggable true
         }
     }
     compileOptions {

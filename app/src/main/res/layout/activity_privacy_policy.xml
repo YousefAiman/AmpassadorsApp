@@ -10,6 +10,7 @@
         layout="@layout/policyprivacytoolbar" />
 
     <ScrollView
+        android:id="@+id/scrollView2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -19,12 +20,25 @@
         app:layout_constraintTop_toBottomOf="@+id/about_toolbar"
         app:layout_constraintVertical_bias="0.0">
 
+
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/textView19"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:padding="10dp"
             android:text="@string/policyPrivacy"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </ScrollView>
+
+
+
+
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

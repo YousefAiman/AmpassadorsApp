@@ -279,17 +279,17 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
 
                                                     GlobalVariables.setRole(snapshot.getString("Role"));
 
-                                                        FirebaseMessagingService.startMessagingService(sign_in.this);
+                                                    FirebaseMessagingService.startMessagingService(sign_in.this);
 
-                                                        Intent intent = new Intent(sign_in.this,
-                                                                Home_Activity.class);
-                                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK |
-                                                                Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                        dialog.dismiss();
-                                                        startActivity(intent);
-                                                        finish();
+                                                    Intent intent = new Intent(sign_in.this,
+                                                            Home_Activity.class);
+                                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                                                            Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                    dialog.dismiss();
+                                                    startActivity(intent);
+                                                    finish();
 
-                                                    }
+                                                }
 //
                                             }
                                         }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -362,7 +362,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
             }
         }else if(view.getId() == facebookbtn.getId()){
             if (WifiUtil.checkWifiConnection(this)) {
-            facebookLoginBtn.setOnClickListener(this);
+                facebookLoginBtn.setOnClickListener(this);
                 facebookLoginBtn.performClick();
             }
         }else if(view.getId() == facebookLoginBtn.getId()){
@@ -418,32 +418,32 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
 
         if(requestCode == GOOGLE_REQUEST){
 //            if(resultCode ==RESULT_OK){
-                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
 
 
             task.addOnSuccessListener(googleSignInAccount -> {
 
                 try {
-                        final GoogleSignInAccount account = task.getResult(ApiException.class);
-                        firebaseAuthWithGoogle(account);
-                    } catch (ApiException e) {
-                        googleProgressDialog.dismiss();
+                    final GoogleSignInAccount account = task.getResult(ApiException.class);
+                    firebaseAuthWithGoogle(account);
+                } catch (ApiException e) {
+                    googleProgressDialog.dismiss();
 
                     Toast.makeText(this,
                             "Failed to sign in using your Gmail account!" +
                                     "Please try again", Toast.LENGTH_SHORT).show();
 
-                        Log.d("ttt","ApiException google: "+e.getMessage());
+                    Log.d("ttt","ApiException google: "+e.getMessage());
 
-                    }
-                }).addOnFailureListener(e -> {
+                }
+            }).addOnFailureListener(e -> {
 
                 Toast.makeText(this,
                         "Failed to sign in using your Gmail account!" +
                                 "Please try again", Toast.LENGTH_SHORT).show();
-                    Log.d("ttt","task google: "+e.toString());
-                    googleProgressDialog.dismiss();
-                });
+                Log.d("ttt","task google: "+e.toString());
+                googleProgressDialog.dismiss();
+            });
         }else if(callbackManager != null){
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
@@ -479,7 +479,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
 
     private void firebaseAuthWithGoogle(final GoogleSignInAccount account) {
 
-       final AuthCredential credential =
+        final AuthCredential credential =
                 GoogleAuthProvider.getCredential(account.getIdToken(), null);
         auth.signInWithCredential(credential)
                 .addOnSuccessListener(authResult -> {
@@ -577,7 +577,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
         hashMap.put("status", false);
         hashMap.put("Role", "Ambassador");
         hashMap.put("isEmailVerified", true);
-         hashMap.put("Bio","");
+        hashMap.put("Bio","");
         GlobalVariables.setRole("Ambassador");
 
         userRef = FirebaseFirestore.getInstance().collection("Users").document(userId);

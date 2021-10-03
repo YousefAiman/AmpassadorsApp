@@ -2,8 +2,10 @@ package hashed.app.ampassadors.Activities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -306,12 +308,7 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
 
                                                 progressDialog.dismiss();
 
-                                                Intent intent = new Intent(sign_up.this, sign_in.class);
-                                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                startActivity(intent);
-                                                finish();
-
-                                                Toast.makeText(sign_up.this, R.string.Email_Verfiy, Toast.LENGTH_SHORT).show();
+                                               verfyDialouge();
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
                                             @Override
@@ -577,5 +574,23 @@ public class sign_up extends AppCompatActivity implements View.OnClickListener {
         spinner.setSelection(spinnerArray.indexOf(defaultSpinnerChoice));
     }
 
+
+    public void verfyDialouge(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.Email_Verfiy_Message));
+        builder.setTitle(getString(R.string.EmailMessage));
+        builder.setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+                Intent intent = new Intent(sign_up.this, sign_in.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+
+            }
+        });
+        builder.create().show();
+    }
 
 }
