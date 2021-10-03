@@ -28,11 +28,13 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
+import com.facebook.login.LoginBehavior;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
@@ -51,15 +53,18 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 
-import org.json.JSONException;
-
-import java.util.HashMap;
-
 import hashed.app.ampassadors.R;
 import hashed.app.ampassadors.Services.FirebaseMessagingService;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 import hashed.app.ampassadors.Utils.LocationRequester;
 import hashed.app.ampassadors.Utils.WifiUtil;
+
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+
+import org.json.JSONException;
+
+import java.util.HashMap;
 
 
 public class sign_in extends AppCompatActivity implements View.OnClickListener {
@@ -277,19 +282,19 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
 //                                                        });
                                                     snapshot.getReference().update("isEmailVerified",true);
 
-                                                    GlobalVariables.setRole(snapshot.getString("Role"));
+                                                    GlobalVariables.getInstance().getInstance().setRole(snapshot.getString("Role"));
 
-                                                        FirebaseMessagingService.startMessagingService(sign_in.this);
+                                                    FirebaseMessagingService.startMessagingService(sign_in.this);
 
-                                                        Intent intent = new Intent(sign_in.this,
-                                                                Home_Activity.class);
-                                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK |
-                                                                Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                        dialog.dismiss();
-                                                        startActivity(intent);
-                                                        finish();
+                                                    Intent intent = new Intent(sign_in.this,
+                                                            Home_Activity.class);
+                                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                                                            Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                    dialog.dismiss();
+                                                    startActivity(intent);
+                                                    finish();
 
-                                                    }
+                                                }
 //
                                             }
                                         }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -362,7 +367,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
             }
         }else if(view.getId() == facebookbtn.getId()){
             if (WifiUtil.checkWifiConnection(this)) {
-            facebookLoginBtn.setOnClickListener(this);
+                facebookLoginBtn.setOnClickListener(this);
                 facebookLoginBtn.performClick();
             }
         }else if(view.getId() == facebookLoginBtn.getId()){
@@ -418,32 +423,32 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
 
         if(requestCode == GOOGLE_REQUEST){
 //            if(resultCode ==RESULT_OK){
-                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
 
 
             task.addOnSuccessListener(googleSignInAccount -> {
 
                 try {
-                        final GoogleSignInAccount account = task.getResult(ApiException.class);
-                        firebaseAuthWithGoogle(account);
-                    } catch (ApiException e) {
-                        googleProgressDialog.dismiss();
+                    final GoogleSignInAccount account = task.getResult(ApiException.class);
+                    firebaseAuthWithGoogle(account);
+                } catch (ApiException e) {
+                    googleProgressDialog.dismiss();
 
                     Toast.makeText(this,
                             "Failed to sign in using your Gmail account!" +
                                     "Please try again", Toast.LENGTH_SHORT).show();
 
-                        Log.d("ttt","ApiException google: "+e.getMessage());
+                    Log.d("ttt","ApiException google: "+e.getMessage());
 
-                    }
-                }).addOnFailureListener(e -> {
+                }
+            }).addOnFailureListener(e -> {
 
                 Toast.makeText(this,
                         "Failed to sign in using your Gmail account!" +
                                 "Please try again", Toast.LENGTH_SHORT).show();
-                    Log.d("ttt","task google: "+e.toString());
-                    googleProgressDialog.dismiss();
-                });
+                Log.d("ttt","task google: "+e.toString());
+                googleProgressDialog.dismiss();
+            });
         }else if(callbackManager != null){
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
@@ -479,7 +484,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
 
     private void firebaseAuthWithGoogle(final GoogleSignInAccount account) {
 
-       final AuthCredential credential =
+        final AuthCredential credential =
                 GoogleAuthProvider.getCredential(account.getIdToken(), null);
         auth.signInWithCredential(credential)
                 .addOnSuccessListener(authResult -> {
@@ -513,7 +518,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                                         snapshot.getReference().update("token", s);
                                     });
 
-                                    GlobalVariables.setRole(snapshot.getString("Role"));
+                                    GlobalVariables.getInstance().setRole(snapshot.getString("Role"));
 
                                     FirebaseMessagingService.
                                             startMessagingService(sign_in.this);
@@ -577,7 +582,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
         hashMap.put("status", false);
         hashMap.put("Role", "Ambassador");
         hashMap.put("isEmailVerified", true);
-         hashMap.put("Bio","");
+        hashMap.put("Bio","");
         GlobalVariables.setRole("Ambassador");
 
         userRef = FirebaseFirestore.getInstance().collection("Users").document(userId);
@@ -732,7 +737,7 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
                                     FirebaseMessaging.getInstance().getToken().addOnSuccessListener(s ->
                                             userRef.update("token", s));
 
-                                    GlobalVariables.setRole(task.getResult().getString("Role"));
+                                    GlobalVariables.getInstance().setRole(task.getResult().getString("Role"));
 
                                     FirebaseMessagingService.
                                             startMessagingService(sign_in.this);

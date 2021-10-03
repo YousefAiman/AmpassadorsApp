@@ -7,10 +7,20 @@
         <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/activity_complanits__details.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/activity_list__sug__com.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/activity_post_news.xml" value="0.19907407407407407" />
-        <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/activity_privacy_policy.xml" value="0.264" />
+        <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/activity_privacy_policy.xml" value="0.152" />
         <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/activity_profile_edit.xml" value="0.2" />
+        <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/activity_sign_in.xml" value="0.264" />
         <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/activity_sign_up.xml" value="0.264" />
         <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/activity_suggestions__dtailes.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/fragment_chatting.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/fragment_zoom_meeting_creation.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/group_message_options_bsd.xml" value="0.264" />
+        <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/meeting_contributor_details_item.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/meeting_item_layout.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/meetings_fragment.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/message_options_bsd.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/post_options_bsd.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ayman/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/private_message_options_bsd.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/yousef/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/activity_post_poll.xml" value="0.209375" />
         <entry key="..\:/Users/yousef/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/activity_privacy_policy.xml" value="0.25" />
         <entry key="..\:/Users/yousef/AndroidStudioProjects/AmpassadorsApp/app/src/main/res/layout/activity_private_messaging.xml" value="0.209375" />

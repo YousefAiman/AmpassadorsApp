@@ -63,7 +63,7 @@
             android:id="@+id/sign_in_btn"
             android:layout_width="167dp"
             android:layout_height="47dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/btn_bg"
             android:elevation="50dp"
             android:text="@string/sign_in"
@@ -78,7 +78,7 @@
             android:id="@+id/forget_pass"
             android:layout_width="0dp"
             android:layout_height="20dp"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="32dp"
             android:clickable="true"
             android:shadowColor="@color/black"
             android:text="@string/forget_password"
@@ -86,17 +86,22 @@
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="@+id/sign_in_btn"
             app:layout_constraintStart_toStartOf="@+id/sign_in_btn"
-            app:layout_constraintTop_toBottomOf="@+id/sign_in_btn" />
+            app:layout_constraintTop_toTopOf="@+id/verify_email" />
 
         <TextView
             android:id="@+id/verify_email"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:clickable="true"
+            android:visibility="gone"
+            android:textAlignment="center"
             android:shadowColor="@color/black"
+            android:text="@string/verify_email"
             android:textColor="@color/black"
-            tools:layout_editor_absoluteX="178dp"
-            tools:layout_editor_absoluteY="406dp"
+            app:layout_constraintEnd_toEndOf="@+id/sign_in_btn"
+            app:layout_constraintStart_toStartOf="@+id/sign_in_btn"
+            app:layout_constraintTop_toBottomOf="@+id/sign_in_btn"
             tools:ignore="MissingConstraints" />
 
         <View

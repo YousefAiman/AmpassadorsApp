@@ -307,7 +307,7 @@
         <string name="important_post">خبر مهم </string>
         <string name="Reporting">ابلاغ</string>
         <string name="Limit_Messgae">الحد المسموح هو 160 حرف </string>
-        <string name="Email_Verfiy_Message">عليك تاكيد حسابك من ثم تسجيل الدخول </string>
+        <string name="Email_Verfiy_Message">عليك تاكيد حسابك من ثم تسجيل الدخول! الرجاء زيارة بريدك الالكتروني للتاكد من ان الرسالة وصلت</string>
         <string name="Login_By_facebook">تسجيل الدخول عن طريق فيسبوك</string>
         <string name="Fail_Login">لقد فشلت عملية تسجيل الدخول:</string>
         <string name="Fail_Login_Use_Gmail">فشلت في التسجيل الدخول عن طريق الجيميل </string>
