@@ -1,6 +1,7 @@
 package hashed.app.ampassadors.Adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +13,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
 
@@ -73,11 +77,26 @@ public class AdminAdapter extends RecyclerView.Adapter<AdminAdapter.AdminHolder>
         @Override
         public void onClick(View view) {
 
-          FirebaseFirestore.getInstance()
-                  .collection("Users").document(userApprovment.getUserId())
+          final FirebaseFirestore firestore =  FirebaseFirestore.getInstance();
+
+          firestore.collection("Users").document(userApprovment.getUserId())
                   .update("rejected",true).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
+
+              firestore.collectionGroup("Comments")
+                      .whereEqualTo("userId",userApprovment.getUserId())
+                      .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                          if(queryDocumentSnapshots!=null){
+                            for(DocumentSnapshot snap:queryDocumentSnapshots){
+                              snap.getReference().update("isDeleted",true);
+                            }
+                          }
+                        }
+                      });
+
               data.remove(userApprovment);
               notifyItemRemoved(getAdapterPosition());
             }

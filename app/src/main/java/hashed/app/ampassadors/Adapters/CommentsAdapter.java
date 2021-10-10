@@ -2,6 +2,7 @@ package hashed.app.ampassadors.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -32,11 +34,10 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
   private final List<Comment> comments;
   private final CollectionReference usersRef =
           FirebaseFirestore.getInstance().collection("Users");
-  private final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+  private final String currentUid;
   private final CommentsListener commentsListener;
   private final CollectionReference commentsRef;
-  private final int redColor
-            ,blackColor;
+  private final int redColor,blackColor;
 
   public CommentsAdapter(List<Comment> comments, CommentsListener commentsListener, String postId,
                          Context context) {
@@ -48,6 +49,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
 
     redColor = context.getResources().getColor(R.color.red);
         blackColor = context.getResources().getColor(R.color.black);
+    currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
   }
 
@@ -63,7 +65,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
 
     redColor = context.getResources().getColor(R.color.red);
     blackColor = context.getResources().getColor(R.color.black);
-
+    currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
   }
 
   @NonNull
@@ -256,7 +258,23 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     @Override
     public boolean onLongClick(View view) {
 
+      final BottomSheetDialog bsd = new BottomSheetDialog(view.getContext(), R.style.SheetDialog);
+      final View parentView = LayoutInflater.from(view.getContext()).inflate(R.layout.comment_options_bsd, null);
+      parentView.setBackgroundColor(Color.TRANSPARENT);
 
+      parentView.findViewById(R.id.tvReport).setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+
+
+          bsd.cancel();
+
+        }
+      });
+
+      bsd.setContentView(parentView);
+      bsd.show();
 
       return false;
     }

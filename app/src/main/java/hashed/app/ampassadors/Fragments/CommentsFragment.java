@@ -138,6 +138,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
     }
 
     commentsQuery = documentReference.collection("Comments")
+            .whereEqualTo("isDeleted",false)
             .limit(COMMENTS_SIZE).orderBy("likes", Query.Direction.DESCENDING);
 
   }

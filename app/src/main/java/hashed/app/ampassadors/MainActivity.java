@@ -56,33 +56,18 @@ public class MainActivity extends AppCompatActivity {
 
 
     FirebaseFirestore.getInstance().collectionGroup("Comments")
-            .whereEqualTo("userId","ThRTTP85NYZIobSj55SfwdMtUYx2")
             .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
       @Override
       public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-
         if(queryDocumentSnapshots!=null){
           for(DocumentSnapshot snap:queryDocumentSnapshots){
-            Log.d("comments",snap.getId());
+            snap.getReference().update("isDeleted",false);
           }
-
-          if(queryDocumentSnapshots.isEmpty()
-          ){
-            Log.d("comments","no comments");
-          }
-        }else{
-
-          Log.d("comments","no comments");
-
         }
-
-      }
-    }).addOnFailureListener(new OnFailureListener() {
-      @Override
-      public void onFailure(@NonNull Exception e) {
-        Log.d("comments","error: "+e.getMessage());
       }
     });
+
+
 
 //    FirebaseDatabase.getInstance().getReference()
 //            .child("GroupMessages").child("69803fed-51a6-474c-8a95-fd7d88f09488").child("Messages")
