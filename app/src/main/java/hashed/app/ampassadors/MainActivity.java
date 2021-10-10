@@ -64,21 +64,44 @@ public class MainActivity extends AppCompatActivity {
         if(queryDocumentSnapshots!=null){
           for(DocumentSnapshot snap:queryDocumentSnapshots){
 
-            snap.getReference().getParent().get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-              @Override
-              public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+            final DocumentReference parentSnap = snap.getReference().getParent().getParent();
+                    if(parentSnap!=null){
+                      parentSnap.update("comments",0);
+                    }
+          }
+        }
+      }
+    }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+      @Override
+      public void onComplete(@NonNull Task<QuerySnapshot> task) {
+        FirebaseFirestore.getInstance().collectionGroup("Comments")
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+          @Override
+          public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+            if(queryDocumentSnapshots!=null){
+              for(DocumentSnapshot snap:queryDocumentSnapshots){
 
-                if(queryDocumentSnapshots!=null){
+                final DocumentReference parentSnap = snap.getReference().getParent().getParent();
 
-                  final DocumentReference parentSnap = snap.getReference().getParent().getParent();
-
-                  if(parentSnap!=null){
-                    parentSnap.update("comments", queryDocumentSnapshots.size());
-                  }
-
+                if(parentSnap!=null){
+                  parentSnap.update("comments",FieldValue.increment(1));
                 }
-              }
-            });
+
+//            snap.getReference().getParent().get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//              @Override
+//              public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+//
+//                if(queryDocumentSnapshots!=null){
+//
+//                  final DocumentReference parentSnap = snap.getReference().getParent().getParent();
+//
+//                  if(parentSnap!=null){
+//                    parentSnap.update("comments", queryDocumentSnapshots.size());
+//                  }
+//
+//                }
+//              }
+//            });
 
 //            final String userId = snap.getString("userId");
 //
@@ -105,10 +128,15 @@ public class MainActivity extends AppCompatActivity {
 //              });
 //            }
 
+              }
+            }
           }
-        }
+        });
       }
     });
+
+
+
 
 
 //    FirebaseDatabase.getInstance().getReference()
