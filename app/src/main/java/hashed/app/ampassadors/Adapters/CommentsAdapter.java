@@ -42,11 +42,14 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
   private final CommentsListener commentsListener;
   private final CollectionReference commentsRef;
   private final int redColor,blackColor;
+  private final String postId;
 
   public CommentsAdapter(List<Comment> comments, CommentsListener commentsListener, String postId,
                          Context context) {
     this.comments = comments;
     this.commentsListener = commentsListener;
+    this.postId = postId;
+
       commentsRef = FirebaseFirestore.getInstance().collection("Posts")
               .document(postId).collection("Comments");
 
@@ -62,6 +65,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
                          Context context,String creatorId) {
     this.comments = comments;
     this.commentsListener = commentsListener;
+    this.postId = postId;
     commentsRef = FirebaseFirestore.getInstance().collection("Users")
             .document(creatorId).collection("UserPosts")
             .document(postId).collection("Comments");
@@ -320,8 +324,12 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
                                         @Override
                                         public void onSuccess(Void unused) {
 
+                                          FirebaseFirestore.getInstance().collection("Posts")
+                                                  .document(postId).update("comments",FieldValue.increment(-1));
+
                                           comments.remove(getBindingAdapterPosition());
                                           notifyItemRemoved(getBindingAdapterPosition());
+
                                         }
                                       });
 

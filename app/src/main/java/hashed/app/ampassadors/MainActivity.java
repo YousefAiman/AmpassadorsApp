@@ -18,7 +18,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -55,36 +57,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    FirebaseFirestore.getInstance().collectionGroup("Comments")
+            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+      @Override
+      public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+        if(queryDocumentSnapshots!=null){
+          for(DocumentSnapshot snap:queryDocumentSnapshots){
 
-//    FirebaseFirestore.getInstance().collectionGroup("Comments")
-//            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-//      @Override
-//      public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-//        if(queryDocumentSnapshots!=null){
-//          for(DocumentSnapshot snap:queryDocumentSnapshots){
-//
-//            final String userId = snap.getString("userId");
-//
-//            if(userId!=null){
-//
-//              FirebaseFirestore.getInstance().collection("Users")
-//                      .document(userId)
-//                      .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//                @Override
-//                public void onSuccess(DocumentSnapshot documentSnapshot) {
-//
-//                  if(documentSnapshot==null || !documentSnapshot.exists() || (documentSnapshot.contains("rejected") && documentSnapshot.getBoolean("rejected"))){
-//                    snap.getReference().update("isDeleted",true);
-//                  }
-//
-//                }
-//              });
-//            }
-//
-//          }
-//        }
-//      }
-//    });
+            final String userId = snap.getString("userId");
+
+            if(userId!=null){
+
+              FirebaseFirestore.getInstance().collection("Users")
+                      .document(userId)
+                      .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                  if(documentSnapshot==null || !documentSnapshot.exists() || (documentSnapshot.contains("rejected") && documentSnapshot.getBoolean("rejected"))){
+                    snap.getReference().update("isDeleted",true);
+
+                    final DocumentReference parentSnap = snap.getReference().getParent().getParent();
+
+                    if(parentSnap!=null){
+                      parentSnap.update("comments",FieldValue.increment(-1));
+                    }
+
+                  }
+
+                }
+              });
+            }
+
+          }
+        }
+      }
+    });
 
 
 //    FirebaseDatabase.getInstance().getReference()
