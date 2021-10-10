@@ -56,35 +56,35 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    FirebaseFirestore.getInstance().collectionGroup("Comments")
-            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-      @Override
-      public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-        if(queryDocumentSnapshots!=null){
-          for(DocumentSnapshot snap:queryDocumentSnapshots){
-
-            final String userId = snap.getString("userId");
-
-            if(userId!=null){
-
-              FirebaseFirestore.getInstance().collection("Users")
-                      .document(userId)
-                      .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-                  if(documentSnapshot==null || !documentSnapshot.exists() || (documentSnapshot.contains("rejected") && documentSnapshot.getBoolean("reject"))){
-                    snap.getReference().update("isDeleted",true);
-                  }
-
-                }
-              });
-            }
-
-          }
-        }
-      }
-    });
+//    FirebaseFirestore.getInstance().collectionGroup("Comments")
+//            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//      @Override
+//      public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+//        if(queryDocumentSnapshots!=null){
+//          for(DocumentSnapshot snap:queryDocumentSnapshots){
+//
+//            final String userId = snap.getString("userId");
+//
+//            if(userId!=null){
+//
+//              FirebaseFirestore.getInstance().collection("Users")
+//                      .document(userId)
+//                      .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                @Override
+//                public void onSuccess(DocumentSnapshot documentSnapshot) {
+//
+//                  if(documentSnapshot==null || !documentSnapshot.exists() || (documentSnapshot.contains("rejected") && documentSnapshot.getBoolean("rejected"))){
+//                    snap.getReference().update("isDeleted",true);
+//                  }
+//
+//                }
+//              });
+//            }
+//
+//          }
+//        }
+//      }
+//    });
 
 
 //    FirebaseDatabase.getInstance().getReference()

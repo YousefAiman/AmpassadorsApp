@@ -141,9 +141,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
       addCommentTv = itemView.findViewById(R.id.addCommentTv);
       repliesRv = itemView.findViewById(R.id.repliesRv);
 
-      if(!comments.get(getBindingAdapterPosition()).getUserId().equals(currentUid)){
-        itemView.setOnLongClickListener(this);
-      }
+
       addCommentTv.setOnClickListener(this);
       likesTv.setOnClickListener(this);
 
@@ -151,6 +149,14 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     }
 
     private void bind(Comment comment) {
+
+      if(!comment.getUserId().equals(currentUid)){
+        itemView.setOnLongClickListener(this);
+      }else{
+        itemView.setOnLongClickListener(null);
+      }
+
+
       imageIv.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
