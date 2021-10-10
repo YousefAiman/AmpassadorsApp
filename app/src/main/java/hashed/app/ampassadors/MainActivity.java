@@ -55,18 +55,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    FirebaseFirestore.getInstance().collectionGroup("Comments")
-            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-      @Override
-      public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-        if(queryDocumentSnapshots!=null){
-          for(DocumentSnapshot snap:queryDocumentSnapshots){
-            snap.getReference().update("isDeleted",false);
-          }
-        }
-      }
-    });
-
+//    FirebaseFirestore.getInstance().collectionGroup("Comments")
+//            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//      @Override
+//      public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+//        if(queryDocumentSnapshots!=null){
+//          for(DocumentSnapshot snap:queryDocumentSnapshots){
+//            snap.getReference().update("isDeleted",false);
+//          }
+//        }
+//      }
+//    });
 
 
 //    FirebaseDatabase.getInstance().getReference()

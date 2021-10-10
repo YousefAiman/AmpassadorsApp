@@ -17,10 +17,14 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -136,6 +140,14 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
       likesTv = itemView.findViewById(R.id.likesTv);
       addCommentTv = itemView.findViewById(R.id.addCommentTv);
       repliesRv = itemView.findViewById(R.id.repliesRv);
+
+      if(!comments.get(getBindingAdapterPosition()).getUserId().equals(currentUid)){
+        itemView.setOnLongClickListener(this);
+      }
+      addCommentTv.setOnClickListener(this);
+      likesTv.setOnClickListener(this);
+
+
     }
 
     private void bind(Comment comment) {
@@ -188,8 +200,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
 
       timeTv.setText(TimeFormatter.formatTime(comment.getTime()));
 
-      addCommentTv.setOnClickListener(this);
-      likesTv.setOnClickListener(this);
+
 
     }
 
@@ -262,11 +273,66 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
       final View parentView = LayoutInflater.from(view.getContext()).inflate(R.layout.comment_options_bsd, null);
       parentView.setBackgroundColor(Color.TRANSPARENT);
 
-      parentView.findViewById(R.id.tvReport).setOnClickListener(new View.OnClickListener() {
+      final TextView tvReport = parentView.findViewById(R.id.tvReport);
+
+      tvReport.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
 
+          tvReport.setClickable(false);
 
+          final HashMap<String,Object> reportMap = new HashMap<>();
+          reportMap.put("userId",currentUid);
+          reportMap.put("time",System.currentTimeMillis());
+
+          final DocumentReference commentRef = commentsRef.document(comments.get(getBindingAdapterPosition()).getCommentId());
+
+          final CollectionReference reportsRef = commentRef.collection("Reports");
+
+          reportsRef.document(currentUid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+              if(task.getResult() == null || !task.getResult().exists()){
+
+                reportsRef.document(currentUid).update(reportMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                  @Override
+                  public void onSuccess(Void unused) {
+
+                    commentRef.update("reports", FieldValue.increment(1))
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                              @Override
+                              public void onSuccess(Void unused) {
+
+                                commentRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                  @Override
+                                  public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                    if(documentSnapshot!= null && documentSnapshot.contains("reports") && documentSnapshot.getLong("reports") >= 5){
+
+                                      commentRef.update("isDeleted",true).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void unused) {
+
+                                          comments.remove(getBindingAdapterPosition());
+                                          notifyItemRemoved(getBindingAdapterPosition());
+                                        }
+                                      });
+
+                                    }
+
+                                  }
+                                });
+
+                              }
+                            });
+
+                  }
+                });
+              }
+
+            }
+          });
 
           bsd.cancel();
 

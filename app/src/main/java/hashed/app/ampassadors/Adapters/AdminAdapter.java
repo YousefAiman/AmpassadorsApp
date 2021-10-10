@@ -1,7 +1,6 @@
 package hashed.app.ampassadors.Adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +12,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import hashed.app.ampassadors.Objects.UserApprovment;
@@ -79,11 +81,14 @@ public class AdminAdapter extends RecyclerView.Adapter<AdminAdapter.AdminHolder>
 
           final FirebaseFirestore firestore =  FirebaseFirestore.getInstance();
 
+          final List<Task<?>> tasks = new ArrayList<>();
+
           firestore.collection("Users").document(userApprovment.getUserId())
                   .update("rejected",true).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
 
+              tasks.add(
               firestore.collectionGroup("Comments")
                       .whereEqualTo("userId",userApprovment.getUserId())
                       .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -91,14 +96,19 @@ public class AdminAdapter extends RecyclerView.Adapter<AdminAdapter.AdminHolder>
                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                           if(queryDocumentSnapshots!=null){
                             for(DocumentSnapshot snap:queryDocumentSnapshots){
-                              snap.getReference().update("isDeleted",true);
+                              tasks.add(snap.getReference().update("isDeleted",true));
                             }
                           }
                         }
-                      });
+                      }));
 
-              data.remove(userApprovment);
-              notifyItemRemoved(getAdapterPosition());
+              Tasks.whenAllComplete(tasks).addOnCompleteListener(new OnCompleteListener<List<Task<?>>>() {
+                @Override
+                public void onComplete(@NonNull Task<List<Task<?>>> task) {
+                  data.remove(userApprovment);
+                  notifyItemRemoved(getBindingAdapterPosition());
+                }
+              });
             }
           });
         }
