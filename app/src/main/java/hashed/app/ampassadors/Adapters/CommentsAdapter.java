@@ -307,7 +307,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
 
               if(task.getResult() == null || !task.getResult().exists()){
 
-                reportsRef.document(currentUid).update(reportMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                reportsRef.document(currentUid).set(reportMap).addOnSuccessListener(new OnSuccessListener<Void>() {
                   @Override
                   public void onSuccess(Void unused) {
 
