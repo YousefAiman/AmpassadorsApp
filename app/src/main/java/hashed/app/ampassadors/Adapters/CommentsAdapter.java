@@ -3,6 +3,7 @@ package hashed.app.ampassadors.Adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -339,12 +341,29 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
                                 });
 
                               }
-                            });
+                            }).addOnFailureListener(new OnFailureListener() {
+                      @Override
+                      public void onFailure(@NonNull Exception e) {
+                        Log.d("comments","failed to add to number of reports: "+ e.getMessage());
+                      }
+                    });
 
                   }
+                }).addOnFailureListener(new OnFailureListener() {
+                  @Override
+                  public void onFailure(@NonNull Exception e) {
+                    Log.d("comments","failed to add report: "+ e.getMessage());
+                  }
                 });
+              }else{
+                Log.d("comments","user has already reported this comment");
               }
 
+            }
+          }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+              Log.d("comments","failed to get reports ref: "+ e.getMessage());
             }
           });
 
