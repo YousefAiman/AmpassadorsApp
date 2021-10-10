@@ -64,6 +64,23 @@ public class MainActivity extends AppCompatActivity {
         if(queryDocumentSnapshots!=null){
           for(DocumentSnapshot snap:queryDocumentSnapshots){
 
+            snap.getReference().getParent().get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+              @Override
+              public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
+                if(queryDocumentSnapshots!=null){
+
+                  final DocumentReference parentSnap = snap.getReference().getParent().getParent();
+
+                  if(parentSnap!=null){
+                    parentSnap.update("comments", queryDocumentSnapshots.size());
+                  }
+
+                }
+              }
+            });
+
+
             final String userId = snap.getString("userId");
 
             if(userId!=null){
@@ -74,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                  if(documentSnapshot==null || !documentSnapshot.exists() || (documentSnapshot.contains("rejected") && documentSnapshot.getBoolean("rejected"))){
+                  if(documentSnapshot == null || !documentSnapshot.exists() || (documentSnapshot.contains("rejected") && documentSnapshot.getBoolean("rejected"))){
                     snap.getReference().update("isDeleted",true);
 
                     final DocumentReference parentSnap = snap.getReference().getParent().getParent();
