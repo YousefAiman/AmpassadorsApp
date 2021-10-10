@@ -80,31 +80,30 @@ public class MainActivity extends AppCompatActivity {
               }
             });
 
-
-            final String userId = snap.getString("userId");
-
-            if(userId!=null){
-
-              FirebaseFirestore.getInstance().collection("Users")
-                      .document(userId)
-                      .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-                  if(documentSnapshot == null || !documentSnapshot.exists() || (documentSnapshot.contains("rejected") && documentSnapshot.getBoolean("rejected"))){
-                    snap.getReference().update("isDeleted",true);
-
-                    final DocumentReference parentSnap = snap.getReference().getParent().getParent();
-
-                    if(parentSnap!=null){
-                      parentSnap.update("comments",FieldValue.increment(-1));
-                    }
-
-                  }
-
-                }
-              });
-            }
+//            final String userId = snap.getString("userId");
+//
+//            if(userId!=null){
+//
+//              FirebaseFirestore.getInstance().collection("Users")
+//                      .document(userId)
+//                      .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                @Override
+//                public void onSuccess(DocumentSnapshot documentSnapshot) {
+//
+//                  if(documentSnapshot == null || !documentSnapshot.exists() || (documentSnapshot.contains("rejected") && documentSnapshot.getBoolean("rejected"))){
+//                    snap.getReference().update("isDeleted",true);
+//
+//                    final DocumentReference parentSnap = snap.getReference().getParent().getParent();
+//
+//                    if(parentSnap!=null){
+//                      parentSnap.update("comments",FieldValue.increment(-1));
+//                    }
+//
+//                  }
+//
+//                }
+//              });
+//            }
 
           }
         }
