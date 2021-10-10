@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
             final DocumentReference parentSnap = snap.getReference().getParent().getParent();
                     if(parentSnap!=null){
                       parentSnap.update("comments",0);
+
                     }
           }
         }
