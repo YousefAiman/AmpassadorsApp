@@ -112,7 +112,8 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     void likeComment(int position, TextView likesTv);
   }
 
-  public class CommentHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+  public class CommentHolder extends RecyclerView.ViewHolder implements View.OnClickListener ,
+          View.OnLongClickListener {
 
     private final TextView usernameTv;
     private final CircleImageView imageIv;
@@ -198,8 +199,10 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                  comment.setUserImage(documentSnapshot.getString("imageUrl"));
-                  comment.setUserName(documentSnapshot.getString("username"));
+                  if(documentSnapshot!=null && (!documentSnapshot.contains("rejected") || !documentSnapshot.getBoolean("rejected"))){
+                    comment.setUserImage(documentSnapshot.getString("imageUrl"));
+                    comment.setUserName(documentSnapshot.getString("username"));
+                  }
 
                 }
               }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -250,6 +253,13 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
       }
     }
 
+    @Override
+    public boolean onLongClick(View view) {
+
+
+
+      return false;
+    }
   }
 
 }

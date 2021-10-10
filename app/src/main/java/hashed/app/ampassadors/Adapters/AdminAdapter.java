@@ -72,9 +72,10 @@ public class AdminAdapter extends RecyclerView.Adapter<AdminAdapter.AdminHolder>
       delete_account.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+
           FirebaseFirestore.getInstance()
                   .collection("Users").document(userApprovment.getUserId())
-                  .update("rejected",false).addOnSuccessListener(new OnSuccessListener<Void>() {
+                  .update("rejected",true).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
               data.remove(userApprovment);

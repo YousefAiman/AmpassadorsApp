@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import hashed.app.ampassadors.Activities.ConnectionActivity;
@@ -52,6 +53,36 @@ public class MainActivity extends AppCompatActivity {
     } else {
       startConnectionActivity();
     }
+
+
+    FirebaseFirestore.getInstance().collectionGroup("Comments")
+            .whereEqualTo("userId","ThRTTP85NYZIobSj55SfwdMtUYx2")
+            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+      @Override
+      public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
+        if(queryDocumentSnapshots!=null){
+          for(DocumentSnapshot snap:queryDocumentSnapshots){
+            Log.d("comments",snap.getId());
+          }
+
+          if(queryDocumentSnapshots.isEmpty()
+          ){
+            Log.d("comments","no comments");
+          }
+        }else{
+
+          Log.d("comments","no comments");
+
+        }
+
+      }
+    }).addOnFailureListener(new OnFailureListener() {
+      @Override
+      public void onFailure(@NonNull Exception e) {
+        Log.d("comments","error: "+e.getMessage());
+      }
+    });
 
 //    FirebaseDatabase.getInstance().getReference()
 //            .child("GroupMessages").child("69803fed-51a6-474c-8a95-fd7d88f09488").child("Messages")
