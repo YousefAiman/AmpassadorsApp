@@ -45,7 +45,7 @@ public class ShutdownService extends Service {
         Log.d("ttt", "task removed");
 
 //        GlobalVariables.setAppIsRunning(false);
-//        getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE).edit()
+//        getSharedPreferences(getResources().getString(R.string.shared_name), MODE_PRIVATE).edit()
 //                .remove("isPaused")
 //                .remove("currentlyMessagingUid").apply();
 
