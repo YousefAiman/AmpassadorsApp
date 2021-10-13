@@ -640,7 +640,7 @@ final PendingIntent pendingIntent = PendingIntent.getActivity(this,
 
   public SharedPreferences getSharedPreferences() {
     if(sharedPreferences == null){
-      sharedPreferences = getSharedPreferences(getResources().getString(R.string.app_name),
+      sharedPreferences = getSharedPreferences(getResources().getString(R.string.shared_name),
               Context.MODE_PRIVATE);
     }
     return sharedPreferences;

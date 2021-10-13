@@ -254,7 +254,7 @@ public class PostsProfileFragment extends Fragment implements Toolbar.OnMenuItem
     }
 
     private void updateOfflineStatusPreference(boolean alwaysOffline){
-        requireContext().getSharedPreferences(getResources().getString(R.string.app_name),
+        requireContext().getSharedPreferences(getResources().getString(R.string.shared_name),
                 Context.MODE_PRIVATE).edit().putBoolean("alwaysOffline",alwaysOffline).apply();
     }
 

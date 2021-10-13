@@ -181,7 +181,7 @@ public abstract class MessagingActivity extends AppCompatActivity
 
   public void handleNotification(String type) {
 
-    sharedPreferences = getSharedPreferences(getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
+    sharedPreferences = getSharedPreferences(getResources().getString(R.string.shared_name), Context.MODE_PRIVATE);
 
     sharedPreferences.edit()
             .putString("currentlyMessagingUid", messagingUid).apply();

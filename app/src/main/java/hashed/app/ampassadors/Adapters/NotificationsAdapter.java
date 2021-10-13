@@ -561,7 +561,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
   public SharedPreferences getSharedPreferences(Context context) {
     if(sharedPreferences == null){
-      sharedPreferences = context.getSharedPreferences(context.getResources().getString(R.string.app_name),
+      sharedPreferences = context.getSharedPreferences(context.getResources().getString(R.string.shared_name),
               Context.MODE_PRIVATE);
     }
     return sharedPreferences;

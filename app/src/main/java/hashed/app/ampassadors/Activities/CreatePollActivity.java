@@ -2,6 +2,8 @@ package hashed.app.ampassadors.Activities;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -33,6 +35,7 @@ import hashed.app.ampassadors.Adapters.PollItemsRecyclerAdapter;
 import hashed.app.ampassadors.Fragments.NumberPickerDialogFragment;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.DialogUtil;
 import hashed.app.ampassadors.Utils.GlobalVariables;
 
 public class CreatePollActivity extends AppCompatActivity implements View.OnClickListener,
@@ -48,6 +51,16 @@ public class CreatePollActivity extends AppCompatActivity implements View.OnClic
   private ArrayList<String> pollItems;
   private long pollDuration;
   private Integer[] durations;
+  private SharedPreferences sharedPreferences;
+
+  public SharedPreferences getSharedPreferences() {
+    if(sharedPreferences == null){
+      sharedPreferences =  getSharedPreferences(getResources().getString(R.string.shared_name), Context.MODE_PRIVATE);
+    }
+    return sharedPreferences;
+  }
+
+
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +125,29 @@ public class CreatePollActivity extends AppCompatActivity implements View.OnClic
   public void onClick(View view) {
 
     if (view.getId() == R.id.edit_btn) {
+
+      if(!getSharedPreferences().contains("hasAcceptedTerms") || !getSharedPreferences().getBoolean("hasAcceptedTerms",false)){
+
+        DialogUtil.showDialog(this,getString(R.string.terms_and_conditions_text),new DialogUtil.DialogListener(){
+          @Override
+          public void onDialogConfirmed() {
+
+            getSharedPreferences().edit().putBoolean("hasAcceptedTerms",true).apply();
+
+            publishBtn.performClick();
+          }
+
+          @Override
+          public void onDialogDismissed() {
+
+            Toast.makeText(CreatePollActivity.this, R.string.cant_upload_until_terms_acceptance, Toast.LENGTH_SHORT).show();
+
+          }
+        });
+
+        return;
+      }
+
       Log.d("ttt", "pollItems: " + pollItems.size());
       final String question = questionEd.getText().toString();
       if (question.isEmpty()) {

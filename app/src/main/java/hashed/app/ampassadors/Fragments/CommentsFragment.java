@@ -3,6 +3,7 @@ package hashed.app.ampassadors.Fragments;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -44,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import hashed.app.ampassadors.Activities.CreatePollActivity;
 import hashed.app.ampassadors.Adapters.CommentsAdapter;
 import hashed.app.ampassadors.Adapters.RepliesAdapter;
 import hashed.app.ampassadors.NotificationUtil.CloudMessagingNotificationsSender;
@@ -53,6 +55,7 @@ import hashed.app.ampassadors.Objects.Comment;
 import hashed.app.ampassadors.Objects.CommentReply;
 import hashed.app.ampassadors.Objects.PostData;
 import hashed.app.ampassadors.R;
+import hashed.app.ampassadors.Utils.DialogUtil;
 import hashed.app.ampassadors.Utils.SigninUtil;
 
 
@@ -81,6 +84,15 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
   private final boolean isUserPost;
   private final String creatorId;
   private final int postType;
+
+  private SharedPreferences sharedPreferences;
+
+  public SharedPreferences getSharedPreferences() {
+    if(sharedPreferences == null){
+      sharedPreferences =  requireContext().getSharedPreferences(getResources().getString(R.string.shared_name), Context.MODE_PRIVATE);
+    }
+    return sharedPreferences;
+  }
 
   public CommentsFragment(String postId, int commentsCount,boolean isUserPost,
                           String creatorId,int postType) {
@@ -233,6 +245,28 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
       SigninUtil.getInstance(getContext(),
               getActivity()).show();
     }else{
+
+      if(!getSharedPreferences().contains("hasAcceptedTerms") || !getSharedPreferences().getBoolean("hasAcceptedTerms",false)){
+
+        DialogUtil.showDialog(requireContext(),getString(R.string.terms_and_conditions_text),new DialogUtil.DialogListener(){
+          @Override
+          public void onDialogConfirmed() {
+
+            getSharedPreferences().edit().putBoolean("hasAcceptedTerms",true).apply();
+
+            addComment();
+          }
+
+          @Override
+          public void onDialogDismissed() {
+
+            Toast.makeText(requireContext(), R.string.cant_upload_until_terms_acceptance, Toast.LENGTH_SHORT).show();
+
+          }
+        });
+
+        return;
+      }
 
       commentSubmitIv.setClickable(false);
       Log.d("ttt", "clicked");
@@ -587,6 +621,28 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
               SigninUtil.getInstance(getContext(),
                       getActivity()).show();
           }else {
+
+                if(!getSharedPreferences().contains("hasAcceptedTerms") || !getSharedPreferences().getBoolean("hasAcceptedTerms",false)){
+
+                  DialogUtil.showDialog(requireContext(),getString(R.string.terms_and_conditions_text),new DialogUtil.DialogListener(){
+                    @Override
+                    public void onDialogConfirmed() {
+
+                      getSharedPreferences().edit().putBoolean("hasAcceptedTerms",true).apply();
+
+                      addReply(rv,replies,adapter,commentPosition);
+                    }
+
+                    @Override
+                    public void onDialogDismissed() {
+
+                      Toast.makeText(requireContext(), R.string.cant_upload_until_terms_acceptance, Toast.LENGTH_SHORT).show();
+
+                    }
+                  });
+
+                  return;
+                }
 
                 commentSubmitIv.setClickable(false);
                 final String reply = commentEd.getText().toString();
