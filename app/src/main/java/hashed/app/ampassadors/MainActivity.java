@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
   private void checkUserCredentials(){
 
     SharedPreferences sharedPreferences =
-            getSharedPreferences(getResources().getString(R.string.app_name),
+            getSharedPreferences(getResources().getString(R.string.shared_name),
                     Context.MODE_PRIVATE);
 
 
@@ -432,7 +432,7 @@ public class MainActivity extends AppCompatActivity {
   private int getIntentFlags(String sourceId){
 
     Log.d("ttt","checkCurrentMessagingActivity");
-    final SharedPreferences sharedPreferences = getSharedPreferences(getResources().getString(R.string.app_name),
+    final SharedPreferences sharedPreferences = getSharedPreferences(getResources().getString(R.string.shared_name),
             Context.MODE_PRIVATE);
 
     if (GlobalVariables.isAppIsRunning() && sharedPreferences.contains("currentlyMessagingUid")) {

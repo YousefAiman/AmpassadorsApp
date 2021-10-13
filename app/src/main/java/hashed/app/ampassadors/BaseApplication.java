@@ -82,7 +82,7 @@ public class BaseApplication extends Application {
     private boolean hasOfflinePreference(){
 
         final SharedPreferences sharedPreferences =
-                getSharedPreferences(getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
+                getSharedPreferences(getResources().getString(R.string.shared_name), Context.MODE_PRIVATE);
 
         return (sharedPreferences.contains("alwaysOffline") && sharedPreferences.getBoolean("alwaysOffline",false));
     }

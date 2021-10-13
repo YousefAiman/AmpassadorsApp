@@ -131,7 +131,7 @@ public class NotificationClickReceiver extends BroadcastReceiver {
   private void checkCurrentMessagingActivity(Context context,Intent destinationIntent,
                                              String sourceId){
     final SharedPreferences sharedPreferences =
-            context.getSharedPreferences(context.getResources().getString(R.string.app_name),
+            context.getSharedPreferences(context.getResources().getString(R.string.shared_name),
                     Context.MODE_PRIVATE);
     Log.d("ttt","checkCurrentMessagingActivity");
     if (sharedPreferences.contains("currentlyMessagingUid")) {
