@@ -412,5 +412,6 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="verify_email">Verify Email</string>
     <string name="EmailMessage">Verfy Email</string>
     <string name="OK">Ok</string>
+    <string name="user_already_reported">You have already reported this comment!</string>
 
 </resources>

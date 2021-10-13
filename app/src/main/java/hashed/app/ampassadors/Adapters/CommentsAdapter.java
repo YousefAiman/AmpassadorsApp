@@ -2,23 +2,32 @@ package hashed.app.ampassadors.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -32,22 +41,25 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
   private final List<Comment> comments;
   private final CollectionReference usersRef =
           FirebaseFirestore.getInstance().collection("Users");
-  private final String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+  private final String currentUid;
   private final CommentsListener commentsListener;
   private final CollectionReference commentsRef;
-  private final int redColor
-            ,blackColor;
+  private final int redColor,blackColor;
+  private final String postId;
 
   public CommentsAdapter(List<Comment> comments, CommentsListener commentsListener, String postId,
                          Context context) {
     this.comments = comments;
     this.commentsListener = commentsListener;
+    this.postId = postId;
+
       commentsRef = FirebaseFirestore.getInstance().collection("Posts")
               .document(postId).collection("Comments");
 
 
     redColor = context.getResources().getColor(R.color.red);
         blackColor = context.getResources().getColor(R.color.black);
+    currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
   }
 
@@ -56,6 +68,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
                          Context context,String creatorId) {
     this.comments = comments;
     this.commentsListener = commentsListener;
+    this.postId = postId;
     commentsRef = FirebaseFirestore.getInstance().collection("Users")
             .document(creatorId).collection("UserPosts")
             .document(postId).collection("Comments");
@@ -63,7 +76,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
 
     redColor = context.getResources().getColor(R.color.red);
     blackColor = context.getResources().getColor(R.color.black);
-
+    currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
   }
 
   @NonNull
@@ -112,7 +125,8 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     void likeComment(int position, TextView likesTv);
   }
 
-  public class CommentHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+  public class CommentHolder extends RecyclerView.ViewHolder implements View.OnClickListener ,
+          View.OnLongClickListener {
 
     private final TextView usernameTv;
     private final CircleImageView imageIv;
@@ -133,9 +147,23 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
       likesTv = itemView.findViewById(R.id.likesTv);
       addCommentTv = itemView.findViewById(R.id.addCommentTv);
       repliesRv = itemView.findViewById(R.id.repliesRv);
+
+
+      addCommentTv.setOnClickListener(this);
+      likesTv.setOnClickListener(this);
+
+
     }
 
     private void bind(Comment comment) {
+
+      if(!comment.getUserId().equals(currentUid)){
+        itemView.setOnLongClickListener(this);
+      }else{
+        itemView.setOnLongClickListener(null);
+      }
+
+
       imageIv.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -185,8 +213,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
 
       timeTv.setText(TimeFormatter.formatTime(comment.getTime()));
 
-      addCommentTv.setOnClickListener(this);
-      likesTv.setOnClickListener(this);
+
 
     }
 
@@ -198,8 +225,10 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                  comment.setUserImage(documentSnapshot.getString("imageUrl"));
-                  comment.setUserName(documentSnapshot.getString("username"));
+                  if(documentSnapshot!=null && (!documentSnapshot.contains("rejected") || !documentSnapshot.getBoolean("rejected"))){
+                    comment.setUserImage(documentSnapshot.getString("imageUrl"));
+                    comment.setUserName(documentSnapshot.getString("username"));
+                  }
 
                 }
               }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -250,6 +279,109 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
       }
     }
 
+    @Override
+    public boolean onLongClick(View view) {
+
+      final BottomSheetDialog bsd = new BottomSheetDialog(view.getContext(), R.style.SheetDialog);
+      final View parentView = LayoutInflater.from(view.getContext()).inflate(R.layout.comment_options_bsd, null);
+      parentView.setBackgroundColor(Color.TRANSPARENT);
+
+      final TextView tvReport = parentView.findViewById(R.id.tvReport);
+
+      tvReport.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+          tvReport.setClickable(false);
+
+          final HashMap<String,Object> reportMap = new HashMap<>();
+          reportMap.put("userId",currentUid);
+          reportMap.put("time",System.currentTimeMillis());
+
+          final DocumentReference commentRef = commentsRef.document(comments.get(getBindingAdapterPosition()).getCommentId());
+
+          final CollectionReference reportsRef = commentRef.collection("Reports");
+
+          reportsRef.document(currentUid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+              if(task.getResult() == null || !task.getResult().exists()){
+
+                reportsRef.document(currentUid).set(reportMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                  @Override
+                  public void onSuccess(Void unused) {
+
+                    commentRef.update("reports", FieldValue.increment(1))
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                              @Override
+                              public void onSuccess(Void unused) {
+
+                                commentRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                  @Override
+                                  public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                    if(documentSnapshot!= null && documentSnapshot.contains("reports") && documentSnapshot.getLong("reports") >= 5){
+
+                                      commentRef.update("isDeleted",true).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void unused) {
+
+                                          FirebaseFirestore.getInstance().collection("Posts")
+                                                  .document(postId).update("comments",FieldValue.increment(-1));
+
+                                          comments.remove(getBindingAdapterPosition());
+                                          notifyItemRemoved(getBindingAdapterPosition());
+
+                                        }
+                                      });
+
+                                    }
+
+                                  }
+                                });
+
+                              }
+                            }).addOnFailureListener(new OnFailureListener() {
+                      @Override
+                      public void onFailure(@NonNull Exception e) {
+                        Log.d("comments","failed to add to number of reports: "+ e.getMessage());
+                      }
+                    });
+
+                  }
+                }).addOnFailureListener(new OnFailureListener() {
+                  @Override
+                  public void onFailure(@NonNull Exception e) {
+                    Log.d("comments","failed to add report: "+ e.getMessage());
+                  }
+                });
+              }else{
+
+                Toast.makeText(itemView.getContext(),
+                        itemView.getResources().getString(R.string.user_already_reported), Toast.LENGTH_SHORT).show();
+
+                Log.d("comments","user has already reported this comment");
+              }
+
+            }
+          }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+              Log.d("comments","failed to get reports ref: "+ e.getMessage());
+            }
+          });
+
+          bsd.cancel();
+
+        }
+      });
+
+      bsd.setContentView(parentView);
+      bsd.show();
+
+      return false;
+    }
   }
 
 }

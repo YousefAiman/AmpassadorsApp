@@ -12,9 +12,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import hashed.app.ampassadors.Objects.UserApprovment;
@@ -72,13 +78,37 @@ public class AdminAdapter extends RecyclerView.Adapter<AdminAdapter.AdminHolder>
       delete_account.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-          FirebaseFirestore.getInstance()
-                  .collection("Users").document(userApprovment.getUserId())
-                  .update("rejected",false).addOnSuccessListener(new OnSuccessListener<Void>() {
+
+          final FirebaseFirestore firestore =  FirebaseFirestore.getInstance();
+
+          final List<Task<?>> tasks = new ArrayList<>();
+
+          firestore.collection("Users").document(userApprovment.getUserId())
+                  .update("rejected",true).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-              data.remove(userApprovment);
-              notifyItemRemoved(getAdapterPosition());
+
+              tasks.add(
+              firestore.collectionGroup("Comments")
+                      .whereEqualTo("userId",userApprovment.getUserId())
+                      .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                          if(queryDocumentSnapshots!=null){
+                            for(DocumentSnapshot snap:queryDocumentSnapshots){
+                              tasks.add(snap.getReference().update("isDeleted",true));
+                            }
+                          }
+                        }
+                      }));
+
+              Tasks.whenAllComplete(tasks).addOnCompleteListener(new OnCompleteListener<List<Task<?>>>() {
+                @Override
+                public void onComplete(@NonNull Task<List<Task<?>>> task) {
+                  data.remove(userApprovment);
+                  notifyItemRemoved(getBindingAdapterPosition());
+                }
+              });
             }
           });
         }

@@ -138,6 +138,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
     }
 
     commentsQuery = documentReference.collection("Comments")
+            .whereEqualTo("isDeleted",false)
             .limit(COMMENTS_SIZE).orderBy("likes", Query.Direction.DESCENDING);
 
   }
@@ -187,9 +188,7 @@ public class CommentsFragment extends BottomSheetDialogFragment implements View.
           lastDocSnap = snapshots.getDocuments().get(snapshots.size() - 1);
 
           if (isInitial) {
-
             comments.addAll(snapshots.toObjects(Comment.class));
-
           } else {
             comments.addAll(comments.size(), snapshots.toObjects(Comment.class));
           }
