@@ -12,7 +12,7 @@
         android:layout_marginTop="8dp"
         app:layout_constraintWidth_percent="0.8"
         app:layout_constraintDimensionRatio="1"
-        android:src="@drawable/ic_logo"
+        android:src="@drawable/logo_new"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>

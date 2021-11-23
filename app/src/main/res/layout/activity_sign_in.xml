@@ -14,10 +14,12 @@
 
         <ImageView
             android:id="@+id/profile_picture"
-            android:layout_width="245dp"
-            android:layout_height="151dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintWidth_percent="0.35"
+            app:layout_constraintDimensionRatio="1"
             android:layout_marginTop="40dp"
-            android:background="@drawable/ic_logo"
+            android:background="@drawable/logo_new"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.506"
             app:layout_constraintStart_toStartOf="parent"

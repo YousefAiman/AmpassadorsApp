@@ -22,7 +22,6 @@ public class VideoDataSourceFactory implements DataSource.Factory {
   private final Context context;
   private final DefaultDataSourceFactory defaultDatasourceFactory;
 
-
   public VideoDataSourceFactory(Context context) {
     super();
     this.context = context;
