@@ -27,10 +27,8 @@ public class VideoDataSourceFactory implements DataSource.Factory {
     this.context = context;
 //    String userAgent = Util.getUserAgent(context, context.getString(R.string.app_name));
 //    DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter.Builder(context).build();
-
     defaultDatasourceFactory = new DefaultDataSource.Factory(this.context,this);
   }
-
   public static void clearVideoCache(Context context) {
 
     Log.d("exoPlayerPlayback", "clearing video cache");
