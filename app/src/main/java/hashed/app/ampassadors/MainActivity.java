@@ -94,8 +94,6 @@ public class MainActivity extends AppCompatActivity {
 //      }
 //    });
 
-
-
 //    FirebaseDatabase.getInstance().getReference()
 //            .child("GroupMessages").child("69803fed-51a6-474c-8a95-fd7d88f09488").child("Messages")
 //            .orderByChild("zoomMeeting")
