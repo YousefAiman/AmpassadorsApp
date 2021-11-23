@@ -70,23 +70,23 @@ import java.util.HashMap;
 public class sign_in extends AppCompatActivity implements View.OnClickListener {
 
     private static final int GOOGLE_REQUEST = 10;
-    EditText email, password;
-    Button btn_login, create_account_btn,gmailbtn,facebookbtn;
-    FirebaseAuth auth;
-    TextView verifyEmail, forgetPass,termsAndConditionsTv;
-    FirebaseFirestore fStore;
-    FirebaseAuth fAuth;
+    private EditText email, password;
+    private Button btn_login, create_account_btn,gmailbtn,facebookbtn;
+    private FirebaseAuth auth;
+    private TextView verifyEmail, forgetPass,termsAndConditionsTv;
+    private FirebaseFirestore fStore;
+    private FirebaseAuth fAuth;
 
-    private static final int
-            REQUEST_CHECK_SETTINGS = 100,
-            REQUEST_LOCATION_PERMISSION = 10;
+//    private static final int
+//            REQUEST_CHECK_SETTINGS = 100,
+//            REQUEST_LOCATION_PERMISSION = 10;
 
     private ProgressDialog googleProgressDialog;
 
 
-    LoginButton facebookLoginBtn;
-    CallbackManager callbackManager;
-    private LocationRequester locationRequester;
+    private LoginButton facebookLoginBtn;
+    private CallbackManager callbackManager;
+//    private LocationRequester locationRequester;
     private HashMap<String,Object> hashMap;
     private DocumentReference userRef;
 
@@ -101,15 +101,15 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
             };
 
 
-    final ActivityResultLauncher<String> permissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(),
-                    isGranted -> {
-                        if(isGranted){
-                            intilizeLocationRequester(locationRequesterListener);
-                        }else{
-                            updateFirebaseUser(userRef,hashMap);
-                        }
-                    });
+//    final ActivityResultLauncher<String> permissionLauncher =
+//            registerForActivityResult(new ActivityResultContracts.RequestPermission(),
+//                    isGranted -> {
+//                        if(isGranted){
+//                            intilizeLocationRequester(locationRequesterListener);
+//                        }else{
+//                            updateFirebaseUser(userRef,hashMap);
+//                        }
+//                    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -473,12 +473,9 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
 //            client.asGoogleApiClient().clearDefaultAccountAndReconnect();
 //        }
 
-
         Intent googleIntent = client.getSignInIntent();
 
-
         startActivityForResult(googleIntent, GOOGLE_REQUEST);
-
     }
 
 
@@ -587,15 +584,16 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
 
         userRef = FirebaseFirestore.getInstance().collection("Users").document(userId);
 
-        final String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
+        updateFirebaseUser(userRef,hashMap);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                checkSelfPermission(permissions[0]) != PackageManager.PERMISSION_GRANTED) {
-//            requestPermissions(permissions, REQUEST_LOCATION_PERMISSION);
-            permissionLauncher.launch(permissions[0]);
-        } else {
-            intilizeLocationRequester(locationRequesterListener);
-        }
+//        final String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+//                checkSelfPermission(permissions[0]) != PackageManager.PERMISSION_GRANTED) {
+////            requestPermissions(permissions, REQUEST_LOCATION_PERMISSION);
+//            permissionLauncher.launch(permissions[0]);
+//        } else {
+//            intilizeLocationRequester(locationRequesterListener);
+//        }
     }
 
     private void updateFirebaseUser(DocumentReference userRef,HashMap<String, Object> hashMap){
@@ -626,27 +624,27 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
     }
 
 
-    void intilizeLocationRequester(LocationRequester.LocationRequesterListener locationRequesterListener) {
-        locationRequester = new LocationRequester(this, this,locationRequesterListener);
-        locationRequester.geCountryFromLocation();
-    }
+//    void intilizeLocationRequester(LocationRequester.LocationRequesterListener locationRequesterListener) {
+//        locationRequester = new LocationRequester(this, this,locationRequesterListener);
+//        locationRequester.geCountryFromLocation();
+//    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (locationRequester != null) {
-            locationRequester.resumeLocationUpdates();
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (locationRequester != null) {
-            locationRequester.stopLocationUpdates();
-        }
-    }
-
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        if (locationRequester != null) {
+//            locationRequester.resumeLocationUpdates();
+//        }
+//    }
+//
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        if (locationRequester != null) {
+//            locationRequester.stopLocationUpdates();
+//        }
+//    }
+//
 
     private void handleFacebookAccessToken(final AccessToken token,ProgressDialog progressDialog) {
 
