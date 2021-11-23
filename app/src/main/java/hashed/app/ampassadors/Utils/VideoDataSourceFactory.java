@@ -4,8 +4,8 @@ import android.content.Context;
 
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultDataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.FileDataSource;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSink;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
@@ -20,20 +20,16 @@ public class VideoDataSourceFactory implements DataSource.Factory {
   private static final long maxFileSize = 100 * 1024 * 1024,
           maxCacheSize = 15 * 1024 * 1024;
   private final Context context;
-  private final DefaultDataSourceFactory defaultDatasourceFactory;
+  private final DefaultDataSource.Factory defaultDatasourceFactory;
 
 
   public VideoDataSourceFactory(Context context) {
     super();
     this.context = context;
+//    String userAgent = Util.getUserAgent(context, context.getString(R.string.app_name));
+//    DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter.Builder(context).build();
 
-    String userAgent = Util.getUserAgent(context, context.getString(R.string.app_name));
-
-    DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter.Builder(context).build();
-
-    defaultDatasourceFactory = new DefaultDataSourceFactory(this.context,
-            bandwidthMeter,
-            new DefaultHttpDataSourceFactory(userAgent, bandwidthMeter));
+    defaultDatasourceFactory = new DefaultDataSource.Factory(this.context,this);
   }
 
   public static void clearVideoCache(Context context) {
