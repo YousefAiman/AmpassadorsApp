@@ -4,30 +4,26 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
+import com.squareup.picasso.Picasso;
+
 import hashed.app.ampassadors.R;
 
-public class WelcomePagerAdapter extends PagerAdapter {
+public class SliderPagerAdapter extends PagerAdapter {
 
-    private final Context context;
-    private final String[] strings;
-
-
-
-    public WelcomePagerAdapter(Context context, String[] strings) {
-        this.context = context;
-        this.strings = strings;
+    private final Integer[] imageIds;
+    public SliderPagerAdapter(Integer[] imageIds) {
+        this.imageIds = imageIds;
     }
-
-
 
     @Override
     public int getCount() {
-        return strings.length;
+        return imageIds.length;
     }
 
     @Override
@@ -43,7 +39,8 @@ public class WelcomePagerAdapter extends PagerAdapter {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE))
                 .inflate(R.layout.welcome_page, null);
 
-        ((TextView) view.findViewById(R.id.welcomePageTv)).setText(strings[position]);
+        Picasso.get().load(imageIds[position]).fit().into(((ImageView)view.findViewById(R.id.iv)));
+
         container.addView(view);
 
         return view;

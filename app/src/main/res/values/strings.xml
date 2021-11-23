@@ -153,8 +153,6 @@ This document was last updated on August 23, 2021
 </string>
 
 
-
-
     <string name="policy_Privacy">Privacy Policy</string>
 
     <string name="policyPrivacy">
@@ -465,5 +463,6 @@ The imminent dangers and national and humanitarian challenges place upon the Pal
     <string name="EmailMessage">Verfy Email</string>
     <string name="OK">Ok</string>
     <string name="user_already_reported">You have already reported this comment!</string>
+    <string name="slider_image">Slider Image</string>
 
 </resources>

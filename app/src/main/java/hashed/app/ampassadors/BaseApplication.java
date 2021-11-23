@@ -78,6 +78,8 @@ public class BaseApplication extends Application {
             FirebaseFirestore.getInstance().collection("Users")
                     .document(currentUser.getUid()).update("status", isOnline);
         }
+
+
     }
     private boolean hasOfflinePreference(){
 

@@ -7,9 +7,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <!--
-    <uses-permission android:name="android.permission.CAMERA" />
-    -->
+    <!--     <uses-permission android:name="android.permission.CAMERA" /> -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -23,6 +21,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AmpassadorsApp">
+        <activity
+            android:name=".Activities.SliderActivity"
+            android:exported="true" />
         <activity android:name=".Activities.ContactUsActivity" />
         <activity android:name=".Activities.NotificationSenderActivity" />
         <activity
@@ -217,12 +218,9 @@
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_ACTION" />
             </intent-filter>
-        </receiver>
-
-<!--        <service-->
-<!--            android:name=".Services.ShutdownService"-->
-<!--            android:stopWithTask="false" />-->
-
+        </receiver> <!-- <service -->
+        <!-- android:name=".Services.ShutdownService" -->
+        <!-- android:stopWithTask="false" /> -->
         <receiver android:name=".NotificationUtil.NotificationClickReceiver" />
         <receiver android:name=".NotificationUtil.NotificationDeleteListener" />
         <receiver
