@@ -87,9 +87,7 @@ public class SliderActivity extends AppCompatActivity implements View.OnClickLis
 
         tvSkip.setOnClickListener(this);
         ivNext.setOnClickListener(this);
-
     }
-
 
     @Override
     public void onClick(View v) {
@@ -97,15 +95,15 @@ public class SliderActivity extends AppCompatActivity implements View.OnClickLis
         final int id = v.getId();
 
         if(id == R.id.tvSkip){
-            vp.setCurrentItem(sliderPagerAdapter.getCount()-1,true);
+//            vp.setCurrentItem(sliderPagerAdapter.getCount()-1,true);
+            startActivity(new Intent(this,sign_in.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         }else if(id == R.id.ivNext){
 
             if(vp.getCurrentItem() == sliderPagerAdapter.getCount()-1){
                 startActivity(new Intent(this,sign_in.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             }else{
-                vp.setCurrentItem(sliderPagerAdapter.getCount()-1,true);
+                vp.setCurrentItem(vp.getCurrentItem() + 1,true);
             }
-
         }
 
 
