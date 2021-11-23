@@ -227,7 +227,6 @@ public class CreatePollActivity extends AppCompatActivity implements View.OnClic
 
     } else if (view.getId() == R.id.timeTv) {
 
-
       if (pollDuration > 0) {
 
         new NumberPickerDialogFragment(durations).show(
