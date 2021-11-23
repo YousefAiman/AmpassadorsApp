@@ -36,6 +36,7 @@ import hashed.app.ampassadors.Activities.MessagingActivities.PrivateMessagingAct
 import hashed.app.ampassadors.Activities.PostNewsActivity;
 import hashed.app.ampassadors.Activities.PostPollActivity;
 import hashed.app.ampassadors.Activities.VideoWelcomeActivity;
+import hashed.app.ampassadors.Activities.WelcomeActivity;
 import hashed.app.ampassadors.NotificationUtil.FirestoreNotificationSender;
 import hashed.app.ampassadors.Services.FirebaseMessagingService;
 import hashed.app.ampassadors.Utils.GlobalVariables;
@@ -134,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
       new Handler().postDelayed(new Runnable() {
         @Override
         public void run() {
-          startActivity(new Intent(MainActivity.this, VideoWelcomeActivity.class)
+          startActivity(new Intent(MainActivity.this, WelcomeActivity.class)
                   .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
           finish();
         }
