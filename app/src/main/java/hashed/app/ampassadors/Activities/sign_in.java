@@ -74,19 +74,15 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
     private Button btn_login, create_account_btn,gmailbtn,facebookbtn;
     private FirebaseAuth auth;
     private TextView verifyEmail, forgetPass,termsAndConditionsTv;
-    private FirebaseFirestore fStore;
-    private FirebaseAuth fAuth;
 
 //    private static final int
 //            REQUEST_CHECK_SETTINGS = 100,
 //            REQUEST_LOCATION_PERMISSION = 10;
 
     private ProgressDialog googleProgressDialog;
-
-
     private LoginButton facebookLoginBtn;
     private CallbackManager callbackManager;
-//    private LocationRequester locationRequester;
+    //private LocationRequester locationRequester;
     private HashMap<String,Object> hashMap;
     private DocumentReference userRef;
 
@@ -214,10 +210,10 @@ public class sign_in extends AppCompatActivity implements View.OnClickListener {
 
         facebookbtn = findViewById(R.id.facebookbtn);
 
-        fAuth = FirebaseAuth.getInstance();
+        FirebaseAuth fAuth = FirebaseAuth.getInstance();
         // userid = fAuth.getCurrentUser().getUid();
 
-        fStore = FirebaseFirestore.getInstance();
+        FirebaseFirestore fStore = FirebaseFirestore.getInstance();
 
     }
 
